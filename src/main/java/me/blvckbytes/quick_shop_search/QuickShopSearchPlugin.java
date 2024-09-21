@@ -6,6 +6,7 @@ import me.blvckbytes.item_predicate_parser.ItemPredicateParserPlugin;
 import me.blvckbytes.item_predicate_parser.parse.PredicateParserFactory;
 import me.blvckbytes.quick_shop_search.config.MainSection;
 import me.blvckbytes.quick_shop_search.display.ResultDisplayHandler;
+import me.blvckbytes.quick_shop_search.display.SelectionStateStore;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -15,6 +16,7 @@ import java.util.logging.Level;
 public class QuickShopSearchPlugin extends JavaPlugin {
 
   private ResultDisplayHandler displayHandler;
+  private SelectionStateStore stateStore;
 
   @Override
   public void onEnable() {
@@ -41,7 +43,8 @@ public class QuickShopSearchPlugin extends JavaPlugin {
 
       Bukkit.getPluginManager().registerEvents(shopRegistry, this);
 
-      displayHandler = new ResultDisplayHandler(mainSection);
+      stateStore = new SelectionStateStore(this);
+      displayHandler = new ResultDisplayHandler(mainSection, stateStore);
 
       Bukkit.getPluginManager().registerEvents(displayHandler, this);
 
@@ -58,5 +61,13 @@ public class QuickShopSearchPlugin extends JavaPlugin {
   public void onDisable() {
     if (displayHandler != null)
       displayHandler.onShutdown();
+
+    if (stateStore != null) {
+      try {
+        stateStore.onShutdown();
+      } catch (Exception e) {
+        getLogger().log(Level.SEVERE, "Could not save state-store", e);
+      }
+    }
   }
 }

@@ -8,22 +8,10 @@ user in a simple yet very useful paginated UI, which offers two actions: opening
 or teleporting to the shop's location. Before shop-items are put on display within said UI, their information
 is extended by the properties specified in the config; by default, lore-lines concerning the owner-name,
 price, remaining stock as well as buying/selling/unlimited-flags are appended - yet more information is
-available in the environment variables of this section.
+available in the environment variables of this section. Results can be filtered by their flags and sorted by
+their properties, all by making use of a visually appealing selection-system.
 
-### Pending Implementation
-
-- Filter by flags
-  - is buying
-  - is selling
-  - is unlimited
-  - has stock left
-
-- Sort by
-  - price
-  - owner-name
-  - stock left
-
-- Save filter- & sort-state in memory per player, for ease of use
+TODO: Add preview GIF
 
 ## Dependencies:
 

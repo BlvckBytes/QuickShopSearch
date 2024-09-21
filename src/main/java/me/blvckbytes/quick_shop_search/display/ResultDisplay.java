@@ -3,6 +3,7 @@ package me.blvckbytes.quick_shop_search.display;
 import com.ghostchu.quickshop.api.shop.Shop;
 import me.blvckbytes.bukkitevaluable.ItemBuilder;
 import me.blvckbytes.gpeee.interpreter.EvaluationEnvironmentBuilder;
+import me.blvckbytes.gpeee.interpreter.IEvaluationEnvironment;
 import me.blvckbytes.quick_shop_search.config.MainSection;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
@@ -10,10 +11,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -22,32 +20,61 @@ public class ResultDisplay {
   public static final int INVENTORY_N_ROWS = 6;
   public static final int BACKWARDS_SLOT_ID = 45;
   public static final int FORWARDS_SLOT_ID = 53;
+  public static final int SORTING_SLOT_ID = 47;
+  public static final int FILTERING_SLOT_ID = 51;
 
   private static final Set<Integer> DISPLAY_SLOTS;
+  private static final Set<Integer> FILLER_SLOTS;
 
   static {
-    DISPLAY_SLOTS = IntStream.range(0, INVENTORY_N_ROWS * 9).boxed().collect(Collectors.toSet());
-    DISPLAY_SLOTS.remove(BACKWARDS_SLOT_ID);
-    DISPLAY_SLOTS.remove(FORWARDS_SLOT_ID);
+    DISPLAY_SLOTS = IntStream.range(0, (INVENTORY_N_ROWS - 1) * 9).boxed().collect(Collectors.toSet());
+    FILLER_SLOTS = IntStream.range((INVENTORY_N_ROWS - 1) * 9, INVENTORY_N_ROWS * 9).boxed().collect(Collectors.toSet());
+
+    FILLER_SLOTS.remove(BACKWARDS_SLOT_ID);
+    FILLER_SLOTS.remove(FORWARDS_SLOT_ID);
+    FILLER_SLOTS.remove(SORTING_SLOT_ID);
+    FILLER_SLOTS.remove(FILTERING_SLOT_ID);
   }
 
   private final MainSection mainSection;
 
-  private final List<Shop> shops;
-  private final Player player;
+  private final List<Shop> unselectedShops;
+  private List<Shop> selectedShops;
+
+  public final Player player;
   private final Map<Integer, Shop> slotMap;
-  private final int numberOfPages;
+  private int numberOfPages;
+
+  public final SelectionState selectionState;
+
+  private final IEvaluationEnvironment pageEnvironment;
+  private final IEvaluationEnvironment sortingEnvironment;
+  private final IEvaluationEnvironment filteringEnvironment;
 
   private Inventory inventory;
   private int currentPage = 1;
 
-  public ResultDisplay(MainSection mainSection, Player player, List<Shop> shops) {
+  public ResultDisplay(MainSection mainSection, Player player, List<Shop> shops, SelectionState selectionState) {
     this.mainSection = mainSection;
     this.player = player;
-    this.shops = shops;
+    this.unselectedShops = shops;
     this.slotMap = new HashMap<>();
-    this.numberOfPages = (int) Math.ceil(shops.size() / (double) DISPLAY_SLOTS.size());
-    this.show();
+    this.selectionState = selectionState;
+
+    this.sortingEnvironment = this.selectionState.makeSortingEnvironment();
+    this.filteringEnvironment = this.selectionState.makeFilteringEnvironment();
+
+    applyFiltering();
+    applySorting();
+
+    this.numberOfPages = (int) Math.ceil(selectedShops.size() / (double) DISPLAY_SLOTS.size());
+
+    this.pageEnvironment = mainSection.getBaseEnvironment()
+      .withLiveVariable("current_page", () -> this.currentPage)
+      .withLiveVariable("number_pages", () -> this.numberOfPages)
+      .build();
+
+    show();
   }
 
   public @Nullable Shop getShopCorrespondingToSlot(int slot) {
@@ -99,6 +126,55 @@ public class ResultDisplay {
     show();
   }
 
+  public void nextSortingCriterion() {
+    this.selectionState.nextSortingCriterion();
+    applySorting();
+    renderItems();
+  }
+
+  public void toggleSortingOrder() {
+    this.selectionState.toggleSortingOrder();
+    applySorting();
+    renderItems();
+  }
+
+  public void nextFilteringCriterion() {
+    this.selectionState.nextFilteringCriterion();
+    renderItems();
+  }
+
+  public void nextFilteringState() {
+    this.selectionState.nextFilteringState();
+
+    int pageCountDelta = applyFiltering();
+    applySorting();
+
+    // Need to update the UI-title
+    if (pageCountDelta != 0)
+      show();
+    else
+      renderItems();
+  }
+
+  private int applyFiltering() {
+    this.selectedShops = this.selectionState.applyFilter(unselectedShops);
+
+    var oldNumberOfPages = this.numberOfPages;
+    this.numberOfPages = (int) Math.ceil(selectedShops.size() / (double) DISPLAY_SLOTS.size());
+
+    var pageCountDelta = this.numberOfPages - oldNumberOfPages;
+
+    // Try to stay on the current page, if possible
+    if (pageCountDelta < 0)
+      this.currentPage = 1;
+
+    return pageCountDelta;
+  }
+
+  private void applySorting() {
+    this.selectionState.applySort(selectedShops);
+  }
+
   private void show() {
     // Avoid the case of the client not accepting opening the new inventory
     // and then being able to take items out of there. This way, we're safe.
@@ -112,19 +188,22 @@ public class ResultDisplay {
 
   private void renderItems() {
     var itemsIndex = (currentPage - 1) * DISPLAY_SLOTS.size();
-    var numberOfItems = shops.size();
+    var numberOfItems = selectedShops.size();
 
     for (var slot : DISPLAY_SLOTS) {
       var currentSlot = itemsIndex++;
 
-      if (currentSlot >= numberOfItems)
+      if (currentSlot >= numberOfItems) {
+        slotMap.remove(slot);
+        inventory.setItem(slot, null);
         continue;
+      }
 
-      var shop = shops.get(currentSlot);
+      var shop = selectedShops.get(currentSlot);
       var shopLocation = shop.getLocation();
       var shopWorld = shopLocation.getWorld();
 
-      var shopEnvironment = makePageEnvironment()
+      var shopEnvironment = new EvaluationEnvironmentBuilder()
         .withLiveVariable("owner", shop.getOwner()::getDisplay)
         .withLiveVariable("price", shop::getPrice)
         .withLiveVariable("currency", shop::getCurrency)
@@ -136,7 +215,7 @@ public class ResultDisplay {
         .withLiveVariable("loc_x", shopLocation::getBlockX)
         .withLiveVariable("loc_y", shopLocation::getBlockY)
         .withLiveVariable("loc_z", shopLocation::getBlockZ)
-        .build();
+        .build(pageEnvironment);
 
       var shopItem = shop.getItem();
 
@@ -147,29 +226,36 @@ public class ResultDisplay {
       inventory.setItem(slot, representativeItem);
       slotMap.put(slot, shop);
     }
-  }
-
-  private Inventory makeInventory() {
-    var currentPageEnvironment = makePageEnvironment().build();
-    var title = mainSection.resultDisplay.title.stringify(currentPageEnvironment);
-    var inventory = Bukkit.createInventory(null, 9 * INVENTORY_N_ROWS, title);
 
     inventory.setItem(
       BACKWARDS_SLOT_ID,
-      mainSection.resultDisplay.previousPage.build(currentPageEnvironment)
+      mainSection.resultDisplay.previousPage.build(pageEnvironment)
     );
 
     inventory.setItem(
       FORWARDS_SLOT_ID,
-      mainSection.resultDisplay.nextPage.build(currentPageEnvironment)
+      mainSection.resultDisplay.nextPage.build(pageEnvironment)
     );
 
-    return inventory;
+    inventory.setItem(
+      SORTING_SLOT_ID,
+      mainSection.resultDisplay.sorting.build(sortingEnvironment)
+    );
+
+    inventory.setItem(
+      FILTERING_SLOT_ID,
+      mainSection.resultDisplay.filtering.build(filteringEnvironment)
+    );
+
+    if (mainSection.resultDisplay.filler != null) {
+      var fillerItem = mainSection.resultDisplay.filler.build();
+      for (var fillerSlot : FILLER_SLOTS)
+        inventory.setItem(fillerSlot, fillerItem);
+    }
   }
 
-  private EvaluationEnvironmentBuilder makePageEnvironment() {
-    return mainSection.getBaseEnvironment()
-      .withStaticVariable("current_page", this.currentPage)
-      .withStaticVariable("number_pages", this.numberOfPages);
+  private Inventory makeInventory() {
+    var title = mainSection.resultDisplay.title.stringify(pageEnvironment);
+    return Bukkit.createInventory(null, 9 * INVENTORY_N_ROWS, title);
   }
 }

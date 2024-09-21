@@ -17,30 +17,30 @@ resultDisplay:
     name$: 'if current_page > 1 then "&dPrevious Page" else "&cNo Previous Page"'
     lore$:
       - '" "'
-      - '"§8§m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"'
-      - '"§7Available actions on search-results"'
-      - '"§8➥ §dLeft-Click §7Teleport to the shop"'
-      - '"§8➥ §dRight-Click §7Open preview"'
-      - '"§8§m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"'
-      - '"§7Available actions on page-navigation"'
-      - '"§8➥ §dLeft-Click §7Navigate to previous page"'
-      - '"§8➥ §dRight-Click §7Jump to very first page"'
-      - '"§8§m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"'
+      - '"&8&m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"'
+      - '"&7Available actions on search-results"'
+      - '"&8➥ &dLeft-Click &7Teleport to the shop"'
+      - '"&8➥ &dRight-Click &7Open preview"'
+      - '"&8&m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"'
+      - '"&7Available actions on page-navigation"'
+      - '"&8➥ &dLeft-Click &7Navigate to previous page"'
+      - '"&8➥ &dRight-Click &7Jump to very first page"'
+      - '"&8&m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"'
   nextPage:
     type: PLAYER_HEAD
     textures$: 'lut["textures"][if current_page > 1 then "ARROW_RIGHT" else "ARROW_RIGHT_RED"]'
     name$: 'if current_page > 1 then "&dNext Page" else "&cNo Next Page"'
     lore$:
       - '" "'
-      - '"§8§m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"'
-      - '"§7Available actions on search-results:"'
-      - '"§8➥ §dLeft-Click §7Teleport to the shop"'
-      - '"§8➥ §dRight-Click §7Open preview"'
-      - '"§8§m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"'
-      - '"§7Available actions on page-navigation:"'
-      - '"§8➥ §dLeft-Click §7Navigate to next page"'
-      - '"§8➥ §dRight-Click §7Jump to very last page"'
-      - '"§8§m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"'
+      - '"&8&m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"'
+      - '"&7Available actions on search-results:"'
+      - '"&8➥ &dLeft-Click &7Teleport to the shop"'
+      - '"&8➥ &dRight-Click &7Open preview"'
+      - '"&8&m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"'
+      - '"&7Available actions on page-navigation:"'
+      - '"&8➥ &dLeft-Click &7Navigate to next page"'
+      - '"&8➥ &dRight-Click &7Jump to very last page"'
+      - '"&8&m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"'
   # - owner: String
   # - price: Double
   # - currency: String?
@@ -55,50 +55,99 @@ resultDisplay:
   representativePatch:
     lore$:
       - '" "'
-      - '"§8§m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"'
-      - '"§7Owner: §d" & owner'
-      - '"§7Price: §d" & price & " " & (currency ?? "")'
-      - '"§7Stock: §d" & remaining_stock'
+      - '"&8&m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"'
+      - '"&7Owner: &d" & owner'
+      - '"&7Price: &d" & price & " " & (currency ?? "")'
+      - '"&7Stock: &d" & remaining_stock'
       - |
-        color_code = (flag, value) => (if flag then "§a" else "§c") & value
-        "§7Features: " & color_code(is_buying, "buying") & "§7, " & color_code(is_selling, "selling") & "§7, " & color_code(is_unlimited, "unlimited")
-      - '"§8§m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"'
+        color_code = (flag, value) => (if flag then "&a" else "&c") & value
+        "&7Features: " & color_code(is_buying, "buying") & "&7, " & color_code(is_selling, "selling") & "&7, " & color_code(is_unlimited, "unlimited")
+      - '"&8&m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"'
+  # - available_criteria: Iterable<ShopSortingCriteria>
+  # - current_criterion: ShopSortingCriteria
+  # - current_order: Boolean
+  sorting:
+    type: COMPARATOR
+    name: "&dSorting"
+    lore$:
+      - '" "'
+      - |
+        map(available_criteria, (entry) => (
+          "&8➥ " & (if entry == current_criterion then "&d" else "&7") & (lut["sortCriteria"][str(entry)] ?? "Criteria Missing")
+        ))
+      - '" "'
+      - '"&8➥ &7Order: &d" & if current_order then "ascending" else "descending"'
+      - '" "'
+      - '"&8➥ &dLeft-Click &7Cycle through criteria"'
+      - '"&8➥ &dRight-Click &7Toggle order"'
+  # - filtering_selections: Map<ShopFilteringCriteria, PredicateSelection>
+  # - selected_criteria: ShopFilteringCriteria
+  filtering:
+    type: HOPPER
+    name: "&dFiltering"
+    lore$:
+      - '" "'
+      - |
+        map(filtering_selections, (entry) => (
+          (if key(entry) == selected_criteria then "&d" else "&8") & "➥ "
+          & (lut["predicateSelectionStyle"][str(value(entry))] ?? "Style Missing")
+          & (lut["filteringCriteria"][str(key(entry))] ?? "Criteria Missing")
+        ))
+      - '" "'
+      - '"&8➥ &dLeft-Click &7Cycle through criteria"'
+      - '"&8➥ &dRight-Click &7Toggle state"'
+  filler:
+    type: BLACK_STAINED_GLASS_PANE
+    name: " "
 
 playerMessages:
-  emptyPredicate$: 'lut["MESSAGE_PREFIX"] & "§cPlease provide a non-empty predicate"'
-  noMatches$: 'lut["MESSAGE_PREFIX"] & "§cYour query resulted in zero matches"'
+  emptyPredicate$: 'lut["MESSAGE_PREFIX"] & "&cPlease provide a non-empty predicate"'
+  noMatches$: 'lut["MESSAGE_PREFIX"] & "&cYour query resulted in zero matches"'
 
 predicates:
   language: ENGLISH_US
   # - command_representation: String
-  expandedPreview$: '"§a" & command_representation'
+  expandedPreview$: '"&a" & command_representation'
   # '~' is the last printable char on the ASCII-table, and should thereby come last, as desired, when the client automatically sorts completions
   # - excess_count: Int
   maxCompletionsExceeded$: '"~ and " & excess_count & " more"'
-  inputNonHighlightPrefix: "§c"
-  inputHighlightPrefix: "§4"
+  inputNonHighlightPrefix: "&c"
+  inputHighlightPrefix: "&4"
   # highlighted_input: String
   parseConflicts$:
-    EXPECTED_CORRECT_INTEGER: '"§cExpected a non-malformed integer: " & highlighted_input'
-    TOO_MANY_TIME_NOTATION_BLOCKS: '"§cDo not use more than 3 colon-separated blocks: " & highlighted_input'
-    EXPECTED_FOLLOWING_INTEGER: '"§cThis predicate requires an integer argument: " & highlighted_input'
-    EXPECTED_SEARCH_PATTERN: '"§cExpected a name to search for: " & highlighted_input'
-    NO_SEARCH_MATCH: '"§cFound no matches: " & highlighted_input'
-    MISSING_STRING_TERMINATION: '"§cString has not been terminated: " & highlighted_input'
-    MULTIPLE_SEARCH_PATTERN_WILDCARDS: '"§cUsed multiple ? within one argument: " & highlighted_input'
-    ONLY_SEARCH_PATTERN_WILDCARD: '"§cCannot search just for a wildcard: " & highlighted_input'
-    DOES_NOT_ACCEPT_TIME_NOTATION: '"§cThis argument does not accept time notation: " & highlighted_input'
-    DOES_NOT_ACCEPT_NON_EQUALS_COMPARISON: '"§cThis argument does not accept comparison notation: " & highlighted_input'
-    EXPECTED_EXPRESSION_AFTER_OPERATOR: '"§cThis operator has to to be followed up by another expression: " & highlighted_input'
-    EXPECTED_OPENING_PARENTHESIS: '"§cExpected a opening parenthesis: " & highlighted_input'
-    EXPECTED_CLOSING_PARENTHESIS: '"§cExpected a closing parenthesis: " & highlighted_input'
-    EMPTY_OR_BLANK_QUOTED_STRING: '"§cStrings are not allowed to be blank: " & highlighted_input'
+    EXPECTED_CORRECT_INTEGER: '"&cExpected a non-malformed integer: " & highlighted_input'
+    TOO_MANY_TIME_NOTATION_BLOCKS: '"&cDo not use more than 3 colon-separated blocks: " & highlighted_input'
+    EXPECTED_FOLLOWING_INTEGER: '"&cThis predicate requires an integer argument: " & highlighted_input'
+    EXPECTED_SEARCH_PATTERN: '"&cExpected a name to search for: " & highlighted_input'
+    NO_SEARCH_MATCH: '"&cFound no matches: " & highlighted_input'
+    MISSING_STRING_TERMINATION: '"&cString has not been terminated: " & highlighted_input'
+    MULTIPLE_SEARCH_PATTERN_WILDCARDS: '"&cUsed multiple ? within one argument: " & highlighted_input'
+    ONLY_SEARCH_PATTERN_WILDCARD: '"&cCannot search just for a wildcard: " & highlighted_input'
+    DOES_NOT_ACCEPT_TIME_NOTATION: '"&cThis argument does not accept time notation: " & highlighted_input'
+    DOES_NOT_ACCEPT_NON_EQUALS_COMPARISON: '"&cThis argument does not accept comparison notation: " & highlighted_input'
+    EXPECTED_EXPRESSION_AFTER_OPERATOR: '"&cThis operator has to to be followed up by another expression: " & highlighted_input'
+    EXPECTED_OPENING_PARENTHESIS: '"&cExpected a opening parenthesis: " & highlighted_input'
+    EXPECTED_CLOSING_PARENTHESIS: '"&cExpected a closing parenthesis: " & highlighted_input'
+    EMPTY_OR_BLANK_QUOTED_STRING: '"&cStrings are not allowed to be blank: " & highlighted_input'
 
 # File-global lookup table
 lut:
-  MESSAGE_PREFIX: '§7[§6QuickShopSearch§7] '
+  MESSAGE_PREFIX: '&7[&6QuickShopSearch&7] '
   textures:
     ARROW_LEFT: 'eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvODU1MGI3Zjc0ZTllZDc2MzNhYTI3NGVhMzBjYzNkMmU4N2FiYjM2ZDRkMWY0Y2E2MDhjZDQ0NTkwY2NlMGIifX19'
     ARROW_LEFT_RED: 'eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZjg0ZjU5NzEzMWJiZTI1ZGMwNThhZjg4OGNiMjk4MzFmNzk1OTliYzY3Yzk1YzgwMjkyNWNlNGFmYmEzMzJmYyJ9fX0='
     ARROW_RIGHT: 'eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOTYzMzlmZjJlNTM0MmJhMThiZGM0OGE5OWNjYTY1ZDEyM2NlNzgxZDg3ODI3MmY5ZDk2NGVhZDNiOGFkMzcwIn19fQ=='
     ARROW_RIGHT_RED: 'eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZmNmZTg4NDVhOGQ1ZTYzNWZiODc3MjhjY2M5Mzg5NWQ0MmI0ZmMyZTZhNTNmMWJhNzhjODQ1MjI1ODIyIn19fQ=='
+  sortCriteria:
+    PRICE: 'Price'
+    OWNER_NAME: 'Owner Name'
+    STOCK_LEFT: 'Stock Left'
+  filteringCriteria:
+    IS_BUYING: 'Buying'
+    IS_SELLING: 'Selling'
+    IS_UNLIMITED: 'Unlimited'
+    HAS_STOCK_LEFT: 'Stock Left'
+  predicateSelectionStyle:
+    POSITIVE: '&a'
+    NEGATIVE: '&c'
+    INVARIANT: '&7&m'

@@ -19,15 +19,17 @@ import java.util.UUID;
 public class ResultDisplayHandler implements Listener {
 
   private final MainSection mainSection;
+  private final SelectionStateStore stateStore;
   private final Map<UUID, ResultDisplay> displayByPlayer;
 
-  public ResultDisplayHandler(MainSection mainSection) {
+  public ResultDisplayHandler(MainSection mainSection, SelectionStateStore stateStore) {
     this.mainSection = mainSection;
+    this.stateStore = stateStore;
     this.displayByPlayer = new HashMap<>();
   }
 
   public void show(Player player, List<Shop> shops) {
-    displayByPlayer.put(player.getUniqueId(), new ResultDisplay(mainSection, player, shops));
+    displayByPlayer.put(player.getUniqueId(), new ResultDisplay(mainSection, player, shops, stateStore.loadState(player)));
   }
 
   @EventHandler
@@ -84,6 +86,16 @@ public class ResultDisplayHandler implements Listener {
         return;
       }
 
+      if (slot == ResultDisplay.SORTING_SLOT_ID) {
+        display.nextSortingCriterion();
+        return;
+      }
+
+      if (slot == ResultDisplay.FILTERING_SLOT_ID) {
+        display.nextFilteringCriterion();
+        return;
+      }
+
       if (targetShop != null) {
         player.teleport(targetShop.getLocation().add(.5, 0, .5));
         player.closeInventory();
@@ -100,6 +112,16 @@ public class ResultDisplayHandler implements Listener {
 
       if (slot == ResultDisplay.FORWARDS_SLOT_ID) {
         display.lastPage();
+        return;
+      }
+
+      if (slot == ResultDisplay.SORTING_SLOT_ID) {
+        display.toggleSortingOrder();
+        return;
+      }
+
+      if (slot == ResultDisplay.FILTERING_SLOT_ID) {
+        display.nextFilteringState();
         return;
       }
 
