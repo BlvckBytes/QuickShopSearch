@@ -17,12 +17,12 @@ import java.util.Map;
 import java.util.function.Consumer;
 import java.util.logging.Logger;
 
-public class CachedQuickShopRegistry implements Listener {
+public class CachedShopRegistry implements Listener {
 
   private final ItemStackSection representativePatch;
   private final Map<Location, CachedShop> existingShopByLocation;
 
-  public CachedQuickShopRegistry(Logger logger, ShopManager shopManager, MainSection mainSection) {
+  public CachedShopRegistry(Logger logger, ShopManager shopManager, MainSection mainSection) {
     this.representativePatch = mainSection.resultDisplay.representativePatch;
     this.existingShopByLocation = new HashMap<>();
 
@@ -30,6 +30,8 @@ public class CachedQuickShopRegistry implements Listener {
 
     for (var shop : shopManager.getAllShops())
       existingShopByLocation.put(shop.getLocation(), new CachedShop(shop, representativePatch));
+
+    logger.info("Found " + existingShopByLocation.size() + " shops in total");
   }
 
   public Iterable<CachedShop> getExistingShops() {

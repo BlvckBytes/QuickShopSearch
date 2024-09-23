@@ -28,14 +28,14 @@ public class QuickShopSearchCommand implements CommandExecutor, TabCompleter {
   private static final int MAX_COMPLETER_RESULTS = 30;
 
   private final PredicateParserFactory parserFactory;
-  private final CachedQuickShopRegistry shopRegistry;
+  private final CachedShopRegistry shopRegistry;
   private final ResultDisplayHandler resultDisplay;
 
   private final MainSection mainSection;
 
   public QuickShopSearchCommand(
     PredicateParserFactory parserFactory,
-    CachedQuickShopRegistry shopRegistry,
+    CachedShopRegistry shopRegistry,
     MainSection mainSection,
     ResultDisplayHandler resultDisplay
   ) {

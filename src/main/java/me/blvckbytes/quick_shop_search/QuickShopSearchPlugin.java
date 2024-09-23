@@ -39,7 +39,7 @@ public class QuickShopSearchPlugin extends JavaPlugin {
       var parserFactory = new PredicateParserFactory(translationRegistry);
 
       var quickShopApi = QuickShopAPI.getInstance();
-      var shopRegistry = new CachedQuickShopRegistry(logger, quickShopApi.getShopManager(), mainSection);
+      var shopRegistry = new CachedShopRegistry(logger, quickShopApi.getShopManager(), mainSection);
 
       Bukkit.getPluginManager().registerEvents(shopRegistry, this);
 
