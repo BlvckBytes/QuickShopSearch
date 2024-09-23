@@ -1,6 +1,6 @@
 package me.blvckbytes.quick_shop_search.display;
 
-import com.ghostchu.quickshop.api.shop.Shop;
+import me.blvckbytes.quick_shop_search.CachedShop;
 import me.blvckbytes.quick_shop_search.config.MainSection;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -28,7 +28,7 @@ public class ResultDisplayHandler implements Listener {
     this.displayByPlayer = new HashMap<>();
   }
 
-  public void show(Player player, List<Shop> shops) {
+  public void show(Player player, List<CachedShop> shops) {
     displayByPlayer.put(player.getUniqueId(), new ResultDisplay(mainSection, player, shops, stateStore.loadState(player)));
   }
 
@@ -97,7 +97,7 @@ public class ResultDisplayHandler implements Listener {
       }
 
       if (targetShop != null) {
-        player.teleport(targetShop.getLocation().add(.5, 0, .5));
+        player.teleport(targetShop.getShop().getLocation().add(.5, 0, .5));
         player.closeInventory();
       }
 
@@ -126,7 +126,7 @@ public class ResultDisplayHandler implements Listener {
       }
 
       if (targetShop != null)
-        targetShop.openPreview(player);
+        targetShop.getShop().openPreview(player);
     }
   }
 

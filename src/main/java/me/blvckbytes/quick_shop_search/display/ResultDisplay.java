@@ -1,9 +1,7 @@
 package me.blvckbytes.quick_shop_search.display;
 
-import com.ghostchu.quickshop.api.shop.Shop;
-import me.blvckbytes.bukkitevaluable.ItemBuilder;
-import me.blvckbytes.gpeee.interpreter.EvaluationEnvironmentBuilder;
 import me.blvckbytes.gpeee.interpreter.IEvaluationEnvironment;
+import me.blvckbytes.quick_shop_search.CachedShop;
 import me.blvckbytes.quick_shop_search.config.MainSection;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
@@ -38,11 +36,11 @@ public class ResultDisplay {
 
   private final MainSection mainSection;
 
-  private final List<Shop> unselectedShops;
-  private List<Shop> selectedShops;
+  private final List<CachedShop> unselectedShops;
+  private List<CachedShop> selectedShops;
 
   public final Player player;
-  private final Map<Integer, Shop> slotMap;
+  private final Map<Integer, CachedShop> slotMap;
   private int numberOfPages;
 
   public final SelectionState selectionState;
@@ -54,7 +52,7 @@ public class ResultDisplay {
   private Inventory inventory;
   private int currentPage = 1;
 
-  public ResultDisplay(MainSection mainSection, Player player, List<Shop> shops, SelectionState selectionState) {
+  public ResultDisplay(MainSection mainSection, Player player, List<CachedShop> shops, SelectionState selectionState) {
     this.mainSection = mainSection;
     this.player = player;
     this.unselectedShops = shops;
@@ -77,7 +75,7 @@ public class ResultDisplay {
     show();
   }
 
-  public @Nullable Shop getShopCorrespondingToSlot(int slot) {
+  public @Nullable CachedShop getShopCorrespondingToSlot(int slot) {
     return slotMap.get(slot);
   }
 
@@ -199,32 +197,16 @@ public class ResultDisplay {
         continue;
       }
 
-      var shop = selectedShops.get(currentSlot);
-      var shopLocation = shop.getLocation();
-      var shopWorld = shopLocation.getWorld();
+      var cachedShop = selectedShops.get(currentSlot);
 
-      var shopEnvironment = new EvaluationEnvironmentBuilder()
-        .withLiveVariable("owner", shop.getOwner()::getDisplay)
-        .withLiveVariable("price", shop::getPrice)
-        .withLiveVariable("currency", shop::getCurrency)
-        .withLiveVariable("remaining_stock", shop::getRemainingStock)
-        .withLiveVariable("is_buying", shop::isBuying)
-        .withLiveVariable("is_selling", shop::isSelling)
-        .withLiveVariable("is_unlimited", shop::isUnlimited)
-        .withLiveVariable("loc_world", () -> shopWorld == null ? null : shopWorld.getName())
-        .withLiveVariable("loc_x", shopLocation::getBlockX)
-        .withLiveVariable("loc_y", shopLocation::getBlockY)
-        .withLiveVariable("loc_z", shopLocation::getBlockZ)
-        .build(pageEnvironment);
+      inventory.setItem(
+        slot,
+        cachedShop.getRepresentativeBuildable().build(
+          cachedShop.getShopEnvironment().build(pageEnvironment)
+        )
+      );
 
-      var shopItem = shop.getItem();
-
-      var representativeItem = new ItemBuilder(shopItem, shopItem.getAmount())
-        .patch(mainSection.resultDisplay.representativePatch)
-        .build(shopEnvironment);
-
-      inventory.setItem(slot, representativeItem);
-      slotMap.put(slot, shop);
+      slotMap.put(slot, cachedShop);
     }
 
     inventory.setItem(

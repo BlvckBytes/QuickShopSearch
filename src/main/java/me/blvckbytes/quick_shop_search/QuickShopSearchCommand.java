@@ -1,6 +1,5 @@
 package me.blvckbytes.quick_shop_search;
 
-import com.ghostchu.quickshop.api.shop.Shop;
 import me.blvckbytes.bukkitevaluable.BukkitEvaluable;
 import me.blvckbytes.gpeee.interpreter.EvaluationEnvironmentBuilder;
 import me.blvckbytes.item_predicate_parser.parse.ItemPredicateParseException;
@@ -67,10 +66,10 @@ public class QuickShopSearchCommand implements CommandExecutor, TabCompleter {
       return true;
     }
 
-    var matchingShops = new ArrayList<Shop>();
+    var matchingShops = new ArrayList<CachedShop>();
 
     for (var shop : shopRegistry.getExistingShops()) {
-      if (predicate.test(new PredicateState(shop.getItem())))
+      if (predicate.test(new PredicateState(shop.getShop().getItem())))
         matchingShops.add(shop);
     }
 

@@ -1,9 +1,9 @@
 package me.blvckbytes.quick_shop_search.display;
 
-import com.ghostchu.quickshop.api.shop.Shop;
 import com.google.gson.JsonObject;
 import me.blvckbytes.gpeee.interpreter.EvaluationEnvironmentBuilder;
 import me.blvckbytes.gpeee.interpreter.IEvaluationEnvironment;
+import me.blvckbytes.quick_shop_search.CachedShop;
 
 import java.util.*;
 
@@ -58,12 +58,12 @@ public class SelectionState {
     this.filteringSelections.put(this.selectedFilteringCriteria, currentState.next());
   }
 
-  public void applySort(List<Shop> items) {
+  public void applySort(List<CachedShop> items) {
     items.sort((a, b) -> this.currentSortingCriterion.compare(a, b) * (this.currentSortingOrder ? 1 : -1));
   }
 
-  public List<Shop> applyFilter(List<Shop> items) {
-    List<Shop> result = new ArrayList<>();
+  public List<CachedShop> applyFilter(List<CachedShop> items) {
+    List<CachedShop> result = new ArrayList<>();
 
     for (var item : items) {
       var doesMatch = true;

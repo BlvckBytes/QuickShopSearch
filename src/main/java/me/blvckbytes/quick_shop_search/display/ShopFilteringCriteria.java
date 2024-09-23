@@ -1,6 +1,7 @@
 package me.blvckbytes.quick_shop_search.display;
 
 import com.ghostchu.quickshop.api.shop.Shop;
+import me.blvckbytes.quick_shop_search.CachedShop;
 
 import java.util.Arrays;
 import java.util.List;
@@ -8,21 +9,21 @@ import java.util.function.Predicate;
 
 public enum ShopFilteringCriteria {
 
-  IS_BUYING(Shop::isBuying),
-  IS_SELLING(Shop::isSelling),
-  IS_UNLIMITED(Shop::isUnlimited),
-  HAS_STOCK_LEFT(shop -> shop.getRemainingStock() > 0),
+  IS_BUYING(shop -> shop.getShop().isBuying()),
+  IS_SELLING(shop -> shop.getShop().isSelling()),
+  IS_UNLIMITED(shop -> shop.getShop().isUnlimited()),
+  HAS_STOCK_LEFT(shop -> shop.getCachedStock() > 0),
   ;
 
-  private final Predicate<Shop> predicate;
+  private final Predicate<CachedShop> predicate;
 
   public static final List<ShopFilteringCriteria> values = Arrays.stream(values()).toList();
 
-  ShopFilteringCriteria(Predicate<Shop> predicate) {
+  ShopFilteringCriteria(Predicate<CachedShop> predicate) {
     this.predicate = predicate;
   }
 
-  public boolean test(Shop shop) {
+  public boolean test(CachedShop shop) {
     return predicate.test(shop);
   }
 
