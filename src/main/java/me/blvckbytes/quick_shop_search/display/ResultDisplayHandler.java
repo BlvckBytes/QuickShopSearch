@@ -10,6 +10,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.plugin.Plugin;
 
 import java.util.HashMap;
 import java.util.List;
@@ -18,18 +19,25 @@ import java.util.UUID;
 
 public class ResultDisplayHandler implements Listener {
 
+  private final Plugin plugin;
   private final MainSection mainSection;
+
   private final SelectionStateStore stateStore;
   private final Map<UUID, ResultDisplay> displayByPlayer;
 
-  public ResultDisplayHandler(MainSection mainSection, SelectionStateStore stateStore) {
+  public ResultDisplayHandler(
+    Plugin plugin,
+    MainSection mainSection,
+    SelectionStateStore stateStore
+  ) {
+    this.plugin = plugin;
     this.mainSection = mainSection;
     this.stateStore = stateStore;
     this.displayByPlayer = new HashMap<>();
   }
 
   public void show(Player player, List<CachedShop> shops) {
-    displayByPlayer.put(player.getUniqueId(), new ResultDisplay(mainSection, player, shops, stateStore.loadState(player)));
+    displayByPlayer.put(player.getUniqueId(), new ResultDisplay(plugin, mainSection, player, shops, stateStore.loadState(player)));
   }
 
   @EventHandler

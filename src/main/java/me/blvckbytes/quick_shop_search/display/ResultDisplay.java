@@ -7,6 +7,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
@@ -34,6 +35,8 @@ public class ResultDisplay {
     FILLER_SLOTS.remove(FILTERING_SLOT_ID);
   }
 
+  private final Plugin plugin;
+  private final AsyncTaskQueue asyncQueue;
   private final MainSection mainSection;
 
   private final List<CachedShop> unselectedShops;
@@ -52,7 +55,15 @@ public class ResultDisplay {
   private Inventory inventory;
   private int currentPage = 1;
 
-  public ResultDisplay(MainSection mainSection, Player player, List<CachedShop> shops, SelectionState selectionState) {
+  public ResultDisplay(
+    Plugin plugin,
+    MainSection mainSection,
+    Player player,
+    List<CachedShop> shops,
+    SelectionState selectionState
+  ) {
+    this.plugin = plugin;
+    this.asyncQueue = new AsyncTaskQueue(plugin);
     this.mainSection = mainSection;
     this.player = player;
     this.unselectedShops = shops;
@@ -61,17 +72,14 @@ public class ResultDisplay {
 
     this.sortingEnvironment = this.selectionState.makeSortingEnvironment();
     this.filteringEnvironment = this.selectionState.makeFilteringEnvironment();
-
-    applyFiltering();
-    applySorting();
-
-    this.numberOfPages = (int) Math.ceil(selectedShops.size() / (double) DISPLAY_SLOTS.size());
-
     this.pageEnvironment = mainSection.getBaseEnvironment()
       .withLiveVariable("current_page", () -> this.currentPage)
       .withLiveVariable("number_pages", () -> this.numberOfPages)
       .build();
 
+    // Within async context already, see corresponding command
+    applyFiltering();
+    applySorting();
     show();
   }
 
@@ -93,65 +101,81 @@ public class ResultDisplay {
   }
 
   public void nextPage() {
-    if (currentPage == numberOfPages)
-      return;
+    asyncQueue.enqueue(() -> {
+      if (currentPage == numberOfPages)
+        return;
 
-    ++currentPage;
-    show();
+      ++currentPage;
+      show();
+    });
   }
 
   public void previousPage() {
-    if (currentPage == 1)
-      return;
+    asyncQueue.enqueue(() -> {
+      if (currentPage == 1)
+        return;
 
-    --currentPage;
-    show();
+      --currentPage;
+      show();
+    });
   }
 
   public void firstPage() {
-    if (currentPage == 1)
-      return;
+    asyncQueue.enqueue(() -> {
+      if (currentPage == 1)
+        return;
 
-    currentPage = 1;
-    show();
+      currentPage = 1;
+      show();
+    });
   }
 
   public void lastPage() {
-    if (currentPage == numberOfPages)
-      return;
+    asyncQueue.enqueue(() -> {
+      if (currentPage == numberOfPages)
+        return;
 
-    currentPage = numberOfPages;
-    show();
+      currentPage = numberOfPages;
+      show();
+    });
   }
 
   public void nextSortingCriterion() {
-    this.selectionState.nextSortingCriterion();
-    applySorting();
-    renderItems();
+    asyncQueue.enqueue(() -> {
+      this.selectionState.nextSortingCriterion();
+      applySorting();
+      renderItems();
+    });
   }
 
   public void toggleSortingOrder() {
-    this.selectionState.toggleSortingOrder();
-    applySorting();
-    renderItems();
+    asyncQueue.enqueue(() -> {
+      this.selectionState.toggleSortingOrder();
+      applySorting();
+      renderItems();
+    });
   }
 
   public void nextFilteringCriterion() {
-    this.selectionState.nextFilteringCriterion();
-    renderItems();
+    asyncQueue.enqueue(() -> {
+      this.selectionState.nextFilteringCriterion();
+      renderItems();
+    });
   }
 
   public void nextFilteringState() {
-    this.selectionState.nextFilteringState();
+    asyncQueue.enqueue(() -> {
+      this.selectionState.nextFilteringState();
 
-    int pageCountDelta = applyFiltering();
-    applySorting();
+      int pageCountDelta = applyFiltering();
+      applySorting();
 
-    // Need to update the UI-title
-    if (pageCountDelta != 0)
-      show();
-    else
-      renderItems();
+      // Need to update the UI-title
+      if (pageCountDelta != 0)
+        show();
+      else
+        renderItems();
+    });
   }
 
   private int applyFiltering() {
@@ -179,9 +203,13 @@ public class ResultDisplay {
     this.cleanup(false);
 
     inventory = makeInventory();
-    player.openInventory(inventory);
-    player.playSound(player.getLocation(), Sound.ITEM_BOOK_PAGE_TURN, 10, 1);
+
     renderItems();
+
+    Bukkit.getScheduler().runTask(plugin, () -> {
+      player.openInventory(inventory);
+      player.playSound(player.getLocation(), Sound.ITEM_BOOK_PAGE_TURN, 10, 1);
+    });
   }
 
   private void renderItems() {

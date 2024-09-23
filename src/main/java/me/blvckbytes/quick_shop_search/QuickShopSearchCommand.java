@@ -12,11 +12,13 @@ import me.blvckbytes.quick_shop_search.config.MainSection;
 import me.blvckbytes.quick_shop_search.display.ResultDisplayHandler;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -27,6 +29,7 @@ public class QuickShopSearchCommand implements CommandExecutor, TabCompleter {
 
   private static final int MAX_COMPLETER_RESULTS = 30;
 
+  private final Plugin plugin;
   private final PredicateParserFactory parserFactory;
   private final CachedShopRegistry shopRegistry;
   private final ResultDisplayHandler resultDisplay;
@@ -34,11 +37,13 @@ public class QuickShopSearchCommand implements CommandExecutor, TabCompleter {
   private final MainSection mainSection;
 
   public QuickShopSearchCommand(
+    Plugin plugin,
     PredicateParserFactory parserFactory,
     CachedShopRegistry shopRegistry,
     MainSection mainSection,
     ResultDisplayHandler resultDisplay
   ) {
+    this.plugin = plugin;
     this.parserFactory = parserFactory;
     this.shopRegistry = shopRegistry;
     this.resultDisplay = resultDisplay;
@@ -50,36 +55,39 @@ public class QuickShopSearchCommand implements CommandExecutor, TabCompleter {
     if (!(sender instanceof Player player))
       return false;
 
-    ItemPredicate predicate;
-    BukkitEvaluable message;
+    Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+      ItemPredicate predicate;
+      BukkitEvaluable message;
 
-    try {
-      predicate = parserFactory.create(TokenParser.parseTokens(args, 0), false).parseAst();
-    } catch (ItemPredicateParseException e) {
-      player.sendMessage(generateParseExceptionMessage(e));
-      return true;
-    }
+      try {
+        predicate = parserFactory.create(TokenParser.parseTokens(args, 0), false).parseAst();
+      } catch (ItemPredicateParseException e) {
+        player.sendMessage(generateParseExceptionMessage(e));
+        return;
+      }
 
-    if (predicate == null) {
-      if ((message = mainSection.playerMessages.emptyPredicate) != null)
-        player.sendMessage(message.stringify(mainSection.getBaseEnvironment().build()));
-      return true;
-    }
+      if (predicate == null) {
+        if ((message = mainSection.playerMessages.emptyPredicate) != null)
+          player.sendMessage(message.stringify(mainSection.getBaseEnvironment().build()));
+        return;
+      }
 
-    var matchingShops = new ArrayList<CachedShop>();
+      var matchingShops = new ArrayList<CachedShop>();
 
-    for (var shop : shopRegistry.getExistingShops()) {
-      if (predicate.test(new PredicateState(shop.getShop().getItem())))
-        matchingShops.add(shop);
-    }
+      for (var shop : shopRegistry.getExistingShops()) {
+        if (predicate.test(new PredicateState(shop.getShop().getItem())))
+          matchingShops.add(shop);
+      }
 
-    if (matchingShops.isEmpty()) {
-      if ((message = mainSection.playerMessages.noMatches) != null)
-        player.sendMessage(message.stringify(mainSection.getBaseEnvironment().build()));
-      return true;
-    }
+      if (matchingShops.isEmpty()) {
+        if ((message = mainSection.playerMessages.noMatches) != null)
+          player.sendMessage(message.stringify(mainSection.getBaseEnvironment().build()));
+        return;
+      }
 
-    resultDisplay.show(player, matchingShops);
+      resultDisplay.show(player, matchingShops);
+    });
+
     return true;
   }
 

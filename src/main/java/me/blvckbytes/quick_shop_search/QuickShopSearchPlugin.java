@@ -44,12 +44,12 @@ public class QuickShopSearchPlugin extends JavaPlugin {
       Bukkit.getPluginManager().registerEvents(shopRegistry, this);
 
       stateStore = new SelectionStateStore(this);
-      displayHandler = new ResultDisplayHandler(mainSection, stateStore);
+      displayHandler = new ResultDisplayHandler(this, mainSection, stateStore);
 
       Bukkit.getPluginManager().registerEvents(displayHandler, this);
 
       Objects.requireNonNull(getCommand("quickshopsearch")).setExecutor(
-        new QuickShopSearchCommand(parserFactory, shopRegistry, mainSection, displayHandler)
+        new QuickShopSearchCommand(this, parserFactory, shopRegistry, mainSection, displayHandler)
       );
     } catch (Exception e) {
       logger.log(Level.SEVERE, "Could not initialize plugin", e);
