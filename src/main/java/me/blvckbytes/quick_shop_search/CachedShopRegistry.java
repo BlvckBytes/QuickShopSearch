@@ -61,6 +61,8 @@ public class CachedShopRegistry implements Listener {
   }
 
   private void accessOrCreate(Shop shop, Consumer<CachedShop> handler) {
-    handler.accept(existingShopByLocation.computeIfAbsent(shop.getLocation(), k -> new CachedShop(shop, representativePatch)));
+    synchronized (existingShopByLocation) {
+      handler.accept(existingShopByLocation.computeIfAbsent(shop.getLocation(), k -> new CachedShop(shop, representativePatch)));
+    }
   }
 }
