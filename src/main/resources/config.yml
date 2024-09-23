@@ -28,8 +28,8 @@ resultDisplay:
       - '"&8&m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"'
   nextPage:
     type: PLAYER_HEAD
-    textures$: 'lut["textures"][if current_page > 1 then "ARROW_RIGHT" else "ARROW_RIGHT_RED"]'
-    name$: 'if current_page > 1 then "&dNext Page" else "&cNo Next Page"'
+    textures$: 'lut["textures"][if current_page < number_pages then "ARROW_RIGHT" else "ARROW_RIGHT_RED"]'
+    name$: 'if current_page < number_pages then "&dNext Page" else "&cNo Next Page"'
     lore$:
       - '" "'
       - '"&8&m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"'
