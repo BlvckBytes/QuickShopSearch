@@ -1,6 +1,9 @@
 package me.blvckbytes.quick_shop_search.display;
 
 import com.ghostchu.quickshop.api.shop.Shop;
+
+import java.util.Arrays;
+import java.util.List;
 import java.util.function.BiFunction;
 
 public enum ShopSortingCriteria {
@@ -12,8 +15,7 @@ public enum ShopSortingCriteria {
 
   private final BiFunction<Shop, Shop, Integer> compare;
 
-  private static final ShopSortingCriteria[] values = values();
-  public static final ArrayIterable<ShopSortingCriteria> iterable = new ArrayIterable<>(values);
+  public static final List<ShopSortingCriteria> values = Arrays.stream(values()).toList();
 
   ShopSortingCriteria(BiFunction<Shop, Shop, Integer> compare) {
     this.compare = compare;
@@ -24,17 +26,13 @@ public enum ShopSortingCriteria {
   }
 
   public ShopSortingCriteria next() {
-    return values[(ordinal() + 1) % values.length];
+    return values.get((ordinal() + 1) % values.size());
   }
 
   public static ShopSortingCriteria byOrdinalOrFirst(int ordinal) {
-    if (ordinal < 0 || ordinal >= values.length)
-      return first();
+    if (ordinal < 0 || ordinal >= values.size())
+      return values.getFirst();
 
-    return values[ordinal];
-  }
-
-  public static ShopSortingCriteria first() {
-    return values[0];
+    return values.get(ordinal);
   }
 }

@@ -2,6 +2,8 @@ package me.blvckbytes.quick_shop_search.display;
 
 import com.ghostchu.quickshop.api.shop.Shop;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.function.Predicate;
 
 public enum ShopFilteringCriteria {
@@ -14,8 +16,7 @@ public enum ShopFilteringCriteria {
 
   private final Predicate<Shop> predicate;
 
-  private static final ShopFilteringCriteria[] values = values();
-  public static final ArrayIterable<ShopFilteringCriteria> iterable = new ArrayIterable<>(values);
+  public static final List<ShopFilteringCriteria> values = Arrays.stream(values()).toList();
 
   ShopFilteringCriteria(Predicate<Shop> predicate) {
     this.predicate = predicate;
@@ -26,17 +27,13 @@ public enum ShopFilteringCriteria {
   }
 
   public ShopFilteringCriteria next() {
-    return values[(ordinal() + 1) % values.length];
+    return values.get((ordinal() + 1) % values.size());
   }
 
   public static ShopFilteringCriteria byOrdinalOrFirst(int ordinal) {
-    if (ordinal < 0 || ordinal >= values.length)
-      return first();
+    if (ordinal < 0 || ordinal >= values.size())
+      return values.getFirst();
 
-    return values[ordinal];
-  }
-
-  public static ShopFilteringCriteria first() {
-    return values[0];
+    return values.get(ordinal);
   }
 }

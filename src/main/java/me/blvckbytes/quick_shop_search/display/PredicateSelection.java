@@ -1,25 +1,24 @@
 package me.blvckbytes.quick_shop_search.display;
 
+import java.util.Arrays;
+import java.util.List;
+
 public enum PredicateSelection {
   POSITIVE,
   NEGATIVE,
   INVARIANT
   ;
 
-  private static final PredicateSelection[] values = values();
+  public static final List<PredicateSelection> values = Arrays.stream(values()).toList();
 
   public PredicateSelection next() {
-    return values[(ordinal() + 1) % values.length];
+    return values.get((ordinal() + 1) % values.size());
   }
 
   public static PredicateSelection byOrdinalOrFirst(int ordinal) {
-    if (ordinal < 0 || ordinal >= values.length)
-      return first();
+    if (ordinal < 0 || ordinal >= values.size())
+      return values.getFirst();
 
-    return values[ordinal];
-  }
-
-  public static PredicateSelection first() {
-    return values[0];
+    return values.get(ordinal);
   }
 }

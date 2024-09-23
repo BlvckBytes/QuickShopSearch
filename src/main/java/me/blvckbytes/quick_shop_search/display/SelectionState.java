@@ -16,13 +16,13 @@ public class SelectionState {
   private ShopFilteringCriteria selectedFilteringCriteria;
 
   public SelectionState() {
-    this.currentSortingCriterion = ShopSortingCriteria.first();
+    this.currentSortingCriterion = ShopSortingCriteria.values.getFirst();
     this.currentSortingOrder = false;
 
     this.filteringSelections = new TreeMap<>(); // Ensure constant order
-    for (ShopFilteringCriteria criteria : ShopFilteringCriteria.iterable)
+    for (ShopFilteringCriteria criteria : ShopFilteringCriteria.values)
       this.filteringSelections.put(criteria, PredicateSelection.INVARIANT);
-    this.selectedFilteringCriteria = ShopFilteringCriteria.first();
+    this.selectedFilteringCriteria = ShopFilteringCriteria.values.getFirst();
   }
 
   private SelectionState(
@@ -95,7 +95,7 @@ public class SelectionState {
 
   public IEvaluationEnvironment makeSortingEnvironment() {
     return new EvaluationEnvironmentBuilder()
-      .withStaticVariable("available_criteria", ShopSortingCriteria.iterable)
+      .withStaticVariable("available_criteria", ShopSortingCriteria.values)
       .withLiveVariable("current_order", () -> currentSortingOrder)
       .withLiveVariable("current_criterion", () -> currentSortingCriterion)
       .build();
@@ -132,7 +132,7 @@ public class SelectionState {
     var filteringSelections = new TreeMap<ShopFilteringCriteria, PredicateSelection>(); // Ensure constant order
     var selections = json.getAsJsonObject("filteringSelections");
 
-    for (ShopFilteringCriteria criteria : ShopFilteringCriteria.iterable) {
+    for (ShopFilteringCriteria criteria : ShopFilteringCriteria.values) {
       filteringSelections.put(
         criteria,
         PredicateSelection.byOrdinalOrFirst(selections.getAsJsonPrimitive(String.valueOf(criteria.ordinal())).getAsInt())
