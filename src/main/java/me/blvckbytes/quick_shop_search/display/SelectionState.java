@@ -16,13 +16,13 @@ public class SelectionState {
   private ShopFilteringCriteria selectedFilteringCriteria;
 
   public SelectionState() {
-    this.currentSortingCriterion = ShopSortingCriteria.values.getFirst();
+    this.currentSortingCriterion = ShopSortingCriteria.values.get(0);
     this.currentSortingOrder = false;
 
     this.filteringSelections = new TreeMap<>(); // Ensure constant order
     for (ShopFilteringCriteria criteria : ShopFilteringCriteria.values)
       this.filteringSelections.put(criteria, PredicateSelection.INVARIANT);
-    this.selectedFilteringCriteria = ShopFilteringCriteria.values.getFirst();
+    this.selectedFilteringCriteria = ShopFilteringCriteria.values.get(0);
   }
 
   private SelectionState(

@@ -43,7 +43,7 @@ public class AsyncTaskQueue {
       if (taskQueue.isEmpty())
         return;
 
-      var task = taskQueue.getFirst();
+      var task = taskQueue.get(0);
 
       // Task has already been dispatched and is still executing
       if (task.dispatched)
@@ -55,7 +55,7 @@ public class AsyncTaskQueue {
         task.runnable.run();
 
         synchronized (taskQueue) {
-          taskQueue.removeFirst();
+          taskQueue.remove(0);
         }
 
         processQueue();

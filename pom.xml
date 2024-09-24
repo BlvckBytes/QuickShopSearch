@@ -9,8 +9,8 @@
     <version>1.0-SNAPSHOT</version>
 
     <properties>
-        <maven.compiler.source>21</maven.compiler.source>
-        <maven.compiler.target>21</maven.compiler.target>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
         <output.path>${user.home}/Documents/Projects/MCServerLagersuche/plugins</output.path>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
@@ -49,7 +49,7 @@
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot</artifactId>
-            <version>1.21.1-R0.1-SNAPSHOT</version>
+            <version>1.13-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -86,8 +86,8 @@
                             <include>me.blvckbytes:BBConfigMapper</include>
                             <include>me.blvckbytes:BukkitEvaluable</include>
                             <include>me.blvckbytes:GPEEE</include>
-                            <!-- [1] Shouldn't be necessary anymore on newer versions of bukkit -->
-<!--                            <include>org.yaml:snakeyaml</include>-->
+                            <!-- [1] Shouldn't be necessary anymore on newer versions of bukkit, but I prefer backwards-compatibility over file-size. -->
+                            <include>org.yaml:snakeyaml</include>
                             <include>com.github.cryptomorin:XSeries</include>
                         </includes>
                     </artifactSet>
@@ -101,11 +101,11 @@
                         </relocation>
 
                         <!-- See [1] -->
-<!--                        <relocation>-->
-<!--                            <pattern>org/yaml/snakeyaml/(.*)</pattern>-->
-<!--                            <shadedPattern>me/blvckbytes/org/yaml/snakeyaml/$1</shadedPattern>-->
-<!--                            <rawString>true</rawString>-->
-<!--                        </relocation>-->
+                        <relocation>
+                            <pattern>org/yaml/snakeyaml/(.*)</pattern>
+                            <shadedPattern>me/blvckbytes/org/yaml/snakeyaml/$1</shadedPattern>
+                            <rawString>true</rawString>
+                        </relocation>
                     </relocations>
 
                     <filters>

@@ -31,7 +31,7 @@ public enum ShopSortingCriteria {
 
   public static ShopSortingCriteria byOrdinalOrFirst(int ordinal) {
     if (ordinal < 0 || ordinal >= values.size())
-      return values.getFirst();
+      return values.get(0);
 
     return values.get(ordinal);
   }
