@@ -4,7 +4,6 @@ import me.blvckbytes.gpeee.interpreter.IEvaluationEnvironment;
 import me.blvckbytes.quick_shop_search.CachedShop;
 import me.blvckbytes.quick_shop_search.config.MainSection;
 import org.bukkit.Bukkit;
-import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.plugin.Plugin;
@@ -206,10 +205,7 @@ public class ResultDisplay {
 
     renderItems();
 
-    Bukkit.getScheduler().runTask(plugin, () -> {
-      player.openInventory(inventory);
-      player.playSound(player.getLocation(), Sound.ITEM_BOOK_PAGE_TURN, 10, 1);
-    });
+    Bukkit.getScheduler().runTask(plugin, () -> player.openInventory(inventory));
   }
 
   private void renderItems() {

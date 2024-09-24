@@ -35,34 +35,43 @@ public class CachedShopRegistry implements Listener {
   }
 
   public Iterable<CachedShop> getExistingShops() {
-    return this.existingShopByLocation.values();
+    synchronized (existingShopByLocation) {
+      return this.existingShopByLocation.values();
+    }
   }
 
   @EventHandler
   public void onShopCreate(ShopCreateSuccessEvent event) {
-    existingShopByLocation.put(event.getShop().getLocation(), new CachedShop(event.getShop(), representativePatch));
+    synchronized (existingShopByLocation) {
+      existingShopByLocation.put(event.getShop().getLocation(), new CachedShop(event.getShop(), representativePatch));
+    }
   }
 
   @EventHandler
   public void onShopDelete(ShopDeleteEvent event) {
-    if (!event.isCancelled())
-      existingShopByLocation.remove(event.getShop().getLocation());
+    synchronized (existingShopByLocation) {
+      if (!event.isCancelled())
+        existingShopByLocation.remove(event.getShop().getLocation());
+    }
   }
 
   @EventHandler
   public void onShopItemChange(ShopItemChangeEvent event) {
     if (!event.isCancelled())
-      accessOrCreate(event.getShop(), shop -> shop.onItemChange(event.getNewItem()));
+      tryAccessCache(event.getShop(), shop -> shop.onItemChange(event.getNewItem()));
   }
 
   @EventHandler
   public void onShopInventoryCalculate(ShopInventoryCalculateEvent event) {
-    accessOrCreate(event.getShop(), shop -> shop.onStockChange(event.getStock()));
+    tryAccessCache(event.getShop(), shop -> shop.onStockChange(event.getStock()));
   }
 
-  private void accessOrCreate(Shop shop, Consumer<CachedShop> handler) {
+  private void tryAccessCache(Shop shop, Consumer<CachedShop> handler) {
     synchronized (existingShopByLocation) {
-      handler.accept(existingShopByLocation.computeIfAbsent(shop.getLocation(), k -> new CachedShop(shop, representativePatch)));
+      var cachedShop = existingShopByLocation.get(shop.getLocation());
+
+      if (cachedShop != null)
+        handler.accept(cachedShop);
     }
   }
 }
