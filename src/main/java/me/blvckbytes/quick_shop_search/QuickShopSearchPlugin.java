@@ -3,7 +3,6 @@ package me.blvckbytes.quick_shop_search;
 import com.ghostchu.quickshop.api.QuickShopAPI;
 import me.blvckbytes.bukkitevaluable.ConfigManager;
 import me.blvckbytes.item_predicate_parser.ItemPredicateParserPlugin;
-import me.blvckbytes.item_predicate_parser.parse.PredicateParserFactory;
 import me.blvckbytes.quick_shop_search.config.MainSection;
 import me.blvckbytes.quick_shop_search.display.ResultDisplayHandler;
 import me.blvckbytes.quick_shop_search.display.SelectionStateStore;
@@ -32,11 +31,7 @@ public class QuickShopSearchPlugin extends JavaPlugin {
       if (parserPlugin == null)
         throw new IllegalStateException("Depending on ItemPredicateParser to be successfully loaded");
 
-      var translationLanguage = mainSection.predicates.language;
-      logger.info("Using language " + translationLanguage.assetFileNameWithoutExtension + " for predicate parsing");
-
-      var translationRegistry = parserPlugin.getLanguageRegistry().getTranslationRegistry(translationLanguage);
-      var parserFactory = new PredicateParserFactory(translationRegistry);
+      logger.info("Using language " + mainSection.predicates.language.assetFileNameWithoutExtension + " for predicate parsing");
 
       var quickShopApi = QuickShopAPI.getInstance();
       var shopRegistry = new CachedShopRegistry(logger, quickShopApi.getShopManager(), mainSection);
@@ -49,7 +44,7 @@ public class QuickShopSearchPlugin extends JavaPlugin {
       Bukkit.getPluginManager().registerEvents(displayHandler, this);
 
       Objects.requireNonNull(getCommand("quickshopsearch")).setExecutor(
-        new QuickShopSearchCommand(this, parserFactory, shopRegistry, mainSection, displayHandler)
+        new QuickShopSearchCommand(this, parserPlugin.getPredicateHelper(), shopRegistry, mainSection, displayHandler)
       );
     } catch (Exception e) {
       logger.log(Level.SEVERE, "Could not initialize plugin", e);

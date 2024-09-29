@@ -104,32 +104,6 @@ playerMessages:
   emptyPredicate$: 'lut["MESSAGE_PREFIX"] & "&cPlease provide a non-empty predicate"'
   noMatches$: 'lut["MESSAGE_PREFIX"] & "&cYour query resulted in zero matches"'
 
-predicates:
-  language: ENGLISH_US
-  # - command_representation: String
-  expandedPreview$: '"&a" & command_representation'
-  # '~' is the last printable char on the ASCII-table, and should thereby come last, as desired, when the client automatically sorts completions
-  # - excess_count: Int
-  maxCompletionsExceeded$: '"~ and " & excess_count & " more"'
-  inputNonHighlightPrefix: "&c"
-  inputHighlightPrefix: "&4"
-  # highlighted_input: String
-  parseConflicts$:
-    EXPECTED_CORRECT_INTEGER: '"&cExpected a non-malformed integer: " & highlighted_input'
-    TOO_MANY_TIME_NOTATION_BLOCKS: '"&cDo not use more than 3 colon-separated blocks: " & highlighted_input'
-    EXPECTED_FOLLOWING_INTEGER: '"&cThis predicate requires an integer argument: " & highlighted_input'
-    EXPECTED_SEARCH_PATTERN: '"&cExpected a name to search for: " & highlighted_input'
-    NO_SEARCH_MATCH: '"&cFound no matches: " & highlighted_input'
-    MISSING_STRING_TERMINATION: '"&cString has not been terminated: " & highlighted_input'
-    MULTIPLE_SEARCH_PATTERN_WILDCARDS: '"&cUsed multiple ? within one argument: " & highlighted_input'
-    ONLY_SEARCH_PATTERN_WILDCARD: '"&cCannot search just for a wildcard: " & highlighted_input'
-    DOES_NOT_ACCEPT_TIME_NOTATION: '"&cThis argument does not accept time notation: " & highlighted_input'
-    DOES_NOT_ACCEPT_NON_EQUALS_COMPARISON: '"&cThis argument does not accept comparison notation: " & highlighted_input'
-    EXPECTED_EXPRESSION_AFTER_OPERATOR: '"&cThis operator has to to be followed up by another expression: " & highlighted_input'
-    EXPECTED_OPENING_PARENTHESIS: '"&cExpected a opening parenthesis: " & highlighted_input'
-    EXPECTED_CLOSING_PARENTHESIS: '"&cExpected a closing parenthesis: " & highlighted_input'
-    EMPTY_OR_BLANK_QUOTED_STRING: '"&cStrings are not allowed to be blank: " & highlighted_input'
-
 # File-global lookup table
 lut:
   MESSAGE_PREFIX: '&7[&6QuickShopSearch&7] '
