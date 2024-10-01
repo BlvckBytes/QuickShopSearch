@@ -1,17 +1,6 @@
 # QuickShopSearch
 
-## Feature Description
-
-Provides one simple command, namely `/quickshopsearch` or it's shorthand `/qss`, which allows to efficiently
-query all globally existing QuickShops by specifying any desired predicate. Results are displayed to the
-user in a simple yet very useful paginated UI, which offers two actions: opening the native preview, 
-or teleporting to the shop's location. Before shop-items are put on display within said UI, their information
-is extended by the properties specified in the config; by default, lore-lines concerning the owner-name,
-price, remaining stock as well as buying/selling/unlimited-flags are appended - yet more information is
-available in the environment variables of this section. Results can be filtered by their flags and sorted by
-their properties, all by making use of a visually appealing selection-system.
-
-TODO: Add preview GIF
+Documentation: https://blvckbytes.github.io/docs-quick-shop-search/
 
 ## Dependencies:
 
