@@ -38,8 +38,9 @@ public class ResultDisplay {
   private final AsyncTaskQueue asyncQueue;
   private final MainSection mainSection;
 
-  private final List<CachedShop> unselectedShops;
-  private List<CachedShop> selectedShops;
+  private final List<CachedShop> unfilteredShops;
+  private List<CachedShop> filteredUnSortedShops;
+  private List<CachedShop> filteredSortedShops;
 
   public final Player player;
   private final Map<Integer, CachedShop> slotMap;
@@ -65,7 +66,7 @@ public class ResultDisplay {
     this.asyncQueue = new AsyncTaskQueue(plugin);
     this.mainSection = mainSection;
     this.player = player;
-    this.unselectedShops = shops;
+    this.unfilteredShops = shops;
     this.slotMap = new HashMap<>();
     this.selectionState = selectionState;
 
@@ -186,10 +187,10 @@ public class ResultDisplay {
   }
 
   private int applyFiltering() {
-    this.selectedShops = this.selectionState.applyFilter(unselectedShops);
+    this.filteredUnSortedShops = this.selectionState.applyFilter(unfilteredShops);
 
     var oldNumberOfPages = this.numberOfPages;
-    this.numberOfPages = Math.max(1, (int) Math.ceil(selectedShops.size() / (double) DISPLAY_SLOTS.size()));
+    this.numberOfPages = Math.max(1, (int) Math.ceil(filteredUnSortedShops.size() / (double) DISPLAY_SLOTS.size()));
 
     var pageCountDelta = this.numberOfPages - oldNumberOfPages;
 
@@ -201,7 +202,8 @@ public class ResultDisplay {
   }
 
   private void applySorting() {
-    this.selectionState.applySort(selectedShops);
+    this.filteredSortedShops = new ArrayList<>(this.filteredUnSortedShops);
+    this.selectionState.applySort(this.filteredSortedShops);
   }
 
   private void show() {
@@ -218,7 +220,7 @@ public class ResultDisplay {
 
   private void renderItems() {
     var itemsIndex = (currentPage - 1) * DISPLAY_SLOTS.size();
-    var numberOfItems = selectedShops.size();
+    var numberOfItems = filteredSortedShops.size();
 
     for (var slot : DISPLAY_SLOTS) {
       var currentSlot = itemsIndex++;
@@ -229,7 +231,7 @@ public class ResultDisplay {
         continue;
       }
 
-      var cachedShop = selectedShops.get(currentSlot);
+      var cachedShop = filteredSortedShops.get(currentSlot);
 
       inventory.setItem(
         slot,
