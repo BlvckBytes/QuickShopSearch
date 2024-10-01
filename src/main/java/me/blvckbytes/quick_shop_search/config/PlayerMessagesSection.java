@@ -9,6 +9,7 @@ public class PlayerMessagesSection extends AConfigSection {
 
   public @Nullable BukkitEvaluable emptyPredicate;
   public @Nullable BukkitEvaluable noMatches;
+  public @Nullable BukkitEvaluable beforeQuerying;
 
   public PlayerMessagesSection(EvaluationEnvironmentBuilder baseEnvironment) {
     super(baseEnvironment);

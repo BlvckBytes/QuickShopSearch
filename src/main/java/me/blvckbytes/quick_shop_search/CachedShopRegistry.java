@@ -40,6 +40,12 @@ public class CachedShopRegistry implements Listener {
     }
   }
 
+  public int getNumberOfExistingShops() {
+    synchronized (existingShopByLocation) {
+      return this.existingShopByLocation.size();
+    }
+  }
+
   @EventHandler
   public void onShopCreate(ShopCreateSuccessEvent event) {
     synchronized (existingShopByLocation) {

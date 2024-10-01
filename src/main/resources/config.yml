@@ -114,6 +114,9 @@ resultDisplay:
 playerMessages:
   emptyPredicate$: 'lut["MESSAGE_PREFIX"] & "&cPlease provide a non-empty predicate"'
   noMatches$: 'lut["MESSAGE_PREFIX"] & "&cYour query resulted in zero matches"'
+  # - number_shops: Integer
+  # - predicate: String
+  beforeQuerying$: 'lut["MESSAGE_PREFIX"] & "&7Querying &e" & number_shops & " Shops &7for &e" & predicate'
 
 # File-global lookup table
 lut:

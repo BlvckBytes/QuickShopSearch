@@ -68,6 +68,15 @@ public class QuickShopSearchCommand implements CommandExecutor, TabCompleter {
         return;
       }
 
+      if ((message = mainSection.playerMessages.beforeQuerying) != null) {
+        player.sendMessage(message.stringify(
+          mainSection.getBaseEnvironment()
+            .withStaticVariable("number_shops", shopRegistry.getNumberOfExistingShops())
+            .withStaticVariable("predicate", predicate.stringify(true))
+            .build()
+        ));
+      }
+
       var matchingShops = new ArrayList<CachedShop>();
 
       for (var shop : shopRegistry.getExistingShops()) {

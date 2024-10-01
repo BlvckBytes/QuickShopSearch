@@ -1,5 +1,6 @@
 package me.blvckbytes.quick_shop_search;
 
+import com.cryptomorin.xseries.XMaterial;
 import com.ghostchu.quickshop.api.QuickShopAPI;
 import me.blvckbytes.bukkitevaluable.ConfigManager;
 import me.blvckbytes.item_predicate_parser.ItemPredicateParserPlugin;
@@ -7,6 +8,7 @@ import me.blvckbytes.quick_shop_search.config.MainSection;
 import me.blvckbytes.quick_shop_search.display.ResultDisplayHandler;
 import me.blvckbytes.quick_shop_search.display.SelectionStateStore;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.Objects;
@@ -20,6 +22,9 @@ public class QuickShopSearchPlugin extends JavaPlugin {
   @Override
   public void onEnable() {
     var logger = getLogger();
+
+    // First invocation is quite heavy - warm up cache
+    XMaterial.matchXMaterial(Material.AIR);
 
     try {
       var configManager = new ConfigManager(this);
