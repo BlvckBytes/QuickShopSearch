@@ -9,40 +9,57 @@ import java.util.*;
 
 public class SelectionState {
 
-  private ShopSortingCriteria currentSortingCriterion;
-  private boolean currentSortingOrder;
+  private static class SortingCriterionSelection {
+    final ShopSortingCriteria criterion;
+    SortingSelection selection;
+
+    SortingCriterionSelection(ShopSortingCriteria criterion, SortingSelection selection) {
+      this.criterion = criterion;
+      this.selection = selection;
+    }
+  }
+
+  private final List<SortingCriterionSelection> sortingSelections;
+  private int selectedSortingSelectionIndex;
 
   private final Map<ShopFilteringCriteria, PredicateSelection> filteringSelections;
   private ShopFilteringCriteria selectedFilteringCriteria;
 
   public SelectionState() {
-    this.currentSortingCriterion = ShopSortingCriteria.values.get(0);
-    this.currentSortingOrder = false;
+    this.sortingSelections = makeDefaultSortingSelections();
+    this.selectedSortingSelectionIndex = 0;
 
-    this.filteringSelections = new TreeMap<>(); // Ensure constant order
-    for (ShopFilteringCriteria criteria : ShopFilteringCriteria.values)
-      this.filteringSelections.put(criteria, PredicateSelection.INVARIANT);
+    this.filteringSelections = makeDefaultFilteringSelections();
     this.selectedFilteringCriteria = ShopFilteringCriteria.values.get(0);
   }
 
   private SelectionState(
-    ShopSortingCriteria currentSortingCriterion,
-    boolean currentSortingOrder,
+    List<SortingCriterionSelection> sortingSelections,
+    int selectedSortingSelectionIndex,
     Map<ShopFilteringCriteria, PredicateSelection> filteringSelections,
     ShopFilteringCriteria selectedFilteringCriteria
   ) {
-    this.currentSortingCriterion = currentSortingCriterion;
-    this.currentSortingOrder = currentSortingOrder;
+    this.sortingSelections = sortingSelections;
+    this.selectedSortingSelectionIndex = selectedSortingSelectionIndex;
     this.filteringSelections = filteringSelections;
     this.selectedFilteringCriteria = selectedFilteringCriteria;
   }
 
-  public void nextSortingCriterion() {
-    this.currentSortingCriterion = this.currentSortingCriterion.next();
+  public void nextSortingSelection() {
+    if (++this.selectedSortingSelectionIndex == this.sortingSelections.size())
+      this.selectedSortingSelectionIndex = 0;
   }
 
-  public void toggleSortingOrder() {
-    this.currentSortingOrder ^= true;
+  public void nextSortingOrder() {
+    var sortingSelection = sortingSelections.get(this.selectedSortingSelectionIndex);
+    sortingSelection.selection = sortingSelection.selection.next();
+  }
+
+  public void moveSortingSelectionDown() {
+    var removalIndex = selectedSortingSelectionIndex;
+    nextSortingSelection();
+    var targetSelection = this.sortingSelections.remove(removalIndex);
+    this.sortingSelections.add(selectedSortingSelectionIndex, targetSelection);
   }
 
   public void nextFilteringCriterion() {
@@ -59,7 +76,22 @@ public class SelectionState {
   }
 
   public void applySort(List<CachedShop> items) {
-    items.sort((a, b) -> this.currentSortingCriterion.compare(a, b) * (this.currentSortingOrder ? 1 : -1));
+    items.sort((a, b) -> {
+      for (var sortingSelection : sortingSelections) {
+        if (sortingSelection.selection == SortingSelection.INACTIVE)
+          continue;
+
+        var sortingResult = sortingSelection.criterion.compare(a, b);
+
+        if (sortingSelection.selection == SortingSelection.DESCENDING)
+          sortingResult *= -1;
+
+        if (sortingResult != 0)
+          return sortingResult;
+      }
+
+      return 0;
+    });
   }
 
   public List<CachedShop> applyFilter(List<CachedShop> items) {
@@ -95,9 +127,8 @@ public class SelectionState {
 
   public IEvaluationEnvironment makeSortingEnvironment() {
     return new EvaluationEnvironmentBuilder()
-      .withStaticVariable("available_criteria", ShopSortingCriteria.values)
-      .withLiveVariable("current_order", () -> currentSortingOrder)
-      .withLiveVariable("current_criterion", () -> currentSortingCriterion)
+      .withLiveVariable("sorting_selections", () -> this.sortingSelections)
+      .withLiveVariable("selected_index", () -> selectedSortingSelectionIndex)
       .build();
   }
 
@@ -111,35 +142,73 @@ public class SelectionState {
   public JsonObject toJson() {
     var result = new JsonObject();
 
-    result.addProperty("currentSortingCriterion", currentSortingCriterion.ordinal());
-    result.addProperty("currentSortingOrder", currentSortingOrder);
+    var sortingSelectionsObject = new JsonObject();
 
-    var selections = new JsonObject();
+    for (var sortingSelection : sortingSelections)
+      sortingSelectionsObject.addProperty(String.valueOf(sortingSelection.criterion.ordinal()), String.valueOf(sortingSelection.selection.ordinal()));
+
+    result.add("sortingSelections", sortingSelectionsObject);
+    result.addProperty("selectedSortingSelectionIndex", selectedSortingSelectionIndex);
+
+    var filteringSelectionsObject = new JsonObject();
 
     for (var filteringSelection : filteringSelections.entrySet())
-      selections.addProperty(String.valueOf(filteringSelection.getKey().ordinal()), filteringSelection.getValue().ordinal());
+      filteringSelectionsObject.addProperty(String.valueOf(filteringSelection.getKey().ordinal()), filteringSelection.getValue().ordinal());
 
-    result.add("filteringSelections", selections);
+    result.add("filteringSelections", filteringSelectionsObject);
     result.addProperty("selectedFilteringCriteria", selectedFilteringCriteria.ordinal());
 
     return result;
   }
 
   public static SelectionState fromJson(JsonObject json) throws Exception {
-    var currentSortingCriterion = ShopSortingCriteria.byOrdinalOrFirst(json.getAsJsonPrimitive("currentSortingCriterion").getAsInt());
-    var currentSortingOrder = json.getAsJsonPrimitive("currentSortingOrder").getAsBoolean();
+    var sortingSelections = makeDefaultSortingSelections();
+    var sortingSelectionsObject = json.getAsJsonObject("sortingSelections");
 
-    var filteringSelections = new TreeMap<ShopFilteringCriteria, PredicateSelection>(); // Ensure constant order
-    var selections = json.getAsJsonObject("filteringSelections");
+    var sortingSelectionIndex = 0;
 
-    for (ShopFilteringCriteria criteria : ShopFilteringCriteria.values) {
+    for (var sortingSelectionEntry : sortingSelectionsObject.entrySet()) {
+      var criterion = ShopSortingCriteria.byOrdinalOrFirst(Integer.parseInt(sortingSelectionEntry.getKey()));
+      var selection = SortingSelection.byOrdinalOrFirst(sortingSelectionEntry.getValue().getAsInt());
+
+      sortingSelections.removeIf(x -> x.criterion == criterion);
+      sortingSelections.add(sortingSelectionIndex, new SortingCriterionSelection(criterion, selection));
+
+      ++sortingSelectionIndex;
+    }
+
+    var filteringSelections = makeDefaultFilteringSelections();
+    var filteringSelectionsObject = json.getAsJsonObject("filteringSelections");
+
+    for (ShopFilteringCriteria criterion : ShopFilteringCriteria.values) {
       filteringSelections.put(
-        criteria,
-        PredicateSelection.byOrdinalOrFirst(selections.getAsJsonPrimitive(String.valueOf(criteria.ordinal())).getAsInt())
+        criterion,
+        PredicateSelection.byOrdinalOrFirst(filteringSelectionsObject.getAsJsonPrimitive(String.valueOf(criterion.ordinal())).getAsInt())
       );
     }
 
     var selectedFilteringCriteria = ShopFilteringCriteria.byOrdinalOrFirst(json.getAsJsonPrimitive("selectedFilteringCriteria").getAsInt());
-    return new SelectionState(currentSortingCriterion, currentSortingOrder, filteringSelections, selectedFilteringCriteria);
+    return new SelectionState(
+      sortingSelections, json.get("selectedSortingSelectionIndex").getAsInt(),
+      filteringSelections, selectedFilteringCriteria
+    );
+  }
+
+  private static ArrayList<SortingCriterionSelection> makeDefaultSortingSelections() {
+    var result = new ArrayList<SortingCriterionSelection>();
+
+    for (var criterion : ShopSortingCriteria.values)
+      result.add(new SortingCriterionSelection(criterion, SortingSelection.INACTIVE));
+
+    return result;
+  }
+
+  private static TreeMap<ShopFilteringCriteria, PredicateSelection> makeDefaultFilteringSelections() {
+    var result = new TreeMap<ShopFilteringCriteria, PredicateSelection>();
+
+    for (var criteria : ShopFilteringCriteria.values)
+      result.put(criteria, PredicateSelection.INVARIANT);
+
+    return result;
   }
 }

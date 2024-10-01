@@ -95,7 +95,7 @@ public class ResultDisplayHandler implements Listener {
       }
 
       if (slot == ResultDisplay.SORTING_SLOT_ID) {
-        display.nextSortingCriterion();
+        display.nextSortingSelection();
         return;
       }
 
@@ -124,7 +124,7 @@ public class ResultDisplayHandler implements Listener {
       }
 
       if (slot == ResultDisplay.SORTING_SLOT_ID) {
-        display.toggleSortingOrder();
+        display.nextSortingOrder();
         return;
       }
 
@@ -135,6 +135,13 @@ public class ResultDisplayHandler implements Listener {
 
       if (targetShop != null)
         targetShop.getShop().openPreview(player);
+
+      return;
+    }
+
+    if (clickType == ClickType.DROP) {
+      if (slot == ResultDisplay.SORTING_SLOT_ID)
+        display.moveSortingSelectionDown();
     }
   }
 

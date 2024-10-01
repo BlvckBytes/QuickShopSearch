@@ -10,7 +10,8 @@ public enum ShopSortingCriteria {
 
   PRICE((a, b) -> Double.compare(a.getShop().getPrice(), b.getShop().getPrice())),
   OWNER_NAME((a, b) -> a.getShop().getOwner().getDisplay().compareTo(b.getShop().getOwner().getDisplay())),
-  STOCK_LEFT((a, b) -> Integer.compare(a.getCachedStock(), b.getCachedStock()))
+  STOCK_LEFT((a, b) -> Integer.compare(a.getCachedStock(), b.getCachedStock())),
+  ITEM_TYPE((a, b) -> Integer.compare(a.getShop().getItem().getType().ordinal(), b.getShop().getItem().getType().ordinal()))
   ;
 
   private final BiFunction<CachedShop, CachedShop, Integer> compare;

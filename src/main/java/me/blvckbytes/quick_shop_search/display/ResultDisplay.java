@@ -139,17 +139,25 @@ public class ResultDisplay {
     });
   }
 
-  public void nextSortingCriterion() {
+  public void nextSortingSelection() {
     asyncQueue.enqueue(() -> {
-      this.selectionState.nextSortingCriterion();
+      this.selectionState.nextSortingSelection();
       applySorting();
       renderItems();
     });
   }
 
-  public void toggleSortingOrder() {
+  public void nextSortingOrder() {
     asyncQueue.enqueue(() -> {
-      this.selectionState.toggleSortingOrder();
+      this.selectionState.nextSortingOrder();
+      applySorting();
+      renderItems();
+    });
+  }
+
+  public void moveSortingSelectionDown() {
+    asyncQueue.enqueue(() -> {
+      this.selectionState.moveSortingSelectionDown();
       applySorting();
       renderItems();
     });

@@ -43,7 +43,7 @@ public class QuickShopSearchPlugin extends JavaPlugin {
 
       Bukkit.getPluginManager().registerEvents(shopRegistry, this);
 
-      stateStore = new SelectionStateStore(this);
+      stateStore = new SelectionStateStore(this, logger);
       displayHandler = new ResultDisplayHandler(this, mainSection, stateStore);
 
       Bukkit.getPluginManager().registerEvents(displayHandler, this);

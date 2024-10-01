@@ -71,9 +71,8 @@ resultDisplay:
           & "&7, " & color_code(is_selling, "selling")
           & "&7, " & color_code(is_unlimited, "unlimited")
       - '"&8&m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"'
-  # - available_criteria: Iterable<ShopSortingCriteria>
-  # - current_criterion: ShopSortingCriteria
-  # - current_order: Boolean
+  # - sorting_selections: Iterable<SortingCriterionSelection>
+  # - selected_index: Integer
   # https://github.com/BlvckBytes/BukkitEvaluable#itemstack-section
   sorting:
     type: COMPARATOR
@@ -81,14 +80,15 @@ resultDisplay:
     lore$:
       - '" "'
       - |
-        map(available_criteria, (entry) => (
-          "&8➥ " & (if entry == current_criterion then "&d" else "&7") & (lut["sortCriteria"][str(entry)] ?? "Criteria Missing")
+        map(sorting_selections, (entry, entry_index) => (
+          (if entry_index == selected_index then "&d" else "&8") & "➥ "
+          & (lut["sortingSelectionStyle"][str(entry.selection)] ?? "Style Missing")
+          & (lut["sortingCriteria"][str(entry.criterion)] ?? "Criteria Missing")
         ))
-      - '" "'
-      - '"&8➥ &7Order: &d" & if current_order then "ascending" else "descending"'
       - '" "'
       - '"&8➥ &dLeft-Click &7Cycle through criteria"'
       - '"&8➥ &dRight-Click &7Toggle order"'
+      - '"&8➥ &dDrop &7Move criterion down"'
   # - filtering_selections: Map<ShopFilteringCriteria, PredicateSelection>
   # - selected_criteria: ShopFilteringCriteria
   # https://github.com/BlvckBytes/BukkitEvaluable#itemstack-section
@@ -126,15 +126,20 @@ lut:
     ARROW_LEFT_RED: 'eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZjg0ZjU5NzEzMWJiZTI1ZGMwNThhZjg4OGNiMjk4MzFmNzk1OTliYzY3Yzk1YzgwMjkyNWNlNGFmYmEzMzJmYyJ9fX0='
     ARROW_RIGHT: 'eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOTYzMzlmZjJlNTM0MmJhMThiZGM0OGE5OWNjYTY1ZDEyM2NlNzgxZDg3ODI3MmY5ZDk2NGVhZDNiOGFkMzcwIn19fQ=='
     ARROW_RIGHT_RED: 'eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZmNmZTg4NDVhOGQ1ZTYzNWZiODc3MjhjY2M5Mzg5NWQ0MmI0ZmMyZTZhNTNmMWJhNzhjODQ1MjI1ODIyIn19fQ=='
-  sortCriteria:
+  sortingCriteria:
     PRICE: 'Price'
     OWNER_NAME: 'Owner Name'
     STOCK_LEFT: 'Stock Left'
+    ITEM_TYPE: 'Item-Type'
   filteringCriteria:
     IS_BUYING: 'Buying'
     IS_SELLING: 'Selling'
     IS_UNLIMITED: 'Unlimited'
     HAS_STOCK_LEFT: 'Stock Left'
+  sortingSelectionStyle:
+    ASCENDING: '&a+ '
+    DESCENDING: '&c- '
+    INACTIVE: '&7/ &m'
   predicateSelectionStyle:
     POSITIVE: '&a'
     NEGATIVE: '&c'

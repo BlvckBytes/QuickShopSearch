@@ -13,6 +13,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.logging.Logger;
 
 public class SelectionStateStore {
 
@@ -21,8 +22,10 @@ public class SelectionStateStore {
 
   private final Map<UUID, SelectionState> states;
   private final File stateFile;
+  private final Logger logger;
 
-  public SelectionStateStore(Plugin plugin) throws Exception {
+  public SelectionStateStore(Plugin plugin, Logger logger) throws Exception {
+    this.logger = logger;
     this.states = new HashMap<>();
     this.stateFile = new File(plugin.getDataFolder(), "selection_states.json");
 
@@ -65,6 +68,7 @@ public class SelectionStateStore {
       try {
         state = SelectionState.fromJson(object);
       } catch (Exception e) {
+        logger.warning("Could not load selection state: " + e.getMessage() + "; falling back to defaults");
         state = new SelectionState();
       }
 
