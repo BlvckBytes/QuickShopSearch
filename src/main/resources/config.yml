@@ -6,15 +6,18 @@
 #                                                     /_/
 #
 # QuickShopSearch - Developed by BlvckBytes <blvckbytes@gmail.com>
+# Repository - https://github.com/BlvckBytes/QuickShopSearch
+# ASCII-Art - https://patorjk.com/software/taag/#p=display&f=Speed
 
 # - current_page: Integer
 # - number_pages: Integer
 resultDisplay:
-  title$: '"&5Shop Search-Results &d" & current_page & "&8/&d" & number_pages'
+  title$: '"&5Shop Search &d" & current_page & "&8/&d" & number_pages'
+  # https://github.com/BlvckBytes/BukkitEvaluable#itemstack-section
   previousPage:
     type: PLAYER_HEAD
     textures$: 'lut["textures"][if current_page > 1 then "ARROW_LEFT" else "ARROW_LEFT_RED"]'
-    name$: 'if current_page > 1 then "&dPrevious Page" else "&cNo Previous Page"'
+    name$: '"&8» " & (if current_page > 1 then "&dPrevious Page" else "&cNo Previous Page") & " &8«"'
     lore$:
       - '" "'
       - '"&8&m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"'
@@ -26,10 +29,11 @@ resultDisplay:
       - '"&8➥ &dLeft-Click &7Navigate to previous page"'
       - '"&8➥ &dRight-Click &7Jump to very first page"'
       - '"&8&m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"'
+  # https://github.com/BlvckBytes/BukkitEvaluable#itemstack-section
   nextPage:
     type: PLAYER_HEAD
     textures$: 'lut["textures"][if current_page < number_pages then "ARROW_RIGHT" else "ARROW_RIGHT_RED"]'
-    name$: 'if current_page < number_pages then "&dNext Page" else "&cNo Next Page"'
+    name$: '"&8» " & (if current_page < number_pages then "&dNext Page" else "&cNo Next Page") & " &8«"'
     lore$:
       - '" "'
       - '"&8&m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"'
@@ -52,6 +56,7 @@ resultDisplay:
   # - loc_x: Integer
   # - loc_y: Integer
   # - loc_z: Integer
+  # https://github.com/BlvckBytes/BukkitEvaluable#itemstack-section
   representativePatch:
     lore$:
       - '" "'
@@ -61,14 +66,18 @@ resultDisplay:
       - '"&7Stock: &d" & remaining_stock'
       - |
         color_code = (flag, value) => (if flag then "&a" else "&c") & value
-        "&7Features: " & color_code(is_buying, "buying") & "&7, " & color_code(is_selling, "selling") & "&7, " & color_code(is_unlimited, "unlimited")
+        "&7Features: "
+          & color_code(is_buying, "buying")
+          & "&7, " & color_code(is_selling, "selling")
+          & "&7, " & color_code(is_unlimited, "unlimited")
       - '"&8&m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"'
   # - available_criteria: Iterable<ShopSortingCriteria>
   # - current_criterion: ShopSortingCriteria
   # - current_order: Boolean
+  # https://github.com/BlvckBytes/BukkitEvaluable#itemstack-section
   sorting:
     type: COMPARATOR
-    name: "&dSorting"
+    name: "&8» &dSorting &8«"
     lore$:
       - '" "'
       - |
@@ -82,9 +91,10 @@ resultDisplay:
       - '"&8➥ &dRight-Click &7Toggle order"'
   # - filtering_selections: Map<ShopFilteringCriteria, PredicateSelection>
   # - selected_criteria: ShopFilteringCriteria
+  # https://github.com/BlvckBytes/BukkitEvaluable#itemstack-section
   filtering:
     type: HOPPER
-    name: "&dFiltering"
+    name: "&8» &dFiltering &8«"
     lore$:
       - '" "'
       - |
@@ -96,6 +106,7 @@ resultDisplay:
       - '" "'
       - '"&8➥ &dLeft-Click &7Cycle through criteria"'
       - '"&8➥ &dRight-Click &7Toggle state"'
+  # https://github.com/BlvckBytes/BukkitEvaluable#itemstack-section
   filler:
     type: BLACK_STAINED_GLASS_PANE
     name: " "

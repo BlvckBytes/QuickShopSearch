@@ -181,7 +181,7 @@ public class ResultDisplay {
     this.selectedShops = this.selectionState.applyFilter(unselectedShops);
 
     var oldNumberOfPages = this.numberOfPages;
-    this.numberOfPages = (int) Math.ceil(selectedShops.size() / (double) DISPLAY_SLOTS.size());
+    this.numberOfPages = Math.max(1, (int) Math.ceil(selectedShops.size() / (double) DISPLAY_SLOTS.size()));
 
     var pageCountDelta = this.numberOfPages - oldNumberOfPages;
 
