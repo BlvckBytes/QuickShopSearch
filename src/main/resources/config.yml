@@ -21,11 +21,6 @@ resultDisplay:
     lore$:
       - '" "'
       - '"&8&m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"'
-      - '"&7Available actions on search-results"'
-      - '"&8➥ &dLeft-Click &7Teleport to the shop"'
-      - '"&8➥ &dRight-Click &7Open preview"'
-      - '"&8&m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"'
-      - '"&7Available actions on page-navigation"'
       - '"&8➥ &dLeft-Click &7Navigate to previous page"'
       - '"&8➥ &dRight-Click &7Jump to very first page"'
       - '"&8&m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"'
@@ -37,11 +32,6 @@ resultDisplay:
     lore$:
       - '" "'
       - '"&8&m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"'
-      - '"&7Available actions on search-results:"'
-      - '"&8➥ &dLeft-Click &7Teleport to the shop"'
-      - '"&8➥ &dRight-Click &7Open preview"'
-      - '"&8&m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"'
-      - '"&7Available actions on page-navigation:"'
       - '"&8➥ &dLeft-Click &7Navigate to next page"'
       - '"&8➥ &dRight-Click &7Jump to very last page"'
       - '"&8&m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"'
@@ -71,6 +61,9 @@ resultDisplay:
           & "&7, " & color_code(is_selling, "selling")
           & "&7, " & color_code(is_unlimited, "unlimited")
       - '"&8&m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"'
+      - '"&8➥ &dLeft-Click &7Teleport to the shop"'
+      - '"&8➥ &dRight-Click &7Open preview"'
+      - '"&8&m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"'
   # - sorting_selections: Iterable<SortingCriterionSelection>
   # - selected_index: Integer
   # https://github.com/BlvckBytes/BukkitEvaluable#itemstack-section
@@ -79,16 +72,18 @@ resultDisplay:
     name: "&8» &dSorting &8«"
     lore$:
       - '" "'
+      - '"&8&m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"'
       - |
         map(sorting_selections, (entry, entry_index) => (
           (if entry_index == selected_index then "&d" else "&8") & "➥ "
           & (lut["sortingSelectionStyle"][str(entry.selection)] ?? "Style Missing")
           & (lut["sortingCriteria"][str(entry.criterion)] ?? "Criteria Missing")
         ))
-      - '" "'
+      - '"&8&m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"'
       - '"&8➥ &dLeft-Click &7Cycle through criteria"'
       - '"&8➥ &dRight-Click &7Toggle order"'
       - '"&8➥ &dDrop &7Move criterion down"'
+      - '"&8&m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"'
   # - filtering_selections: Map<ShopFilteringCriteria, PredicateSelection>
   # - selected_criteria: ShopFilteringCriteria
   # https://github.com/BlvckBytes/BukkitEvaluable#itemstack-section
@@ -97,15 +92,17 @@ resultDisplay:
     name: "&8» &dFiltering &8«"
     lore$:
       - '" "'
+      - '"&8&m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"'
       - |
         map(filtering_selections, (entry) => (
           (if key(entry) == selected_criteria then "&d" else "&8") & "➥ "
           & (lut["predicateSelectionStyle"][str(value(entry))] ?? "Style Missing")
           & (lut["filteringCriteria"][str(key(entry))] ?? "Criteria Missing")
         ))
-      - '" "'
+      - '"&8&m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"'
       - '"&8➥ &dLeft-Click &7Cycle through criteria"'
       - '"&8➥ &dRight-Click &7Toggle state"'
+      - '"&8&m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"'
   # https://github.com/BlvckBytes/BukkitEvaluable#itemstack-section
   filler:
     type: BLACK_STAINED_GLASS_PANE
