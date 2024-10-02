@@ -69,7 +69,7 @@ public class CachedShopRegistry implements Listener {
 
   @EventHandler
   public void onShopInventoryCalculate(ShopInventoryCalculateEvent event) {
-    tryAccessCache(event.getShop(), shop -> shop.onStockChange(event.getStock()));
+    tryAccessCache(event.getShop(), shop -> shop.onInventoryCalculate(event.getStock(), event.getSpace()));
   }
 
   private void tryAccessCache(Shop shop, Consumer<CachedShop> handler) {

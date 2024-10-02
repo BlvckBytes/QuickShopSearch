@@ -15,12 +15,14 @@ public class CachedShop {
 
   private IItemBuildable representativeBuildable;
   private int cachedStock;
+  private int cachedSpace;
 
   public CachedShop(Shop shop, ItemStackSection representativePatch) {
     this.shop = shop;
     this.representativePatch = representativePatch;
     this.representativeBuildable = makeBuildable(shop.getItem());
     this.cachedStock = shop.getRemainingStock();
+    this.cachedSpace = shop.getRemainingSpace();
 
     var shopLocation = shop.getLocation();
     var shopWorld = shopLocation.getWorld();
@@ -29,7 +31,8 @@ public class CachedShop {
       .withLiveVariable("owner", shop.getOwner()::getDisplay)
       .withLiveVariable("price", shop::getPrice)
       .withLiveVariable("currency", shop::getCurrency)
-      .withLiveVariable("remaining_stock", () -> this.cachedStock)
+      .withLiveVariable("remaining_stock", this::getCachedStock)
+      .withLiveVariable("remaining_space", this::getCachedSpace)
       .withLiveVariable("is_buying", shop::isBuying)
       .withLiveVariable("is_selling", shop::isSelling)
       .withLiveVariable("is_unlimited", shop::isUnlimited)
@@ -47,6 +50,10 @@ public class CachedShop {
     return cachedStock;
   }
 
+  public int getCachedSpace() {
+    return cachedSpace;
+  }
+
   public IItemBuildable getRepresentativeBuildable() {
     return representativeBuildable;
   }
@@ -55,8 +62,12 @@ public class CachedShop {
     return shopEnvironment;
   }
 
-  public void onStockChange(int newStock) {
-    this.cachedStock = newStock;
+  public void onInventoryCalculate(int newStock, int newSpace) {
+    if (newStock >= 0)
+      this.cachedStock = newStock;
+
+    if (newSpace >= 0)
+      this.cachedSpace = newSpace;
   }
 
   public void onItemChange(ItemStack newItem) {

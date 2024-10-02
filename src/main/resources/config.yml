@@ -39,6 +39,7 @@ resultDisplay:
   # - price: Double
   # - currency: String?
   # - remaining_stock: Integer
+  # - remaining_space: Integer
   # - is_selling: Boolean
   # - is_buying: Boolean
   # - is_unlimited: Boolean
@@ -53,6 +54,7 @@ resultDisplay:
       - '"&8&m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"'
       - '"&7Owner: &d" & owner'
       - '"&7Price: &d" & price & " " & (currency ?? "")'
+      - '"&7Space: &d" & remaining_space'
       - '"&7Stock: &d" & remaining_stock'
       - |
         color_code = (flag, value) => (if flag then "&a" else "&c") & value
@@ -127,7 +129,9 @@ lut:
     PRICE: 'Price'
     OWNER_NAME: 'Owner Name'
     STOCK_LEFT: 'Stock Left'
+    SPACE_LEFT: 'Space Left'
     ITEM_TYPE: 'Item-Type'
+    SHOP_TYPE: 'Shop-Type'
   filteringCriteria:
     IS_BUYING: 'Buying'
     IS_SELLING: 'Selling'
