@@ -38,6 +38,7 @@
             <groupId>com.ghostchu</groupId>
             <artifactId>quickshop-api</artifactId>
             <version>6.2.0.6</version>
+            <scope>provided</scope>
         </dependency>
         <!--You need also bring in quickshop-common module to your project so it will help you resolve our used 3rd-party libraries-->
         <dependency>
