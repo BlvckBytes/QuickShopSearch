@@ -105,7 +105,7 @@ public class ResultDisplayHandler implements Listener {
       }
 
       if (targetShop != null) {
-        player.teleport(targetShop.getShop().getLocation().add(.5, 0, .5));
+        player.teleport(targetShop.getShop().getLocation().clone().add(.5, 0, .5));
         player.closeInventory();
       }
 
