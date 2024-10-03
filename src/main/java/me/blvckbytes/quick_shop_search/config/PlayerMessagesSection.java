@@ -10,6 +10,9 @@ public class PlayerMessagesSection extends AConfigSection {
   public @Nullable BukkitEvaluable emptyPredicate;
   public @Nullable BukkitEvaluable noMatches;
   public @Nullable BukkitEvaluable beforeQuerying;
+  public @Nullable BukkitEvaluable unknownLanguageChat;
+  public @Nullable BukkitEvaluable unknownLanguageActionBar;
+  public @Nullable BukkitEvaluable missingLanguage;
 
   public PlayerMessagesSection(EvaluationEnvironmentBuilder baseEnvironment) {
     super(baseEnvironment);

@@ -5,6 +5,7 @@ import me.blvckbytes.item_predicate_parser.PredicateHelper;
 import me.blvckbytes.item_predicate_parser.parse.ItemPredicateParseException;
 import me.blvckbytes.item_predicate_parser.predicate.ItemPredicate;
 import me.blvckbytes.item_predicate_parser.predicate.PredicateState;
+import me.blvckbytes.item_predicate_parser.translation.TranslationLanguage;
 import me.blvckbytes.quick_shop_search.config.MainSection;
 import me.blvckbytes.quick_shop_search.display.ResultDisplayHandler;
 import net.md_5.bungee.api.ChatMessageType;
@@ -20,9 +21,23 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class QuickShopSearchCommand implements CommandExecutor, TabCompleter {
+
+  public static final String MAIN_COMMAND_NAME = "quickshopsearch";
+  public static final String LANGUAGE_COMMAND_NAME = "quickshopsearchlanguage";
+
+  private static final List<String> translationLanguages;
+
+  static {
+    translationLanguages = Arrays.stream(TranslationLanguage.values())
+      .map(Enum::name)
+      .sorted() // Leave order as displayed by the client to avoid confusion
+      .collect(Collectors.toList());
+  }
 
   private final Plugin plugin;
   private final PredicateHelper predicateHelper;
@@ -51,12 +66,42 @@ public class QuickShopSearchCommand implements CommandExecutor, TabCompleter {
       return false;
 
     Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
-      ItemPredicate predicate;
       BukkitEvaluable message;
 
+      var language = mainSection.predicates.mainLanguage;
+      var argsOffset = 0;
+
+      if (command.getName().equals(LANGUAGE_COMMAND_NAME)) {
+        if (args.length == 0) {
+          if ((message = mainSection.playerMessages.missingLanguage) != null)
+            player.sendMessage(message.stringify(mainSection.getBaseEnvironment().build()));
+
+          return;
+        }
+
+        var filterResults = filterLanguageCompletions(args[0], true);
+
+        if (filterResults.isEmpty()) {
+          if ((message = mainSection.playerMessages.unknownLanguageChat) != null) {
+            player.sendMessage(message.stringify(
+              mainSection.getBaseEnvironment()
+                .withStaticVariable("user_input", args[0])
+                .build()
+            ));
+          }
+
+          return;
+        }
+
+        language = TranslationLanguage.valueOf(filterResults.get(0));
+        argsOffset = 1;
+      }
+
+      ItemPredicate predicate;
+
       try {
-        var tokens = predicateHelper.parseTokens(args, 0);
-        predicate = predicateHelper.parsePredicate(mainSection.predicates.language, tokens);
+        var tokens = predicateHelper.parseTokens(args, argsOffset);
+        predicate = predicateHelper.parsePredicate(language, tokens);
       } catch (ItemPredicateParseException e) {
         player.sendMessage(predicateHelper.createExceptionMessage(e));
         return;
@@ -101,9 +146,37 @@ public class QuickShopSearchCommand implements CommandExecutor, TabCompleter {
     if (!(sender instanceof Player player))
       return null;
 
+    BukkitEvaluable message;
+
+    var language = mainSection.predicates.mainLanguage;
+    var argsOffset = 0;
+
+    if (command.getName().equals(LANGUAGE_COMMAND_NAME)) {
+      argsOffset = 1;
+
+      if (args.length == 1)
+        return filterLanguageCompletions(args[0], false);
+
+      var filterResults = filterLanguageCompletions(args[0], true);
+
+      if (filterResults.isEmpty()) {
+        if ((message = mainSection.playerMessages.unknownLanguageActionBar) != null) {
+          showActionBarMessage(player, message.stringify(
+            mainSection.getBaseEnvironment()
+              .withStaticVariable("user_input", args[0])
+              .build()
+          ));
+        }
+
+        return null;
+      }
+
+      language = TranslationLanguage.valueOf(filterResults.get(0));
+    }
+
     try {
-      var tokens = predicateHelper.parseTokens(args, 0);
-      var completion = predicateHelper.createCompletion(mainSection.predicates.language, tokens);
+      var tokens = predicateHelper.parseTokens(args, argsOffset);
+      var completion = predicateHelper.createCompletion(language, tokens);
 
       if (completion.expandedPreviewOrError() != null)
         showActionBarMessage(player, completion.expandedPreviewOrError());
@@ -118,5 +191,26 @@ public class QuickShopSearchCommand implements CommandExecutor, TabCompleter {
 
   private void showActionBarMessage(Player player, String message) {
     player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(message));
+  }
+
+  private List<String> filterLanguageCompletions(String input, boolean onlyFirst) {
+    var inputParts = input.split("[\\-_]");
+    var results = new ArrayList<String>();
+
+    languageLoop: for (var translationLanguage : translationLanguages) {
+      var translationLanguageLower = translationLanguage.toLowerCase();
+
+      for (var inputPart : inputParts) {
+        if (!translationLanguageLower.contains(inputPart))
+          continue languageLoop;
+      }
+
+      results.add(translationLanguage);
+
+      if (onlyFirst)
+        break;
+    }
+
+    return results;
   }
 }

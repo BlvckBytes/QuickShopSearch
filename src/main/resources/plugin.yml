@@ -7,3 +7,5 @@ depend: [QuickShop-Hikari, ItemPredicateParser]
 commands:
   quickshopsearch:
     aliases: 'qss'
+  quickshopsearchlanguage:
+    aliases: 'qssl'

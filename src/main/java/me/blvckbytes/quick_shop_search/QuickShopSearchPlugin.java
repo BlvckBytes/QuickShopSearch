@@ -36,7 +36,7 @@ public class QuickShopSearchPlugin extends JavaPlugin {
       if (parserPlugin == null)
         throw new IllegalStateException("Depending on ItemPredicateParser to be successfully loaded");
 
-      logger.info("Using language " + mainSection.predicates.language.assetFileNameWithoutExtension + " for predicate parsing");
+      logger.info("Using language " + mainSection.predicates.mainLanguage.assetFileNameWithoutExtension + " for predicate parsing");
 
       var quickShopApi = QuickShopAPI.getInstance();
       var shopRegistry = new CachedShopRegistry(logger, quickShopApi.getShopManager(), mainSection);
@@ -48,9 +48,12 @@ public class QuickShopSearchPlugin extends JavaPlugin {
 
       Bukkit.getPluginManager().registerEvents(displayHandler, this);
 
-      Objects.requireNonNull(getCommand("quickshopsearch")).setExecutor(
-        new QuickShopSearchCommand(this, parserPlugin.getPredicateHelper(), shopRegistry, mainSection, displayHandler)
-      );
+      var commandExecutor = new QuickShopSearchCommand(this, parserPlugin.getPredicateHelper(), shopRegistry, mainSection, displayHandler);
+      var mainCommand = Objects.requireNonNull(getCommand(QuickShopSearchCommand.MAIN_COMMAND_NAME));
+      var languageCommand = Objects.requireNonNull(getCommand(QuickShopSearchCommand.LANGUAGE_COMMAND_NAME));
+
+      mainCommand.setExecutor(commandExecutor);
+      languageCommand.setExecutor(commandExecutor);
     } catch (Exception e) {
       logger.log(Level.SEVERE, "Could not initialize plugin", e);
       Bukkit.getPluginManager().disablePlugin(this);

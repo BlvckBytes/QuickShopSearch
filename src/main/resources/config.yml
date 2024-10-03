@@ -116,6 +116,14 @@ playerMessages:
   # - number_shops: Integer
   # - predicate: String
   beforeQuerying$: 'lut["MESSAGE_PREFIX"] & "&7Querying &e" & number_shops & " Shops &7for &e" & predicate'
+  # - user_input: String
+  unknownLanguageChat$: 'lut["MESSAGE_PREFIX"] & "&7The input &c" & user_input & " &7does not resemble a known language."'
+  # - user_input: String
+  unknownLanguageActionBar$: '"&cUnknown language: &4" & user_input'
+  missingLanguage$: 'lut["MESSAGE_PREFIX"] & "&cPlease provide a known language as the first argument."'
+
+predicates:
+  mainLanguage: ENGLISH_US
 
 # File-global lookup table
 lut:

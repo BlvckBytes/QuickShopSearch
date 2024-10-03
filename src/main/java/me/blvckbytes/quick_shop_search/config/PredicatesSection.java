@@ -6,11 +6,11 @@ import me.blvckbytes.item_predicate_parser.translation.TranslationLanguage;
 
 public class PredicatesSection extends AConfigSection {
 
-  public TranslationLanguage language;
+  public TranslationLanguage mainLanguage;
 
   public PredicatesSection(EvaluationEnvironmentBuilder baseEnvironment) {
     super(baseEnvironment);
 
-    this.language = TranslationLanguage.ENGLISH_US;
+    this.mainLanguage = TranslationLanguage.ENGLISH_US;
   }
 }
