@@ -57,6 +57,8 @@ public class QuickShopSearchPlugin extends JavaPlugin {
       Objects.requireNonNull(getCommand(ReloadCommand.RELOAD_COMMAND_NAME)).setExecutor(
         new ReloadCommand(logger, configManager, configPusher)
       );
+
+      Bukkit.getPluginManager().registerEvents(new CommandSendListener(this), this);
     } catch (Exception e) {
       logger.log(Level.SEVERE, "Could not initialize plugin", e);
       Bukkit.getPluginManager().disablePlugin(this);
