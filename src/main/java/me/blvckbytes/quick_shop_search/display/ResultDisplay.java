@@ -43,9 +43,8 @@ public class ResultDisplay {
   private List<CachedShop> filteredSortedShops;
 
   public final Player player;
-  private final Map<Integer, CachedShop> slotMap;
+  private final CachedShop[] slotMap;
   private int numberOfPages;
-
   public final SelectionState selectionState;
 
   private final IEvaluationEnvironment pageEnvironment;
@@ -67,7 +66,7 @@ public class ResultDisplay {
     this.mainSection = mainSection;
     this.player = player;
     this.unfilteredShops = shops;
-    this.slotMap = new HashMap<>();
+    this.slotMap = new CachedShop[INVENTORY_N_ROWS * 9];
     this.selectionState = selectionState;
 
     this.sortingEnvironment = this.selectionState.makeSortingEnvironment();
@@ -84,7 +83,7 @@ public class ResultDisplay {
   }
 
   public @Nullable CachedShop getShopCorrespondingToSlot(int slot) {
-    return slotMap.get(slot);
+    return slotMap[slot];
   }
 
   public boolean isInventory(Inventory inventory) {
@@ -94,7 +93,9 @@ public class ResultDisplay {
   public void cleanup(boolean close) {
     if (this.inventory != null)
       this.inventory.clear();
-    this.slotMap.clear();
+
+    for (var i = 0; i < slotMap.length; ++i)
+      this.slotMap[i] = null;
 
     if (close && player.getOpenInventory().getTopInventory() == inventory)
       player.closeInventory();
@@ -226,7 +227,7 @@ public class ResultDisplay {
       var currentSlot = itemsIndex++;
 
       if (currentSlot >= numberOfItems) {
-        slotMap.remove(slot);
+        slotMap[slot] = null;
         inventory.setItem(slot, null);
         continue;
       }
@@ -240,7 +241,7 @@ public class ResultDisplay {
         )
       );
 
-      slotMap.put(slot, cachedShop);
+      slotMap[slot] = cachedShop;
     }
 
     inventory.setItem(
