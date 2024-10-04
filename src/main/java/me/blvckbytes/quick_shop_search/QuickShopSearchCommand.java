@@ -21,23 +21,12 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class QuickShopSearchCommand implements CommandExecutor, TabCompleter {
 
   public static final String MAIN_COMMAND_NAME = "quickshopsearch";
   public static final String LANGUAGE_COMMAND_NAME = "quickshopsearchlanguage";
-
-  private static final List<String> translationLanguages;
-
-  static {
-    translationLanguages = Arrays.stream(TranslationLanguage.values())
-      .map(Enum::name)
-      .sorted() // Leave order as displayed by the client to avoid confusion
-      .collect(Collectors.toList());
-  }
 
   private final Plugin plugin;
   private final PredicateHelper predicateHelper;
@@ -89,9 +78,9 @@ public class QuickShopSearchCommand implements CommandExecutor, TabCompleter {
           return;
         }
 
-        var filterResults = filterLanguageCompletions(args[0], true);
+        language = TranslationLanguage.matchFirst(args[0]);
 
-        if (filterResults.isEmpty()) {
+        if (language == null) {
           if ((message = mainSection.playerMessages.unknownLanguageChat) != null) {
             player.sendMessage(message.stringify(
               mainSection.getBaseEnvironment()
@@ -103,7 +92,6 @@ public class QuickShopSearchCommand implements CommandExecutor, TabCompleter {
           return;
         }
 
-        language = TranslationLanguage.valueOf(filterResults.get(0));
         argsOffset = 1;
       }
 
@@ -189,11 +177,11 @@ public class QuickShopSearchCommand implements CommandExecutor, TabCompleter {
       argsOffset = 1;
 
       if (args.length == 1)
-        return filterLanguageCompletions(args[0], false);
+        return TranslationLanguage.createCompletions(args[0]);
 
-      var filterResults = filterLanguageCompletions(args[0], true);
+      language = TranslationLanguage.matchFirst(args[0]);
 
-      if (filterResults.isEmpty()) {
+      if (language == null) {
         if ((message = mainSection.playerMessages.unknownLanguageActionBar) != null) {
           showActionBarMessage(player, message.stringify(
             mainSection.getBaseEnvironment()
@@ -204,8 +192,6 @@ public class QuickShopSearchCommand implements CommandExecutor, TabCompleter {
 
         return List.of();
       }
-
-      language = TranslationLanguage.valueOf(filterResults.get(0));
     }
 
     if (!PluginPermission.MAIN_COMMAND.has(player))
@@ -228,26 +214,5 @@ public class QuickShopSearchCommand implements CommandExecutor, TabCompleter {
 
   private void showActionBarMessage(Player player, String message) {
     player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(message));
-  }
-
-  private List<String> filterLanguageCompletions(String input, boolean onlyFirst) {
-    var inputParts = input.split("[\\-_]");
-    var results = new ArrayList<String>();
-
-    languageLoop: for (var translationLanguage : translationLanguages) {
-      var translationLanguageLower = translationLanguage.toLowerCase();
-
-      for (var inputPart : inputParts) {
-        if (!translationLanguageLower.contains(inputPart.toLowerCase()))
-          continue languageLoop;
-      }
-
-      results.add(translationLanguage);
-
-      if (onlyFirst)
-        break;
-    }
-
-    return results;
   }
 }
