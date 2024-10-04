@@ -4,6 +4,9 @@ import me.blvckbytes.bukkitevaluable.BukkitEvaluable;
 import me.blvckbytes.quick_shop_search.CachedShop;
 import me.blvckbytes.quick_shop_search.PluginPermission;
 import me.blvckbytes.quick_shop_search.config.MainSection;
+import org.bukkit.Location;
+import org.bukkit.block.BlockFace;
+import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -13,11 +16,18 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.util.Vector;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
 public class ResultDisplayHandler implements Listener {
+
+  private static final double PLAYER_EYE_HEIGHT = 1.5;
+
+  private static final BlockFace[] SHOP_SIGN_FACES = new BlockFace[] {
+    BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST
+  };
 
   private final Plugin plugin;
   private final MainSection mainSection;
@@ -169,8 +179,35 @@ public class ResultDisplayHandler implements Listener {
       ));
     }
 
-    // TODO: Implement safe teleport
-    player.teleport(cachedShop.getShop().getLocation().clone().add(.5, 0, .5));
+    var shop = cachedShop.getShop();
+    var shopLocation = shop.getLocation().clone(); // Not cloning can mess shops up (direct reference)!
+    var shopBlock = shopLocation.getBlock();
+
+    Location targetLocation = null;
+
+    // Try to teleport at the block-face where the sign's mounted, looking directly at the center of the container
+
+    for (var signFace : SHOP_SIGN_FACES) {
+      var currentBlock = shopBlock.getRelative(signFace);
+      if (!(currentBlock.getState() instanceof Sign sign))
+        continue;
+
+      if (!shop.isShopSign(sign))
+        continue;
+
+      var currentLocationXZCenter = currentBlock.getLocation().add(.5, 0, .5);
+      var newEyeLocation = currentLocationXZCenter.toVector().add(new Vector(0, PLAYER_EYE_HEIGHT, 0));
+      var shopXYZCenter = shopLocation.add(.5, .5, .5);
+
+      targetLocation = currentLocationXZCenter.setDirection(shopXYZCenter.toVector().subtract(newEyeLocation));
+      break;
+    }
+
+    // This fallback should never be reached, but better safe than sorry.
+    if (targetLocation == null)
+      targetLocation = shopLocation.add(.5, 0, .5);
+
+    player.teleport(targetLocation);
     player.closeInventory();
   }
 
