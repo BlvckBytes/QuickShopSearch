@@ -1,6 +1,7 @@
 package me.blvckbytes.quick_shop_search;
 
 import com.ghostchu.quickshop.api.shop.Shop;
+import me.blvckbytes.bukkitevaluable.ConfigKeeper;
 import me.blvckbytes.bukkitevaluable.IItemBuildable;
 import me.blvckbytes.bukkitevaluable.ItemBuilder;
 import me.blvckbytes.bukkitevaluable.section.ItemStackSection;
@@ -13,15 +14,17 @@ public class CachedShop {
   private final Shop shop;
   private ItemStackSection representativePatch;
   private final EvaluationEnvironmentBuilder shopEnvironment;
+  private final ConfigKeeper<MainSection> config;
 
   private IItemBuildable representativeBuildable;
   private int cachedStock;
   private int cachedSpace;
 
-  public CachedShop(Shop shop, MainSection mainSection) {
+  public CachedShop(Shop shop, ConfigKeeper<MainSection> config) {
     this.shop = shop;
+    this.config = config;
 
-    setConfig(mainSection);
+    onConfigReload();
 
     this.representativeBuildable = makeBuildable(shop.getItem());
     this.cachedStock = shop.getRemainingStock();
@@ -45,8 +48,8 @@ public class CachedShop {
       .withLiveVariable("loc_z", shopLocation::getBlockZ);
   }
 
-  public void setConfig(MainSection mainSection) {
-    this.representativePatch = mainSection.resultDisplay.representativePatch;
+  public void onConfigReload() {
+    this.representativePatch = config.rootSection.resultDisplay.representativePatch;
     this.representativeBuildable = makeBuildable(this.shop.getItem());
   }
 

@@ -1,7 +1,7 @@
 package me.blvckbytes.quick_shop_search;
 
 import me.blvckbytes.bukkitevaluable.BukkitEvaluable;
-import me.blvckbytes.bukkitevaluable.ConfigManager;
+import me.blvckbytes.bukkitevaluable.ConfigKeeper;
 import me.blvckbytes.quick_shop_search.config.MainSection;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -16,19 +16,11 @@ public class ReloadCommand implements CommandExecutor {
   public static final String RELOAD_COMMAND_NAME = "quickshopsearchreload";
 
   private final Logger logger;
-  private final ConfigManager configManager;
-  private final ValuePusher<MainSection> configPusher;
+  private final ConfigKeeper<MainSection> config;
 
-  private MainSection mainSection;
-
-  public ReloadCommand(Logger logger, ConfigManager configManager, ValuePusher<MainSection> configPusher) {
+  public ReloadCommand(Logger logger, ConfigKeeper<MainSection> config) {
     this.logger = logger;
-    this.configManager = configManager;
-    this.configPusher = configPusher;
-
-    this.mainSection = configPusher
-      .subscribeToUpdates(value -> this.mainSection = value)
-      .get();
+    this.config = config;
   }
 
   @Override
@@ -36,22 +28,22 @@ public class ReloadCommand implements CommandExecutor {
     BukkitEvaluable message;
 
     if (sender instanceof Player player && !PluginPermission.RELOAD_COMMAND.has(player)) {
-      if ((message = mainSection.playerMessages.missingPermissionReload) != null)
-        player.sendMessage(message.stringify(mainSection.getBaseEnvironment().build()));
+      if ((message = config.rootSection.playerMessages.missingPermissionReload) != null)
+        player.sendMessage(message.stringify(config.rootSection.getBaseEnvironment().build()));
 
       return true;
     }
 
     try {
-      this.configPusher.push(this.configManager.loadConfig("config.yml").mapSection(null, MainSection.class));
+      this.config.reload();
 
-      if ((message = mainSection.playerMessages.pluginReloadedSuccess) != null)
-        sender.sendMessage(message.stringify(mainSection.getBaseEnvironment().build()));
+      if ((message = config.rootSection.playerMessages.pluginReloadedSuccess) != null)
+        sender.sendMessage(message.stringify(config.rootSection.getBaseEnvironment().build()));
     } catch (Exception e) {
       logger.log(Level.SEVERE, "An error occurred while trying to reload the config", e);
 
-      if ((message = mainSection.playerMessages.pluginReloadedError) != null)
-        sender.sendMessage(message.stringify(mainSection.getBaseEnvironment().build()));
+      if ((message = config.rootSection.playerMessages.pluginReloadedError) != null)
+        sender.sendMessage(message.stringify(config.rootSection.getBaseEnvironment().build()));
     }
 
     return true;

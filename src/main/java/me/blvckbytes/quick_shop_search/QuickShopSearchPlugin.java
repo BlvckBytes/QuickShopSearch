@@ -2,6 +2,7 @@ package me.blvckbytes.quick_shop_search;
 
 import com.cryptomorin.xseries.XMaterial;
 import com.ghostchu.quickshop.api.QuickShopAPI;
+import me.blvckbytes.bukkitevaluable.ConfigKeeper;
 import me.blvckbytes.bukkitevaluable.ConfigManager;
 import me.blvckbytes.item_predicate_parser.ItemPredicateParserPlugin;
 import me.blvckbytes.quick_shop_search.config.MainSection;
@@ -28,26 +29,26 @@ public class QuickShopSearchPlugin extends JavaPlugin {
 
     try {
       var configManager = new ConfigManager(this);
-      var configPusher = new ValuePusher<>(configManager.loadConfig("config.yml").mapSection(null, MainSection.class));
+      var config = new ConfigKeeper<>(configManager, "config.yml", MainSection.class);
 
       var parserPlugin = ItemPredicateParserPlugin.getInstance();
 
       if (parserPlugin == null)
         throw new IllegalStateException("Depending on ItemPredicateParser to be successfully loaded");
 
-      logger.info("Using language " + configPusher.get().predicates.mainLanguage.assetFileNameWithoutExtension + " for predicate parsing");
+      logger.info("Using language " + config.rootSection.predicates.mainLanguage.assetFileNameWithoutExtension + " for predicate parsing");
 
       var quickShopApi = QuickShopAPI.getInstance();
-      var shopRegistry = new CachedShopRegistry(logger, quickShopApi.getShopManager(), configPusher);
+      var shopRegistry = new CachedShopRegistry(logger, quickShopApi.getShopManager(), config);
 
       Bukkit.getPluginManager().registerEvents(shopRegistry, this);
 
       stateStore = new SelectionStateStore(this, logger);
-      displayHandler = new ResultDisplayHandler(this, configPusher, stateStore);
+      displayHandler = new ResultDisplayHandler(this, config, stateStore);
 
       Bukkit.getPluginManager().registerEvents(displayHandler, this);
 
-      var commandExecutor = new QuickShopSearchCommand(this, parserPlugin.getPredicateHelper(), shopRegistry, configPusher, displayHandler);
+      var commandExecutor = new QuickShopSearchCommand(this, parserPlugin.getPredicateHelper(), shopRegistry, config, displayHandler);
       var mainCommand = Objects.requireNonNull(getCommand(QuickShopSearchCommand.MAIN_COMMAND_NAME));
       var languageCommand = Objects.requireNonNull(getCommand(QuickShopSearchCommand.LANGUAGE_COMMAND_NAME));
 
@@ -55,7 +56,7 @@ public class QuickShopSearchPlugin extends JavaPlugin {
       languageCommand.setExecutor(commandExecutor);
 
       Objects.requireNonNull(getCommand(ReloadCommand.RELOAD_COMMAND_NAME)).setExecutor(
-        new ReloadCommand(logger, configManager, configPusher)
+        new ReloadCommand(logger, config)
       );
 
       Bukkit.getPluginManager().registerEvents(new CommandSendListener(this), this);

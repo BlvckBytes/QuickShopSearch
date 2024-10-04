@@ -1,5 +1,6 @@
 package me.blvckbytes.quick_shop_search.display;
 
+import me.blvckbytes.bukkitevaluable.ConfigKeeper;
 import me.blvckbytes.gpeee.interpreter.IEvaluationEnvironment;
 import me.blvckbytes.quick_shop_search.CachedShop;
 import me.blvckbytes.quick_shop_search.config.MainSection;
@@ -39,7 +40,7 @@ public class ResultDisplay implements ShopDistanceProvider {
 
   private final Plugin plugin;
   private final AsyncTaskQueue asyncQueue;
-  private MainSection mainSection;
+  private final ConfigKeeper<MainSection> config;
 
   private final Collection<CachedShop> unfilteredShops;
   private final Map<Long, Long> shopDistanceByShopId;
@@ -61,12 +62,13 @@ public class ResultDisplay implements ShopDistanceProvider {
 
   public ResultDisplay(
     Plugin plugin,
-    MainSection mainSection,
+    ConfigKeeper<MainSection> config,
     Player player,
     Collection<CachedShop> shops,
     SelectionState selectionState
   ) {
     this.plugin = plugin;
+    this.config = config;
     this.asyncQueue = new AsyncTaskQueue(plugin);
     this.player = player;
     this.playerLocation = player.getLocation();
@@ -75,7 +77,7 @@ public class ResultDisplay implements ShopDistanceProvider {
     this.slotMap = new CachedShop[INVENTORY_N_ROWS * 9];
     this.selectionState = selectionState;
 
-    setConfig(mainSection, false);
+    onConfigReload(false);
 
     // Within async context already, see corresponding command
     applyFiltering();
@@ -83,11 +85,10 @@ public class ResultDisplay implements ShopDistanceProvider {
     show();
   }
 
-  public void setConfig(MainSection mainSection, boolean redraw) {
-    this.mainSection = mainSection;
-    this.sortingEnvironment = this.selectionState.makeSortingEnvironment(mainSection);
-    this.filteringEnvironment = this.selectionState.makeFilteringEnvironment(mainSection);
-    this.pageEnvironment = mainSection.getBaseEnvironment()
+  public void onConfigReload(boolean redraw) {
+    this.sortingEnvironment = this.selectionState.makeSortingEnvironment(config.rootSection);
+    this.filteringEnvironment = this.selectionState.makeFilteringEnvironment(config.rootSection);
+    this.pageEnvironment = config.rootSection.getBaseEnvironment()
       .withLiveVariable("current_page", () -> this.currentPage)
       .withLiveVariable("number_pages", () -> this.numberOfPages)
       .build();
@@ -279,26 +280,26 @@ public class ResultDisplay implements ShopDistanceProvider {
 
     inventory.setItem(
       BACKWARDS_SLOT_ID,
-      mainSection.resultDisplay.previousPage.build(pageEnvironment)
+      config.rootSection.resultDisplay.previousPage.build(pageEnvironment)
     );
 
     inventory.setItem(
       FORWARDS_SLOT_ID,
-      mainSection.resultDisplay.nextPage.build(pageEnvironment)
+      config.rootSection.resultDisplay.nextPage.build(pageEnvironment)
     );
 
     inventory.setItem(
       SORTING_SLOT_ID,
-      mainSection.resultDisplay.sorting.build(sortingEnvironment)
+      config.rootSection.resultDisplay.sorting.build(sortingEnvironment)
     );
 
     inventory.setItem(
       FILTERING_SLOT_ID,
-      mainSection.resultDisplay.filtering.build(filteringEnvironment)
+      config.rootSection.resultDisplay.filtering.build(filteringEnvironment)
     );
 
-    if (mainSection.resultDisplay.filler != null) {
-      var fillerItem = mainSection.resultDisplay.filler.build();
+    if (config.rootSection.resultDisplay.filler != null) {
+      var fillerItem = config.rootSection.resultDisplay.filler.build();
       for (var fillerSlot : FILLER_SLOTS)
         inventory.setItem(fillerSlot, fillerItem);
     }
@@ -313,7 +314,7 @@ public class ResultDisplay implements ShopDistanceProvider {
   }
 
   private Inventory makeInventory() {
-    var title = mainSection.resultDisplay.title.stringify(pageEnvironment);
+    var title = config.rootSection.resultDisplay.title.stringify(pageEnvironment);
     return Bukkit.createInventory(null, 9 * INVENTORY_N_ROWS, title);
   }
 }

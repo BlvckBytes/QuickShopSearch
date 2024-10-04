@@ -1,9 +1,9 @@
 package me.blvckbytes.quick_shop_search.display;
 
 import me.blvckbytes.bukkitevaluable.BukkitEvaluable;
+import me.blvckbytes.bukkitevaluable.ConfigKeeper;
 import me.blvckbytes.quick_shop_search.CachedShop;
 import me.blvckbytes.quick_shop_search.PluginPermission;
-import me.blvckbytes.quick_shop_search.ValuePusher;
 import me.blvckbytes.quick_shop_search.config.MainSection;
 import org.bukkit.Location;
 import org.bukkit.block.BlockFace;
@@ -32,32 +32,29 @@ public class ResultDisplayHandler implements Listener {
 
   private final Plugin plugin;
 
-  private MainSection mainSection;
+  private final ConfigKeeper<MainSection> config;
 
   private final SelectionStateStore stateStore;
   private final Map<UUID, ResultDisplay> displayByPlayer;
 
   public ResultDisplayHandler(
     Plugin plugin,
-    ValuePusher<MainSection> configPusher,
+    ConfigKeeper<MainSection> config,
     SelectionStateStore stateStore
   ) {
     this.plugin = plugin;
     this.stateStore = stateStore;
+    this.config = config;
     this.displayByPlayer = new HashMap<>();
 
-    this.mainSection = configPusher
-      .subscribeToUpdates(value -> {
-        this.mainSection = value;
-
-        for (var display : displayByPlayer.values())
-          display.setConfig(value, true);
-      })
-      .get();
+    config.registerReloadListener(() -> {
+      for (var display : displayByPlayer.values())
+        display.onConfigReload(true);
+    });
   }
 
   public void show(Player player, Collection<CachedShop> shops) {
-    displayByPlayer.put(player.getUniqueId(), new ResultDisplay(plugin, mainSection, player, shops, stateStore.loadState(player)));
+    displayByPlayer.put(player.getUniqueId(), new ResultDisplay(plugin, config, player, shops, stateStore.loadState(player)));
   }
 
   @EventHandler
@@ -115,12 +112,12 @@ public class ResultDisplayHandler implements Listener {
       }
 
       if (slot == ResultDisplay.SORTING_SLOT_ID) {
-        ensurePermission(player, PluginPermission.FEATURE_SORT, mainSection.playerMessages.missingPermissionFeatureSort, display::nextSortingSelection);
+        ensurePermission(player, PluginPermission.FEATURE_SORT, config.rootSection.playerMessages.missingPermissionFeatureSort, display::nextSortingSelection);
         return;
       }
 
       if (slot == ResultDisplay.FILTERING_SLOT_ID) {
-        ensurePermission(player, PluginPermission.FEATURE_FILTER, mainSection.playerMessages.missingPermissionFeatureFilter, display::nextFilteringCriterion);
+        ensurePermission(player, PluginPermission.FEATURE_FILTER, config.rootSection.playerMessages.missingPermissionFeatureFilter, display::nextFilteringCriterion);
         return;
       }
 
@@ -130,7 +127,7 @@ public class ResultDisplayHandler implements Listener {
         if (shopLocation.getWorld() != player.getWorld()) {
           ensurePermission(
             player, PluginPermission.FEATURE_TELEPORT_OTHER_WORLD,
-            mainSection.playerMessages.missingPermissionFeatureTeleportOtherWorld,
+            config.rootSection.playerMessages.missingPermissionFeatureTeleportOtherWorld,
             () -> teleportPlayerToShop(player, display, targetShop)
           );
           return;
@@ -138,7 +135,7 @@ public class ResultDisplayHandler implements Listener {
 
         ensurePermission(
           player, PluginPermission.FEATURE_TELEPORT,
-          mainSection.playerMessages.missingPermissionFeatureTeleport,
+          config.rootSection.playerMessages.missingPermissionFeatureTeleport,
           () -> teleportPlayerToShop(player, display, targetShop)
         );
         return;
@@ -159,12 +156,12 @@ public class ResultDisplayHandler implements Listener {
       }
 
       if (slot == ResultDisplay.SORTING_SLOT_ID) {
-        ensurePermission(player, PluginPermission.FEATURE_SORT, mainSection.playerMessages.missingPermissionFeatureSort, display::nextSortingOrder);
+        ensurePermission(player, PluginPermission.FEATURE_SORT, config.rootSection.playerMessages.missingPermissionFeatureSort, display::nextSortingOrder);
         return;
       }
 
       if (slot == ResultDisplay.FILTERING_SLOT_ID) {
-        ensurePermission(player, PluginPermission.FEATURE_FILTER, mainSection.playerMessages.missingPermissionFeatureFilter, display::nextFilteringState);
+        ensurePermission(player, PluginPermission.FEATURE_FILTER, config.rootSection.playerMessages.missingPermissionFeatureFilter, display::nextFilteringState);
         return;
       }
 
@@ -176,16 +173,16 @@ public class ResultDisplayHandler implements Listener {
 
     if (clickType == ClickType.DROP) {
       if (slot == ResultDisplay.SORTING_SLOT_ID)
-        ensurePermission(player, PluginPermission.FEATURE_SORT, mainSection.playerMessages.missingPermissionFeatureSort, display::moveSortingSelectionDown);
+        ensurePermission(player, PluginPermission.FEATURE_SORT, config.rootSection.playerMessages.missingPermissionFeatureSort, display::moveSortingSelectionDown);
     }
   }
 
   private void teleportPlayerToShop(Player player, ResultDisplay display, CachedShop cachedShop) {
     BukkitEvaluable message;
 
-    if ((message = mainSection.playerMessages.beforeTeleporting) != null) {
+    if ((message = config.rootSection.playerMessages.beforeTeleporting) != null) {
       player.sendMessage(message.stringify(
-        mainSection.getBaseEnvironment().build(display.getDistanceExtendedShopEnvironment(cachedShop))
+        config.rootSection.getBaseEnvironment().build(display.getDistanceExtendedShopEnvironment(cachedShop))
       ));
     }
 
@@ -248,6 +245,6 @@ public class ResultDisplayHandler implements Listener {
     }
 
     if (missingMessage != null)
-      player.sendMessage(missingMessage.stringify(mainSection.getBaseEnvironment().build()));
+      player.sendMessage(missingMessage.stringify(config.rootSection.getBaseEnvironment().build()));
   }
 }

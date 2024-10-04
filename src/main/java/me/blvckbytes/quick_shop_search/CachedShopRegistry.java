@@ -6,6 +6,7 @@ import com.ghostchu.quickshop.api.event.ShopInventoryCalculateEvent;
 import com.ghostchu.quickshop.api.event.ShopItemChangeEvent;
 import com.ghostchu.quickshop.api.shop.Shop;
 import com.ghostchu.quickshop.api.shop.ShopManager;
+import me.blvckbytes.bukkitevaluable.ConfigKeeper;
 import me.blvckbytes.quick_shop_search.config.MainSection;
 import org.bukkit.Location;
 import org.bukkit.event.EventHandler;
@@ -20,27 +21,23 @@ import java.util.logging.Logger;
 public class CachedShopRegistry implements Listener {
 
   private final Map<Location, CachedShop> existingShopByLocation;
+  private final ConfigKeeper<MainSection> config;
 
-  private MainSection mainSection;
-
-  public CachedShopRegistry(Logger logger, ShopManager shopManager, ValuePusher<MainSection> configPusher) {
+  public CachedShopRegistry(Logger logger, ShopManager shopManager, ConfigKeeper<MainSection> config) {
+    this.config = config;
     this.existingShopByLocation = new HashMap<>();
 
-    this.mainSection = configPusher
-      .subscribeToUpdates(value -> {
-        this.mainSection = value;
-
-        synchronized (existingShopByLocation) {
-          for (var cachedShop : existingShopByLocation.values())
-            cachedShop.setConfig(value);
-        }
-      })
-      .get();
+    config.registerReloadListener(() -> {
+      synchronized (existingShopByLocation) {
+        for (var cachedShop : existingShopByLocation.values())
+          cachedShop.onConfigReload();
+      }
+    });
 
     logger.info("Getting all globally existing shops... This may take a while!");
 
     for (var shop : shopManager.getAllShops())
-      existingShopByLocation.put(shop.getLocation(), new CachedShop(shop, mainSection));
+      existingShopByLocation.put(shop.getLocation(), new CachedShop(shop, config));
 
     logger.info("Found " + existingShopByLocation.size() + " shops in total");
   }
@@ -60,7 +57,7 @@ public class CachedShopRegistry implements Listener {
   @EventHandler
   public void onShopCreate(ShopCreateSuccessEvent event) {
     synchronized (existingShopByLocation) {
-      existingShopByLocation.put(event.getShop().getLocation(), new CachedShop(event.getShop(), mainSection));
+      existingShopByLocation.put(event.getShop().getLocation(), new CachedShop(event.getShop(), config));
     }
   }
 

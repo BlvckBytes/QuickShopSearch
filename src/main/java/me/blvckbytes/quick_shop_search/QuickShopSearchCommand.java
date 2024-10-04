@@ -1,6 +1,7 @@
 package me.blvckbytes.quick_shop_search;
 
 import me.blvckbytes.bukkitevaluable.BukkitEvaluable;
+import me.blvckbytes.bukkitevaluable.ConfigKeeper;
 import me.blvckbytes.item_predicate_parser.PredicateHelper;
 import me.blvckbytes.item_predicate_parser.parse.ItemPredicateParseException;
 import me.blvckbytes.item_predicate_parser.predicate.ItemPredicate;
@@ -33,23 +34,20 @@ public class QuickShopSearchCommand implements CommandExecutor, TabCompleter {
   private final CachedShopRegistry shopRegistry;
   private final ResultDisplayHandler resultDisplay;
 
-  private MainSection mainSection;
+  private final ConfigKeeper<MainSection> config;
 
   public QuickShopSearchCommand(
     Plugin plugin,
     PredicateHelper predicateHelper,
     CachedShopRegistry shopRegistry,
-    ValuePusher<MainSection> configPusher,
+    ConfigKeeper<MainSection> config,
     ResultDisplayHandler resultDisplay
   ) {
     this.plugin = plugin;
     this.predicateHelper = predicateHelper;
     this.shopRegistry = shopRegistry;
+    this.config = config;
     this.resultDisplay = resultDisplay;
-
-    this.mainSection = configPusher
-      .subscribeToUpdates(value -> this.mainSection = value)
-      .get();
   }
 
   @Override
@@ -60,20 +58,20 @@ public class QuickShopSearchCommand implements CommandExecutor, TabCompleter {
     Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
       BukkitEvaluable message;
 
-      var language = mainSection.predicates.mainLanguage;
+      var language = config.rootSection.predicates.mainLanguage;
       var argsOffset = 0;
 
       if (command.getName().equals(LANGUAGE_COMMAND_NAME)) {
         if (!PluginPermission.LANGUAGE_COMMAND.has(player)) {
-          if ((message = mainSection.playerMessages.missingPermissionLanguageCommand) != null)
-            player.sendMessage(message.stringify(mainSection.getBaseEnvironment().build()));
+          if ((message = config.rootSection.playerMessages.missingPermissionLanguageCommand) != null)
+            player.sendMessage(message.stringify(config.rootSection.getBaseEnvironment().build()));
 
           return;
         }
 
         if (args.length == 0) {
-          if ((message = mainSection.playerMessages.missingLanguage) != null)
-            player.sendMessage(message.stringify(mainSection.getBaseEnvironment().build()));
+          if ((message = config.rootSection.playerMessages.missingLanguage) != null)
+            player.sendMessage(message.stringify(config.rootSection.getBaseEnvironment().build()));
 
           return;
         }
@@ -81,9 +79,9 @@ public class QuickShopSearchCommand implements CommandExecutor, TabCompleter {
         language = TranslationLanguage.matchFirst(args[0]);
 
         if (language == null) {
-          if ((message = mainSection.playerMessages.unknownLanguageChat) != null) {
+          if ((message = config.rootSection.playerMessages.unknownLanguageChat) != null) {
             player.sendMessage(message.stringify(
-              mainSection.getBaseEnvironment()
+              config.rootSection.getBaseEnvironment()
                 .withStaticVariable("user_input", args[0])
                 .build()
             ));
@@ -96,8 +94,8 @@ public class QuickShopSearchCommand implements CommandExecutor, TabCompleter {
       }
 
       if (!PluginPermission.MAIN_COMMAND.has(player)) {
-        if ((message = mainSection.playerMessages.missingPermissionMainCommand) != null)
-          player.sendMessage(message.stringify(mainSection.getBaseEnvironment().build()));
+        if ((message = config.rootSection.playerMessages.missingPermissionMainCommand) != null)
+          player.sendMessage(message.stringify(config.rootSection.getBaseEnvironment().build()));
 
         return;
       }
@@ -114,9 +112,9 @@ public class QuickShopSearchCommand implements CommandExecutor, TabCompleter {
 
       if (predicate == null) {
         if (PluginPermission.EMPTY_PREDICATE.has(player)) {
-          if ((message = mainSection.playerMessages.queryingAllShops) != null) {
+          if ((message = config.rootSection.playerMessages.queryingAllShops) != null) {
             player.sendMessage(message.stringify(
-              mainSection.getBaseEnvironment()
+              config.rootSection.getBaseEnvironment()
                 .withLiveVariable("number_shops", shopRegistry::getNumberOfExistingShops)
                 .build()
             ));
@@ -126,15 +124,15 @@ public class QuickShopSearchCommand implements CommandExecutor, TabCompleter {
           return;
         }
 
-        if ((message = mainSection.playerMessages.emptyPredicate) != null)
-          player.sendMessage(message.stringify(mainSection.getBaseEnvironment().build()));
+        if ((message = config.rootSection.playerMessages.emptyPredicate) != null)
+          player.sendMessage(message.stringify(config.rootSection.getBaseEnvironment().build()));
 
         return;
       }
 
-      if ((message = mainSection.playerMessages.beforeQuerying) != null) {
+      if ((message = config.rootSection.playerMessages.beforeQuerying) != null) {
         player.sendMessage(message.stringify(
-          mainSection.getBaseEnvironment()
+          config.rootSection.getBaseEnvironment()
             .withLiveVariable("number_shops", shopRegistry::getNumberOfExistingShops)
             .withStaticVariable("predicate", predicate.stringify(true))
             .build()
@@ -149,8 +147,8 @@ public class QuickShopSearchCommand implements CommandExecutor, TabCompleter {
       }
 
       if (matchingShops.isEmpty()) {
-        if ((message = mainSection.playerMessages.noMatches) != null)
-          player.sendMessage(message.stringify(mainSection.getBaseEnvironment().build()));
+        if ((message = config.rootSection.playerMessages.noMatches) != null)
+          player.sendMessage(message.stringify(config.rootSection.getBaseEnvironment().build()));
         return;
       }
 
@@ -167,7 +165,7 @@ public class QuickShopSearchCommand implements CommandExecutor, TabCompleter {
 
     BukkitEvaluable message;
 
-    var language = mainSection.predicates.mainLanguage;
+    var language = config.rootSection.predicates.mainLanguage;
     var argsOffset = 0;
 
     if (command.getName().equals(LANGUAGE_COMMAND_NAME)) {
@@ -182,9 +180,9 @@ public class QuickShopSearchCommand implements CommandExecutor, TabCompleter {
       language = TranslationLanguage.matchFirst(args[0]);
 
       if (language == null) {
-        if ((message = mainSection.playerMessages.unknownLanguageActionBar) != null) {
+        if ((message = config.rootSection.playerMessages.unknownLanguageActionBar) != null) {
           showActionBarMessage(player, message.stringify(
-            mainSection.getBaseEnvironment()
+            config.rootSection.getBaseEnvironment()
               .withStaticVariable("user_input", args[0])
               .build()
           ));
