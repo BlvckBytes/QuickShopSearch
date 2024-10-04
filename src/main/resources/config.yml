@@ -140,12 +140,12 @@ playerMessages:
   # - user_input: String
   unknownLanguageActionBar$: '"&cUnknown language: &4" & user_input & "&c."'
   missingLanguage$: 'lut["MESSAGE_PREFIX"] & "&cPlease provide a known language as the first argument."'
-  missingPermissionMainCommand$: 'lut["MESSAGE_PREFIX"] & "&cYou lack the permission to use the main command."'
-  missingPermissionLanguageCommand$: 'lut["MESSAGE_PREFIX"] & "&cYou lack the permission to use the language command."'
-  missingPermissionFeatureSort$: 'lut["MESSAGE_PREFIX"] & "&cYou lack the permission to use sorting."'
-  missingPermissionFeatureFilter$: 'lut["MESSAGE_PREFIX"] & "&cYou lack the permission to use filtering."'
-  missingPermissionFeatureTeleport$: 'lut["MESSAGE_PREFIX"] & "&cYou lack the permission to use teleportation."'
-  missingPermissionFeatureTeleportOtherWorld$: 'lut["MESSAGE_PREFIX"] & "&cYou lack the permission to teleport to other worlds."'
+  missingPermissionMainCommand$: 'lut["MESSAGE_PREFIX"] & "&cYou don''t have the permission to use the main command."'
+  missingPermissionLanguageCommand$: 'lut["MESSAGE_PREFIX"] & "&cYou don''t have the permission to use the language command."'
+  missingPermissionFeatureSort$: 'lut["MESSAGE_PREFIX"] & "&cYou don''t have the permission to use sorting."'
+  missingPermissionFeatureFilter$: 'lut["MESSAGE_PREFIX"] & "&cYou don''t have the permission to use filtering."'
+  missingPermissionFeatureTeleport$: 'lut["MESSAGE_PREFIX"] & "&cYou don''t have the permission to use teleportation."'
+  missingPermissionFeatureTeleportOtherWorld$: 'lut["MESSAGE_PREFIX"] & "&cYou don''t have the permission to teleport to other worlds."'
 
 predicates:
   mainLanguage: ENGLISH_US
