@@ -17,6 +17,7 @@ public class PlayerMessagesSection extends AConfigSection {
   public @Nullable BukkitEvaluable missingLanguage;
   public @Nullable BukkitEvaluable pluginReloadedSuccess;
   public @Nullable BukkitEvaluable pluginReloadedError;
+  public @Nullable BukkitEvaluable predicateParseError;
 
   public @Nullable BukkitEvaluable missingPermissionMainCommand;
   public @Nullable BukkitEvaluable missingPermissionLanguageCommand;

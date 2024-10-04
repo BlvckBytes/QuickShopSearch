@@ -107,7 +107,13 @@ public class QuickShopSearchCommand implements CommandExecutor, TabCompleter {
         var tokens = predicateHelper.parseTokens(args, argsOffset);
         predicate = predicateHelper.parsePredicate(language, tokens);
       } catch (ItemPredicateParseException e) {
-        player.sendMessage(predicateHelper.createExceptionMessage(e));
+        if ((message = config.rootSection.playerMessages.predicateParseError) != null) {
+          player.sendMessage(message.stringify(
+            config.rootSection.getBaseEnvironment()
+              .withStaticVariable("exception_message", predicateHelper.createExceptionMessage(e))
+              .build()
+          ));
+        }
         return;
       }
 
