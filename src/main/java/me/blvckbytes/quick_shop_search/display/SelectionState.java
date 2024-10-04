@@ -1,9 +1,9 @@
 package me.blvckbytes.quick_shop_search.display;
 
 import com.google.gson.JsonObject;
-import me.blvckbytes.gpeee.interpreter.EvaluationEnvironmentBuilder;
 import me.blvckbytes.gpeee.interpreter.IEvaluationEnvironment;
 import me.blvckbytes.quick_shop_search.CachedShop;
+import me.blvckbytes.quick_shop_search.config.MainSection;
 
 import java.util.*;
 
@@ -132,15 +132,15 @@ public class SelectionState {
     return result;
   }
 
-  public IEvaluationEnvironment makeSortingEnvironment() {
-    return new EvaluationEnvironmentBuilder()
+  public IEvaluationEnvironment makeSortingEnvironment(MainSection mainSection) {
+    return mainSection.getBaseEnvironment()
       .withLiveVariable("sorting_selections", () -> this.sortingSelections)
       .withLiveVariable("selected_index", () -> selectedSortingSelectionIndex)
       .build();
   }
 
-  public IEvaluationEnvironment makeFilteringEnvironment() {
-    return new EvaluationEnvironmentBuilder()
+  public IEvaluationEnvironment makeFilteringEnvironment(MainSection mainSection) {
+    return mainSection.getBaseEnvironment()
       .withLiveVariable("filtering_selections", () -> this.filteringSelections)
       .withLiveVariable("selected_criteria", () -> this.selectedFilteringCriteria)
       .build();

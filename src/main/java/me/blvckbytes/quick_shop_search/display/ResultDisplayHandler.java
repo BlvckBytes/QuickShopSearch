@@ -3,6 +3,7 @@ package me.blvckbytes.quick_shop_search.display;
 import me.blvckbytes.bukkitevaluable.BukkitEvaluable;
 import me.blvckbytes.quick_shop_search.CachedShop;
 import me.blvckbytes.quick_shop_search.PluginPermission;
+import me.blvckbytes.quick_shop_search.ValuePusher;
 import me.blvckbytes.quick_shop_search.config.MainSection;
 import org.bukkit.Location;
 import org.bukkit.block.BlockFace;
@@ -30,20 +31,29 @@ public class ResultDisplayHandler implements Listener {
   };
 
   private final Plugin plugin;
-  private final MainSection mainSection;
+
+  private MainSection mainSection;
 
   private final SelectionStateStore stateStore;
   private final Map<UUID, ResultDisplay> displayByPlayer;
 
   public ResultDisplayHandler(
     Plugin plugin,
-    MainSection mainSection,
+    ValuePusher<MainSection> configPusher,
     SelectionStateStore stateStore
   ) {
     this.plugin = plugin;
-    this.mainSection = mainSection;
     this.stateStore = stateStore;
     this.displayByPlayer = new HashMap<>();
+
+    this.mainSection = configPusher
+      .subscribeToUpdates(value -> {
+        this.mainSection = value;
+
+        for (var display : displayByPlayer.values())
+          display.setConfig(value, true);
+      })
+      .get();
   }
 
   public void show(Player player, Collection<CachedShop> shops) {

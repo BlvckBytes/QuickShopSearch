@@ -5,6 +5,7 @@ import org.bukkit.entity.Player;
 public enum PluginPermission {
   MAIN_COMMAND("command.qss"),
   LANGUAGE_COMMAND("command.qssl"),
+  RELOAD_COMMAND("command.qssrl"),
   EMPTY_PREDICATE("empty-predicate"),
   FEATURE_SORT("feature.sort"),
   FEATURE_FILTER("feature.filter"),

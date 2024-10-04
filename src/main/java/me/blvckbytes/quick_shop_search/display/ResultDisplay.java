@@ -39,7 +39,7 @@ public class ResultDisplay implements ShopDistanceProvider {
 
   private final Plugin plugin;
   private final AsyncTaskQueue asyncQueue;
-  private final MainSection mainSection;
+  private MainSection mainSection;
 
   private final Collection<CachedShop> unfilteredShops;
   private final Map<Long, Long> shopDistanceByShopId;
@@ -52,9 +52,9 @@ public class ResultDisplay implements ShopDistanceProvider {
   private int numberOfPages;
   public final SelectionState selectionState;
 
-  private final IEvaluationEnvironment pageEnvironment;
-  private final IEvaluationEnvironment sortingEnvironment;
-  private final IEvaluationEnvironment filteringEnvironment;
+  private IEvaluationEnvironment pageEnvironment;
+  private IEvaluationEnvironment sortingEnvironment;
+  private IEvaluationEnvironment filteringEnvironment;
 
   private Inventory inventory;
   private int currentPage = 1;
@@ -68,7 +68,6 @@ public class ResultDisplay implements ShopDistanceProvider {
   ) {
     this.plugin = plugin;
     this.asyncQueue = new AsyncTaskQueue(plugin);
-    this.mainSection = mainSection;
     this.player = player;
     this.playerLocation = player.getLocation();
     this.unfilteredShops = shops;
@@ -76,17 +75,25 @@ public class ResultDisplay implements ShopDistanceProvider {
     this.slotMap = new CachedShop[INVENTORY_N_ROWS * 9];
     this.selectionState = selectionState;
 
-    this.sortingEnvironment = this.selectionState.makeSortingEnvironment();
-    this.filteringEnvironment = this.selectionState.makeFilteringEnvironment();
-    this.pageEnvironment = mainSection.getBaseEnvironment()
-      .withLiveVariable("current_page", () -> this.currentPage)
-      .withLiveVariable("number_pages", () -> this.numberOfPages)
-      .build();
+    setConfig(mainSection, false);
 
     // Within async context already, see corresponding command
     applyFiltering();
     applySorting();
     show();
+  }
+
+  public void setConfig(MainSection mainSection, boolean redraw) {
+    this.mainSection = mainSection;
+    this.sortingEnvironment = this.selectionState.makeSortingEnvironment(mainSection);
+    this.filteringEnvironment = this.selectionState.makeFilteringEnvironment(mainSection);
+    this.pageEnvironment = mainSection.getBaseEnvironment()
+      .withLiveVariable("current_page", () -> this.currentPage)
+      .withLiveVariable("number_pages", () -> this.numberOfPages)
+      .build();
+
+    if (redraw)
+      show();
   }
 
   public @Nullable CachedShop getShopCorrespondingToSlot(int slot) {

@@ -44,20 +44,23 @@ public class QuickShopSearchCommand implements CommandExecutor, TabCompleter {
   private final CachedShopRegistry shopRegistry;
   private final ResultDisplayHandler resultDisplay;
 
-  private final MainSection mainSection;
+  private MainSection mainSection;
 
   public QuickShopSearchCommand(
     Plugin plugin,
     PredicateHelper predicateHelper,
     CachedShopRegistry shopRegistry,
-    MainSection mainSection,
+    ValuePusher<MainSection> configPusher,
     ResultDisplayHandler resultDisplay
   ) {
     this.plugin = plugin;
     this.predicateHelper = predicateHelper;
     this.shopRegistry = shopRegistry;
     this.resultDisplay = resultDisplay;
-    this.mainSection = mainSection;
+
+    this.mainSection = configPusher
+      .subscribeToUpdates(value -> this.mainSection = value)
+      .get();
   }
 
   @Override

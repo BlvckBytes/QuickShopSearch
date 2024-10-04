@@ -7,14 +7,22 @@ depend: [QuickShop-Hikari, ItemPredicateParser]
 commands:
   quickshopsearch:
     aliases: 'qss'
+    description: 'Query shops using the main predicate language'
   quickshopsearchlanguage:
     aliases: 'qssl'
+    description: 'Query shops using any supported predicate language'
+  quickshopsearchreload:
+    aliases: 'qssrl'
+    description: 'Reload the configuration-file'
 permissions:
   quickshopsearch.command.qss:
     description: 'Invoke the main command'
     default: op
   quickshopsearch.command.qssl:
     description: 'Invoke the language command'
+    default: op
+  quickshopsearch.command.qssrl:
+    description: 'Invoke the reload command'
     default: op
   quickshopsearch.empty-predicate:
     description: 'Query all shops without a predicate'

@@ -6,7 +6,6 @@ import com.ghostchu.quickshop.api.event.ShopInventoryCalculateEvent;
 import com.ghostchu.quickshop.api.event.ShopItemChangeEvent;
 import com.ghostchu.quickshop.api.shop.Shop;
 import com.ghostchu.quickshop.api.shop.ShopManager;
-import me.blvckbytes.bukkitevaluable.section.ItemStackSection;
 import me.blvckbytes.quick_shop_search.config.MainSection;
 import org.bukkit.Location;
 import org.bukkit.event.EventHandler;
@@ -20,17 +19,28 @@ import java.util.logging.Logger;
 
 public class CachedShopRegistry implements Listener {
 
-  private final ItemStackSection representativePatch;
   private final Map<Location, CachedShop> existingShopByLocation;
 
-  public CachedShopRegistry(Logger logger, ShopManager shopManager, MainSection mainSection) {
-    this.representativePatch = mainSection.resultDisplay.representativePatch;
+  private MainSection mainSection;
+
+  public CachedShopRegistry(Logger logger, ShopManager shopManager, ValuePusher<MainSection> configPusher) {
     this.existingShopByLocation = new HashMap<>();
+
+    this.mainSection = configPusher
+      .subscribeToUpdates(value -> {
+        this.mainSection = value;
+
+        synchronized (existingShopByLocation) {
+          for (var cachedShop : existingShopByLocation.values())
+            cachedShop.setConfig(value);
+        }
+      })
+      .get();
 
     logger.info("Getting all globally existing shops... This may take a while!");
 
     for (var shop : shopManager.getAllShops())
-      existingShopByLocation.put(shop.getLocation(), new CachedShop(shop, representativePatch));
+      existingShopByLocation.put(shop.getLocation(), new CachedShop(shop, mainSection));
 
     logger.info("Found " + existingShopByLocation.size() + " shops in total");
   }
@@ -50,7 +60,7 @@ public class CachedShopRegistry implements Listener {
   @EventHandler
   public void onShopCreate(ShopCreateSuccessEvent event) {
     synchronized (existingShopByLocation) {
-      existingShopByLocation.put(event.getShop().getLocation(), new CachedShop(event.getShop(), representativePatch));
+      existingShopByLocation.put(event.getShop().getLocation(), new CachedShop(event.getShop(), mainSection));
     }
   }
 

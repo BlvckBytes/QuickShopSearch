@@ -5,21 +5,24 @@ import me.blvckbytes.bukkitevaluable.IItemBuildable;
 import me.blvckbytes.bukkitevaluable.ItemBuilder;
 import me.blvckbytes.bukkitevaluable.section.ItemStackSection;
 import me.blvckbytes.gpeee.interpreter.EvaluationEnvironmentBuilder;
+import me.blvckbytes.quick_shop_search.config.MainSection;
 import org.bukkit.inventory.ItemStack;
 
 public class CachedShop {
 
   private final Shop shop;
-  private final ItemStackSection representativePatch;
+  private ItemStackSection representativePatch;
   private final EvaluationEnvironmentBuilder shopEnvironment;
 
   private IItemBuildable representativeBuildable;
   private int cachedStock;
   private int cachedSpace;
 
-  public CachedShop(Shop shop, ItemStackSection representativePatch) {
+  public CachedShop(Shop shop, MainSection mainSection) {
     this.shop = shop;
-    this.representativePatch = representativePatch;
+
+    setConfig(mainSection);
+
     this.representativeBuildable = makeBuildable(shop.getItem());
     this.cachedStock = shop.getRemainingStock();
     this.cachedSpace = shop.getRemainingSpace();
@@ -40,6 +43,11 @@ public class CachedShop {
       .withLiveVariable("loc_x", shopLocation::getBlockX)
       .withLiveVariable("loc_y", shopLocation::getBlockY)
       .withLiveVariable("loc_z", shopLocation::getBlockZ);
+  }
+
+  public void setConfig(MainSection mainSection) {
+    this.representativePatch = mainSection.resultDisplay.representativePatch;
+    this.representativeBuildable = makeBuildable(this.shop.getItem());
   }
 
   public Shop getShop() {

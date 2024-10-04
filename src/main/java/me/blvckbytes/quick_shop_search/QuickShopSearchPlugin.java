@@ -28,32 +28,35 @@ public class QuickShopSearchPlugin extends JavaPlugin {
 
     try {
       var configManager = new ConfigManager(this);
-      var configMapper = configManager.loadConfig("config.yml");
-      var mainSection = configMapper.mapSection(null, MainSection.class);
+      var configPusher = new ValuePusher<>(configManager.loadConfig("config.yml").mapSection(null, MainSection.class));
 
       var parserPlugin = ItemPredicateParserPlugin.getInstance();
 
       if (parserPlugin == null)
         throw new IllegalStateException("Depending on ItemPredicateParser to be successfully loaded");
 
-      logger.info("Using language " + mainSection.predicates.mainLanguage.assetFileNameWithoutExtension + " for predicate parsing");
+      logger.info("Using language " + configPusher.get().predicates.mainLanguage.assetFileNameWithoutExtension + " for predicate parsing");
 
       var quickShopApi = QuickShopAPI.getInstance();
-      var shopRegistry = new CachedShopRegistry(logger, quickShopApi.getShopManager(), mainSection);
+      var shopRegistry = new CachedShopRegistry(logger, quickShopApi.getShopManager(), configPusher);
 
       Bukkit.getPluginManager().registerEvents(shopRegistry, this);
 
       stateStore = new SelectionStateStore(this, logger);
-      displayHandler = new ResultDisplayHandler(this, mainSection, stateStore);
+      displayHandler = new ResultDisplayHandler(this, configPusher, stateStore);
 
       Bukkit.getPluginManager().registerEvents(displayHandler, this);
 
-      var commandExecutor = new QuickShopSearchCommand(this, parserPlugin.getPredicateHelper(), shopRegistry, mainSection, displayHandler);
+      var commandExecutor = new QuickShopSearchCommand(this, parserPlugin.getPredicateHelper(), shopRegistry, configPusher, displayHandler);
       var mainCommand = Objects.requireNonNull(getCommand(QuickShopSearchCommand.MAIN_COMMAND_NAME));
       var languageCommand = Objects.requireNonNull(getCommand(QuickShopSearchCommand.LANGUAGE_COMMAND_NAME));
 
       mainCommand.setExecutor(commandExecutor);
       languageCommand.setExecutor(commandExecutor);
+
+      Objects.requireNonNull(getCommand(ReloadCommand.RELOAD_COMMAND_NAME)).setExecutor(
+        new ReloadCommand(logger, configManager, configPusher)
+      );
     } catch (Exception e) {
       logger.log(Level.SEVERE, "Could not initialize plugin", e);
       Bukkit.getPluginManager().disablePlugin(this);
