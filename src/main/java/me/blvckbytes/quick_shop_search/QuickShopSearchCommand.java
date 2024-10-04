@@ -4,6 +4,7 @@ import me.blvckbytes.bukkitevaluable.BukkitEvaluable;
 import me.blvckbytes.bukkitevaluable.ConfigKeeper;
 import me.blvckbytes.item_predicate_parser.PredicateHelper;
 import me.blvckbytes.item_predicate_parser.parse.ItemPredicateParseException;
+import me.blvckbytes.item_predicate_parser.parse.NormalizedConstant;
 import me.blvckbytes.item_predicate_parser.predicate.ItemPredicate;
 import me.blvckbytes.item_predicate_parser.predicate.PredicateState;
 import me.blvckbytes.item_predicate_parser.translation.TranslationLanguage;
@@ -69,20 +70,14 @@ public class QuickShopSearchCommand implements CommandExecutor, TabCompleter {
           return;
         }
 
-        if (args.length == 0) {
-          if ((message = config.rootSection.playerMessages.missingLanguage) != null)
-            player.sendMessage(message.stringify(config.rootSection.getBaseEnvironment().build()));
+        NormalizedConstant<TranslationLanguage> matchedLanguage;
 
-          return;
-        }
-
-        var matchedLanguage = TranslationLanguage.matcher.matchFirst(args[0]);
-
-        if (matchedLanguage == null) {
-          if ((message = config.rootSection.playerMessages.unknownLanguageChat) != null) {
+        if (args.length == 0 || (matchedLanguage = TranslationLanguage.matcher.matchFirst(args[0])) == null) {
+          if ((message = config.rootSection.playerMessages.usageQsslCommandLanguage) != null) {
             player.sendMessage(message.stringify(
               config.rootSection.getBaseEnvironment()
-                .withStaticVariable("user_input", args[0])
+                .withStaticVariable("label", label)
+                .withStaticVariable("languages", TranslationLanguage.matcher.createCompletions(null))
                 .build()
             ));
           }

@@ -135,15 +135,15 @@ playerMessages:
   beforeQuerying$: 'lut["MESSAGE_PREFIX"] & "&7Querying &e" & number_shops & " Shops &7for &e" & predicate & "&7..."'
   # - number_shops: Integer
   queryingAllShops$: 'lut["MESSAGE_PREFIX"] & "&7Querying &eall &7(&e" & number_shops & "&7) Shops..."'
-  # - user_input: String
-  unknownLanguageChat$: 'lut["MESSAGE_PREFIX"] & "&7The input &c" & user_input & " &7does not resemble a known language."'
+  # - label: String
+  # - languages: Collection<String>
+  usageQsslCommandLanguage$: 'lut["MESSAGE_PREFIX"] & "&7Usage: /" & label & " <" & iter_cat(languages, (language) => "&e" & language, "&7, ") & "&7> [Predicate]"'
   # - user_input: String
   unknownLanguageActionBar$: '"&cUnknown language: &4" & user_input & "&c."'
   pluginReloadedSuccess$: 'lut["MESSAGE_PREFIX"] & "&7The plugin has been &ereloaded &7successfully."'
   pluginReloadedError$: 'lut["MESSAGE_PREFIX"] & "&cAn error occurred while trying to reload the plugin. Check the console!"'
   # - exception_message: String
   predicateParseError$: 'lut["MESSAGE_PREFIX"] & exception_message'
-  missingLanguage$: 'lut["MESSAGE_PREFIX"] & "&cPlease provide a known language as the first argument."'
   missingPermissionMainCommand$: 'lut["MESSAGE_PREFIX"] & "&cYou don''t have the permission to use the main command."'
   missingPermissionLanguageCommand$: 'lut["MESSAGE_PREFIX"] & "&cYou don''t have the permission to use the language command."'
   missingPermissionFeatureSort$: 'lut["MESSAGE_PREFIX"] & "&cYou don''t have the permission to use sorting."'

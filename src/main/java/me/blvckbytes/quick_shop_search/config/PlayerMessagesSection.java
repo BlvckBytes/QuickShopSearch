@@ -12,9 +12,8 @@ public class PlayerMessagesSection extends AConfigSection {
   public @Nullable BukkitEvaluable beforeQuerying;
   public @Nullable BukkitEvaluable beforeTeleporting;
   public @Nullable BukkitEvaluable queryingAllShops;
-  public @Nullable BukkitEvaluable unknownLanguageChat;
+  public @Nullable BukkitEvaluable usageQsslCommandLanguage;
   public @Nullable BukkitEvaluable unknownLanguageActionBar;
-  public @Nullable BukkitEvaluable missingLanguage;
   public @Nullable BukkitEvaluable pluginReloadedSuccess;
   public @Nullable BukkitEvaluable pluginReloadedError;
   public @Nullable BukkitEvaluable predicateParseError;
