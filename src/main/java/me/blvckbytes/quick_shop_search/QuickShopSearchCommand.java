@@ -235,7 +235,7 @@ public class QuickShopSearchCommand implements CommandExecutor, TabCompleter {
       var translationLanguageLower = translationLanguage.toLowerCase();
 
       for (var inputPart : inputParts) {
-        if (!translationLanguageLower.contains(inputPart))
+        if (!translationLanguageLower.contains(inputPart.toLowerCase()))
           continue languageLoop;
       }
 
