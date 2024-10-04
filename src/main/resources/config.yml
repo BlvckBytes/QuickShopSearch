@@ -47,6 +47,7 @@ resultDisplay:
   # - loc_x: Integer
   # - loc_y: Integer
   # - loc_z: Integer
+  # - distance: Integer
   # https://github.com/BlvckBytes/BukkitEvaluable#itemstack-section
   representativePatch:
     lore$:
@@ -56,6 +57,7 @@ resultDisplay:
       - '"&7Price: &d" & price & " " & (currency ?? "")'
       - '"&7Space: &d" & remaining_space'
       - '"&7Stock: &d" & remaining_stock'
+      - '"&7Distance: " & if distance < 0 then "&cDifferent World" else "&d" & distance & " Blocks"'
       - |
         color_code = (flag, value) => (if flag then "&a" else "&c") & value
         "&7Features: "
@@ -140,6 +142,7 @@ lut:
     SPACE_LEFT: 'Space Left'
     ITEM_TYPE: 'Item-Type'
     SHOP_TYPE: 'Shop-Type'
+    DISTANCE: 'Distance'
   filteringCriteria:
     IS_BUYING: 'Buying'
     IS_SELLING: 'Selling'

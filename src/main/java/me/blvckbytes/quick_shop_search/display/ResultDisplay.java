@@ -4,6 +4,7 @@ import me.blvckbytes.gpeee.interpreter.IEvaluationEnvironment;
 import me.blvckbytes.quick_shop_search.CachedShop;
 import me.blvckbytes.quick_shop_search.config.MainSection;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.plugin.Plugin;
@@ -13,7 +14,9 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-public class ResultDisplay {
+public class ResultDisplay implements ShopDistanceProvider {
+
+  private static final long SENTINEL_DISTANCE_UN_COMPUTABLE = -1;
 
   public static final int INVENTORY_N_ROWS = 6;
   public static final int BACKWARDS_SLOT_ID = 45;
@@ -39,10 +42,12 @@ public class ResultDisplay {
   private final MainSection mainSection;
 
   private final List<CachedShop> unfilteredShops;
+  private final Map<Long, Long> shopDistanceByShopId;
   private List<CachedShop> filteredUnSortedShops;
   private List<CachedShop> filteredSortedShops;
 
   public final Player player;
+  private final Location playerLocation;
   private final CachedShop[] slotMap;
   private int numberOfPages;
   public final SelectionState selectionState;
@@ -65,7 +70,9 @@ public class ResultDisplay {
     this.asyncQueue = new AsyncTaskQueue(plugin);
     this.mainSection = mainSection;
     this.player = player;
+    this.playerLocation = player.getLocation();
     this.unfilteredShops = shops;
+    this.shopDistanceByShopId = new HashMap<>();
     this.slotMap = new CachedShop[INVENTORY_N_ROWS * 9];
     this.selectionState = selectionState;
 
@@ -204,7 +211,7 @@ public class ResultDisplay {
 
   private void applySorting() {
     this.filteredSortedShops = new ArrayList<>(this.filteredUnSortedShops);
-    this.selectionState.applySort(this.filteredSortedShops);
+    this.selectionState.applySort(this, this.filteredSortedShops);
   }
 
   private void show() {
@@ -217,6 +224,28 @@ public class ResultDisplay {
     renderItems();
 
     Bukkit.getScheduler().runTask(plugin, () -> player.openInventory(inventory));
+  }
+
+  @Override
+  public long getShopDistance(CachedShop cachedShop) {
+    var shopId = cachedShop.getShop().getShopId();
+    var distance = shopDistanceByShopId.get(shopId);
+
+    if (distance == null) {
+      var shopLocation = cachedShop.getShop().getLocation();
+
+      if (shopLocation.getWorld() != playerLocation.getWorld())
+        distance = SENTINEL_DISTANCE_UN_COMPUTABLE;
+      else
+        distance = Math.round(playerLocation.distance(shopLocation));
+    }
+
+    else if (distance == SENTINEL_DISTANCE_UN_COMPUTABLE)
+      return -1;
+
+    shopDistanceByShopId.put(shopId, distance);
+
+    return distance;
   }
 
   private void renderItems() {
@@ -237,7 +266,11 @@ public class ResultDisplay {
       inventory.setItem(
         slot,
         cachedShop.getRepresentativeBuildable().build(
-          cachedShop.getShopEnvironment().build(pageEnvironment)
+          cachedShop
+            .getShopEnvironment()
+            .duplicate()
+            .withStaticVariable("distance", getShopDistance(cachedShop))
+            .build(pageEnvironment)
         )
       );
 

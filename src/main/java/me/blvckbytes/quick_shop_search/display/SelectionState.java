@@ -75,13 +75,13 @@ public class SelectionState {
     this.filteringSelections.put(this.selectedFilteringCriteria, currentState.next());
   }
 
-  public void applySort(List<CachedShop> items) {
+  public void applySort(ShopDistanceProvider distanceProvider, List<CachedShop> items) {
     items.sort((a, b) -> {
       for (var sortingSelection : sortingSelections) {
         if (sortingSelection.selection == SortingSelection.INACTIVE)
           continue;
 
-        var sortingResult = sortingSelection.criterion.compare(a, b);
+        int sortingResult = sortingSelection.criterion.compare(distanceProvider, a, b);
 
         if (sortingSelection.selection == SortingSelection.DESCENDING)
           sortingResult *= -1;

@@ -4,32 +4,28 @@ import me.blvckbytes.quick_shop_search.CachedShop;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.function.BiFunction;
 
 public enum ShopSortingCriteria {
 
-  PRICE((a, b) -> Double.compare(a.getShop().getPrice(), b.getShop().getPrice())),
-  OWNER_NAME((a, b) -> a.getShop().getOwner().getDisplay().compareTo(b.getShop().getOwner().getDisplay())),
-  STOCK_LEFT((a, b) -> Integer.compare(a.getCachedStock(), b.getCachedStock())),
-  SPACE_LEFT((a, b) -> Integer.compare(a.getCachedSpace(), b.getCachedSpace())),
-  ITEM_TYPE((a, b) -> a.getShop().getItem().getType().compareTo(b.getShop().getItem().getType())),
-  SHOP_TYPE((a, b) -> a.getShop().getShopType().compareTo(b.getShop().getShopType()))
+  PRICE((d, a, b) -> Double.compare(a.getShop().getPrice(), b.getShop().getPrice())),
+  OWNER_NAME((d, a, b) -> a.getShop().getOwner().getDisplay().compareTo(b.getShop().getOwner().getDisplay())),
+  STOCK_LEFT((d, a, b) -> Integer.compare(a.getCachedStock(), b.getCachedStock())),
+  SPACE_LEFT((d, a, b) -> Integer.compare(a.getCachedSpace(), b.getCachedSpace())),
+  ITEM_TYPE((d, a, b) -> a.getShop().getItem().getType().compareTo(b.getShop().getItem().getType())),
+  SHOP_TYPE((d, a, b) -> a.getShop().getShopType().compareTo(b.getShop().getShopType())),
+  DISTANCE((d, a, b) -> Long.compare(d.getShopDistance(a), d.getShopDistance(b)))
   ;
 
-  private final BiFunction<CachedShop, CachedShop, Integer> compare;
+  private final SortingFunction function;
 
   public static final List<ShopSortingCriteria> values = Arrays.stream(values()).toList();
 
-  ShopSortingCriteria(BiFunction<CachedShop, CachedShop, Integer> compare) {
-    this.compare = compare;
+  ShopSortingCriteria(SortingFunction function) {
+    this.function = function;
   }
 
-  public Integer compare(CachedShop a, CachedShop b) {
-    return compare.apply(a, b);
-  }
-
-  public ShopSortingCriteria next() {
-    return values.get((ordinal() + 1) % values.size());
+  public Integer compare(ShopDistanceProvider distanceProvider, CachedShop a, CachedShop b) {
+    return function.compare(distanceProvider, a, b);
   }
 
   public static ShopSortingCriteria byOrdinalOrFirst(int ordinal) {
