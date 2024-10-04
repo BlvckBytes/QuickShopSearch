@@ -1,6 +1,8 @@
 package me.blvckbytes.quick_shop_search.display;
 
+import me.blvckbytes.bukkitevaluable.BukkitEvaluable;
 import me.blvckbytes.quick_shop_search.CachedShop;
+import me.blvckbytes.quick_shop_search.PluginPermission;
 import me.blvckbytes.quick_shop_search.config.MainSection;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -11,11 +13,9 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.Plugin;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 public class ResultDisplayHandler implements Listener {
 
@@ -36,7 +36,7 @@ public class ResultDisplayHandler implements Listener {
     this.displayByPlayer = new HashMap<>();
   }
 
-  public void show(Player player, List<CachedShop> shops) {
+  public void show(Player player, Collection<CachedShop> shops) {
     displayByPlayer.put(player.getUniqueId(), new ResultDisplay(plugin, mainSection, player, shops, stateStore.loadState(player)));
   }
 
@@ -95,18 +95,33 @@ public class ResultDisplayHandler implements Listener {
       }
 
       if (slot == ResultDisplay.SORTING_SLOT_ID) {
-        display.nextSortingSelection();
+        ensurePermission(player, PluginPermission.FEATURE_SORT, mainSection.playerMessages.missingPermissionFeatureSort, display::nextSortingSelection);
         return;
       }
 
       if (slot == ResultDisplay.FILTERING_SLOT_ID) {
-        display.nextFilteringCriterion();
+        ensurePermission(player, PluginPermission.FEATURE_FILTER, mainSection.playerMessages.missingPermissionFeatureFilter, display::nextFilteringCriterion);
         return;
       }
 
       if (targetShop != null) {
-        player.teleport(targetShop.getShop().getLocation().clone().add(.5, 0, .5));
-        player.closeInventory();
+        var shopLocation = targetShop.getShop().getLocation();
+
+        if (shopLocation.getWorld() != player.getWorld()) {
+          ensurePermission(
+            player, PluginPermission.FEATURE_TELEPORT_OTHER_WORLD,
+            mainSection.playerMessages.missingPermissionFeatureTeleportOtherWorld,
+            () -> teleportPlayerToShop(player, display, targetShop)
+          );
+          return;
+        }
+
+        ensurePermission(
+          player, PluginPermission.FEATURE_TELEPORT,
+          mainSection.playerMessages.missingPermissionFeatureTeleport,
+          () -> teleportPlayerToShop(player, display, targetShop)
+        );
+        return;
       }
 
       return;
@@ -124,12 +139,12 @@ public class ResultDisplayHandler implements Listener {
       }
 
       if (slot == ResultDisplay.SORTING_SLOT_ID) {
-        display.nextSortingOrder();
+        ensurePermission(player, PluginPermission.FEATURE_SORT, mainSection.playerMessages.missingPermissionFeatureSort, display::nextSortingOrder);
         return;
       }
 
       if (slot == ResultDisplay.FILTERING_SLOT_ID) {
-        display.nextFilteringState();
+        ensurePermission(player, PluginPermission.FEATURE_FILTER, mainSection.playerMessages.missingPermissionFeatureFilter, display::nextFilteringState);
         return;
       }
 
@@ -141,8 +156,22 @@ public class ResultDisplayHandler implements Listener {
 
     if (clickType == ClickType.DROP) {
       if (slot == ResultDisplay.SORTING_SLOT_ID)
-        display.moveSortingSelectionDown();
+        ensurePermission(player, PluginPermission.FEATURE_SORT, mainSection.playerMessages.missingPermissionFeatureSort, display::moveSortingSelectionDown);
     }
+  }
+
+  private void teleportPlayerToShop(Player player, ResultDisplay display, CachedShop cachedShop) {
+    BukkitEvaluable message;
+
+    if ((message = mainSection.playerMessages.beforeTeleporting) != null) {
+      player.sendMessage(message.stringify(
+        mainSection.getBaseEnvironment().build(display.getDistanceExtendedShopEnvironment(cachedShop))
+      ));
+    }
+
+    // TODO: Implement safe teleport
+    player.teleport(cachedShop.getShop().getLocation().clone().add(.5, 0, .5));
+    player.closeInventory();
   }
 
   @EventHandler
@@ -163,5 +192,15 @@ public class ResultDisplayHandler implements Listener {
       displayIterator.next().getValue().cleanup(true);
       displayIterator.remove();
     }
+  }
+
+  private void ensurePermission(Player player, PluginPermission permission, @Nullable BukkitEvaluable missingMessage, Runnable handler) {
+    if (permission.has(player)) {
+      handler.run();
+      return;
+    }
+
+    if (missingMessage != null)
+      player.sendMessage(missingMessage.stringify(mainSection.getBaseEnvironment().build()));
   }
 }

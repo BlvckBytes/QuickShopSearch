@@ -12,6 +12,7 @@ import org.bukkit.Location;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -34,7 +35,7 @@ public class CachedShopRegistry implements Listener {
     logger.info("Found " + existingShopByLocation.size() + " shops in total");
   }
 
-  public Iterable<CachedShop> getExistingShops() {
+  public Collection<CachedShop> getExistingShops() {
     synchronized (existingShopByLocation) {
       return this.existingShopByLocation.values();
     }

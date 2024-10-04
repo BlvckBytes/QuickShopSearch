@@ -9,3 +9,25 @@ commands:
     aliases: 'qss'
   quickshopsearchlanguage:
     aliases: 'qssl'
+permissions:
+  quickshopsearch.command.qss:
+    description: 'Invoke the main command'
+    default: op
+  quickshopsearch.command.qssl:
+    description: 'Invoke the language command'
+    default: op
+  quickshopsearch.empty-predicate:
+    description: 'Query all shops without a predicate'
+    default: op
+  quickshopsearch.feature.sort:
+    description: 'Use the sorting feature'
+    default: op
+  quickshopsearch.feature.filter:
+    description: 'Use the filtering feature'
+    default: op
+  quickshopsearch.feature.teleport:
+    description: 'Teleport to shops within the same world'
+    default: op
+  quickshopsearch.feature.teleport.other-world:
+    description: 'Teleport to shops within another world'
+    default: op

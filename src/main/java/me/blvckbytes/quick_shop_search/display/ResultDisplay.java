@@ -41,7 +41,7 @@ public class ResultDisplay implements ShopDistanceProvider {
   private final AsyncTaskQueue asyncQueue;
   private final MainSection mainSection;
 
-  private final List<CachedShop> unfilteredShops;
+  private final Collection<CachedShop> unfilteredShops;
   private final Map<Long, Long> shopDistanceByShopId;
   private List<CachedShop> filteredUnSortedShops;
   private List<CachedShop> filteredSortedShops;
@@ -63,7 +63,7 @@ public class ResultDisplay implements ShopDistanceProvider {
     Plugin plugin,
     MainSection mainSection,
     Player player,
-    List<CachedShop> shops,
+    Collection<CachedShop> shops,
     SelectionState selectionState
   ) {
     this.plugin = plugin;
@@ -263,16 +263,9 @@ public class ResultDisplay implements ShopDistanceProvider {
 
       var cachedShop = filteredSortedShops.get(currentSlot);
 
-      inventory.setItem(
-        slot,
-        cachedShop.getRepresentativeBuildable().build(
-          cachedShop
-            .getShopEnvironment()
-            .duplicate()
-            .withStaticVariable("distance", getShopDistance(cachedShop))
-            .build(pageEnvironment)
-        )
-      );
+      inventory.setItem(slot, cachedShop.getRepresentativeBuildable().build(
+        getDistanceExtendedShopEnvironment(cachedShop)
+      ));
 
       slotMap[slot] = cachedShop;
     }
@@ -302,6 +295,14 @@ public class ResultDisplay implements ShopDistanceProvider {
       for (var fillerSlot : FILLER_SLOTS)
         inventory.setItem(fillerSlot, fillerItem);
     }
+  }
+
+  public IEvaluationEnvironment getDistanceExtendedShopEnvironment(CachedShop cachedShop) {
+    return cachedShop
+      .getShopEnvironment()
+      .duplicate()
+      .withStaticVariable("distance", getShopDistance(cachedShop))
+      .build(pageEnvironment);
   }
 
   private Inventory makeInventory() {

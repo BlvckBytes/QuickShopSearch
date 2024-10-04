@@ -19,18 +19,15 @@ public class SelectionState {
     }
   }
 
-  private final List<SortingCriterionSelection> sortingSelections;
+  private List<SortingCriterionSelection> sortingSelections;
   private int selectedSortingSelectionIndex;
 
-  private final Map<ShopFilteringCriteria, PredicateSelection> filteringSelections;
+  private Map<ShopFilteringCriteria, PredicateSelection> filteringSelections;
   private ShopFilteringCriteria selectedFilteringCriteria;
 
   public SelectionState() {
-    this.sortingSelections = makeDefaultSortingSelections();
-    this.selectedSortingSelectionIndex = 0;
-
-    this.filteringSelections = makeDefaultFilteringSelections();
-    this.selectedFilteringCriteria = ShopFilteringCriteria.values.get(0);
+    resetSorting();
+    resetFiltering();
   }
 
   private SelectionState(
@@ -43,6 +40,16 @@ public class SelectionState {
     this.selectedSortingSelectionIndex = selectedSortingSelectionIndex;
     this.filteringSelections = filteringSelections;
     this.selectedFilteringCriteria = selectedFilteringCriteria;
+  }
+
+  public void resetFiltering() {
+    this.filteringSelections = makeDefaultFilteringSelections();
+    this.selectedFilteringCriteria = ShopFilteringCriteria.values.get(0);
+  }
+
+  public void resetSorting() {
+    this.sortingSelections = makeDefaultSortingSelections();
+    this.selectedSortingSelectionIndex = 0;
   }
 
   public void nextSortingSelection() {
@@ -94,7 +101,7 @@ public class SelectionState {
     });
   }
 
-  public List<CachedShop> applyFilter(List<CachedShop> items) {
+  public List<CachedShop> applyFilter(Collection<CachedShop> items) {
     List<CachedShop> result = new ArrayList<>();
 
     for (var item : items) {

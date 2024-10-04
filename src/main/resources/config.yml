@@ -12,28 +12,28 @@
 # - current_page: Integer
 # - number_pages: Integer
 resultDisplay:
-  title$: '"&5Shop Search &d" & current_page & "&8/&d" & number_pages'
+  title$: '"&8Shop Search &e" & current_page & "&8/&e" & number_pages'
   # https://github.com/BlvckBytes/BukkitEvaluable#itemstack-section
   previousPage:
     type: PLAYER_HEAD
     textures$: 'lut["textures"][if current_page > 1 then "ARROW_LEFT" else "ARROW_LEFT_RED"]'
-    name$: '"&8» " & (if current_page > 1 then "&dPrevious Page" else "&cNo Previous Page") & " &8«"'
+    name$: '"&8» " & (if current_page > 1 then "&6Previous Page" else "&cNo Previous Page") & " &8«"'
     lore$:
       - '" "'
       - '"&8&m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"'
-      - '"&8➥ &dLeft-Click &7Navigate to previous page"'
-      - '"&8➥ &dRight-Click &7Jump to very first page"'
+      - '"&8➥ &eLeft-Click &7Navigate to previous page"'
+      - '"&8➥ &eRight-Click &7Jump to very first page"'
       - '"&8&m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"'
   # https://github.com/BlvckBytes/BukkitEvaluable#itemstack-section
   nextPage:
     type: PLAYER_HEAD
     textures$: 'lut["textures"][if current_page < number_pages then "ARROW_RIGHT" else "ARROW_RIGHT_RED"]'
-    name$: '"&8» " & (if current_page < number_pages then "&dNext Page" else "&cNo Next Page") & " &8«"'
+    name$: '"&8» " & (if current_page < number_pages then "&6Next Page" else "&cNo Next Page") & " &8«"'
     lore$:
       - '" "'
       - '"&8&m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"'
-      - '"&8➥ &dLeft-Click &7Navigate to next page"'
-      - '"&8➥ &dRight-Click &7Jump to very last page"'
+      - '"&8➥ &eLeft-Click &7Navigate to next page"'
+      - '"&8➥ &eRight-Click &7Jump to very last page"'
       - '"&8&m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"'
   # - owner: String
   # - price: Double
@@ -53,59 +53,60 @@ resultDisplay:
     lore$:
       - '" "'
       - '"&8&m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"'
-      - '"&7Owner: &d" & owner'
-      - '"&7Price: &d" & price & " " & (currency ?? "")'
-      - '"&7Space: &d" & remaining_space'
-      - '"&7Stock: &d" & remaining_stock'
-      - '"&7Distance: " & if distance < 0 then "&cDifferent World" else "&d" & distance & " Blocks"'
+      - '"&8♦ &7Owner: &e" & owner'
+      - '"&8♦ &7Price: &e" & price & " " & (currency ?? "")'
+      - '"&8♦ &7Space: &e" & remaining_space'
+      - '"&8♦ &7Stock: &e" & remaining_stock'
+      - '"&8♦ &7Coordinates: &e" & loc_x & "&7, &e" & loc_y & "&7, &e" & loc_z'
+      - '"&8♦ &7Distance: " & if distance < 0 then "&cDifferent World" else "&e" & distance & " Blocks"'
       - |
         color_code = (flag, value) => (if flag then "&a" else "&c") & value
-        "&7Features: "
+        "&8♦ &7Features: "
           & color_code(is_buying, "buying")
           & "&7, " & color_code(is_selling, "selling")
           & "&7, " & color_code(is_unlimited, "unlimited")
       - '"&8&m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"'
-      - '"&8➥ &dLeft-Click &7Teleport to the shop"'
-      - '"&8➥ &dRight-Click &7Open preview"'
+      - '"&8➥ &eLeft-Click &7Teleport to the shop"'
+      - '"&8➥ &eRight-Click &7Open preview"'
       - '"&8&m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"'
   # - sorting_selections: Iterable<SortingCriterionSelection>
   # - selected_index: Integer
   # https://github.com/BlvckBytes/BukkitEvaluable#itemstack-section
   sorting:
     type: COMPARATOR
-    name: "&8» &dSorting &8«"
+    name: "&8» &6Sorting &8«"
     lore$:
       - '" "'
       - '"&8&m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"'
       - |
         map(sorting_selections, (entry, entry_index) => (
-          (if entry_index == selected_index then "&d" else "&8") & "➥ "
+          (if entry_index == selected_index then "&e" else "&8") & "➥ "
           & (lut["sortingSelectionStyle"][str(entry.selection)] ?? "Style Missing")
           & (lut["sortingCriteria"][str(entry.criterion)] ?? "Criteria Missing")
         ))
       - '"&8&m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"'
-      - '"&8➥ &dLeft-Click &7Cycle through criteria"'
-      - '"&8➥ &dRight-Click &7Toggle order"'
-      - '"&8➥ &dDrop &7Move criterion down"'
+      - '"&8➥ &eLeft-Click &7Cycle through criteria"'
+      - '"&8➥ &eRight-Click &7Toggle order"'
+      - '"&8➥ &eDrop &7Move criterion down"'
       - '"&8&m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"'
   # - filtering_selections: Map<ShopFilteringCriteria, PredicateSelection>
   # - selected_criteria: ShopFilteringCriteria
   # https://github.com/BlvckBytes/BukkitEvaluable#itemstack-section
   filtering:
     type: HOPPER
-    name: "&8» &dFiltering &8«"
+    name: "&8» &6Filtering &8«"
     lore$:
       - '" "'
       - '"&8&m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"'
       - |
         map(filtering_selections, (entry) => (
-          (if key(entry) == selected_criteria then "&d" else "&8") & "➥ "
+          (if key(entry) == selected_criteria then "&e" else "&8") & "➥ "
           & (lut["predicateSelectionStyle"][str(value(entry))] ?? "Style Missing")
           & (lut["filteringCriteria"][str(key(entry))] ?? "Criteria Missing")
         ))
       - '"&8&m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"'
-      - '"&8➥ &dLeft-Click &7Cycle through criteria"'
-      - '"&8➥ &dRight-Click &7Toggle state"'
+      - '"&8➥ &eLeft-Click &7Cycle through criteria"'
+      - '"&8➥ &eRight-Click &7Toggle state"'
       - '"&8&m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"'
   # https://github.com/BlvckBytes/BukkitEvaluable#itemstack-section
   filler:
@@ -113,16 +114,38 @@ resultDisplay:
     name: " "
 
 playerMessages:
-  emptyPredicate$: 'lut["MESSAGE_PREFIX"] & "&cPlease provide a non-empty predicate"'
-  noMatches$: 'lut["MESSAGE_PREFIX"] & "&cYour query resulted in zero matches"'
+  emptyPredicate$: 'lut["MESSAGE_PREFIX"] & "&cPlease provide a non-empty predicate."'
+  noMatches$: 'lut["MESSAGE_PREFIX"] & "&cYour query resulted in zero matches."'
+  # - owner: String
+  # - price: Double
+  # - currency: String?
+  # - remaining_stock: Integer
+  # - remaining_space: Integer
+  # - is_selling: Boolean
+  # - is_buying: Boolean
+  # - is_unlimited: Boolean
+  # - loc_world: String?
+  # - loc_x: Integer
+  # - loc_y: Integer
+  # - loc_z: Integer
+  # - distance: Integer
+  beforeTeleporting$: 'lut["MESSAGE_PREFIX"] & "&7Teleporting to the Shop of &e" & owner & " &7at &e" & loc_x & "&7, &e" & loc_y & "&7, &e" & loc_z & "&7."'
   # - number_shops: Integer
   # - predicate: String
-  beforeQuerying$: 'lut["MESSAGE_PREFIX"] & "&7Querying &e" & number_shops & " Shops &7for &e" & predicate'
+  beforeQuerying$: 'lut["MESSAGE_PREFIX"] & "&7Querying &e" & number_shops & " Shops &7for &e" & predicate & "&7..."'
+  # - number_shops: Integer
+  queryingAllShops$: 'lut["MESSAGE_PREFIX"] & "&7Querying &eall &7(&e" & number_shops & "&7) Shops..."'
   # - user_input: String
   unknownLanguageChat$: 'lut["MESSAGE_PREFIX"] & "&7The input &c" & user_input & " &7does not resemble a known language."'
   # - user_input: String
-  unknownLanguageActionBar$: '"&cUnknown language: &4" & user_input'
+  unknownLanguageActionBar$: '"&cUnknown language: &4" & user_input & "&c."'
   missingLanguage$: 'lut["MESSAGE_PREFIX"] & "&cPlease provide a known language as the first argument."'
+  missingPermissionMainCommand$: 'lut["MESSAGE_PREFIX"] & "&cYou lack the permission to use the main command."'
+  missingPermissionLanguageCommand$: 'lut["MESSAGE_PREFIX"] & "&cYou lack the permission to use the language command."'
+  missingPermissionFeatureSort$: 'lut["MESSAGE_PREFIX"] & "&cYou lack the permission to use sorting."'
+  missingPermissionFeatureFilter$: 'lut["MESSAGE_PREFIX"] & "&cYou lack the permission to use filtering."'
+  missingPermissionFeatureTeleport$: 'lut["MESSAGE_PREFIX"] & "&cYou lack the permission to use teleportation."'
+  missingPermissionFeatureTeleportOtherWorld$: 'lut["MESSAGE_PREFIX"] & "&cYou lack the permission to teleport to other worlds."'
 
 predicates:
   mainLanguage: ENGLISH_US

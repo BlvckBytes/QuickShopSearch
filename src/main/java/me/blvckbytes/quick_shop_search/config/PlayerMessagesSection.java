@@ -10,9 +10,18 @@ public class PlayerMessagesSection extends AConfigSection {
   public @Nullable BukkitEvaluable emptyPredicate;
   public @Nullable BukkitEvaluable noMatches;
   public @Nullable BukkitEvaluable beforeQuerying;
+  public @Nullable BukkitEvaluable beforeTeleporting;
+  public @Nullable BukkitEvaluable queryingAllShops;
   public @Nullable BukkitEvaluable unknownLanguageChat;
   public @Nullable BukkitEvaluable unknownLanguageActionBar;
   public @Nullable BukkitEvaluable missingLanguage;
+
+  public @Nullable BukkitEvaluable missingPermissionMainCommand;
+  public @Nullable BukkitEvaluable missingPermissionLanguageCommand;
+  public @Nullable BukkitEvaluable missingPermissionFeatureSort;
+  public @Nullable BukkitEvaluable missingPermissionFeatureFilter;
+  public @Nullable BukkitEvaluable missingPermissionFeatureTeleport;
+  public @Nullable BukkitEvaluable missingPermissionFeatureTeleportOtherWorld;
 
   public PlayerMessagesSection(EvaluationEnvironmentBuilder baseEnvironment) {
     super(baseEnvironment);

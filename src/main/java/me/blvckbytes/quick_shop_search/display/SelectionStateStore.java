@@ -3,6 +3,7 @@ package me.blvckbytes.quick_shop_search.display;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
+import me.blvckbytes.quick_shop_search.PluginPermission;
 import org.apache.commons.io.FileUtils;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -39,7 +40,23 @@ public class SelectionStateStore {
   }
 
   public SelectionState loadState(Player player) {
-    return this.states.computeIfAbsent(player.getUniqueId(), k -> new SelectionState());
+    var result = this.states.get(player.getUniqueId());
+
+    if (result == null) {
+      result = new SelectionState();
+      this.states.put(player.getUniqueId(), result);
+      return result;
+    }
+
+    // Make sure that the player's not stuck with any unchangeable sorting- or filtering-setup
+
+    if (!PluginPermission.FEATURE_SORT.has(player))
+      result.resetSorting();
+
+    if (!PluginPermission.FEATURE_FILTER.has(player))
+      result.resetFiltering();
+
+    return result;
   }
 
   public void onShutdown() throws Exception {
