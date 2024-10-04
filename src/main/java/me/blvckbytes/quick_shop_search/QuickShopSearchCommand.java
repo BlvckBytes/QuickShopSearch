@@ -76,9 +76,9 @@ public class QuickShopSearchCommand implements CommandExecutor, TabCompleter {
           return;
         }
 
-        language = TranslationLanguage.matchFirst(args[0]);
+        var matchedLanguage = TranslationLanguage.matcher.matchFirst(args[0]);
 
-        if (language == null) {
+        if (matchedLanguage == null) {
           if ((message = config.rootSection.playerMessages.unknownLanguageChat) != null) {
             player.sendMessage(message.stringify(
               config.rootSection.getBaseEnvironment()
@@ -90,6 +90,7 @@ public class QuickShopSearchCommand implements CommandExecutor, TabCompleter {
           return;
         }
 
+        language = matchedLanguage.constant;
         argsOffset = 1;
       }
 
@@ -175,11 +176,11 @@ public class QuickShopSearchCommand implements CommandExecutor, TabCompleter {
       argsOffset = 1;
 
       if (args.length == 1)
-        return TranslationLanguage.createCompletions(args[0]);
+        return TranslationLanguage.matcher.createCompletions(args[0]);
 
-      language = TranslationLanguage.matchFirst(args[0]);
+      var matchedLanguage = TranslationLanguage.matcher.matchFirst(args[0]);
 
-      if (language == null) {
+      if (matchedLanguage == null) {
         if ((message = config.rootSection.playerMessages.unknownLanguageActionBar) != null) {
           showActionBarMessage(player, message.stringify(
             config.rootSection.getBaseEnvironment()
@@ -190,6 +191,8 @@ public class QuickShopSearchCommand implements CommandExecutor, TabCompleter {
 
         return List.of();
       }
+
+      language = matchedLanguage.constant;
     }
 
     if (!PluginPermission.MAIN_COMMAND.has(player))
