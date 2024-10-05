@@ -1,6 +1,6 @@
 name: QuickShopSearch
 main: me.blvckbytes.quick_shop_search.QuickShopSearchPlugin
-version: ${project.version}
+version: '${project.version}'
 author: BlvckBytes
 api-version: 1.13
 depend: [QuickShop-Hikari, ItemPredicateParser]
