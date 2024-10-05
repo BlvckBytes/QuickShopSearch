@@ -7,6 +7,7 @@ import me.blvckbytes.item_predicate_parser.parse.ItemPredicateParseException;
 import me.blvckbytes.item_predicate_parser.parse.NormalizedConstant;
 import me.blvckbytes.item_predicate_parser.predicate.ItemPredicate;
 import me.blvckbytes.item_predicate_parser.predicate.PredicateState;
+import me.blvckbytes.item_predicate_parser.predicate.StringifyState;
 import me.blvckbytes.item_predicate_parser.translation.TranslationLanguage;
 import me.blvckbytes.quick_shop_search.config.MainSection;
 import me.blvckbytes.quick_shop_search.display.ResultDisplayHandler;
@@ -136,7 +137,7 @@ public class QuickShopSearchCommand implements CommandExecutor, TabCompleter {
         player.sendMessage(message.stringify(
           config.rootSection.getBaseEnvironment()
             .withLiveVariable("number_shops", shopRegistry::getNumberOfExistingShops)
-            .withStaticVariable("predicate", predicate.stringify(true))
+            .withStaticVariable("predicate", new StringifyState(true).appendPredicate(predicate).toString())
             .build()
         ));
       }
