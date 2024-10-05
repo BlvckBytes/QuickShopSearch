@@ -144,13 +144,8 @@ playerMessages:
   pluginReloadedError$: 'lut["MESSAGE_PREFIX"] & "&cAn error occurred while trying to reload the plugin. Check the console!"'
   # - exception_message: String
   predicateParseError$: 'lut["MESSAGE_PREFIX"] & exception_message'
-  missingPermissionMainCommand$: 'lut["MESSAGE_PREFIX"] & "&cYou don''t have the permission to use the main command."'
-  missingPermissionLanguageCommand$: 'lut["MESSAGE_PREFIX"] & "&cYou don''t have the permission to use the language command."'
-  missingPermissionFeatureSort$: 'lut["MESSAGE_PREFIX"] & "&cYou don''t have the permission to use sorting."'
-  missingPermissionFeatureFilter$: 'lut["MESSAGE_PREFIX"] & "&cYou don''t have the permission to use filtering."'
-  missingPermissionFeatureTeleport$: 'lut["MESSAGE_PREFIX"] & "&cYou don''t have the permission to use teleportation."'
-  missingPermissionFeatureTeleportOtherWorld$: 'lut["MESSAGE_PREFIX"] & "&cYou don''t have the permission to teleport to other worlds."'
-  missingPermissionReload$: 'lut["MESSAGE_PREFIX"] & "&cYou don''t have the permission to reload the plugin."'
+  missingPermission$: 'lut["MESSAGE_PREFIX"] & "&cYou do not have permission to do that."'
+
 
 predicates:
   mainLanguage: ENGLISH_US

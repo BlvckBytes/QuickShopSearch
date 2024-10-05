@@ -112,12 +112,12 @@ public class ResultDisplayHandler implements Listener {
       }
 
       if (slot == ResultDisplay.SORTING_SLOT_ID) {
-        ensurePermission(player, PluginPermission.FEATURE_SORT, config.rootSection.playerMessages.missingPermissionFeatureSort, display::nextSortingSelection);
+        ensurePermission(player, PluginPermission.FEATURE_SORT, config.rootSection.playerMessages.missingPermission, display::nextSortingSelection);
         return;
       }
 
       if (slot == ResultDisplay.FILTERING_SLOT_ID) {
-        ensurePermission(player, PluginPermission.FEATURE_FILTER, config.rootSection.playerMessages.missingPermissionFeatureFilter, display::nextFilteringCriterion);
+        ensurePermission(player, PluginPermission.FEATURE_FILTER, config.rootSection.playerMessages.missingPermission, display::nextFilteringCriterion);
         return;
       }
 
@@ -127,7 +127,7 @@ public class ResultDisplayHandler implements Listener {
         if (shopLocation.getWorld() != player.getWorld()) {
           ensurePermission(
             player, PluginPermission.FEATURE_TELEPORT_OTHER_WORLD,
-            config.rootSection.playerMessages.missingPermissionFeatureTeleportOtherWorld,
+            config.rootSection.playerMessages.missingPermission,
             () -> teleportPlayerToShop(player, display, targetShop)
           );
           return;
@@ -135,7 +135,7 @@ public class ResultDisplayHandler implements Listener {
 
         ensurePermission(
           player, PluginPermission.FEATURE_TELEPORT,
-          config.rootSection.playerMessages.missingPermissionFeatureTeleport,
+          config.rootSection.playerMessages.missingPermission,
           () -> teleportPlayerToShop(player, display, targetShop)
         );
         return;

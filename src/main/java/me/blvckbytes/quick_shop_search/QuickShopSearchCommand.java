@@ -64,7 +64,7 @@ public class QuickShopSearchCommand implements CommandExecutor, TabCompleter {
 
       if (command.getName().equals(LANGUAGE_COMMAND_NAME)) {
         if (!PluginPermission.LANGUAGE_COMMAND.has(player)) {
-          if ((message = config.rootSection.playerMessages.missingPermissionLanguageCommand) != null)
+          if ((message = config.rootSection.playerMessages.missingPermission) != null)
             player.sendMessage(message.stringify(config.rootSection.getBaseEnvironment().build()));
 
           return;
@@ -90,7 +90,7 @@ public class QuickShopSearchCommand implements CommandExecutor, TabCompleter {
       }
 
       if (!PluginPermission.MAIN_COMMAND.has(player)) {
-        if ((message = config.rootSection.playerMessages.missingPermissionMainCommand) != null)
+        if ((message = config.rootSection.playerMessages.missingPermission) != null)
           player.sendMessage(message.stringify(config.rootSection.getBaseEnvironment().build()));
 
         return;
