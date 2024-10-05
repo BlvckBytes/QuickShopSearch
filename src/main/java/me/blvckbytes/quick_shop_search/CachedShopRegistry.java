@@ -8,22 +8,25 @@ import com.ghostchu.quickshop.api.shop.Shop;
 import com.ghostchu.quickshop.api.shop.ShopManager;
 import me.blvckbytes.bukkitevaluable.ConfigKeeper;
 import me.blvckbytes.quick_shop_search.config.MainSection;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.plugin.Plugin;
 
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
-import java.util.logging.Logger;
 
 public class CachedShopRegistry implements Listener {
 
+  private final Plugin plugin;
   private final Map<Location, CachedShop> existingShopByLocation;
   private final ConfigKeeper<MainSection> config;
 
-  public CachedShopRegistry(Logger logger, ShopManager shopManager, ConfigKeeper<MainSection> config) {
+  public CachedShopRegistry(Plugin plugin, ShopManager shopManager, ConfigKeeper<MainSection> config) {
+    this.plugin = plugin;
     this.config = config;
     this.existingShopByLocation = new HashMap<>();
 
@@ -34,12 +37,12 @@ public class CachedShopRegistry implements Listener {
       }
     });
 
-    logger.info("Getting all globally existing shops... This may take a while!");
+    plugin.getLogger().info("Getting all globally existing shops... This may take a while!");
 
     for (var shop : shopManager.getAllShops())
       existingShopByLocation.put(shop.getLocation(), new CachedShop(shop, config));
 
-    logger.info("Found " + existingShopByLocation.size() + " shops in total");
+    plugin.getLogger().info("Found " + existingShopByLocation.size() + " shops in total");
   }
 
   public Collection<CachedShop> getExistingShops() {
@@ -56,9 +59,11 @@ public class CachedShopRegistry implements Listener {
 
   @EventHandler
   public void onShopCreate(ShopCreateSuccessEvent event) {
-    synchronized (existingShopByLocation) {
-      existingShopByLocation.put(event.getShop().getLocation(), new CachedShop(event.getShop(), config));
-    }
+    Bukkit.getScheduler().runTask(plugin, () -> {
+      synchronized (existingShopByLocation) {
+        existingShopByLocation.put(event.getShop().getLocation(), new CachedShop(event.getShop(), config));
+      }
+    });
   }
 
   @EventHandler
