@@ -6,7 +6,7 @@
 
     <groupId>me.blvckbytes</groupId>
     <artifactId>QuickShopSearch</artifactId>
-    <version>0.0.8</version>
+    <version>0.0.9</version>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
