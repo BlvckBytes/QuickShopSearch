@@ -114,7 +114,8 @@ public class QuickShopSearchCommand implements CommandExecutor, TabCompleter {
       }
 
       if (predicate == null) {
-        if (PluginPermission.EMPTY_PREDICATE.has(player)) {
+        // Empty predicates on a command which requires specifying the desired language explicitly seem odd...
+        if (argsOffset == 0 && PluginPermission.EMPTY_PREDICATE.has(player)) {
           if ((message = config.rootSection.playerMessages.queryingAllShops) != null) {
             player.sendMessage(message.stringify(
               config.rootSection.getBaseEnvironment()
