@@ -156,12 +156,12 @@ public class ResultDisplayHandler implements Listener {
       }
 
       if (slot == ResultDisplay.SORTING_SLOT_ID) {
-        ensurePermission(player, PluginPermission.FEATURE_SORT, config.rootSection.playerMessages.missingPermissionFeatureSort, display::nextSortingOrder);
+        ensurePermission(player, PluginPermission.FEATURE_SORT, config.rootSection.playerMessages.missingPermission, display::nextSortingOrder);
         return;
       }
 
       if (slot == ResultDisplay.FILTERING_SLOT_ID) {
-        ensurePermission(player, PluginPermission.FEATURE_FILTER, config.rootSection.playerMessages.missingPermissionFeatureFilter, display::nextFilteringState);
+        ensurePermission(player, PluginPermission.FEATURE_FILTER, config.rootSection.playerMessages.missingPermission, display::nextFilteringState);
         return;
       }
 
@@ -173,7 +173,7 @@ public class ResultDisplayHandler implements Listener {
 
     if (clickType == ClickType.DROP) {
       if (slot == ResultDisplay.SORTING_SLOT_ID)
-        ensurePermission(player, PluginPermission.FEATURE_SORT, config.rootSection.playerMessages.missingPermissionFeatureSort, display::moveSortingSelectionDown);
+        ensurePermission(player, PluginPermission.FEATURE_SORT, config.rootSection.playerMessages.missingPermission, display::moveSortingSelectionDown);
     }
   }
 
