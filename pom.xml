@@ -20,6 +20,10 @@
             <id>codemc</id>
             <url>https://repo.codemc.io/repository/maven-public/</url>
         </repository>
+        <repository>
+            <id>spigot-repo</id>
+            <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -49,7 +53,7 @@
         </dependency>
         <dependency>
             <groupId>org.spigotmc</groupId>
-            <artifactId>spigot</artifactId>
+            <artifactId>spigot-api</artifactId>
             <version>1.18.2-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
@@ -62,6 +66,11 @@
             <groupId>org.jetbrains</groupId>
             <artifactId>annotations</artifactId>
             <version>24.1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.yaml</groupId>
+            <artifactId>snakeyaml</artifactId>
+            <version>2.3</version>
         </dependency>
     </dependencies>
 
@@ -106,7 +115,7 @@
                     <relocations>
                         <!-- Relocate all libs into the root package -->
                         <relocation>
-                            <pattern>me/blvckbytes/(bbconfigmapper|bukkit-evaluable|GPEEE)/(.*)</pattern>
+                            <pattern>me/blvckbytes/(bbconfigmapper|bukkitevaluable|gpeee)/(.*)</pattern>
                             <shadedPattern>me/blvckbytes/quick_shop_search/$1/$2</shadedPattern>
                             <rawString>true</rawString>
                         </relocation>
@@ -114,7 +123,7 @@
                         <!-- See [1] -->
                         <relocation>
                             <pattern>org/yaml/snakeyaml/(.*)</pattern>
-                            <shadedPattern>me/blvckbytes/org/yaml/snakeyaml/$1</shadedPattern>
+                            <shadedPattern>me/blvckbytes/quick_shop_search/org/yaml/snakeyaml/$1</shadedPattern>
                             <rawString>true</rawString>
                         </relocation>
                     </relocations>
