@@ -112,12 +112,12 @@ public class ResultDisplayHandler implements Listener {
       }
 
       if (slot == ResultDisplay.SORTING_SLOT_ID) {
-        ensurePermission(player, PluginPermission.FEATURE_SORT, config.rootSection.playerMessages.missingPermission, display::nextSortingSelection);
+        ensurePermission(player, PluginPermission.FEATURE_SORT, config.rootSection.playerMessages.missingPermissionFeatureSort, display::nextSortingSelection);
         return;
       }
 
       if (slot == ResultDisplay.FILTERING_SLOT_ID) {
-        ensurePermission(player, PluginPermission.FEATURE_FILTER, config.rootSection.playerMessages.missingPermission, display::nextFilteringCriterion);
+        ensurePermission(player, PluginPermission.FEATURE_FILTER, config.rootSection.playerMessages.missingPermissionFeatureFilter, display::nextFilteringCriterion);
         return;
       }
 
@@ -127,7 +127,7 @@ public class ResultDisplayHandler implements Listener {
         if (shopLocation.getWorld() != player.getWorld()) {
           ensurePermission(
             player, PluginPermission.FEATURE_TELEPORT_OTHER_WORLD,
-            config.rootSection.playerMessages.missingPermission,
+            config.rootSection.playerMessages.missingPermissionFeatureTeleportOtherWorld,
             () -> teleportPlayerToShop(player, display, targetShop)
           );
           return;
@@ -135,7 +135,7 @@ public class ResultDisplayHandler implements Listener {
 
         ensurePermission(
           player, PluginPermission.FEATURE_TELEPORT,
-          config.rootSection.playerMessages.missingPermission,
+          config.rootSection.playerMessages.missingPermissionFeatureTeleport,
           () -> teleportPlayerToShop(player, display, targetShop)
         );
         return;
@@ -156,12 +156,12 @@ public class ResultDisplayHandler implements Listener {
       }
 
       if (slot == ResultDisplay.SORTING_SLOT_ID) {
-        ensurePermission(player, PluginPermission.FEATURE_SORT, config.rootSection.playerMessages.missingPermission, display::nextSortingOrder);
+        ensurePermission(player, PluginPermission.FEATURE_SORT, config.rootSection.playerMessages.missingPermissionFeatureSort, display::nextSortingOrder);
         return;
       }
 
       if (slot == ResultDisplay.FILTERING_SLOT_ID) {
-        ensurePermission(player, PluginPermission.FEATURE_FILTER, config.rootSection.playerMessages.missingPermission, display::nextFilteringState);
+        ensurePermission(player, PluginPermission.FEATURE_FILTER, config.rootSection.playerMessages.missingPermissionFeatureFilter, display::nextFilteringState);
         return;
       }
 
@@ -173,7 +173,7 @@ public class ResultDisplayHandler implements Listener {
 
     if (clickType == ClickType.DROP) {
       if (slot == ResultDisplay.SORTING_SLOT_ID)
-        ensurePermission(player, PluginPermission.FEATURE_SORT, config.rootSection.playerMessages.missingPermission, display::moveSortingSelectionDown);
+        ensurePermission(player, PluginPermission.FEATURE_SORT, config.rootSection.playerMessages.missingPermissionFeatureSort, display::moveSortingSelectionDown);
     }
   }
 
