@@ -20,10 +20,10 @@ resultDisplay:
     name$: '"&8» " & (if current_page > 1 then "&6Previous Page" else "&cNo Previous Page") & " &8«"'
     lore$:
       - '" "'
-      - '"&8&m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"'
+      - '"&8&m                                                  "'
       - '"&8➥ &eLeft-Click &7Navigate to previous page"'
       - '"&8➥ &eRight-Click &7Jump to very first page"'
-      - '"&8&m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"'
+      - '"&8&m                                                  "'
   # https://github.com/BlvckBytes/BukkitEvaluable#itemstack-section
   nextPage:
     type: PLAYER_HEAD
@@ -31,10 +31,10 @@ resultDisplay:
     name$: '"&8» " & (if current_page < number_pages then "&6Next Page" else "&cNo Next Page") & " &8«"'
     lore$:
       - '" "'
-      - '"&8&m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"'
+      - '"&8&m                                                  "'
       - '"&8➥ &eLeft-Click &7Navigate to next page"'
       - '"&8➥ &eRight-Click &7Jump to very last page"'
-      - '"&8&m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"'
+      - '"&8&m                                                  "'
   # - owner: String
   # - price: Double
   # - currency: String?
@@ -52,7 +52,7 @@ resultDisplay:
   representativePatch:
     lore$:
       - '" "'
-      - '"&8&m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"'
+      - '"&8&m                                                  "'
       - '"&8♦ &7Owner: &e" & owner'
       - '"&8♦ &7Price: &e" & price & " " & (currency ?? "")'
       - '"&8♦ &7Space: &e" & remaining_space'
@@ -65,10 +65,10 @@ resultDisplay:
           & color_code(is_buying, "buying")
           & "&7, " & color_code(is_selling, "selling")
           & "&7, " & color_code(is_unlimited, "unlimited")
-      - '"&8&m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"'
+      - '"&8&m                                                  "'
       - '"&8➥ &eLeft-Click &7Teleport to the shop"'
       - '"&8➥ &eRight-Click &7Open preview"'
-      - '"&8&m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"'
+      - '"&8&m                                                  "'
   # - sorting_selections: Iterable<SortingCriterionSelection>
   # - selected_index: Integer
   # https://github.com/BlvckBytes/BukkitEvaluable#itemstack-section
@@ -77,18 +77,18 @@ resultDisplay:
     name: "&8» &6Sorting &8«"
     lore$:
       - '" "'
-      - '"&8&m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"'
+      - '"&8&m                                                  "'
       - |
         map(sorting_selections, (entry, entry_index) => (
           (if entry_index == selected_index then "&e" else "&8") & "➥ "
           & (lut["sortingSelectionStyle"][str(entry.selection)] ?? "Style Missing")
           & (lut["sortingCriteria"][str(entry.criterion)] ?? "Criteria Missing")
         ))
-      - '"&8&m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"'
+      - '"&8&m                                                  "'
       - '"&8➥ &eLeft-Click &7Cycle through criteria"'
       - '"&8➥ &eRight-Click &7Toggle order"'
       - '"&8➥ &eDrop &7Move criterion down"'
-      - '"&8&m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"'
+      - '"&8&m                                                  "'
   # - filtering_selections: Map<ShopFilteringCriteria, PredicateSelection>
   # - selected_criteria: ShopFilteringCriteria
   # https://github.com/BlvckBytes/BukkitEvaluable#itemstack-section
@@ -97,17 +97,17 @@ resultDisplay:
     name: "&8» &6Filtering &8«"
     lore$:
       - '" "'
-      - '"&8&m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"'
+      - '"&8&m                                                  "'
       - |
         map(filtering_selections, (entry) => (
           (if key(entry) == selected_criteria then "&e" else "&8") & "➥ "
           & (lut["predicateSelectionStyle"][str(value(entry))] ?? "Style Missing")
           & (lut["filteringCriteria"][str(key(entry))] ?? "Criteria Missing")
         ))
-      - '"&8&m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"'
+      - '"&8&m                                                  "'
       - '"&8➥ &eLeft-Click &7Cycle through criteria"'
       - '"&8➥ &eRight-Click &7Toggle state"'
-      - '"&8&m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"'
+      - '"&8&m                                                  "'
   # https://github.com/BlvckBytes/BukkitEvaluable#itemstack-section
   filler:
     type: BLACK_STAINED_GLASS_PANE

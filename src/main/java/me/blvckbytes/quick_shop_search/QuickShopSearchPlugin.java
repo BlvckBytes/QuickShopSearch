@@ -39,7 +39,7 @@ public class QuickShopSearchPlugin extends JavaPlugin {
       logger.info("Using language " + config.rootSection.predicates.mainLanguage.assetFileNameWithoutExtension + " for predicate parsing");
 
       var quickShopApi = QuickShopAPI.getInstance();
-      var shopRegistry = new CachedShopRegistry(logger, quickShopApi.getShopManager(), config);
+      var shopRegistry = new CachedShopRegistry(this, quickShopApi.getShopManager(), config);
 
       Bukkit.getPluginManager().registerEvents(shopRegistry, this);
 
