@@ -7,13 +7,12 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class ReloadCommand implements CommandExecutor {
-
-  public static final String RELOAD_COMMAND_NAME = "quickshopsearchreload";
 
   private final Logger logger;
   private final ConfigKeeper<MainSection> config;
@@ -24,7 +23,7 @@ public class ReloadCommand implements CommandExecutor {
   }
 
   @Override
-  public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+  public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
     BukkitEvaluable message;
 
     if (sender instanceof Player player && !PluginPermission.RELOAD_COMMAND.has(player)) {

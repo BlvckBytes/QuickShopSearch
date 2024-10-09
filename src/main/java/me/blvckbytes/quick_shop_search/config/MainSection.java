@@ -10,6 +10,7 @@ public class MainSection extends AConfigSection {
   public ResultDisplaySection resultDisplay;
   public PlayerMessagesSection playerMessages;
   public PredicatesSection predicates;
+  public CommandsSection commands;
 
   public MainSection(EvaluationEnvironmentBuilder baseEnvironment) {
     super(baseEnvironment);

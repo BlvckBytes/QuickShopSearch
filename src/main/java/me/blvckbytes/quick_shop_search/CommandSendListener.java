@@ -1,5 +1,7 @@
 package me.blvckbytes.quick_shop_search;
 
+import me.blvckbytes.bukkitevaluable.ConfigKeeper;
+import me.blvckbytes.quick_shop_search.config.MainSection;
 import org.bukkit.command.Command;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -14,13 +16,24 @@ public class CommandSendListener implements Listener {
   private final Map<Command, PluginPermission> pluginCommands;
   private final String lowerPluginName;
 
-  public CommandSendListener(JavaPlugin plugin) {
+  public CommandSendListener(JavaPlugin plugin, ConfigKeeper<MainSection> config) {
     this.pluginCommands = new HashMap<>();
     this.lowerPluginName = plugin.getName().toLowerCase();
 
-    pluginCommands.put(plugin.getCommand(ReloadCommand.RELOAD_COMMAND_NAME), PluginPermission.RELOAD_COMMAND);
-    pluginCommands.put(plugin.getCommand(QuickShopSearchCommand.LANGUAGE_COMMAND_NAME), PluginPermission.LANGUAGE_COMMAND);
-    pluginCommands.put(plugin.getCommand(QuickShopSearchCommand.MAIN_COMMAND_NAME), PluginPermission.MAIN_COMMAND);
+    pluginCommands.put(
+      plugin.getCommand(config.rootSection.commands.quickShopSearch.evaluatedName),
+      PluginPermission.MAIN_COMMAND
+    );
+
+    pluginCommands.put(
+      plugin.getCommand(config.rootSection.commands.quickShopSearchLanguage.evaluatedName),
+      PluginPermission.LANGUAGE_COMMAND
+    );
+
+    pluginCommands.put(
+      plugin.getCommand(config.rootSection.commands.quickShopSearchReload.evaluatedName),
+      PluginPermission.RELOAD_COMMAND
+    );
   }
 
   @EventHandler

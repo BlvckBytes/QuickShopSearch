@@ -2,10 +2,14 @@ package me.blvckbytes.quick_shop_search;
 
 import com.cryptomorin.xseries.XMaterial;
 import com.ghostchu.quickshop.api.QuickShopAPI;
+import me.blvckbytes.bukkitevaluable.CommandUpdater;
 import me.blvckbytes.bukkitevaluable.ConfigKeeper;
 import me.blvckbytes.bukkitevaluable.ConfigManager;
 import me.blvckbytes.item_predicate_parser.ItemPredicateParserPlugin;
 import me.blvckbytes.quick_shop_search.config.MainSection;
+import me.blvckbytes.quick_shop_search.config.QuickShopSearchCommandSection;
+import me.blvckbytes.quick_shop_search.config.QuickShopSearchLanguageCommandSection;
+import me.blvckbytes.quick_shop_search.config.QuickShopSearchReloadCommandSection;
 import me.blvckbytes.quick_shop_search.display.ResultDisplayHandler;
 import me.blvckbytes.quick_shop_search.display.SelectionStateStore;
 import org.bukkit.Bukkit;
@@ -48,18 +52,29 @@ public class QuickShopSearchPlugin extends JavaPlugin {
 
       Bukkit.getPluginManager().registerEvents(displayHandler, this);
 
+      var commandUpdater = new CommandUpdater(this);
       var commandExecutor = new QuickShopSearchCommand(this, parserPlugin.getPredicateHelper(), shopRegistry, config, displayHandler);
-      var mainCommand = Objects.requireNonNull(getCommand(QuickShopSearchCommand.MAIN_COMMAND_NAME));
-      var languageCommand = Objects.requireNonNull(getCommand(QuickShopSearchCommand.LANGUAGE_COMMAND_NAME));
+
+      var mainCommand = Objects.requireNonNull(getCommand(QuickShopSearchCommandSection.INITIAL_NAME));
+      var languageCommand = Objects.requireNonNull(getCommand(QuickShopSearchLanguageCommandSection.INITIAL_NAME));
+      var reloadCommand = Objects.requireNonNull(getCommand(QuickShopSearchReloadCommandSection.INITIAL_NAME));
 
       mainCommand.setExecutor(commandExecutor);
       languageCommand.setExecutor(commandExecutor);
+      reloadCommand.setExecutor(new ReloadCommand(logger, config));
 
-      Objects.requireNonNull(getCommand(ReloadCommand.RELOAD_COMMAND_NAME)).setExecutor(
-        new ReloadCommand(logger, config)
-      );
+      Runnable updateCommands = () -> {
+        config.rootSection.commands.quickShopSearch.apply(mainCommand, commandUpdater);
+        config.rootSection.commands.quickShopSearchLanguage.apply(languageCommand, commandUpdater);
+        config.rootSection.commands.quickShopSearchReload.apply(reloadCommand, commandUpdater);
 
-      Bukkit.getPluginManager().registerEvents(new CommandSendListener(this), this);
+        commandUpdater.trySyncCommands();
+      };
+
+      updateCommands.run();
+      config.registerReloadListener(updateCommands);
+
+      Bukkit.getPluginManager().registerEvents(new CommandSendListener(this, config), this);
     } catch (Exception e) {
       logger.log(Level.SEVERE, "Could not initialize plugin", e);
       Bukkit.getPluginManager().disablePlugin(this);

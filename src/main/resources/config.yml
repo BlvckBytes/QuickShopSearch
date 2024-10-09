@@ -155,6 +155,20 @@ playerMessages:
 predicates:
   mainLanguage: ENGLISH_US
 
+commands:
+  quickshopsearch:
+    name: quickshopsearch
+    aliases:
+    - qss
+  quickshopsearchlanguage:
+    name: quickshopsearchlanguage
+    aliases:
+    - qssl
+  quickshopsearchreload:
+    name: quickshopsearchreload
+    aliases:
+    - qssrl
+
 # File-global lookup table
 lut:
   MESSAGE_PREFIX: '&7[&6QuickShopSearch&7] '

@@ -6,13 +6,10 @@ api-version: 1.18
 depend: [QuickShop-Hikari, ItemPredicateParser]
 commands:
   quickshopsearch:
-    aliases: 'qss'
     description: 'Query shops using the main predicate language'
   quickshopsearchlanguage:
-    aliases: 'qssl'
     description: 'Query shops using any supported predicate language'
   quickshopsearchreload:
-    aliases: 'qssrl'
     description: 'Reload the configuration-file'
 permissions:
   quickshopsearch.command.qss:

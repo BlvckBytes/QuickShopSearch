@@ -28,14 +28,10 @@ import java.util.List;
 
 public class QuickShopSearchCommand implements CommandExecutor, TabCompleter {
 
-  public static final String MAIN_COMMAND_NAME = "quickshopsearch";
-  public static final String LANGUAGE_COMMAND_NAME = "quickshopsearchlanguage";
-
   private final Plugin plugin;
   private final PredicateHelper predicateHelper;
   private final CachedShopRegistry shopRegistry;
   private final ResultDisplayHandler resultDisplay;
-
   private final ConfigKeeper<MainSection> config;
 
   public QuickShopSearchCommand(
@@ -63,7 +59,7 @@ public class QuickShopSearchCommand implements CommandExecutor, TabCompleter {
       var language = config.rootSection.predicates.mainLanguage;
       var argsOffset = 0;
 
-      if (command.getName().equals(LANGUAGE_COMMAND_NAME)) {
+      if (command.getName().equals(config.rootSection.commands.quickShopSearchLanguage.evaluatedName)) {
         if (!PluginPermission.LANGUAGE_COMMAND.has(player)) {
           if ((message = config.rootSection.playerMessages.missingPermissionLanguageCommand) != null)
             player.sendMessage(message.stringify(config.rootSection.getBaseEnvironment().build()));
@@ -172,7 +168,7 @@ public class QuickShopSearchCommand implements CommandExecutor, TabCompleter {
     var language = config.rootSection.predicates.mainLanguage;
     var argsOffset = 0;
 
-    if (command.getName().equals(LANGUAGE_COMMAND_NAME)) {
+    if (command.getName().equals(config.rootSection.commands.quickShopSearchLanguage.evaluatedName)) {
       if (!PluginPermission.LANGUAGE_COMMAND.has(player))
         return List.of();
 
