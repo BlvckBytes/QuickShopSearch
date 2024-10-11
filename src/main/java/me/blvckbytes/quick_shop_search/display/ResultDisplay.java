@@ -86,8 +86,8 @@ public class ResultDisplay implements ShopDistanceProvider {
   }
 
   public void onConfigReload(boolean redraw) {
-    this.sortingEnvironment = this.selectionState.makeSortingEnvironment(config.rootSection);
-    this.filteringEnvironment = this.selectionState.makeFilteringEnvironment(config.rootSection);
+    this.sortingEnvironment = this.selectionState.makeSortingEnvironment(player, config.rootSection);
+    this.filteringEnvironment = this.selectionState.makeFilteringEnvironment(player, config.rootSection);
     this.pageEnvironment = config.rootSection.getBaseEnvironment()
       .withLiveVariable("current_page", () -> this.currentPage)
       .withLiveVariable("number_pages", () -> this.numberOfPages)
@@ -180,6 +180,14 @@ public class ResultDisplay implements ShopDistanceProvider {
     });
   }
 
+  public void resetSortingState() {
+    asyncQueue.enqueue(() -> {
+      this.selectionState.resetSorting();
+      applySorting();
+      renderItems();
+    });
+  }
+
   public void nextFilteringCriterion() {
     asyncQueue.enqueue(() -> {
       this.selectionState.nextFilteringCriterion();
@@ -190,16 +198,26 @@ public class ResultDisplay implements ShopDistanceProvider {
   public void nextFilteringState() {
     asyncQueue.enqueue(() -> {
       this.selectionState.nextFilteringState();
-
-      int pageCountDelta = applyFiltering();
-      applySorting();
-
-      // Need to update the UI-title
-      if (pageCountDelta != 0)
-        show();
-      else
-        renderItems();
+      afterFilterChange();
     });
+  }
+
+  public void resetFilteringState() {
+    asyncQueue.enqueue(() -> {
+      this.selectionState.resetFiltering();
+      afterFilterChange();
+    });
+  }
+
+  private void afterFilterChange() {
+    int pageCountDelta = applyFiltering();
+    applySorting();
+
+    // Need to update the UI-title
+    if (pageCountDelta != 0)
+      show();
+    else
+      renderItems();
   }
 
   private int applyFiltering() {

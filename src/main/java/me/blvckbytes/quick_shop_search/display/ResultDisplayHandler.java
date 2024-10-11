@@ -174,6 +174,19 @@ public class ResultDisplayHandler implements Listener {
     if (clickType == ClickType.DROP) {
       if (slot == ResultDisplay.SORTING_SLOT_ID)
         ensurePermission(player, PluginPermission.FEATURE_SORT, config.rootSection.playerMessages.missingPermissionFeatureSort, display::moveSortingSelectionDown);
+
+      return;
+    }
+
+    if (clickType == ClickType.CONTROL_DROP) {
+      if (slot == ResultDisplay.SORTING_SLOT_ID) {
+        ensurePermission(player, PluginPermission.FEATURE_SORT, config.rootSection.playerMessages.missingPermissionFeatureSort, display::resetSortingState);
+        return;
+      }
+
+      if (slot == ResultDisplay.FILTERING_SLOT_ID) {
+        ensurePermission(player, PluginPermission.FEATURE_FILTER, config.rootSection.playerMessages.missingPermissionFeatureFilter, display::resetFilteringState);
+      }
     }
   }
 
