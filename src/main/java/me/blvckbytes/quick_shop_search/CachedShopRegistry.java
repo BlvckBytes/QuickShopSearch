@@ -1,9 +1,6 @@
 package me.blvckbytes.quick_shop_search;
 
-import com.ghostchu.quickshop.api.event.ShopCreateSuccessEvent;
-import com.ghostchu.quickshop.api.event.ShopDeleteEvent;
-import com.ghostchu.quickshop.api.event.ShopInventoryCalculateEvent;
-import com.ghostchu.quickshop.api.event.ShopItemChangeEvent;
+import com.ghostchu.quickshop.api.event.*;
 import com.ghostchu.quickshop.api.shop.Shop;
 import com.ghostchu.quickshop.api.shop.ShopManager;
 import me.blvckbytes.bukkitevaluable.ConfigKeeper;
@@ -81,8 +78,11 @@ public class CachedShopRegistry implements Listener {
   }
 
   @EventHandler
-  public void onShopInventoryCalculate(ShopInventoryCalculateEvent event) {
-    tryAccessCache(event.getShop(), shop -> shop.onInventoryCalculate(event.getStock(), event.getSpace()));
+  public void onSignUpdate(ShopSignUpdateEvent event) {
+    tryAccessCache(event.getShop(), shop -> {
+      shop.setCachedStock(event.getShop().getRemainingStock());
+      shop.setCachedSpace(event.getShop().getRemainingSpace());
+    });
   }
 
   private void tryAccessCache(Shop shop, Consumer<CachedShop> handler) {

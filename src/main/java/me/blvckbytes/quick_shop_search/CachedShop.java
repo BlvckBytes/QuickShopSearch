@@ -61,6 +61,18 @@ public class CachedShop {
     return cachedStock;
   }
 
+  // NOTE: Some QuickShop-Event(s) may respond with -1 as a sentinel for "not computed"; make sure to account for that
+
+  public void setCachedStock(int stock) {
+    if (stock >= 0)
+      this.cachedStock = stock;
+  }
+
+  public void setCachedSpace(int space) {
+    if (space >= 0)
+      this.cachedSpace = space;
+  }
+
   public int getCachedSpace() {
     return cachedSpace;
   }
@@ -71,14 +83,6 @@ public class CachedShop {
 
   public EvaluationEnvironmentBuilder getShopEnvironment() {
     return shopEnvironment;
-  }
-
-  public void onInventoryCalculate(int newStock, int newSpace) {
-    if (newStock >= 0)
-      this.cachedStock = newStock;
-
-    if (newSpace >= 0)
-      this.cachedSpace = newSpace;
   }
 
   public void onItemChange(ItemStack newItem) {
