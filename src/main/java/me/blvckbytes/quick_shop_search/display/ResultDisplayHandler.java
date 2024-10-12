@@ -4,6 +4,7 @@ import me.blvckbytes.bukkitevaluable.BukkitEvaluable;
 import me.blvckbytes.bukkitevaluable.ConfigKeeper;
 import me.blvckbytes.quick_shop_search.CachedShop;
 import me.blvckbytes.quick_shop_search.PluginPermission;
+import me.blvckbytes.quick_shop_search.ShopUpdate;
 import me.blvckbytes.quick_shop_search.config.MainSection;
 import org.bukkit.Location;
 import org.bukkit.block.BlockFace;
@@ -53,8 +54,13 @@ public class ResultDisplayHandler implements Listener {
     });
   }
 
-  public void show(Player player, Collection<CachedShop> shops) {
-    displayByPlayer.put(player.getUniqueId(), new ResultDisplay(plugin, config, player, shops, stateStore.loadState(player)));
+  public void onShopUpdate(CachedShop shop, ShopUpdate update) {
+    for (var display : displayByPlayer.values())
+      display.onShopUpdate(shop, update);
+  }
+
+  public void show(Player player, DisplayData displayData) {
+    displayByPlayer.put(player.getUniqueId(), new ResultDisplay(plugin, config, player, displayData, stateStore.loadState(player)));
   }
 
   @EventHandler
@@ -122,7 +128,7 @@ public class ResultDisplayHandler implements Listener {
       }
 
       if (targetShop != null) {
-        var shopLocation = targetShop.getShop().getLocation();
+        var shopLocation = targetShop.handle.getLocation();
 
         if (shopLocation.getWorld() != player.getWorld()) {
           ensurePermission(
@@ -166,7 +172,7 @@ public class ResultDisplayHandler implements Listener {
       }
 
       if (targetShop != null)
-        targetShop.getShop().openPreview(player);
+        targetShop.handle.openPreview(player);
 
       return;
     }
@@ -199,7 +205,7 @@ public class ResultDisplayHandler implements Listener {
       ));
     }
 
-    var shop = cachedShop.getShop();
+    var shop = cachedShop.handle;
     var shopLocation = shop.getLocation().clone(); // Not cloning can mess shops up (direct reference)!
     var shopBlock = shopLocation.getBlock();
 

@@ -1,18 +1,20 @@
 package me.blvckbytes.quick_shop_search.display;
 
 import me.blvckbytes.quick_shop_search.CachedShop;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.List;
 
 public enum ShopSortingCriteria {
 
-  PRICE((d, a, b) -> Double.compare(a.getShop().getPrice(), b.getShop().getPrice())),
-  OWNER_NAME((d, a, b) -> a.getShop().getOwner().getDisplay().compareTo(b.getShop().getOwner().getDisplay())),
-  STOCK_LEFT((d, a, b) -> Integer.compare(a.getCachedStock(), b.getCachedStock())),
-  SPACE_LEFT((d, a, b) -> Integer.compare(a.getCachedSpace(), b.getCachedSpace())),
-  ITEM_TYPE((d, a, b) -> a.getShop().getItem().getType().compareTo(b.getShop().getItem().getType())),
-  SHOP_TYPE((d, a, b) -> a.getShop().getShopType().compareTo(b.getShop().getShopType())),
+  PRICE((d, a, b) -> Double.compare(a.handle.getPrice(), b.handle.getPrice())),
+  OWNER_NAME((d, a, b) -> a.handle.getOwner().getDisplay().compareTo(b.handle.getOwner().getDisplay())),
+  STOCK_LEFT((d, a, b) -> Integer.compare(a.cachedStock, b.cachedStock)),
+  SPACE_LEFT((d, a, b) -> Integer.compare(a.cachedSpace, b.cachedSpace)),
+  ITEM_TYPE((d, a, b) -> a.handle.getItem().getType().compareTo(b.handle.getItem().getType())),
+  SHOP_TYPE((d, a, b) -> a.handle.getShopType().compareTo(b.handle.getShopType())),
+  SHOP_NAME((d, a, b) -> compareNullableStrings(a.handle.getShopName(), b.handle.getShopName())),
   DISTANCE((d, a, b) -> Long.compare(d.getShopDistance(a), d.getShopDistance(b)))
   ;
 
@@ -33,5 +35,18 @@ public enum ShopSortingCriteria {
       return values.get(0);
 
     return values.get(ordinal);
+  }
+
+  private static int compareNullableStrings(@Nullable String a, @Nullable String b) {
+    if (a == null && b == null)
+      return 0;
+
+    if (a == null)
+      return 1;
+
+    if (b == null)
+      return -1;
+
+    return a.compareTo(b);
   }
 }

@@ -36,6 +36,7 @@ resultDisplay:
       - '"&8➥ &eRight-Click &7Jump to very last page"'
       - '"&8&m                                                  "'
   # - owner: String
+  # - name: String?
   # - price: Double
   # - currency: String?
   # - remaining_stock: Integer
@@ -54,17 +55,21 @@ resultDisplay:
       - '" "'
       - '"&8&m                                                  "'
       - '"&8♦ &7Owner: &e" & owner'
+      - 'if name != null then "&8♦ &7Name: &e" & name else null'
       - '"&8♦ &7Price: &e" & price & " " & (currency ?? "")'
-      - '"&8♦ &7Space: &e" & remaining_space'
-      - '"&8♦ &7Stock: &e" & remaining_stock'
+      - |
+        if is_buying then
+          "&8♦ &7Space: &e" & remaining_space
+        else
+          "&8♦ &7Stock: &e" & remaining_stock
       - '"&8♦ &7Coordinates: &e" & loc_x & "&7, &e" & loc_y & "&7, &e" & loc_z'
       - '"&8♦ &7Distance: " & if distance < 0 then "&cDifferent World" else "&e" & distance & " Blocks"'
       - |
-        color_code = (flag, value) => (if flag then "&a" else "&c") & value
-        "&8♦ &7Features: "
-          & color_code(is_buying, "buying")
-          & "&7, " & color_code(is_selling, "selling")
-          & "&7, " & color_code(is_unlimited, "unlimited")
+        "&8♦ &7Mode: &e" &
+        if is_buying then
+          if is_unlimited then "Buys Unlimited Items" else "Buys Items"
+        else
+          if is_unlimited then "Sells Unlimited Items" else "Sells Items"
       - '"&8&m                                                  "'
       - '"&8➥ &eLeft-Click &7Teleport to the shop"'
       - '"&8➥ &eRight-Click &7Open preview"'
@@ -131,6 +136,7 @@ playerMessages:
   emptyPredicate$: 'lut["MESSAGE_PREFIX"] & "&cPlease provide a non-empty predicate."'
   noMatches$: 'lut["MESSAGE_PREFIX"] & "&cYour query resulted in zero matches."'
   # - owner: String
+  # - name: String?
   # - price: Double
   # - currency: String?
   # - remaining_stock: Integer
@@ -198,6 +204,7 @@ lut:
     SPACE_LEFT: 'Space Left'
     ITEM_TYPE: 'Item-Type'
     SHOP_TYPE: 'Shop-Type'
+    SHOP_NAME: 'Shop-Name'
     DISTANCE: 'Distance'
   filteringCriteria:
     IS_BUYING: 'Buying'
