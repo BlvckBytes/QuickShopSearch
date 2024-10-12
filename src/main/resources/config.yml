@@ -11,121 +11,137 @@
 
 # - current_page: Integer
 # - number_pages: Integer
+# - number_of_rows: Integer
+# - last_slot: Integer
 resultDisplay:
   title$: '"&8Shop Search &e" & current_page & "&8/&e" & number_pages'
-  # https://github.com/BlvckBytes/BukkitEvaluable#itemstack-section
-  previousPage:
-    type: PLAYER_HEAD
-    textures$: 'lut["textures"][if current_page > 1 then "ARROW_LEFT" else "ARROW_LEFT_RED"]'
-    name$: '"&8» " & (if current_page > 1 then "&6Previous Page" else "&cNo Previous Page") & " &8«"'
-    lore$:
-      - '" "'
-      - '"&8&m                                                  "'
-      - '"&8➥ &eLeft-Click &7Navigate to previous page"'
-      - '"&8➥ &eRight-Click &7Jump to very first page"'
-      - '"&8&m                                                  "'
-  # https://github.com/BlvckBytes/BukkitEvaluable#itemstack-section
-  nextPage:
-    type: PLAYER_HEAD
-    textures$: 'lut["textures"][if current_page < number_pages then "ARROW_RIGHT" else "ARROW_RIGHT_RED"]'
-    name$: '"&8» " & (if current_page < number_pages then "&6Next Page" else "&cNo Next Page") & " &8«"'
-    lore$:
-      - '" "'
-      - '"&8&m                                                  "'
-      - '"&8➥ &eLeft-Click &7Navigate to next page"'
-      - '"&8➥ &eRight-Click &7Jump to very last page"'
-      - '"&8&m                                                  "'
-  # - owner: String
-  # - price: Double
-  # - currency: String?
-  # - remaining_stock: Integer
-  # - remaining_space: Integer
-  # - is_selling: Boolean
-  # - is_buying: Boolean
-  # - is_unlimited: Boolean
-  # - loc_world: String?
-  # - loc_x: Integer
-  # - loc_y: Integer
-  # - loc_z: Integer
-  # - distance: Integer
-  # https://github.com/BlvckBytes/BukkitEvaluable#itemstack-section
-  representativePatch:
-    lore$:
-      - '" "'
-      - '"&8&m                                                  "'
-      - '"&8♦ &7Owner: &e" & owner'
-      - '"&8♦ &7Price: &e" & price & " " & (currency ?? "")'
-      - '"&8♦ &7Space: &e" & remaining_space'
-      - '"&8♦ &7Stock: &e" & remaining_stock'
-      - '"&8♦ &7Coordinates: &e" & loc_x & "&7, &e" & loc_y & "&7, &e" & loc_z'
-      - '"&8♦ &7Distance: " & if distance < 0 then "&cDifferent World" else "&e" & distance & " Blocks"'
-      - |
-        color_code = (flag, value) => (if flag then "&a" else "&c") & value
-        "&8♦ &7Features: "
-          & color_code(is_buying, "buying")
-          & "&7, " & color_code(is_selling, "selling")
-          & "&7, " & color_code(is_unlimited, "unlimited")
-      - '"&8&m                                                  "'
-      - '"&8➥ &eLeft-Click &7Teleport to the shop"'
-      - '"&8➥ &eRight-Click &7Open preview"'
-      - '"&8&m                                                  "'
-  # - sorting_selections: Iterable<SortingCriterionSelection>
-  # - selected_index: Integer
-  # - has_permission: Boolean
-  # https://github.com/BlvckBytes/BukkitEvaluable#itemstack-section
-  sorting:
-    type: COMPARATOR
-    name: "&8» &6Sorting &8«"
-    lore$:
-      - '" "'
-      - |
-        if not has_permission then
-          "&8➥ &cNo permission to use this feature"
-        else
-          flatten(
-            "&8&m                                                  ",
-            map(sorting_selections, (entry, entry_index) => (
-              (if entry_index == selected_index then "&e" else "&8") & "➥ "
-              & (lut["sortingSelectionStyle"][str(entry.selection)] ?? "Style Missing")
-              & (lut["sortingCriteria"][str(entry.criterion)] ?? "Criteria Missing")
-            )),
-            "&8&m                                                  ",
-            "&8➥ &eLeft-Click &7Cycle through criteria",
-            "&8➥ &eRight-Click &7Toggle order",
-            "&8➥ &eDrop &7Move criterion down",
-            "&8➥ &eDrop All &7Reset choices",
-            "&8&m                                                  "
-          )
-  # - filtering_selections: Map<ShopFilteringCriteria, PredicateSelection>
-  # - selected_criteria: ShopFilteringCriteria
-  # - has_permission: Boolean
-  # https://github.com/BlvckBytes/BukkitEvaluable#itemstack-section
-  filtering:
-    type: HOPPER
-    name: "&8» &6Filtering &8«"
-    lore$:
-      - '" "'
-      - |
-        if not has_permission then
-          "&8➥ &cNo permission to use this feature"
-        else
-          flatten(
-            "&8&m                                                  ",
-            map(filtering_selections, (entry) => (
-              (if key(entry) == selected_criteria then "&e" else "&8") & "➥ "
-              & (lut["predicateSelectionStyle"][str(value(entry))] ?? "Style Missing")
-              & (lut["filteringCriteria"][str(key(entry))] ?? "Criteria Missing")
-            )),
-            "&8&m                                                  ",
-            "&8➥ &eLeft-Click &7Cycle through criteria",
-            "&8➥ &eRight-Click &7Toggle state",
-            "&8➥ &eDrop All &7Reset choices",
-            "&8&m                                                  "
-          )
-  # https://github.com/BlvckBytes/BukkitEvaluable#itemstack-section
-  filler:
-    type: BLACK_STAINED_GLASS_PANE
-    name: " "
+  rows: 6
+  paginationSlots$: 'range(0, 44)'
+  # - number_pages: Integer
+  items:
+    # https://github.com/BlvckBytes/BukkitEvaluable#itemstack-section
+    previousPage:
+      slot$: 'last_slot - 8'
+      type: PLAYER_HEAD
+      textures$: 'lut["textures"][if current_page > 1 then "ARROW_LEFT" else "ARROW_LEFT_RED"]'
+      name$: '"&8» " & (if current_page > 1 then "&6Previous Page" else "&cNo Previous Page") & " &8«"'
+      lore$:
+        - '" "'
+        - '"&8&m                                                  "'
+        - '"&8➥ &eLeft-Click &7Navigate to previous page"'
+        - '"&8➥ &eRight-Click &7Jump to very first page"'
+        - '"&8&m                                                  "'
+    # https://github.com/BlvckBytes/BukkitEvaluable#itemstack-section
+    nextPage:
+      slot$: 'last_slot'
+      type: PLAYER_HEAD
+      textures$: 'lut["textures"][if current_page < number_pages then "ARROW_RIGHT" else "ARROW_RIGHT_RED"]'
+      name$: '"&8» " & (if current_page < number_pages then "&6Next Page" else "&cNo Next Page") & " &8«"'
+      lore$:
+        - '" "'
+        - '"&8&m                                                  "'
+        - '"&8➥ &eLeft-Click &7Navigate to next page"'
+        - '"&8➥ &eRight-Click &7Jump to very last page"'
+        - '"&8&m                                                  "'
+    # - owner: String
+    # - price: Double
+    # - currency: String?
+    # - remaining_stock: Integer
+    # - remaining_space: Integer
+    # - is_selling: Boolean
+    # - is_buying: Boolean
+    # - is_unlimited: Boolean
+    # - loc_world: String?
+    # - loc_x: Integer
+    # - loc_y: Integer
+    # - loc_z: Integer
+    # - distance: Integer
+    # https://github.com/BlvckBytes/BukkitEvaluable#itemstack-section
+    representativePatch:
+      lore$:
+        - '" "'
+        - '"&8&m                                                  "'
+        - '"&8♦ &7Owner: &e" & owner'
+        - '"&8♦ &7Price: &e" & price & " " & (currency ?? "")'
+        - '"&8♦ &7Space: &e" & remaining_space'
+        - '"&8♦ &7Stock: &e" & remaining_stock'
+        - '"&8♦ &7Coordinates: &e" & loc_x & "&7, &e" & loc_y & "&7, &e" & loc_z'
+        - '"&8♦ &7Distance: " & if distance < 0 then "&cDifferent World" else "&e" & distance & " Blocks"'
+        - |
+          color_code = (flag, value) => (if flag then "&a" else "&c") & value
+          "&8♦ &7Features: "
+            & color_code(is_buying, "buying")
+            & "&7, " & color_code(is_selling, "selling")
+            & "&7, " & color_code(is_unlimited, "unlimited")
+        - '"&8&m                                                  "'
+        - '"&8➥ &eLeft-Click &7Teleport to the shop"'
+        - '"&8➥ &eRight-Click &7Open preview"'
+        - '"&8&m                                                  "'
+    # - sorting_selections: Iterable<SortingCriterionSelection>
+    # - selected_index: Integer
+    # - has_permission: Boolean
+    # https://github.com/BlvckBytes/BukkitEvaluable#itemstack-section
+    sorting:
+      slot$: 'last_slot - 6'
+      type: COMPARATOR
+      name: "&8» &6Sorting &8«"
+      lore$:
+        - '" "'
+        - |
+          if not has_permission then
+            "&8➥ &cNo permission to use this feature"
+          else
+            flatten(
+              "&8&m                                                  ",
+              map(sorting_selections, (entry, entry_index) => (
+                (if entry_index == selected_index then "&e" else "&8") & "➥ "
+                & (lut["sortingSelectionStyle"][str(entry.selection)] ?? "Style Missing")
+                & (lut["sortingCriteria"][str(entry.criterion)] ?? "Criteria Missing")
+              )),
+              "&8&m                                                  ",
+              "&8➥ &eLeft-Click &7Cycle through criteria",
+              "&8➥ &eRight-Click &7Toggle order",
+              "&8➥ &eDrop &7Move criterion down",
+              "&8➥ &eDrop All &7Reset choices",
+              "&8&m                                                  "
+            )
+    # - filtering_selections: Map<ShopFilteringCriteria, PredicateSelection>
+    # - selected_criteria: ShopFilteringCriteria
+    # - has_permission: Boolean
+    # https://github.com/BlvckBytes/BukkitEvaluable#itemstack-section
+    filtering:
+      slot$: 'last_slot - 2'
+      type: HOPPER
+      name: "&8» &6Filtering &8«"
+      lore$:
+        - '" "'
+        - |
+          if not has_permission then
+            "&8➥ &cNo permission to use this feature"
+          else
+            flatten(
+              "&8&m                                                  ",
+              map(filtering_selections, (entry) => (
+                (if key(entry) == selected_criteria then "&e" else "&8") & "➥ "
+                & (lut["predicateSelectionStyle"][str(value(entry))] ?? "Style Missing")
+                & (lut["filteringCriteria"][str(key(entry))] ?? "Criteria Missing")
+              )),
+              "&8&m                                                  ",
+              "&8➥ &eLeft-Click &7Cycle through criteria",
+              "&8➥ &eRight-Click &7Toggle state",
+              "&8➥ &eDrop All &7Reset choices",
+              "&8&m                                                  "
+            )
+    # https://github.com/BlvckBytes/BukkitEvaluable#itemstack-section
+    filler:
+      slot$:
+        - 'last_slot - 7'
+        - 'last_slot - 5'
+        - 'last_slot - 4'
+        - 'last_slot - 3'
+        - 'last_slot - 1'
+      type: BLACK_STAINED_GLASS_PANE
+      name: " "
 
 playerMessages:
   emptyPredicate$: 'lut["MESSAGE_PREFIX"] & "&cPlease provide a non-empty predicate."'

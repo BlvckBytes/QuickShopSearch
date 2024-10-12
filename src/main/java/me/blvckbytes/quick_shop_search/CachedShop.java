@@ -49,7 +49,7 @@ public class CachedShop {
   }
 
   public void onConfigReload() {
-    this.representativePatch = config.rootSection.resultDisplay.representativePatch;
+    this.representativePatch = config.rootSection.resultDisplay.items.representativePatch;
     this.representativeBuildable = makeBuildable(this.shop.getItem());
   }
 

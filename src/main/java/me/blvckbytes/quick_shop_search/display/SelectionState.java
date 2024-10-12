@@ -1,7 +1,7 @@
 package me.blvckbytes.quick_shop_search.display;
 
 import com.google.gson.JsonObject;
-import me.blvckbytes.gpeee.interpreter.IEvaluationEnvironment;
+import me.blvckbytes.gpeee.interpreter.EvaluationEnvironmentBuilder;
 import me.blvckbytes.quick_shop_search.CachedShop;
 import me.blvckbytes.quick_shop_search.PluginPermission;
 import me.blvckbytes.quick_shop_search.config.MainSection;
@@ -134,20 +134,18 @@ public class SelectionState {
     return result;
   }
 
-  public IEvaluationEnvironment makeSortingEnvironment(Player player, MainSection mainSection) {
+  public EvaluationEnvironmentBuilder makeSortingEnvironment(Player player, MainSection mainSection) {
     return mainSection.getBaseEnvironment()
       .withLiveVariable("sorting_selections", () -> this.sortingSelections)
       .withLiveVariable("selected_index", () -> selectedSortingSelectionIndex)
-      .withLiveVariable("has_permission", () -> PluginPermission.FEATURE_SORT.has(player))
-      .build();
+      .withLiveVariable("has_permission", () -> PluginPermission.FEATURE_SORT.has(player));
   }
 
-  public IEvaluationEnvironment makeFilteringEnvironment(Player player, MainSection mainSection) {
+  public EvaluationEnvironmentBuilder makeFilteringEnvironment(Player player, MainSection mainSection) {
     return mainSection.getBaseEnvironment()
       .withLiveVariable("filtering_selections", () -> this.filteringSelections)
       .withLiveVariable("selected_criteria", () -> this.selectedFilteringCriteria)
-      .withLiveVariable("has_permission", () -> PluginPermission.FEATURE_FILTER.has(player))
-      .build();
+      .withLiveVariable("has_permission", () -> PluginPermission.FEATURE_FILTER.has(player));
   }
 
   public JsonObject toJson() {
