@@ -28,11 +28,6 @@ public class AsyncTaskQueue {
 
   public void enqueue(Runnable runnable) {
     synchronized (taskQueue) {
-      if (taskQueue.isEmpty()) {
-        Bukkit.getScheduler().runTaskAsynchronously(plugin, runnable);
-        return;
-      }
-
       taskQueue.add(new QueuedTask(runnable));
       processQueue();
     }
