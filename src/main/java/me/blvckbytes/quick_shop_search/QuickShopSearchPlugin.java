@@ -7,6 +7,7 @@ import me.blvckbytes.bukkitevaluable.ConfigKeeper;
 import me.blvckbytes.bukkitevaluable.ConfigManager;
 import me.blvckbytes.item_predicate_parser.ItemPredicateParserPlugin;
 import me.blvckbytes.quick_shop_search.cache.CachedShopRegistry;
+import me.blvckbytes.quick_shop_search.cache.QuickShopListenerFactory;
 import me.blvckbytes.quick_shop_search.config.MainSection;
 import me.blvckbytes.quick_shop_search.config.QuickShopSearchCommandSection;
 import me.blvckbytes.quick_shop_search.config.QuickShopSearchLanguageCommandSection;
@@ -49,7 +50,9 @@ public class QuickShopSearchPlugin extends JavaPlugin {
       var quickShopApi = QuickShopAPI.getInstance();
       var shopRegistry = new CachedShopRegistry(this, quickShopApi.getShopManager(), displayHandler, config);
 
-      Bukkit.getPluginManager().registerEvents(shopRegistry, this);
+      var shopEventHandler = new QuickShopListenerFactory().create(shopRegistry);
+
+      Bukkit.getPluginManager().registerEvents(shopEventHandler, this);
       Bukkit.getPluginManager().registerEvents(displayHandler, this);
 
       var commandUpdater = new CommandUpdater(this);

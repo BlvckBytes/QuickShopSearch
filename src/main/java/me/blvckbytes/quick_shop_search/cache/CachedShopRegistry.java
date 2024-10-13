@@ -1,6 +1,5 @@
 package me.blvckbytes.quick_shop_search.cache;
 
-import com.ghostchu.quickshop.api.event.*;
 import com.ghostchu.quickshop.api.shop.Shop;
 import com.ghostchu.quickshop.api.shop.ShopManager;
 import com.ghostchu.quickshop.api.shop.ShopType;
@@ -12,15 +11,14 @@ import me.blvckbytes.quick_shop_search.display.DisplayData;
 import me.blvckbytes.quick_shop_search.display.ResultDisplayHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 
-public class CachedShopRegistry implements Listener {
+public class CachedShopRegistry implements QuickShopEventConsumer {
 
   private final Plugin plugin;
   private final Map<Location, CachedShop> existingShopByLocation;
@@ -72,96 +70,89 @@ public class CachedShopRegistry implements Listener {
     }
   }
 
-  @EventHandler
-  public void onShopCreate(ShopCreateSuccessEvent event) {
+  @Override
+  public void onShopCreate(Shop shop) {
     Bukkit.getScheduler().runTask(plugin, () -> {
       synchronized (existingShopByLocation) {
-        var addedShop = new CachedShop(event.getShop(), config);
+        var addedShop = new CachedShop(shop, config);
 
-        existingShopByLocation.put(event.getShop().getLocation(), addedShop);
-        existingShopIds.add(event.getShop().getShopId());
+        existingShopByLocation.put(shop.getLocation(), addedShop);
+        existingShopIds.add(shop.getShopId());
 
         displayHandler.onShopUpdate(addedShop, ShopUpdate.CREATED);
       }
     });
   }
 
-  @EventHandler
-  public void onShopDelete(ShopDeleteEvent event) {
-    if (event.isCancelled())
-      return;
-
+  @Override
+  public void onShopDelete(Shop shop) {
     synchronized (existingShopByLocation) {
-      var removedShop = existingShopByLocation.remove(event.getShop().getLocation());
+      var removedShop = existingShopByLocation.remove(shop.getLocation());
 
       if (removedShop == null)
         return;
 
-      existingShopIds.remove(event.getShop().getShopId());
+      existingShopIds.remove(shop.getShopId());
 
       displayHandler.onShopUpdate(removedShop, ShopUpdate.REMOVED);
     }
   }
 
-  @EventHandler
-  public void onShopItemChange(ShopItemChangeEvent event) {
-    if (!event.isCancelled())
-      tryAccessCache(event.getShop(), shop -> {
-        shop.onItemChange(event.getNewItem());
-        displayHandler.onShopUpdate(shop, ShopUpdate.ITEM_CHANGED);
-      });
-  }
-
-  @EventHandler
-  public void onOwnerChange(ShopOwnershipTransferEvent event) {
-    tryAccessCache(event.getShop(), shop -> {
-      displayHandler.onShopUpdate(shop, ShopUpdate.PROPERTIES_CHANGED);
+  @Override
+  public void onShopItemChange(Shop shop, ItemStack newItem) {
+    tryAccessCache(shop, cachedShop -> {
+      cachedShop.onItemChange(newItem);
+      displayHandler.onShopUpdate(cachedShop, ShopUpdate.ITEM_CHANGED);
     });
   }
 
-  @EventHandler
-  public void onShopSignUpdate(ShopSignUpdateEvent event) {
-    // NOTE: Sadly, this event is not being called when unsetting shop-names.
-    //       Neither is the ShopNamingEvent.
-
-    tryAccessCache(event.getShop(), shop -> {
-      if (shop.diff.update())
-        displayHandler.onShopUpdate(shop, ShopUpdate.PROPERTIES_CHANGED);
+  @Override
+  public void onShopOwnerChange(Shop shop) {
+    tryAccessCache(shop, cachedShop -> {
+      displayHandler.onShopUpdate(cachedShop, ShopUpdate.PROPERTIES_CHANGED);
     });
   }
 
-  @EventHandler
-  public void onShopCalculate(ShopInventoryCalculateEvent event) {
-    tryAccessCache(event.getShop(), shop -> {
-      if (shop.handle.getShopType() == ShopType.BUYING && event.getSpace() >= 0)
-        shop.cachedSpace = event.getSpace();
-
-      if (shop.handle.getShopType() == ShopType.SELLING && event.getStock() >= 0)
-        shop.cachedStock = event.getStock();
-
-      if (shop.diff.update())
-        displayHandler.onShopUpdate(shop, ShopUpdate.PROPERTIES_CHANGED);
+  @Override
+  public void onShopSignUpdate(Shop shop) {
+    tryAccessCache(shop, cachedShop -> {
+      if (cachedShop.diff.update())
+        displayHandler.onShopUpdate(cachedShop, ShopUpdate.PROPERTIES_CHANGED);
     });
   }
 
-  @EventHandler
-  public void onShopNaming(ShopNamingEvent event) {
-    tryAccessCache(event.getShop(), shop -> {
-      displayHandler.onShopUpdate(shop, ShopUpdate.PROPERTIES_CHANGED);
+  @Override
+  public void onShopInventoryCalculate(Shop shop, int stock, int space) {
+    tryAccessCache(shop, cachedShop -> {
+      if (cachedShop.handle.getShopType() == ShopType.BUYING && space >= 0)
+        cachedShop.cachedSpace = space;
+
+      if (cachedShop.handle.getShopType() == ShopType.SELLING && stock >= 0)
+        cachedShop.cachedStock = stock;
+
+      if (cachedShop.diff.update())
+        displayHandler.onShopUpdate(cachedShop, ShopUpdate.PROPERTIES_CHANGED);
     });
   }
 
-  @EventHandler
-  public void onShopPriceChange(ShopPriceChangeEvent event) {
-    tryAccessCache(event.getShop(), shop -> {
-      displayHandler.onShopUpdate(shop, ShopUpdate.PROPERTIES_CHANGED);
+  @Override
+  public void onShopNameChange(Shop shop) {
+    tryAccessCache(shop, cachedShop -> {
+      displayHandler.onShopUpdate(cachedShop, ShopUpdate.PROPERTIES_CHANGED);
     });
   }
 
-  @EventHandler
-  public void onShopTypeChange(ShopTypeChangeEvent event) {
-    tryAccessCache(event.getShop(), shop -> {
-      displayHandler.onShopUpdate(shop, ShopUpdate.PROPERTIES_CHANGED);
+  @Override
+  public void onShopPriceChange(Shop shop) {
+    tryAccessCache(shop, cachedShop -> {
+      displayHandler.onShopUpdate(cachedShop, ShopUpdate.PROPERTIES_CHANGED);
+    });
+  }
+
+  @Override
+  public void onShopTypeChange(Shop shop) {
+    tryAccessCache(shop, cachedShop -> {
+      displayHandler.onShopUpdate(cachedShop, ShopUpdate.PROPERTIES_CHANGED);
     });
   }
 
