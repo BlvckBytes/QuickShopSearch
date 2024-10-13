@@ -1,6 +1,6 @@
 package me.blvckbytes.quick_shop_search.display;
 
-import me.blvckbytes.quick_shop_search.CachedShop;
+import me.blvckbytes.quick_shop_search.cache.CachedShop;
 
 public interface ShopDistanceProvider {
 

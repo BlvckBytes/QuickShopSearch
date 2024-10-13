@@ -1,4 +1,4 @@
-package me.blvckbytes.quick_shop_search;
+package me.blvckbytes.quick_shop_search.cache;
 
 import org.jetbrains.annotations.Nullable;
 

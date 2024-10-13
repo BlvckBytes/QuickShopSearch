@@ -1,4 +1,4 @@
-package me.blvckbytes.quick_shop_search;
+package me.blvckbytes.quick_shop_search.cache;
 
 import com.ghostchu.quickshop.api.event.*;
 import com.ghostchu.quickshop.api.shop.Shop;
@@ -6,6 +6,7 @@ import com.ghostchu.quickshop.api.shop.ShopManager;
 import com.ghostchu.quickshop.api.shop.ShopType;
 import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
 import me.blvckbytes.bukkitevaluable.ConfigKeeper;
+import me.blvckbytes.quick_shop_search.ShopUpdate;
 import me.blvckbytes.quick_shop_search.config.MainSection;
 import me.blvckbytes.quick_shop_search.display.DisplayData;
 import me.blvckbytes.quick_shop_search.display.ResultDisplayHandler;

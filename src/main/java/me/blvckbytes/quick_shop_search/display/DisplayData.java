@@ -2,7 +2,7 @@ package me.blvckbytes.quick_shop_search.display;
 
 import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
 import me.blvckbytes.item_predicate_parser.predicate.ItemPredicate;
-import me.blvckbytes.quick_shop_search.CachedShop;
+import me.blvckbytes.quick_shop_search.cache.CachedShop;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
