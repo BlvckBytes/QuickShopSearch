@@ -162,15 +162,15 @@ playerMessages:
   unknownLanguageActionBar$: '"&cUnknown language: &4" & user_input & "&c."'
   pluginReloadedSuccess$: 'lut["MESSAGE_PREFIX"] & "&7The plugin has been &ereloaded &7successfully."'
   pluginReloadedError$: 'lut["MESSAGE_PREFIX"] & "&cAn error occurred while trying to reload the plugin. Check the console!"'
-  # - exception_message: String
-  predicateParseError$: 'lut["MESSAGE_PREFIX"] & exception_message'
+  # - error_message: String
+  predicateParseError$: 'lut["MESSAGE_PREFIX"] & error_message'
   missingPermissionMainCommand$: 'lut["MESSAGE_PREFIX"] & "&cYou don''t have the permission to use the main command."'
   missingPermissionLanguageCommand$: 'lut["MESSAGE_PREFIX"] & "&cYou don''t have the permission to use the language command."'
+  missingPermissionReloadCommand$: 'lut["MESSAGE_PREFIX"] & "&cYou don''t have the permission to reload the plugin."'
   missingPermissionFeatureSort$: 'lut["MESSAGE_PREFIX"] & "&cYou don''t have the permission to use sorting."'
   missingPermissionFeatureFilter$: 'lut["MESSAGE_PREFIX"] & "&cYou don''t have the permission to use filtering."'
   missingPermissionFeatureTeleport$: 'lut["MESSAGE_PREFIX"] & "&cYou don''t have the permission to use teleportation."'
   missingPermissionFeatureTeleportOtherWorld$: 'lut["MESSAGE_PREFIX"] & "&cYou don''t have the permission to teleport to other worlds."'
-  missingPermissionReload$: 'lut["MESSAGE_PREFIX"] & "&cYou don''t have the permission to reload the plugin."'
 
 predicates:
   mainLanguage: ENGLISH_US

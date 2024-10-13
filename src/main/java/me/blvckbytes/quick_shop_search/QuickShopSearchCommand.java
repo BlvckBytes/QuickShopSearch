@@ -104,7 +104,7 @@ public class QuickShopSearchCommand implements CommandExecutor, TabCompleter {
         if ((message = config.rootSection.playerMessages.predicateParseError) != null) {
           player.sendMessage(message.stringify(
             config.rootSection.getBaseEnvironment()
-              .withStaticVariable("exception_message", predicateHelper.createExceptionMessage(e))
+              .withStaticVariable("error_message", predicateHelper.createExceptionMessage(e))
               .build()
           ));
         }

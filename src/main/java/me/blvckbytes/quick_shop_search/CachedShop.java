@@ -45,7 +45,7 @@ public class CachedShop {
       .withLiveVariable("is_buying", handle::isBuying)
       .withLiveVariable("is_selling", handle::isSelling)
       .withLiveVariable("is_unlimited", handle::isUnlimited)
-      .withLiveVariable("loc_world", () -> shopWorld == null ? null : shopWorld.getName())
+      .withLiveVariable("loc_world", () -> shopWorld == null ? "?" : shopWorld.getName())
       .withLiveVariable("loc_x", shopLocation::getBlockX)
       .withLiveVariable("loc_y", shopLocation::getBlockY)
       .withLiveVariable("loc_z", shopLocation::getBlockZ);

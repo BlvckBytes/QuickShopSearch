@@ -20,11 +20,11 @@ public class PlayerMessagesSection extends AConfigSection {
 
   public @Nullable BukkitEvaluable missingPermissionMainCommand;
   public @Nullable BukkitEvaluable missingPermissionLanguageCommand;
+  public @Nullable BukkitEvaluable missingPermissionReloadCommand;
   public @Nullable BukkitEvaluable missingPermissionFeatureSort;
   public @Nullable BukkitEvaluable missingPermissionFeatureFilter;
   public @Nullable BukkitEvaluable missingPermissionFeatureTeleport;
   public @Nullable BukkitEvaluable missingPermissionFeatureTeleportOtherWorld;
-  public @Nullable BukkitEvaluable missingPermissionReload;
 
   public PlayerMessagesSection(EvaluationEnvironmentBuilder baseEnvironment) {
     super(baseEnvironment);
