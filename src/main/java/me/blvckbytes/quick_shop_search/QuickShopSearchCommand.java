@@ -158,7 +158,7 @@ public class QuickShopSearchCommand implements CommandExecutor, TabCompleter {
         return;
       }
 
-      resultDisplay.show(player, new DisplayData(matchingShops, matchingShopIds, predicate));
+      resultDisplay.show(player, new DisplayData(matchingShops, matchingShopIds, predicate, false));
     });
 
     return true;

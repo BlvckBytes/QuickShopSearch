@@ -13,7 +13,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.plugin.Plugin;
 
 import java.util.HashMap;
@@ -60,7 +59,8 @@ public class CachedShopRegistry implements Listener {
       return new DisplayData(
         this.existingShopByLocation.values(),
         existingShopIds,
-        null
+        null,
+        true
       );
     }
   }
@@ -130,45 +130,16 @@ public class CachedShopRegistry implements Listener {
   }
 
   @EventHandler
-  public void onClose(InventoryCloseEvent event) {
-    var location = event.getInventory().getLocation();
-
-    if (location == null)
-      return;
-
-    // The inventory-location seems to be block-centered, and thereby wouldn't match with any map-entry
-    var shop = existingShopByLocation.get(location.getBlock().getLocation());
-
-    if (shop == null)
-      return;
-
-    boolean causedChanges = false;
-    int nextValue;
-
-    if (shop.handle.getShopType() == ShopType.SELLING) {
-      nextValue = shop.handle.getRemainingStock();
-      causedChanges = shop.cachedStock != nextValue;
-      shop.cachedStock = nextValue;
-    } else if (shop.handle.getShopType() == ShopType.BUYING) {
-      nextValue = shop.handle.getRemainingSpace();
-      causedChanges = shop.cachedSpace != nextValue;
-      shop.cachedSpace = nextValue;
-    }
-
-    if (causedChanges)
-      displayHandler.onShopUpdate(shop, ShopUpdate.PROPERTIES_CHANGED);
-  }
-
-  @EventHandler
-  public void onPurchase(ShopSuccessPurchaseEvent event) {
+  public void onShopCalculate(ShopInventoryCalculateEvent event) {
     tryAccessCache(event.getShop(), shop -> {
-      if (shop.handle.getShopType() == ShopType.SELLING)
-        shop.cachedStock -= event.getAmount();
+      if (shop.handle.getShopType() == ShopType.BUYING && event.getSpace() >= 0)
+        shop.cachedSpace = event.getSpace();
 
-      if (shop.handle.getShopType() == ShopType.BUYING)
-        shop.cachedSpace -= event.getAmount();
+      if (shop.handle.getShopType() == ShopType.SELLING && event.getStock() >= 0)
+        shop.cachedStock = event.getStock();
 
-      displayHandler.onShopUpdate(shop, ShopUpdate.PROPERTIES_CHANGED);
+      if (shop.diff.update())
+        displayHandler.onShopUpdate(shop, ShopUpdate.PROPERTIES_CHANGED);
     });
   }
 

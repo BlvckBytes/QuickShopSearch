@@ -8,6 +8,8 @@ public class ShopScalarDiff {
 
   private final CachedShop shop;
 
+  private int lastCachedSpace;
+  private int lastCachedStock;
   private boolean lastIsUnlimited;
   private @Nullable String lastShopName;
 
@@ -19,6 +21,8 @@ public class ShopScalarDiff {
   public boolean update() {
     var unlimited = shop.handle.isUnlimited();
     var shopName = shop.handle.getShopName();
+    var cachedSpace = shop.cachedSpace;
+    var cachedStock = shop.cachedStock;
 
     boolean hadDelta;
 
@@ -27,6 +31,12 @@ public class ShopScalarDiff {
 
     hadDelta |= !Objects.equals(lastShopName, shopName);
     lastShopName = shopName;
+
+    hadDelta |= lastCachedSpace != cachedSpace;
+    lastCachedSpace = cachedSpace;
+
+    hadDelta |= lastCachedStock != cachedStock;
+    lastCachedStock = cachedStock;
 
     return hadDelta;
   }

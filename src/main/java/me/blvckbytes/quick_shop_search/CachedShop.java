@@ -49,6 +49,8 @@ public class CachedShop {
       .withLiveVariable("loc_x", shopLocation::getBlockX)
       .withLiveVariable("loc_y", shopLocation::getBlockY)
       .withLiveVariable("loc_z", shopLocation::getBlockZ);
+
+    this.diff.update();
   }
 
   public void onConfigReload() {
