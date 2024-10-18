@@ -11,7 +11,8 @@ public enum ShopFilteringCriteria {
   IS_BUYING(shop -> shop.handle.isBuying()),
   IS_SELLING(shop -> shop.handle.isSelling()),
   IS_UNLIMITED(shop -> shop.handle.isUnlimited()),
-  HAS_STOCK_LEFT(shop -> shop.cachedStock > 0),
+  HAS_STOCK_LEFT(shop -> shop.handle.isSelling() || shop.cachedStock > 0),
+  HAS_SPACE_LEFT(shop -> shop.handle.isBuying() || shop.cachedSpace > 0),
   ;
 
   private final Predicate<CachedShop> predicate;

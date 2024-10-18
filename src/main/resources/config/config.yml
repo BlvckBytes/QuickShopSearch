@@ -14,7 +14,6 @@
 # - current_page: Integer
 # - number_pages: Integer
 resultDisplay:
-  title$: '"&8Shop Search &e" & current_page & "&8/&e" & number_pages'
   title: '@{RESULT-DISPLAY-TITLE}'
   # https://github.com/BlvckBytes/BukkitEvaluable#itemstack-section
   previousPage:
@@ -226,6 +225,7 @@ lut:
     IS_SELLING: '@{FILTERING_LORE_CRITERIA_IS-SELLING}'
     IS_UNLIMITED: '@{FILTERING_LORE_CRITERIA_IS-UNLIMITED}'
     HAS_STOCK_LEFT: '@{FILTERING_LORE_CRITERIA_HAS-STOCK-LEFT}'
+    HAS_SPACE_LEFT: '@{FILTERING_LORE_CRITERIA_HAS-SPACE-LEFT}'
   filteringSelectionStyle:
     POSITIVE: '@{FILTERING_LORE_SELECTION-STYLE_POSITIVE}'
     NEGATIVE: '@{FILTERING_LORE_SELECTION-STYLE_NEGATIVE}'

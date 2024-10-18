@@ -3,7 +3,7 @@
 # - current_page: Integer
 # - number_pages: Integer
 
-RESULT-DISPLAY-TITLE                        &8Shop Search &e{current_page} &8/&e {number_pages}
+RESULT-DISPLAY-TITLE                        &8Shop Search &e{current_page}&8/&e{number_pages}
 
 ANY-CONTROL_LORE_SPACER                     &8&m                                                  \
 
@@ -59,7 +59,7 @@ SORTING_LORE_CRITERIA_SHOP-TYPE           Shop-Type
 SORTING_LORE_CRITERIA_SHOP-NAME           Shop-Name
 SORTING_LORE_CRITERIA_DISTANCE            Distance
 SORTING_LORE_LEFT-CLICK-DESCRIPTION       &8➥ &eLeft-Click &7Cycle through criteria
-SORTING_LORE_RIGHT-CLICK-DESCRIPTION      &8➥ &eRight-Click &7Toggle order
+SORTING_LORE_RIGHT-CLICK-DESCRIPTION      &8➥ &eRight-Click &7Toggle sorting-order
 SORTING_LORE_DROP-DESCRIPTION             &8➥ &eDrop &7Move criterion down
 SORTING_LORE_DROP-ALL-DESCRIPTION         &8➥ &eDrop All &7Reset choices
 
@@ -74,6 +74,7 @@ FILTERING_LORE_CRITERIA_IS-BUYING          Buying
 FILTERING_LORE_CRITERIA_IS-SELLING         Selling
 FILTERING_LORE_CRITERIA_IS-UNLIMITED       Unlimited
 FILTERING_LORE_CRITERIA_HAS-STOCK-LEFT     Stock Left
+FILTERING_LORE_CRITERIA_HAS-SPACE-LEFT     Space Left
 FILTERING_LORE_LEFT-CLICK-DESCRIPTION      &8➥ &eLeft-Click &7Cycle through criteria
 FILTERING_LORE_RIGHT-CLICK-DESCRIPTION     &8➥ &eRight-Click &7Toggle state
 FILTERING_LORE_DROP-ALL-DESCRIPTION        &8➥ &eDrop All &7Reset choices
