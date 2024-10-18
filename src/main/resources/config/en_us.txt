@@ -27,8 +27,6 @@ REPRESENTATIVE_LORE_PRICE                    &8♦ &7Price: &e{price} {currency}
 # - remaining_space: Integer
 REPRESENTATIVE_LORE_REMAINING-SPACE          &8♦ &7Space: &e{remaining_space}
 # - remaining_stock: Integer
-REPRESENTATIVE_LORE_REMAINING_STOCK          &8♦ &7Stock: &e{remaining_stock}
-# - remaining_stock: Integer
 REPRESENTATIVE_LORE_REMAINING-STOCK          &8♦ &7Stock: &e{remaining_stock}
 # - loc_x: Integer
 # - loc_y: Integer
