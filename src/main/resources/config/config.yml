@@ -1,0 +1,232 @@
+# _______       _____      ______ _____________               ________                        ______
+# __  __ \___  ____(_)________  /___  ___/__  /_________________  ___/__________ ________________  /_
+# _  / / /  / / /_  /_  ___/_  //_/____ \__  __ \  __ \__  __ \____ \_  _ \  __ `/_  ___/  ___/_  __ \
+# / /_/ // /_/ /_  / / /__ _  ,<  ____/ /_  / / / /_/ /_  /_/ /___/ //  __/ /_/ /_  /   / /__ _  / / /
+# \___\_\\__,_/ /_/  \___/ /_/|_| /____/ /_/ /_/\____/_  .___//____/ \___/\__,_/ /_/    \___/ /_/ /_/
+#                                                     /_/
+#
+# QuickShopSearch - Developed by BlvckBytes <blvckbytes@gmail.com>
+# Repository - https://github.com/BlvckBytes/QuickShopSearch
+# ASCII-Art - https://patorjk.com/software/taag/#p=display&f=Speed
+#
+# PRE-PROCESSOR-INPUT en_us.txt
+
+# - current_page: Integer
+# - number_pages: Integer
+resultDisplay:
+  title$: '"&8Shop Search &e" & current_page & "&8/&e" & number_pages'
+  title: '@{RESULT-DISPLAY-TITLE}'
+  # https://github.com/BlvckBytes/BukkitEvaluable#itemstack-section
+  previousPage:
+    type: PLAYER_HEAD
+    textures$: 'lut["textures"][if current_page > 1 then "ARROW_LEFT" else "ARROW_LEFT_RED"]'
+    name$: 'if current_page > 1 then @{PREVIOUS-PAGE_NAME_HAS} else @{PREVIOUS-PAGE_NAME_HAS-NOT}'
+    lore$:
+    - '" "'
+    - '@{ANY-CONTROL_LORE_SPACER}'
+    - '@{PREVIOUS-PAGE_LORE_LEFT-CLICK-DESCRIPTION}'
+    - '@{PREVIOUS-PAGE_LORE_RIGHT-CLICK-DESCRIPTION}'
+    - '@{ANY-CONTROL_LORE_SPACER}'
+  # https://github.com/BlvckBytes/BukkitEvaluable#itemstack-section
+  nextPage:
+    type: PLAYER_HEAD
+    textures$: 'lut["textures"][if current_page < number_pages then "ARROW_RIGHT"
+      else "ARROW_RIGHT_RED"]'
+    name$: 'if current_page < number_pages then @{NEXT-PAGE_NAME_HAS} else @{NEXT-PAGE_NAME_HAS-NOT}'
+    lore$:
+    - '" "'
+    - '@{ANY-CONTROL_LORE_SPACER}'
+    - '@{NEXT-PAGE_LORE_LEFT-CLICK-DESCRIPTION}'
+    - '@{NEXT-PAGE_LORE_RIGHT-CLICK-DESCRIPTION}'
+    - '@{ANY-CONTROL_LORE_SPACER}'
+  # - owner: String
+  # - name: String?
+  # - price: Double
+  # - currency: String?
+  # - remaining_stock: Integer
+  # - remaining_space: Integer
+  # - is_selling: Boolean
+  # - is_buying: Boolean
+  # - is_unlimited: Boolean
+  # - loc_world: String
+  # - loc_x: Integer
+  # - loc_y: Integer
+  # - loc_z: Integer
+  # - distance: Integer
+  # https://github.com/BlvckBytes/BukkitEvaluable#itemstack-section
+  representativePatch:
+    lore$:
+    - '" "'
+    - '@{ANY-CONTROL_LORE_SPACER}'
+    - '@{REPRESENTATIVE_LORE_OWNER}'
+    - 'if name != null then @{REPRESENTATIVE_LORE_NAME} & name else null'
+    - '@{REPRESENTATIVE_LORE_PRICE(currency=currency ?? "")}'
+    - |
+      if is_buying then
+        @{REPRESENTATIVE_LORE_REMAINING-SPACE}
+      else
+        @{REPRESENTATIVE_LORE_REMAINING-STOCK}
+    - '@{REPRESENTATIVE_LORE_LOCATION}'
+    - 'if distance < 0 then @{REPRESENTATIVE_LORE_DISTANCE_OTHER-WORLD} else @{REPRESENTATIVE_LORE_DISTANCE}'
+    - |
+      if is_buying then
+        if is_unlimited then @{REPRESENTATIVE_LORE_MODE_BUYING-UNLIMITED} else @{REPRESENTATIVE_LORE_MODE_BUYING}
+      else
+        if is_unlimited then @{REPRESENTATIVE_LORE_MODE_SELLING-UNLIMITED} else @{REPRESENTATIVE_LORE_MODE_SELLING}
+    - '@{ANY-CONTROL_LORE_SPACER}'
+    - '@{REPRESENTATIVE_LORE_LEFT-CLICK-DESCRIPTION}'
+    - '@{REPRESENTATIVE_LORE_RIGHT-CLICK-DESCRIPTION}'
+    - '@{ANY-CONTROL_LORE_SPACER}'
+  # - sorting_selections: Iterable<SortingCriterionSelection>
+  # - selected_index: Integer
+  # - has_permission: Boolean
+  # https://github.com/BlvckBytes/BukkitEvaluable#itemstack-section
+  sorting:
+    type: COMPARATOR
+    name$: '@{SORTING_NAME}'
+    lore$:
+    - '" "'
+    - |
+      if not has_permission then
+        @{SORTING_LORE_NO_PERMISSION}
+      else
+        flatten(
+          @{ANY-CONTROL_LORE_SPACER},
+          map(sorting_selections, (entry, entry_index) => (
+            (if entry_index == selected_index then
+              @{SORTING_LORE_ENTRY-PREFIX_ACTIVE}
+            else
+              @{SORTING_LORE_ENTRY-PREFIX_INACTIVE})
+            & (lut["sortingSelectionStyle"][str(entry.selection)] ?? "&4?")
+            & (lut["sortingCriteria"][str(entry.criterion)] ?? "&4?")
+          )),
+          @{ANY-CONTROL_LORE_SPACER},
+          @{SORTING_LORE_LEFT-CLICK-DESCRIPTION},
+          @{SORTING_LORE_RIGHT-CLICK-DESCRIPTION},
+          @{SORTING_LORE_DROP-DESCRIPTION},
+          @{SORTING_LORE_DROP-ALL-DESCRIPTION},
+          @{ANY-CONTROL_LORE_SPACER}
+        )
+# - filtering_selections: Map<ShopFilteringCriteria, PredicateSelection>
+# - selected_criteria: ShopFilteringCriteria
+# - has_permission: Boolean
+# https://github.com/BlvckBytes/BukkitEvaluable#itemstack-section
+  filtering:
+    type: HOPPER
+    name$: '@{FILTERING_NAME}'
+    lore$:
+    - '" "'
+    - |
+      if not has_permission then
+        @{FILTERING_LORE_NO_PERMISSION}
+      else
+        flatten(
+          @{ANY-CONTROL_LORE_SPACER},
+          map(filtering_selections, (entry) => (
+            (if key(entry) == selected_criteria then
+              @{FILTERING_LORE_ENTRY-PREFIX_ACTIVE}
+            else
+              @{FILTERING_LORE_ENTRY-PREFIX_INACTIVE})
+            & (lut["filteringSelectionStyle"][str(value(entry))] ?? "&4?")
+            & (lut["filteringCriteria"][str(key(entry))] ?? "&4?")
+          )),
+          @{ANY-CONTROL_LORE_SPACER},
+          @{FILTERING_LORE_LEFT-CLICK-DESCRIPTION},
+          @{FILTERING_LORE_RIGHT-CLICK-DESCRIPTION},
+          @{FILTERING_LORE_DROP-ALL-DESCRIPTION},
+          @{ANY-CONTROL_LORE_SPACER}
+        )
+# https://github.com/BlvckBytes/BukkitEvaluable#itemstack-section
+  filler:
+    type: BLACK_STAINED_GLASS_PANE
+    name: " "
+
+playerMessages:
+  emptyPredicate$: '@{MESSAGE_EMPTY-PREDICATE(prefix=lut["MESSAGE_PREFIX"])}'
+  noMatches$: '@{MESSAGE_NO-MATCHES(prefix=lut["MESSAGE_PREFIX"])}'
+  # - owner: String
+  # - name: String?
+  # - price: Double
+  # - currency: String?
+  # - remaining_stock: Integer
+  # - remaining_space: Integer
+  # - is_selling: Boolean
+  # - is_buying: Boolean
+  # - is_unlimited: Boolean
+  # - loc_world: String?
+  # - loc_x: Integer
+  # - loc_y: Integer
+  # - loc_z: Integer
+  # - distance: Integer
+  beforeTeleporting$: '@{MESSAGE_BEFORE-TELEPORTING(prefix=lut["MESSAGE_PREFIX"])}'
+  # - number_shops: Integer
+  # - predicate: String
+  beforeQuerying$: '@{MESSAGE_BEFORE-QUERYING(prefix=lut["MESSAGE_PREFIX"])}'
+  # - number_shops: Integer
+  queryingAllShops$: '@{MESSAGE_QUERYING-ALL-SHOPS(prefix=lut["MESSAGE_PREFIX"])}'
+  # - label: String
+  # - languages: Collection<String>
+  usageQsslCommandLanguage$: |
+    language_list = iter_cat(languages, (language) => @{MESSAGE_USAGE_QSSL_LANGUAGE_ITEM_COLOR} & language, @{MESSAGE_USAGE_QSSL_LANGUAGE_SEPARATOR_COLOR} & ", ")
+    @{MESSAGE_USAGE_QSSL_LANGUAGE(prefix=lut["MESSAGE_PREFIX"])}
+# - user_input: String
+  unknownLanguageActionBar$: '@{MESSAGE_UNKNOWN_LANGUAGE(prefix=lut["MESSAGE_PREFIX"])}'
+  pluginReloadedSuccess$: '@{MESSAGE_PLUGIN_RELOAD(prefix=lut["MESSAGE_PREFIX"])}'
+  pluginReloadedError$: '@{MESSAGE_PLUGIN_RELOAD_ERROR(prefix=lut["MESSAGE_PREFIX"])}'
+  # - error_message: String
+  predicateParseError$: '@{MESSAGE_PREDICATE_ERROR(prefix=lut["MESSAGE_PREFIX"])}'
+  missingPermissionMainCommand$: '@{MESSAGE_MISSING_PERMISSION_MAIN-COMMAND(prefix=lut["MESSAGE_PREFIX"])}'
+  missingPermissionLanguageCommand$: '@{MESSAGE_MISSING_PERMISSION_LANGUAGE-COMMAND(prefix=lut["MESSAGE_PREFIX"])}'
+  missingPermissionReloadCommand$: '@{MESSAGE_MISSING_PERMISSION_RELOAD-COMMAND(prefix=lut["MESSAGE_PREFIX"])}'
+  missingPermissionFeatureSort$: '@{MESSAGE_MISSING_PERMISSION_FEATURE_SORT(prefix=lut["MESSAGE_PREFIX"])}'
+  missingPermissionFeatureFilter$: '@{MESSAGE_MISSING_PERMISSION_FEATURE_FILTER(prefix=lut["MESSAGE_PREFIX"])}'
+  missingPermissionFeatureTeleport$: '@{MESSAGE_MISSING_PERMISSION_FEATURE_TELEPORT(prefix=lut["MESSAGE_PREFIX"])}'
+  missingPermissionFeatureTeleportOtherWorld$: '@{MESSAGE_MISSING_PERMISSION_FEATURE_TELEPORT-OTHER-WORLD(prefix=lut["MESSAGE_PREFIX"])}'
+
+predicates:
+  mainLanguage: ENGLISH_US
+
+commands:
+  quickshopsearch:
+    name: quickshopsearch
+    aliases:
+    - qss
+  quickshopsearchlanguage:
+    name: quickshopsearchlanguage
+    aliases:
+    - qssl
+  quickshopsearchreload:
+    name: quickshopsearchreload
+    aliases:
+    - qssrl
+
+# File-global lookup table
+lut:
+  MESSAGE_PREFIX: '@{MESSAGE_PREFIX}'
+  textures:
+    ARROW_LEFT: 'eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvODU1MGI3Zjc0ZTllZDc2MzNhYTI3NGVhMzBjYzNkMmU4N2FiYjM2ZDRkMWY0Y2E2MDhjZDQ0NTkwY2NlMGIifX19'
+    ARROW_LEFT_RED: 'eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZjg0ZjU5NzEzMWJiZTI1ZGMwNThhZjg4OGNiMjk4MzFmNzk1OTliYzY3Yzk1YzgwMjkyNWNlNGFmYmEzMzJmYyJ9fX0='
+    ARROW_RIGHT: 'eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOTYzMzlmZjJlNTM0MmJhMThiZGM0OGE5OWNjYTY1ZDEyM2NlNzgxZDg3ODI3MmY5ZDk2NGVhZDNiOGFkMzcwIn19fQ=='
+    ARROW_RIGHT_RED: 'eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZmNmZTg4NDVhOGQ1ZTYzNWZiODc3MjhjY2M5Mzg5NWQ0MmI0ZmMyZTZhNTNmMWJhNzhjODQ1MjI1ODIyIn19fQ=='
+  sortingCriteria:
+    PRICE: '@{SORTING_LORE_CRITERIA_PRICE}'
+    OWNER_NAME: '@{SORTING_LORE_CRITERIA_OWNER-NAME}'
+    STOCK_LEFT: '@{SORTING_LORE_CRITERIA_STOCK-LEFT}'
+    SPACE_LEFT: '@{SORTING_LORE_CRITERIA_SPACE-LEFT}'
+    ITEM_TYPE: '@{SORTING_LORE_CRITERIA_ITEM-TYPE}'
+    SHOP_TYPE: '@{SORTING_LORE_CRITERIA_SHOP-TYPE}'
+    SHOP_NAME: '@{SORTING_LORE_CRITERIA_SHOP-NAME}'
+    DISTANCE: '@{SORTING_LORE_CRITERIA_DISTANCE}'
+  sortingSelectionStyle:
+    ASCENDING: '@{SORTING_LORE_SELECTION-STYLE_ASCENDING}'
+    DESCENDING: '@{SORTING_LORE_SELECTION-STYLE_DESCENDING}'
+    INACTIVE: '@{SORTING_LORE_SELECTION-STYLE_INACTIVE}'
+  filteringCriteria:
+    IS_BUYING: '@{FILTERING_LORE_CRITERIA_IS-BUYING}'
+    IS_SELLING: '@{FILTERING_LORE_CRITERIA_IS-SELLING}'
+    IS_UNLIMITED: '@{FILTERING_LORE_CRITERIA_IS-UNLIMITED}'
+    HAS_STOCK_LEFT: '@{FILTERING_LORE_CRITERIA_HAS-STOCK-LEFT}'
+  filteringSelectionStyle:
+    POSITIVE: '@{FILTERING_LORE_SELECTION-STYLE_POSITIVE}'
+    NEGATIVE: '@{FILTERING_LORE_SELECTION-STYLE_NEGATIVE}'
+    INVARIANT: '@{FILTERING_LORE_SELECTION-STYLE_INVARIANT}'

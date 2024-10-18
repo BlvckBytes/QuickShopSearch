@@ -81,7 +81,7 @@
                 <filtering>true</filtering>
                 <includes>
                     <include>plugin.yml</include>
-                    <include>config.yml</include>
+                    <include>config/**</include>
                 </includes>
             </resource>
         </resources>

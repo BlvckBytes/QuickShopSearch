@@ -34,7 +34,7 @@ public class QuickShopSearchPlugin extends JavaPlugin {
     XMaterial.matchXMaterial(Material.AIR);
 
     try {
-      var configManager = new ConfigManager(this);
+      var configManager = new ConfigManager(this, "config");
       var config = new ConfigKeeper<>(configManager, "config.yml", MainSection.class);
 
       var parserPlugin = ItemPredicateParserPlugin.getInstance();
