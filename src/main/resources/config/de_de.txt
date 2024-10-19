@@ -1,0 +1,122 @@
+# ==================== BEGIN ResultDisplay ====================
+
+# - current_page: Integer
+# - number_pages: Integer
+
+RESULT-DISPLAY-TITLE                        &8Shopsuche &e{current_page}&8/&e{number_pages}
+
+ANY-CONTROL_LORE_SPACER                     &8&m                                                  \
+
+PREVIOUS-PAGE_NAME_HAS                      &8» &6Vorherige Seite &8«
+PREVIOUS-PAGE_NAME_HAS-NOT                  &8» &cKeine vorherige Seite &8«
+PREVIOUS-PAGE_LORE_LEFT-CLICK-DESCRIPTION   &8➥ &eLinksklick &7Navigiere zur vorherigen Seite
+PREVIOUS-PAGE_LORE_RIGHT-CLICK-DESCRIPTION  &8➥ &eRechtsklick &7Springe zur ersten Seite
+
+NEXT-PAGE_NAME_HAS                      &8» &6Nächste Seite &8«
+NEXT-PAGE_NAME_HAS-NOT                  &8» &cKeine nächste Seite &8«
+NEXT-PAGE_LORE_LEFT-CLICK-DESCRIPTION   &8➥ &eLinksklick &7Navigiere zur nächsten Seite
+NEXT-PAGE_LORE_RIGHT-CLICK-DESCRIPTION  &8➥ &eRechtsklick &7Springe zur letzten Seite
+
+# - owner: String
+REPRESENTATIVE_LORE_OWNER                    &8♦ &7Besitzer: &e{owner}
+# - name: String
+REPRESENTATIVE_LORE_NAME                     &8♦ &7Name: &e{name}
+# - price: String
+# - currency: String
+REPRESENTATIVE_LORE_PRICE                    &8♦ &7Preis: &e{price} {currency}
+# - remaining_space: Integer
+REPRESENTATIVE_LORE_REMAINING-SPACE          &8♦ &7Kapazität: &e{remaining_space}
+# - remaining_stock: Integer
+REPRESENTATIVE_LORE_REMAINING-STOCK          &8♦ &7Lagerbestand: &e{remaining_stock}
+# - loc_x: Integer
+# - loc_y: Integer
+# - loc_z: Integer
+# - loc_world: String
+REPRESENTATIVE_LORE_LOCATION                 &8♦ &7Koordinaten: &e{loc_x} {loc_y} {loc_z}
+# distance: Integer
+REPRESENTATIVE_LORE_DISTANCE                 &8♦ &7Distanz: &e{distance} Blocks
+REPRESENTATIVE_LORE_DISTANCE_OTHER-WORLD     &8♦ &7Distanz: &cAndere Welt
+REPRESENTATIVE_LORE_MODE_BUYING              &8♦ &7Modus: &eKauft Items
+REPRESENTATIVE_LORE_MODE_BUYING-UNLIMITED    &8♦ &7Modus: &eKauft unlimitiert Items
+REPRESENTATIVE_LORE_MODE_SELLING             &8♦ &7Modus: &eVerkauft Items
+REPRESENTATIVE_LORE_MODE_SELLING-UNLIMITED   &8♦ &7Modus: &eVerkauft unlimitiert Items
+REPRESENTATIVE_LORE_LEFT-CLICK-DESCRIPTION   &8➥ &eLinksklick &7Zum Shop teleportieren
+REPRESENTATIVE_LORE_RIGHT-CLICK-DESCRIPTION  &8➥ &eRechtsklick &7Vorschau öffnen
+
+SORTING_NAME                              &8» &6Sortierung &8«
+SORTING_LORE_NO_PERMISSION                &8➥ &cKeine Berechtigung zum Sortieren der Ergebnisse
+SORTING_LORE_ENTRY-PREFIX_ACTIVE          &e➥ \
+SORTING_LORE_ENTRY-PREFIX_INACTIVE        &8➥ \
+SORTING_LORE_SELECTION-STYLE_ASCENDING    &a+ \
+SORTING_LORE_SELECTION-STYLE_DESCENDING   &c- \
+SORTING_LORE_SELECTION-STYLE_INACTIVE     &7/ &m
+SORTING_LORE_CRITERIA_PRICE               Preis
+SORTING_LORE_CRITERIA_OWNER-NAME          Name des Besitzers
+SORTING_LORE_CRITERIA_STOCK-LEFT          Übriger Lagerbestand
+SORTING_LORE_CRITERIA_SPACE-LEFT          Übrige Kapazität
+SORTING_LORE_CRITERIA_ITEM-TYPE           Typ des Items
+SORTING_LORE_CRITERIA_SHOP-TYPE           Typ des Shops
+SORTING_LORE_CRITERIA_SHOP-NAME           Name des Shops
+SORTING_LORE_CRITERIA_DISTANCE            Distanz
+SORTING_LORE_LEFT-CLICK-DESCRIPTION       &8➥ &eLinksklick &7Kriterium auswählen
+SORTING_LORE_RIGHT-CLICK-DESCRIPTION      &8➥ &eRechtsklick &7Sortierrichtung ändern
+SORTING_LORE_DROP-DESCRIPTION             &8➥ &eWerfen &7Kriterium nach unten verschieben
+SORTING_LORE_DROP-ALL-DESCRIPTION         &8➥ &eAlle werfen &7Auswahlen zurücksetzen
+
+FILTERING_NAME                             &8» &6Filtern &8«
+FILTERING_LORE_NO_PERMISSION               &8➥ &cKeine Berechtigung zum Filtern der Ergebnisse
+FILTERING_LORE_ENTRY-PREFIX_ACTIVE         &e➥ \
+FILTERING_LORE_ENTRY-PREFIX_INACTIVE       &8➥ \
+FILTERING_LORE_SELECTION-STYLE_POSITIVE    &a
+FILTERING_LORE_SELECTION-STYLE_NEGATIVE    &c
+FILTERING_LORE_SELECTION-STYLE_INVARIANT   &7&m
+FILTERING_LORE_CRITERIA_IS-BUYING          Kaufen
+FILTERING_LORE_CRITERIA_IS-SELLING         Verkaufen
+FILTERING_LORE_CRITERIA_IS-UNLIMITED       Unlimitiert
+FILTERING_LORE_CRITERIA_HAS-STOCK-LEFT     Lagerbestand übrig
+FILTERING_LORE_CRITERIA_HAS-SPACE-LEFT     Kapazität übrig
+FILTERING_LORE_LEFT-CLICK-DESCRIPTION      &8➥ &eLinksklick &7Kriterium auswählen
+FILTERING_LORE_RIGHT-CLICK-DESCRIPTION     &8➥ &eRechtsklick &7Zustand umschalten
+FILTERING_LORE_DROP-ALL-DESCRIPTION        &8➥ &eAlle werfen &7Auswahlen zurücksetzen
+
+# ==================== END ResultDisplay ====================
+
+# ==================== BEGIN Messages ====================
+
+MESSAGE_PREFIX                              &7[&6QuickShopSearch&7]
+# - prefix: String
+MESSAGE_EMPTY-PREDICATE                     {prefix} &cBitte gib ein nicht-leeres Prädikat an.
+MESSAGE_NO-MATCHES                          {prefix} &cDeine Suche erzielte keine Ergebnisse.
+# - owner: String
+# - loc_world: String
+# - loc_x: Integer
+# - loc_y: Integer
+# - loc_z: Integer
+MESSAGE_BEFORE-TELEPORTING                  {prefix} &7Teleportiere zum Shop von &e{owner} &7bei &e{loc_x}&7, &e{loc_y}&7, &e{loc_z}&7.
+# - number_shops: Integer
+# - predicate: String
+MESSAGE_BEFORE-QUERYING                     {prefix} &7Durchsuche &e{number_shops} Shops &7nach &e{predicate}&7...
+# - number_shops: Integer
+MESSAGE_QUERYING-ALL-SHOPS                  {prefix} &7Durchsuche &ealle &7(&e{number_shops}&7) Shops...
+MESSAGE_USAGE_QSSL_LANGUAGE_ITEM_COLOR      &e
+MESSAGE_USAGE_QSSL_LANGUAGE_SEPARATOR_COLOR &7
+# label: String
+# language_list: String
+MESSAGE_USAGE_QSSL_LANGUAGE                 {prefix} Benutzung: /{label} <{language_list}&7> [Prädikat]
+# - user_input: String
+# Displayed in the action-bar
+MESSAGE_UNKNOWN_LANGUAGE                    &cUnbekannte Sprache: &4{user_input}&c.
+MESSAGE_PLUGIN_RELOAD                       {prefix} &7Das Plugin wurde erfolgreich &eneu geladen&7.
+MESSAGE_PLUGIN_RELOAD_ERROR                 {prefix} &cEin Fehler trat während des Ladeprozesses auf. Überprüfe die Konsole!
+# - error_message: String
+MESSAGE_PREDICATE_ERROR                     {prefix} {error_message}
+
+MESSAGE_MISSING_PERMISSION_MAIN-COMMAND                 {prefix} &cKeine Berechtigung zur Benutzung des Hauptbefehls.
+MESSAGE_MISSING_PERMISSION_LANGUAGE-COMMAND             {prefix} &cKeine Berechtigung zur Benutzung des Sprachbefehls.
+MESSAGE_MISSING_PERMISSION_RELOAD-COMMAND               {prefix} &cKeine Berechtigung zur Benutzung des Befehls zum neu laden.
+MESSAGE_MISSING_PERMISSION_FEATURE_SORT                 {prefix} &cKeine Berechtigung zur Benutzung der Sortierfunktion.
+MESSAGE_MISSING_PERMISSION_FEATURE_FILTER               {prefix} &cKeine Berechtigung zur Benutzung der Filterfunktion.
+MESSAGE_MISSING_PERMISSION_FEATURE_TELEPORT             {prefix} &cKeine Berechtigung zur Benutzung der Teleportation.
+MESSAGE_MISSING_PERMISSION_FEATURE_TELEPORT-OTHER-WORLD {prefix} &cKeine Berechtigung zur Teleportation in andere Welten.
+
+# ==================== END Messages ====================
