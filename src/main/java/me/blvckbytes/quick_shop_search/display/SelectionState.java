@@ -2,7 +2,7 @@ package me.blvckbytes.quick_shop_search.display;
 
 import com.google.gson.JsonObject;
 import me.blvckbytes.gpeee.interpreter.EvaluationEnvironmentBuilder;
-import me.blvckbytes.quick_shop_search.CachedShop;
+import me.blvckbytes.quick_shop_search.cache.CachedShop;
 import me.blvckbytes.quick_shop_search.PluginPermission;
 import me.blvckbytes.quick_shop_search.config.MainSection;
 import org.bukkit.entity.Player;

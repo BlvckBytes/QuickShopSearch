@@ -6,6 +6,8 @@ import me.blvckbytes.bukkitevaluable.CommandUpdater;
 import me.blvckbytes.bukkitevaluable.ConfigKeeper;
 import me.blvckbytes.bukkitevaluable.ConfigManager;
 import me.blvckbytes.item_predicate_parser.ItemPredicateParserPlugin;
+import me.blvckbytes.quick_shop_search.cache.CachedShopRegistry;
+import me.blvckbytes.quick_shop_search.cache.QuickShopListenerFactory;
 import me.blvckbytes.quick_shop_search.config.MainSection;
 import me.blvckbytes.quick_shop_search.config.QuickShopSearchCommandSection;
 import me.blvckbytes.quick_shop_search.config.QuickShopSearchLanguageCommandSection;
@@ -32,7 +34,7 @@ public class QuickShopSearchPlugin extends JavaPlugin {
     XMaterial.matchXMaterial(Material.AIR);
 
     try {
-      var configManager = new ConfigManager(this);
+      var configManager = new ConfigManager(this, "config");
       var config = new ConfigKeeper<>(configManager, "config.yml", MainSection.class);
 
       var parserPlugin = ItemPredicateParserPlugin.getInstance();
@@ -42,14 +44,15 @@ public class QuickShopSearchPlugin extends JavaPlugin {
 
       logger.info("Using language " + config.rootSection.predicates.mainLanguage.assetFileNameWithoutExtension + " for predicate parsing");
 
-      var quickShopApi = QuickShopAPI.getInstance();
-      var shopRegistry = new CachedShopRegistry(this, quickShopApi.getShopManager(), config);
-
-      Bukkit.getPluginManager().registerEvents(shopRegistry, this);
-
       stateStore = new SelectionStateStore(this, logger);
       displayHandler = new ResultDisplayHandler(this, config, stateStore);
 
+      var quickShopApi = QuickShopAPI.getInstance();
+      var shopRegistry = new CachedShopRegistry(this, quickShopApi.getShopManager(), displayHandler, config);
+
+      var shopEventHandler = QuickShopListenerFactory.create(logger, shopRegistry);
+
+      Bukkit.getPluginManager().registerEvents(shopEventHandler, this);
       Bukkit.getPluginManager().registerEvents(displayHandler, this);
 
       var commandUpdater = new CommandUpdater(this);

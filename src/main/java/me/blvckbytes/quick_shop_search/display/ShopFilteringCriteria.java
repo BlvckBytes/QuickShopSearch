@@ -1,7 +1,6 @@
 package me.blvckbytes.quick_shop_search.display;
 
-import com.ghostchu.quickshop.api.shop.Shop;
-import me.blvckbytes.quick_shop_search.CachedShop;
+import me.blvckbytes.quick_shop_search.cache.CachedShop;
 
 import java.util.Arrays;
 import java.util.List;
@@ -9,10 +8,11 @@ import java.util.function.Predicate;
 
 public enum ShopFilteringCriteria {
 
-  IS_BUYING(shop -> shop.getShop().isBuying()),
-  IS_SELLING(shop -> shop.getShop().isSelling()),
-  IS_UNLIMITED(shop -> shop.getShop().isUnlimited()),
-  HAS_STOCK_LEFT(shop -> shop.getCachedStock() > 0),
+  IS_BUYING(shop -> shop.handle.isBuying()),
+  IS_SELLING(shop -> shop.handle.isSelling()),
+  IS_UNLIMITED(shop -> shop.handle.isUnlimited()),
+  HAS_STOCK_LEFT(shop -> shop.handle.isSelling() || shop.cachedStock > 0),
+  HAS_SPACE_LEFT(shop -> shop.handle.isBuying() || shop.cachedSpace > 0),
   ;
 
   private final Predicate<CachedShop> predicate;

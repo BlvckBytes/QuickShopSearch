@@ -6,7 +6,7 @@
 
     <groupId>me.blvckbytes</groupId>
     <artifactId>QuickShopSearch</artifactId>
-    <version>0.0.13</version>
+    <version>0.0.18</version>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
@@ -81,7 +81,7 @@
                 <filtering>true</filtering>
                 <includes>
                     <include>plugin.yml</include>
-                    <include>config.yml</include>
+                    <include>config/**</include>
                 </includes>
             </resource>
         </resources>

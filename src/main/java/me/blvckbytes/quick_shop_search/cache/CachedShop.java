@@ -1,4 +1,4 @@
-package me.blvckbytes.quick_shop_search;
+package me.blvckbytes.quick_shop_search.cache;
 
 import com.ghostchu.quickshop.api.shop.Shop;
 import me.blvckbytes.bukkitevaluable.ConfigKeeper;
@@ -11,58 +11,51 @@ import org.bukkit.inventory.ItemStack;
 
 public class CachedShop {
 
-  private final Shop shop;
+  public final Shop handle;
+  public final ShopScalarDiff diff;
+
   private ItemStackSection representativePatch;
   private final EvaluationEnvironmentBuilder shopEnvironment;
   private final ConfigKeeper<MainSection> config;
 
   private IItemBuildable representativeBuildable;
-  private int cachedStock;
-  private int cachedSpace;
+  public int cachedStock;
+  public int cachedSpace;
 
-  public CachedShop(Shop shop, ConfigKeeper<MainSection> config) {
-    this.shop = shop;
+  public CachedShop(Shop handle, ConfigKeeper<MainSection> config) {
+    this.handle = handle;
+    this.diff = new ShopScalarDiff(this);
     this.config = config;
 
     onConfigReload();
 
-    this.representativeBuildable = makeBuildable(shop.getItem());
-    this.cachedStock = shop.getRemainingStock();
-    this.cachedSpace = shop.getRemainingSpace();
-
-    var shopLocation = shop.getLocation();
+    this.representativeBuildable = makeBuildable(handle.getItem());
+    this.cachedStock = handle.getRemainingStock();
+    this.cachedSpace = handle.getRemainingSpace();
+    var shopLocation = handle.getLocation();
     var shopWorld = shopLocation.getWorld();
 
     this.shopEnvironment = new EvaluationEnvironmentBuilder()
-      .withLiveVariable("owner", shop.getOwner()::getDisplay)
-      .withLiveVariable("price", shop::getPrice)
-      .withLiveVariable("currency", shop::getCurrency)
-      .withLiveVariable("remaining_stock", this::getCachedStock)
-      .withLiveVariable("remaining_space", this::getCachedSpace)
-      .withLiveVariable("is_buying", shop::isBuying)
-      .withLiveVariable("is_selling", shop::isSelling)
-      .withLiveVariable("is_unlimited", shop::isUnlimited)
-      .withLiveVariable("loc_world", () -> shopWorld == null ? null : shopWorld.getName())
+      .withLiveVariable("owner", handle.getOwner()::getDisplay)
+      .withLiveVariable("name", handle::getShopName)
+      .withLiveVariable("price", handle::getPrice)
+      .withLiveVariable("currency", handle::getCurrency)
+      .withLiveVariable("remaining_stock", () -> this.cachedStock)
+      .withLiveVariable("remaining_space", () -> this.cachedSpace)
+      .withLiveVariable("is_buying", handle::isBuying)
+      .withLiveVariable("is_selling", handle::isSelling)
+      .withLiveVariable("is_unlimited", handle::isUnlimited)
+      .withLiveVariable("loc_world", () -> shopWorld == null ? "?" : shopWorld.getName())
       .withLiveVariable("loc_x", shopLocation::getBlockX)
       .withLiveVariable("loc_y", shopLocation::getBlockY)
       .withLiveVariable("loc_z", shopLocation::getBlockZ);
+
+    this.diff.update();
   }
 
   public void onConfigReload() {
     this.representativePatch = config.rootSection.resultDisplay.items.representativePatch;
-    this.representativeBuildable = makeBuildable(this.shop.getItem());
-  }
-
-  public Shop getShop() {
-    return shop;
-  }
-
-  public int getCachedStock() {
-    return cachedStock;
-  }
-
-  public int getCachedSpace() {
-    return cachedSpace;
+    this.representativeBuildable = makeBuildable(this.handle.getItem());
   }
 
   public IItemBuildable getRepresentativeBuildable() {
@@ -71,14 +64,6 @@ public class CachedShop {
 
   public EvaluationEnvironmentBuilder getShopEnvironment() {
     return shopEnvironment;
-  }
-
-  public void onInventoryCalculate(int newStock, int newSpace) {
-    if (newStock >= 0)
-      this.cachedStock = newStock;
-
-    if (newSpace >= 0)
-      this.cachedSpace = newSpace;
   }
 
   public void onItemChange(ItemStack newItem) {

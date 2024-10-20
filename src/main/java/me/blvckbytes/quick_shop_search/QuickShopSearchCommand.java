@@ -1,5 +1,6 @@
 package me.blvckbytes.quick_shop_search;
 
+import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
 import me.blvckbytes.bukkitevaluable.BukkitEvaluable;
 import me.blvckbytes.bukkitevaluable.ConfigKeeper;
 import me.blvckbytes.item_predicate_parser.PredicateHelper;
@@ -9,7 +10,10 @@ import me.blvckbytes.item_predicate_parser.predicate.ItemPredicate;
 import me.blvckbytes.item_predicate_parser.predicate.PredicateState;
 import me.blvckbytes.item_predicate_parser.predicate.StringifyState;
 import me.blvckbytes.item_predicate_parser.translation.TranslationLanguage;
+import me.blvckbytes.quick_shop_search.cache.CachedShop;
+import me.blvckbytes.quick_shop_search.cache.CachedShopRegistry;
 import me.blvckbytes.quick_shop_search.config.MainSection;
+import me.blvckbytes.quick_shop_search.display.DisplayData;
 import me.blvckbytes.quick_shop_search.display.ResultDisplayHandler;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -102,7 +106,7 @@ public class QuickShopSearchCommand implements CommandExecutor, TabCompleter {
         if ((message = config.rootSection.playerMessages.predicateParseError) != null) {
           player.sendMessage(message.stringify(
             config.rootSection.getBaseEnvironment()
-              .withStaticVariable("exception_message", predicateHelper.createExceptionMessage(e))
+              .withStaticVariable("error_message", predicateHelper.createExceptionMessage(e))
               .build()
           ));
         }
@@ -140,10 +144,14 @@ public class QuickShopSearchCommand implements CommandExecutor, TabCompleter {
       }
 
       var matchingShops = new ArrayList<CachedShop>();
+      var matchingShopIds = new LongOpenHashSet();
 
-      for (var shop : shopRegistry.getExistingShops()) {
-        if (predicate.test(new PredicateState(shop.getShop().getItem())))
-          matchingShops.add(shop);
+      for (var shop : shopRegistry.getExistingShops().shops()) {
+        if (!predicate.test(new PredicateState(shop.handle.getItem())))
+          continue;
+
+        matchingShops.add(shop);
+        matchingShopIds.add(shop.handle.getShopId());
       }
 
       if (matchingShops.isEmpty()) {
@@ -152,7 +160,7 @@ public class QuickShopSearchCommand implements CommandExecutor, TabCompleter {
         return;
       }
 
-      resultDisplay.show(player, matchingShops);
+      resultDisplay.show(player, new DisplayData(matchingShops, matchingShopIds, predicate, false));
     });
 
     return true;

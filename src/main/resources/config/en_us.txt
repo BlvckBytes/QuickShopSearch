@@ -1,0 +1,138 @@
+# ==================== BEGIN ResultDisplay ====================
+
+# - current_page: Integer
+# - number_pages: Integer
+
+RESULT-DISPLAY-TITLE                        &8Shop Search &e{current_page}&8/&e{number_pages}
+
+ANY-CONTROL-LORE-SPACER                     &8&m                                                  \
+
+PREVIOUS-PAGE-NAME-HAS                      &8» &6Previous Page &8«
+PREVIOUS-PAGE-NAME-HAS-NOT                  &8» &cNo Previous Page &8«
+PREVIOUS-PAGE-LORE-LEFT-CLICK-DESCRIPTION   &8➥ &eLeft-Click &7Navigate to previous page
+PREVIOUS-PAGE-LORE-RIGHT-CLICK-DESCRIPTION  &8➥ &eRight-Click &7Jump to very first page
+
+NEXT-PAGE-NAME-HAS                      &8» &6Next Page &8«
+NEXT-PAGE-NAME-HAS-NOT                  &8» &cNo Next Page &8«
+NEXT-PAGE-LORE-LEFT-CLICK-DESCRIPTION   &8➥ &eLeft-Click &7Navigate to next page
+NEXT-PAGE-LORE-RIGHT-CLICK-DESCRIPTION  &8➥ &eRight-Click &7Jump to very last page
+
+# - owner: String
+REPRESENTATIVE-LORE-OWNER                    &8♦ &7Owner: &e{owner}
+# - name: String
+REPRESENTATIVE-LORE-NAME                     &8♦ &7Name: &e{name}
+# - price: String
+# - currency: String
+REPRESENTATIVE-LORE-PRICE                    &8♦ &7Price: &e{price} {currency}
+# - remaining_space: Integer
+REPRESENTATIVE-LORE-REMAINING-SPACE          &8♦ &7Space: &e{remaining_space}
+# - remaining_stock: Integer
+REPRESENTATIVE-LORE-REMAINING-STOCK          &8♦ &7Stock: &e{remaining_stock}
+# - loc_x: Integer
+# - loc_y: Integer
+# - loc_z: Integer
+# - loc_world: String
+REPRESENTATIVE-LORE-LOCATION                 &8♦ &7Coordinates: &e{loc_x} {loc_y} {loc_z}
+# distance: Integer
+REPRESENTATIVE-LORE-DISTANCE                 &8♦ &7Distance: &e{distance} Blocks
+REPRESENTATIVE-LORE-DISTANCE-OTHER-WORLD     &8♦ &7Distance: &cDifferent World
+REPRESENTATIVE-LORE-MODE-BUYING              &8♦ &7Mode: &eBuys Items
+REPRESENTATIVE-LORE-MODE-BUYING-UNLIMITED    &8♦ &7Mode: &eBuys Unlimited Items
+REPRESENTATIVE-LORE-MODE-SELLING             &8♦ &7Mode: &eSells Items
+REPRESENTATIVE-LORE-MODE-SELLING-UNLIMITED   &8♦ &7Mode: &eSells Unlimited Items
+REPRESENTATIVE-LORE-LEFT-CLICK-DESCRIPTION   &8➥ &eLeft-Click &7Teleport to the shop
+REPRESENTATIVE-LORE-RIGHT-CLICK-DESCRIPTION  &8➥ &eRight-Click &7Open preview
+
+SORTING-NAME                              &8» &6Sorting &8«
+SORTING-LORE-NO-PERMISSION                &8➥ &cNo permission to sort results
+SORTING-LORE-ENTRY-PREFIX-ACTIVE          &e➥ \
+SORTING-LORE-ENTRY-PREFIX-INACTIVE        &8➥ \
+SORTING-LORE-SELECTION-STYLE-ASCENDING    &a+ \
+SORTING-LORE-SELECTION-STYLE-DESCENDING   &c- \
+SORTING-LORE-SELECTION-STYLE-INACTIVE     &7/ &m
+SORTING-LORE-CRITERIA-PRICE               Price
+SORTING-LORE-CRITERIA-OWNER-NAME          Owner-Name
+SORTING-LORE-CRITERIA-STOCK-LEFT          Stock Left
+SORTING-LORE-CRITERIA-SPACE-LEFT          Space Left
+SORTING-LORE-CRITERIA-ITEM-TYPE           Item-Type
+SORTING-LORE-CRITERIA-SHOP-TYPE           Shop-Type
+SORTING-LORE-CRITERIA-SHOP-NAME           Shop-Name
+SORTING-LORE-CRITERIA-DISTANCE            Distance
+SORTING-LORE-LEFT-CLICK-DESCRIPTION       &8➥ &eLeft-Click &7Cycle through criteria
+SORTING-LORE-RIGHT-CLICK-DESCRIPTION      &8➥ &eRight-Click &7Toggle sorting-order
+SORTING-LORE-DROP-DESCRIPTION             &8➥ &eDrop &7Move criterion down
+SORTING-LORE-DROP-ALL-DESCRIPTION         &8➥ &eDrop All &7Reset choices
+
+FILTERING-NAME                             &8» &6Filtering &8«
+FILTERING-LORE-NO-PERMISSION               &8➥ &cNo permission to filter results
+FILTERING-LORE-ENTRY-PREFIX-ACTIVE         &e➥ \
+FILTERING-LORE-ENTRY-PREFIX-INACTIVE       &8➥ \
+FILTERING-LORE-SELECTION-STYLE-POSITIVE    &a
+FILTERING-LORE-SELECTION-STYLE-NEGATIVE    &c
+FILTERING-LORE-SELECTION-STYLE-INVARIANT   &7&m
+FILTERING-LORE-CRITERIA-IS-BUYING          Buying
+FILTERING-LORE-CRITERIA-IS-SELLING         Selling
+FILTERING-LORE-CRITERIA-IS-UNLIMITED       Unlimited
+FILTERING-LORE-CRITERIA-HAS-STOCK-LEFT     Stock Left
+FILTERING-LORE-CRITERIA-HAS-SPACE-LEFT     Space Left
+FILTERING-LORE-LEFT-CLICK-DESCRIPTION      &8➥ &eLeft-Click &7Cycle through criteria
+FILTERING-LORE-RIGHT-CLICK-DESCRIPTION     &8➥ &eRight-Click &7Toggle state
+FILTERING-LORE-DROP-ALL-DESCRIPTION        &8➥ &eDrop All &7Reset choices
+
+# ==================== END ResultDisplay ====================
+
+# ==================== BEGIN Messages ====================
+
+MESSAGE-PREFIX                              &7[&6QuickShopSearch&7]
+# - prefix: String
+MESSAGE-EMPTY-PREDICATE                     {prefix} &cPlease provide a non-empty predicate.
+# - prefix: String
+MESSAGE-NO-MATCHES                          {prefix} &cYour query resulted in zero matches.
+# - owner: String
+# - loc_world: String
+# - loc_x: Integer
+# - loc_y: Integer
+# - loc_z: Integer
+# - prefix: String
+MESSAGE-BEFORE-TELEPORTING                  {prefix} &7Teleporting to the Shop of &e{owner} &7at &e{loc_x}&7, &e{loc_y}&7, &e{loc_z}&7.
+# - number_shops: Integer
+# - predicate: String
+# - prefix: String
+MESSAGE-BEFORE-QUERYING                     {prefix} &7Querying &e{number_shops} Shops &7for &e{predicate}&7...
+# - number_shops: Integer
+# - prefix: String
+MESSAGE-QUERYING-ALL-SHOPS                  {prefix} &7Querying &eall &7(&e{number_shops}&7) Shops...
+MESSAGE-USAGE-QSSL-LANGUAGE-ITEM-COLOR      &e
+MESSAGE-USAGE-QSSL-LANGUAGE-SEPARATOR-COLOR &7
+# label: String
+# language_list: String
+# - prefix: String
+MESSAGE-USAGE-QSSL-LANGUAGE                 {prefix} &7Usage: /{label} <{language_list}&7> [Predicate]
+# - user_input: String
+# - prefix: String
+# Displayed in the action-bar
+MESSAGE-UNKNOWN-LANGUAGE                    &cUnknown language: &4{user_input}&c.
+# - prefix: String
+MESSAGE-PLUGIN-RELOAD                       {prefix} &7The plugin has been &ereloaded &7successfully.
+# - prefix: String
+MESSAGE-PLUGIN-RELOAD-ERROR                 {prefix} &cAn error occurred while trying to reload the plugin. Check the console!
+# - error_message: String
+# - prefix: String
+MESSAGE-PREDICATE-ERROR                     {prefix} {error_message}
+
+# - prefix: String
+MESSAGE-MISSING-PERMISSION-MAIN-COMMAND                 {prefix} &cYou don't have permission to use the main-command.
+# - prefix: String
+MESSAGE-MISSING-PERMISSION-LANGUAGE-COMMAND             {prefix} &cYou don't have permission to use the language-command.
+# - prefix: String
+MESSAGE-MISSING-PERMISSION-RELOAD-COMMAND               {prefix} &cYou don't have permission to use the reload-command.
+# - prefix: String
+MESSAGE-MISSING-PERMISSION-FEATURE-SORT                 {prefix} &cYou don't have the permission to use sorting.
+# - prefix: String
+MESSAGE-MISSING-PERMISSION-FEATURE-FILTER               {prefix} &cYou don't have the permission to use filtering.
+# - prefix: String
+MESSAGE-MISSING-PERMISSION-FEATURE-TELEPORT             {prefix} &cYou don't have the permission to use teleportation.
+# - prefix: String
+MESSAGE-MISSING-PERMISSION-FEATURE-TELEPORT-OTHER-WORLD {prefix} &cYou don't have the permission to teleport to other worlds.
+
+# ==================== END Messages ====================

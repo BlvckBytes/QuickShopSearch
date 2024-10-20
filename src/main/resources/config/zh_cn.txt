@@ -1,0 +1,122 @@
+# ==================== BEGIN ResultDisplay ====================
+
+# - current_page: Integer
+# - number_pages: Integer
+
+RESULT-DISPLAY-TITLE                        &8商店查询 &e{current_page}&8/&e{number_pages}
+
+ANY-CONTROL-LORE-SPACER                     &8&m                                                  \
+
+PREVIOUS-PAGE-NAME-HAS                      &8» &6上一页 &8«
+PREVIOUS-PAGE-NAME-HAS-NOT                  &8» &c没有上一页 &8«
+PREVIOUS-PAGE-LORE-LEFT-CLICK-DESCRIPTION   &8➥ &e鼠标左键 &7跳转到上一页
+PREVIOUS-PAGE-LORE-RIGHT-CLICK-DESCRIPTION  &8➥ &e鼠标右键 &7跳转到第一页
+
+NEXT-PAGE-NAME-HAS                      &8» &6下一页 &8«
+NEXT-PAGE-NAME-HAS-NOT                  &8» &c没有下一页 &8«
+NEXT-PAGE-LORE-LEFT-CLICK-DESCRIPTION   &8➥ &e鼠标左键 &7跳转到下一页
+NEXT-PAGE-LORE-RIGHT-CLICK-DESCRIPTION  &8➥ &e鼠标右键 &7跳转到最后一页
+
+# - owner: String
+REPRESENTATIVE-LORE-OWNER                    &8♦ &7所有者: &e{owner}
+# - name: String
+REPRESENTATIVE-LORE-NAME                     &8♦ &7名称: &e{name}
+# - price: String
+# - currency: String
+REPRESENTATIVE-LORE-PRICE                    &8♦ &7价格: &e{price} {currency}
+# - remaining_space: Integer
+REPRESENTATIVE-LORE-REMAINING-SPACE          &8♦ &7空间: &e{remaining_space}
+# - remaining_stock: Integer
+REPRESENTATIVE-LORE-REMAINING-STOCK          &8♦ &7库存: &e{remaining_stock}
+# - loc_x: Integer
+# - loc_y: Integer
+# - loc_z: Integer
+# - loc_world: String
+REPRESENTATIVE-LORE-LOCATION                 &8♦ &7坐标: &e{loc_x} {loc_y} {loc_z}
+# distance: Integer
+REPRESENTATIVE-LORE-DISTANCE                 &8♦ &7距离: &e{distance} 个方块
+REPRESENTATIVE-LORE-DISTANCE-OTHER-WORLD     &8♦ &7距离: &c在不同的世界中
+REPRESENTATIVE-LORE-MODE-BUYING              &8♦ &7模式: &e收购
+REPRESENTATIVE-LORE-MODE-BUYING-UNLIMITED    &8♦ &7模式: &e收购无限的物品
+REPRESENTATIVE-LORE-MODE-SELLING             &8♦ &7模式: &e出售
+REPRESENTATIVE-LORE-MODE-SELLING-UNLIMITED   &8♦ &7模式: &e出售无限的商品
+REPRESENTATIVE-LORE-LEFT-CLICK-DESCRIPTION   &8➥ &e鼠标左键 &7传送到商店
+REPRESENTATIVE-LORE-RIGHT-CLICK-DESCRIPTION  &8➥ &e鼠标右键 &7查看该商店的物品预览
+
+SORTING-NAME                              &8» &6排序 &8«
+SORTING-LORE-NO-PERMISSION                &8➥ &c你没有权限进行排序
+SORTING-LORE-ENTRY-PREFIX-ACTIVE          &e➥ \
+SORTING-LORE-ENTRY-PREFIX-INACTIVE        &8➥ \
+SORTING-LORE-SELECTION-STYLE-ASCENDING    &a+ \
+SORTING-LORE-SELECTION-STYLE-DESCENDING   &c- \
+SORTING-LORE-SELECTION-STYLE-INACTIVE     &7/ &m
+SORTING-LORE-CRITERIA-PRICE               价格
+SORTING-LORE-CRITERIA-OWNER-NAME          所有者名称
+SORTING-LORE-CRITERIA-STOCK-LEFT          库存剩余
+SORTING-LORE-CRITERIA-SPACE-LEFT          空间剩余
+SORTING-LORE-CRITERIA-ITEM-TYPE           物品类型
+SORTING-LORE-CRITERIA-SHOP-TYPE           商店类型
+SORTING-LORE-CRITERIA-SHOP-NAME           商店名称
+SORTING-LORE-CRITERIA-DISTANCE            距离
+SORTING-LORE-LEFT-CLICK-DESCRIPTION       &8➥ &e鼠标左键 &7依次切换条件
+SORTING-LORE-RIGHT-CLICK-DESCRIPTION      &8➥ &e鼠标右键 &7切换排序顺序
+SORTING-LORE-DROP-DESCRIPTION             &8➥ &e丢弃 &7将条件下移
+SORTING-LORE-DROP-ALL-DESCRIPTION         &8➥ &e丢弃全部 &7重置选择
+
+FILTERING-NAME                             &8» &6筛选 &8«
+FILTERING-LORE-NO-PERMISSION               &8➥ &c你没有权限进行筛选
+FILTERING-LORE-ENTRY-PREFIX-ACTIVE         &e➥ \
+FILTERING-LORE-ENTRY-PREFIX-INACTIVE       &8➥ \
+FILTERING-LORE-SELECTION-STYLE-POSITIVE    &a
+FILTERING-LORE-SELECTION-STYLE-NEGATIVE    &c
+FILTERING-LORE-SELECTION-STYLE-INVARIANT   &7&m
+FILTERING-LORE-CRITERIA-IS-BUYING          收购
+FILTERING-LORE-CRITERIA-IS-SELLING         出售
+FILTERING-LORE-CRITERIA-IS-UNLIMITED       无限
+FILTERING-LORE-CRITERIA-HAS-STOCK-LEFT     库存剩余
+FILTERING-LORE-CRITERIA-HAS-SPACE-LEFT     空间剩余
+FILTERING-LORE-LEFT-CLICK-DESCRIPTION      &8➥ &e鼠标左键 &7依次切换条件
+FILTERING-LORE-RIGHT-CLICK-DESCRIPTION     &8➥ &e鼠标右键 &7切换状态
+FILTERING-LORE-DROP-ALL-DESCRIPTION        &8➥ &e丢弃全部 &7重置选择
+
+# ==================== END ResultDisplay ====================
+
+# ==================== BEGIN Messages ====================
+
+MESSAGE-PREFIX                              &7[&6QuickShopSearch&7]
+# - prefix: String
+MESSAGE-EMPTY-PREDICATE                     {prefix} &c请重新提供一个谓词.
+MESSAGE-NO-MATCHES                          {prefix} &c您的查询结果为零匹配.
+# - owner: String
+# - loc_world: String
+# - loc_x: Integer
+# - loc_y: Integer
+# - loc_z: Integer
+MESSAGE-BEFORE-TELEPORTING                  {prefix} &7正在传送到商店所有者 &e{owner} &7的商店，在 &e{loc_x}&7, &e{loc_y}&7, &e{loc_z}&7.
+# - number_shops: Integer
+# - predicate: String
+MESSAGE-BEFORE-QUERYING                     {prefix} &7正在查询符合结果 &e{predicate} &7的 &e{number_shops} &7个商店...
+# - number_shops: Integer
+MESSAGE-QUERYING-ALL-SHOPS                  {prefix} &7正在查询 &e所有 &7(&e{number_shops}&7) 个商店...
+MESSAGE-USAGE-QSSL-LANGUAGE-ITEM-COLOR      &e
+MESSAGE-USAGE-QSSL-LANGUAGE-SEPARATOR-COLOR &7
+# label: String
+# language_list: String
+MESSAGE-USAGE-QSSL-LANGUAGE                 {prefix} 用法: /{label} <{language_list}&7> [谓词]
+# - user_input: String
+# Displayed in the action-bar
+MESSAGE-UNKNOWN-LANGUAGE                    &c未知语言: &4{user_input}&c.
+MESSAGE-PLUGIN-RELOAD                       {prefix} &7配置文件&e重新加载成功.
+MESSAGE-PLUGIN-RELOAD-ERROR                 {prefix} &c在重新加载配置文件时发生错误，请检查服务器控制台!
+# - error_message: String
+MESSAGE-PREDICATE-ERROR                     {prefix} {error_message}
+
+MESSAGE-MISSING-PERMISSION-MAIN-COMMAND                 {prefix} &c你没有权限使用主命令.
+MESSAGE-MISSING-PERMISSION-LANGUAGE-COMMAND             {prefix} &c你没有权限使用语言命令.
+MESSAGE-MISSING-PERMISSION-RELOAD-COMMAND               {prefix} &c你没有权限使用插件重载命令.
+MESSAGE-MISSING-PERMISSION-FEATURE-SORT                 {prefix} &c你没有权限使用排序功能.
+MESSAGE-MISSING-PERMISSION-FEATURE-FILTER               {prefix} &c你没有权限使用筛选功能.
+MESSAGE-MISSING-PERMISSION-FEATURE-TELEPORT             {prefix} &c你没有权限进行传送.
+MESSAGE-MISSING-PERMISSION-FEATURE-TELEPORT-OTHER-WORLD {prefix} &c你没有权限传送到其它世界.
+
+# ==================== END Messages ====================

@@ -27,7 +27,7 @@ public class ReloadCommand implements CommandExecutor {
     BukkitEvaluable message;
 
     if (sender instanceof Player player && !PluginPermission.RELOAD_COMMAND.has(player)) {
-      if ((message = config.rootSection.playerMessages.missingPermissionReload) != null)
+      if ((message = config.rootSection.playerMessages.missingPermissionReloadCommand) != null)
         player.sendMessage(message.stringify(config.rootSection.getBaseEnvironment().build()));
 
       return true;
