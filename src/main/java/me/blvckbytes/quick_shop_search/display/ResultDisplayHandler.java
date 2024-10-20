@@ -100,29 +100,29 @@ public class ResultDisplayHandler implements Listener {
 
     var slot = event.getRawSlot();
 
-    if (slot < 0 || slot >= ResultDisplay.INVENTORY_N_ROWS * 9)
+    if (slot < 0 || slot >= config.rootSection.resultDisplay.getRows() * 9)
       return;
 
     var targetShop = display.getShopCorrespondingToSlot(slot);
     var clickType = event.getClick();
 
     if (clickType == ClickType.LEFT) {
-      if (slot == ResultDisplay.BACKWARDS_SLOT_ID) {
+      if (config.rootSection.resultDisplay.items.previousPage.getDisplaySlots().contains(slot)) {
         display.previousPage();
         return;
       }
 
-      if (slot == ResultDisplay.FORWARDS_SLOT_ID) {
+      if (config.rootSection.resultDisplay.items.nextPage.getDisplaySlots().contains(slot)) {
         display.nextPage();
         return;
       }
 
-      if (slot == ResultDisplay.SORTING_SLOT_ID) {
+      if (config.rootSection.resultDisplay.items.sorting.getDisplaySlots().contains(slot)) {
         ensurePermission(player, PluginPermission.FEATURE_SORT, config.rootSection.playerMessages.missingPermissionFeatureSort, display::nextSortingSelection);
         return;
       }
 
-      if (slot == ResultDisplay.FILTERING_SLOT_ID) {
+      if (config.rootSection.resultDisplay.items.filtering.getDisplaySlots().contains(slot)) {
         ensurePermission(player, PluginPermission.FEATURE_FILTER, config.rootSection.playerMessages.missingPermissionFeatureFilter, display::nextFilteringCriterion);
         return;
       }
@@ -151,22 +151,22 @@ public class ResultDisplayHandler implements Listener {
     }
 
     if (clickType == ClickType.RIGHT) {
-      if (slot == ResultDisplay.BACKWARDS_SLOT_ID) {
+      if (config.rootSection.resultDisplay.items.previousPage.getDisplaySlots().contains(slot)) {
         display.firstPage();
         return;
       }
 
-      if (slot == ResultDisplay.FORWARDS_SLOT_ID) {
+      if (config.rootSection.resultDisplay.items.nextPage.getDisplaySlots().contains(slot)) {
         display.lastPage();
         return;
       }
 
-      if (slot == ResultDisplay.SORTING_SLOT_ID) {
+      if (config.rootSection.resultDisplay.items.sorting.getDisplaySlots().contains(slot)) {
         ensurePermission(player, PluginPermission.FEATURE_SORT, config.rootSection.playerMessages.missingPermissionFeatureSort, display::nextSortingOrder);
         return;
       }
 
-      if (slot == ResultDisplay.FILTERING_SLOT_ID) {
+      if (config.rootSection.resultDisplay.items.filtering.getDisplaySlots().contains(slot)) {
         ensurePermission(player, PluginPermission.FEATURE_FILTER, config.rootSection.playerMessages.missingPermissionFeatureFilter, display::nextFilteringState);
         return;
       }
@@ -178,19 +178,19 @@ public class ResultDisplayHandler implements Listener {
     }
 
     if (clickType == ClickType.DROP) {
-      if (slot == ResultDisplay.SORTING_SLOT_ID)
+      if (config.rootSection.resultDisplay.items.sorting.getDisplaySlots().contains(slot))
         ensurePermission(player, PluginPermission.FEATURE_SORT, config.rootSection.playerMessages.missingPermissionFeatureSort, display::moveSortingSelectionDown);
 
       return;
     }
 
     if (clickType == ClickType.CONTROL_DROP) {
-      if (slot == ResultDisplay.SORTING_SLOT_ID) {
+      if (config.rootSection.resultDisplay.items.sorting.getDisplaySlots().contains(slot)) {
         ensurePermission(player, PluginPermission.FEATURE_SORT, config.rootSection.playerMessages.missingPermissionFeatureSort, display::resetSortingState);
         return;
       }
 
-      if (slot == ResultDisplay.FILTERING_SLOT_ID) {
+      if (config.rootSection.resultDisplay.items.filtering.getDisplaySlots().contains(slot)) {
         ensurePermission(player, PluginPermission.FEATURE_FILTER, config.rootSection.playerMessages.missingPermissionFeatureFilter, display::resetFilteringState);
       }
     }

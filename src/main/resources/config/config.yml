@@ -13,132 +13,147 @@
 
 # - current_page: Integer
 # - number_pages: Integer
+# - number_of_rows: Integer
+# - last_slot: Integer
 resultDisplay:
   title: '@{RESULT-DISPLAY-TITLE}'
-  # https://github.com/BlvckBytes/BukkitEvaluable#itemstack-section
-  previousPage:
-    type: PLAYER_HEAD
-    textures$: 'lut["textures"][if current_page > 1 then "ARROW_LEFT" else "ARROW_LEFT_RED"]'
-    name$: 'if current_page > 1 then @{PREVIOUS-PAGE-NAME-HAS} else @{PREVIOUS-PAGE-NAME-HAS-NOT}'
-    lore$:
-    - '" "'
-    - '@{ANY-CONTROL-LORE-SPACER}'
-    - '@{PREVIOUS-PAGE-LORE-LEFT-CLICK-DESCRIPTION}'
-    - '@{PREVIOUS-PAGE-LORE-RIGHT-CLICK-DESCRIPTION}'
-    - '@{ANY-CONTROL-LORE-SPACER}'
-  # https://github.com/BlvckBytes/BukkitEvaluable#itemstack-section
-  nextPage:
-    type: PLAYER_HEAD
-    textures$: 'lut["textures"][if current_page < number_pages then "ARROW_RIGHT"
-      else "ARROW_RIGHT_RED"]'
-    name$: 'if current_page < number_pages then @{NEXT-PAGE-NAME-HAS} else @{NEXT-PAGE-NAME-HAS-NOT}'
-    lore$:
-    - '" "'
-    - '@{ANY-CONTROL-LORE-SPACER}'
-    - '@{NEXT-PAGE-LORE-LEFT-CLICK-DESCRIPTION}'
-    - '@{NEXT-PAGE-LORE-RIGHT-CLICK-DESCRIPTION}'
-    - '@{ANY-CONTROL-LORE-SPACER}'
-  # - owner: String
-  # - name: String?
-  # - price: Double
-  # - currency: String?
-  # - remaining_stock: Integer
-  # - remaining_space: Integer
-  # - is_selling: Boolean
-  # - is_buying: Boolean
-  # - is_unlimited: Boolean
-  # - loc_world: String
-  # - loc_x: Integer
-  # - loc_y: Integer
-  # - loc_z: Integer
-  # - distance: Integer
-  # https://github.com/BlvckBytes/BukkitEvaluable#itemstack-section
-  representativePatch:
-    lore$:
-    - '" "'
-    - '@{ANY-CONTROL-LORE-SPACER}'
-    - '@{REPRESENTATIVE-LORE-OWNER}'
-    - 'if name != null then @{REPRESENTATIVE-LORE-NAME} & name else null'
-    - '@{REPRESENTATIVE-LORE-PRICE(currency=currency ?? "")}'
-    - |
-      if is_buying then
-        @{REPRESENTATIVE-LORE-REMAINING-SPACE}
-      else
-        @{REPRESENTATIVE-LORE-REMAINING-STOCK}
-    - '@{REPRESENTATIVE-LORE-LOCATION}'
-    - 'if distance < 0 then @{REPRESENTATIVE-LORE-DISTANCE-OTHER-WORLD} else @{REPRESENTATIVE-LORE-DISTANCE}'
-    - |
-      if is_buying then
-        if is_unlimited then @{REPRESENTATIVE-LORE-MODE-BUYING-UNLIMITED} else @{REPRESENTATIVE-LORE-MODE-BUYING}
-      else
-        if is_unlimited then @{REPRESENTATIVE-LORE-MODE-SELLING-UNLIMITED} else @{REPRESENTATIVE-LORE-MODE-SELLING}
-    - '@{ANY-CONTROL-LORE-SPACER}'
-    - '@{REPRESENTATIVE-LORE-LEFT-CLICK-DESCRIPTION}'
-    - '@{REPRESENTATIVE-LORE-RIGHT-CLICK-DESCRIPTION}'
-    - '@{ANY-CONTROL-LORE-SPACER}'
-  # - sorting_selections: Iterable<SortingCriterionSelection>
-  # - selected_index: Integer
+  rows: 6
+  paginationSlots$: 'range(0, 44)'
+  items:
+    # https://github.com/BlvckBytes/BukkitEvaluable#itemstack-section
+    previousPage:
+      slots$: 'last_slot - 8'
+      type: PLAYER_HEAD
+      textures$: 'lut["textures"][if current_page > 1 then "ARROW_LEFT" else "ARROW_LEFT_RED"]'
+      name$: 'if current_page > 1 then @{PREVIOUS-PAGE-NAME-HAS} else @{PREVIOUS-PAGE-NAME-HAS-NOT}'
+      lore$:
+      - '" "'
+      - '@{ANY-CONTROL-LORE-SPACER}'
+      - '@{PREVIOUS-PAGE-LORE-LEFT-CLICK-DESCRIPTION}'
+      - '@{PREVIOUS-PAGE-LORE-RIGHT-CLICK-DESCRIPTION}'
+      - '@{ANY-CONTROL-LORE-SPACER}'
+    # https://github.com/BlvckBytes/BukkitEvaluable#itemstack-section
+    nextPage:
+      slots$: 'last_slot'
+      type: PLAYER_HEAD
+      textures$: 'lut["textures"][if current_page < number_pages then "ARROW_RIGHT"
+        else "ARROW_RIGHT_RED"]'
+      name$: 'if current_page < number_pages then @{NEXT-PAGE-NAME-HAS} else @{NEXT-PAGE-NAME-HAS-NOT}'
+      lore$:
+      - '" "'
+      - '@{ANY-CONTROL-LORE-SPACER}'
+      - '@{NEXT-PAGE-LORE-LEFT-CLICK-DESCRIPTION}'
+      - '@{NEXT-PAGE-LORE-RIGHT-CLICK-DESCRIPTION}'
+      - '@{ANY-CONTROL-LORE-SPACER}'
+    # - owner: String
+    # - name: String?
+    # - price: Double
+    # - currency: String?
+    # - remaining_stock: Integer
+    # - remaining_space: Integer
+    # - is_selling: Boolean
+    # - is_buying: Boolean
+    # - is_unlimited: Boolean
+    # - loc_world: String
+    # - loc_x: Integer
+    # - loc_y: Integer
+    # - loc_z: Integer
+    # - distance: Integer
+    # https://github.com/BlvckBytes/BukkitEvaluable#itemstack-section
+    representativePatch:
+      lore$:
+      - '" "'
+      - '@{ANY-CONTROL-LORE-SPACER}'
+      - '@{REPRESENTATIVE-LORE-OWNER}'
+      - 'if name != null then @{REPRESENTATIVE-LORE-NAME} & name else null'
+      - '@{REPRESENTATIVE-LORE-PRICE(currency=currency ?? "")}'
+      - |
+        if is_buying then
+          @{REPRESENTATIVE-LORE-REMAINING-SPACE}
+        else
+          @{REPRESENTATIVE-LORE-REMAINING-STOCK}
+      - '@{REPRESENTATIVE-LORE-LOCATION}'
+      - 'if distance < 0 then @{REPRESENTATIVE-LORE-DISTANCE-OTHER-WORLD} else @{REPRESENTATIVE-LORE-DISTANCE}'
+      - |
+        if is_buying then
+          if is_unlimited then @{REPRESENTATIVE-LORE-MODE-BUYING-UNLIMITED} else @{REPRESENTATIVE-LORE-MODE-BUYING}
+        else
+          if is_unlimited then @{REPRESENTATIVE-LORE-MODE-SELLING-UNLIMITED} else @{REPRESENTATIVE-LORE-MODE-SELLING}
+      - '@{ANY-CONTROL-LORE-SPACER}'
+      - '@{REPRESENTATIVE-LORE-LEFT-CLICK-DESCRIPTION}'
+      - '@{REPRESENTATIVE-LORE-RIGHT-CLICK-DESCRIPTION}'
+      - '@{ANY-CONTROL-LORE-SPACER}'
+    # - sorting_selections: Iterable<SortingCriterionSelection>
+    # - selected_index: Integer
+    # - has_permission: Boolean
+    # https://github.com/BlvckBytes/BukkitEvaluable#itemstack-section
+    sorting:
+      slots$: 'last_slot - 6'
+      type: COMPARATOR
+      name$: '@{SORTING-NAME}'
+      lore$:
+      - '" "'
+      - |
+        if not has_permission then
+          @{SORTING-LORE-NO-PERMISSION}
+        else
+          flatten(
+            @{ANY-CONTROL-LORE-SPACER},
+            map(sorting_selections, (entry, entry_index) => (
+              (if entry_index == selected_index then
+                @{SORTING-LORE-ENTRY-PREFIX-ACTIVE}
+              else
+                @{SORTING-LORE-ENTRY-PREFIX-INACTIVE})
+              & (lut["sortingSelectionStyle"][str(entry.selection)] ?? "&4?")
+              & (lut["sortingCriteria"][str(entry.criterion)] ?? "&4?")
+            )),
+            @{ANY-CONTROL-LORE-SPACER},
+            @{SORTING-LORE-LEFT-CLICK-DESCRIPTION},
+            @{SORTING-LORE-RIGHT-CLICK-DESCRIPTION},
+            @{SORTING-LORE-DROP-DESCRIPTION},
+            @{SORTING-LORE-DROP-ALL-DESCRIPTION},
+            @{ANY-CONTROL-LORE-SPACER}
+          )
+  # - filtering_selections: Map<ShopFilteringCriteria, PredicateSelection>
+  # - selected_criteria: ShopFilteringCriteria
   # - has_permission: Boolean
   # https://github.com/BlvckBytes/BukkitEvaluable#itemstack-section
-  sorting:
-    type: COMPARATOR
-    name$: '@{SORTING-NAME}'
-    lore$:
-    - '" "'
-    - |
-      if not has_permission then
-        @{SORTING-LORE-NO-PERMISSION}
-      else
-        flatten(
-          @{ANY-CONTROL-LORE-SPACER},
-          map(sorting_selections, (entry, entry_index) => (
-            (if entry_index == selected_index then
-              @{SORTING-LORE-ENTRY-PREFIX-ACTIVE}
-            else
-              @{SORTING-LORE-ENTRY-PREFIX-INACTIVE})
-            & (lut["sortingSelectionStyle"][str(entry.selection)] ?? "&4?")
-            & (lut["sortingCriteria"][str(entry.criterion)] ?? "&4?")
-          )),
-          @{ANY-CONTROL-LORE-SPACER},
-          @{SORTING-LORE-LEFT-CLICK-DESCRIPTION},
-          @{SORTING-LORE-RIGHT-CLICK-DESCRIPTION},
-          @{SORTING-LORE-DROP-DESCRIPTION},
-          @{SORTING-LORE-DROP-ALL-DESCRIPTION},
-          @{ANY-CONTROL-LORE-SPACER}
-        )
-# - filtering_selections: Map<ShopFilteringCriteria, PredicateSelection>
-# - selected_criteria: ShopFilteringCriteria
-# - has_permission: Boolean
-# https://github.com/BlvckBytes/BukkitEvaluable#itemstack-section
-  filtering:
-    type: HOPPER
-    name$: '@{FILTERING-NAME}'
-    lore$:
-    - '" "'
-    - |
-      if not has_permission then
-        @{FILTERING-LORE-NO-PERMISSION}
-      else
-        flatten(
-          @{ANY-CONTROL-LORE-SPACER},
-          map(filtering_selections, (entry) => (
-            (if key(entry) == selected_criteria then
-              @{FILTERING-LORE-ENTRY-PREFIX-ACTIVE}
-            else
-              @{FILTERING-LORE-ENTRY-PREFIX-INACTIVE})
-            & (lut["filteringSelectionStyle"][str(value(entry))] ?? "&4?")
-            & (lut["filteringCriteria"][str(key(entry))] ?? "&4?")
-          )),
-          @{ANY-CONTROL-LORE-SPACER},
-          @{FILTERING-LORE-LEFT-CLICK-DESCRIPTION},
-          @{FILTERING-LORE-RIGHT-CLICK-DESCRIPTION},
-          @{FILTERING-LORE-DROP-ALL-DESCRIPTION},
-          @{ANY-CONTROL-LORE-SPACER}
-        )
-# https://github.com/BlvckBytes/BukkitEvaluable#itemstack-section
-  filler:
-    type: BLACK_STAINED_GLASS_PANE
-    name: " "
+    filtering:
+      slots$: 'last_slot - 2'
+      type: HOPPER
+      name$: '@{FILTERING-NAME}'
+      lore$:
+      - '" "'
+      - |
+        if not has_permission then
+          @{FILTERING-LORE-NO-PERMISSION}
+        else
+          flatten(
+            @{ANY-CONTROL-LORE-SPACER},
+            map(filtering_selections, (entry) => (
+              (if key(entry) == selected_criteria then
+                @{FILTERING-LORE-ENTRY-PREFIX-ACTIVE}
+              else
+                @{FILTERING-LORE-ENTRY-PREFIX-INACTIVE})
+              & (lut["filteringSelectionStyle"][str(value(entry))] ?? "&4?")
+              & (lut["filteringCriteria"][str(key(entry))] ?? "&4?")
+            )),
+            @{ANY-CONTROL-LORE-SPACER},
+            @{FILTERING-LORE-LEFT-CLICK-DESCRIPTION},
+            @{FILTERING-LORE-RIGHT-CLICK-DESCRIPTION},
+            @{FILTERING-LORE-DROP-ALL-DESCRIPTION},
+            @{ANY-CONTROL-LORE-SPACER}
+          )
+  # https://github.com/BlvckBytes/BukkitEvaluable#itemstack-section
+    filler:
+      slots$:
+        - 'last_slot - 7'
+        - 'last_slot - 5'
+        - 'last_slot - 4'
+        - 'last_slot - 3'
+        - 'last_slot - 1'
+      type: BLACK_STAINED_GLASS_PANE
+      name: " "
 
 playerMessages:
   emptyPredicate$: '@{MESSAGE-EMPTY-PREDICATE(prefix=lut["MESSAGE_PREFIX"])}'

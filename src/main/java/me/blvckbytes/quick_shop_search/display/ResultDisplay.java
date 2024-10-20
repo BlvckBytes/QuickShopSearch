@@ -1,6 +1,7 @@
 package me.blvckbytes.quick_shop_search.display;
 
 import me.blvckbytes.bukkitevaluable.ConfigKeeper;
+import me.blvckbytes.gpeee.interpreter.EvaluationEnvironmentBuilder;
 import me.blvckbytes.gpeee.interpreter.IEvaluationEnvironment;
 import me.blvckbytes.quick_shop_search.cache.CachedShop;
 import me.blvckbytes.quick_shop_search.ShopUpdate;
@@ -13,31 +14,10 @@ import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 public class ResultDisplay implements ShopDistanceProvider {
 
   private static final long SENTINEL_DISTANCE_UN_COMPUTABLE = -1;
-
-  public static final int INVENTORY_N_ROWS = 6;
-  public static final int BACKWARDS_SLOT_ID = 45;
-  public static final int FORWARDS_SLOT_ID = 53;
-  public static final int SORTING_SLOT_ID = 47;
-  public static final int FILTERING_SLOT_ID = 51;
-
-  private static final Set<Integer> DISPLAY_SLOTS;
-  private static final Set<Integer> FILLER_SLOTS;
-
-  static {
-    DISPLAY_SLOTS = IntStream.range(0, (INVENTORY_N_ROWS - 1) * 9).boxed().collect(Collectors.toSet());
-    FILLER_SLOTS = IntStream.range((INVENTORY_N_ROWS - 1) * 9, INVENTORY_N_ROWS * 9).boxed().collect(Collectors.toSet());
-
-    FILLER_SLOTS.remove(BACKWARDS_SLOT_ID);
-    FILLER_SLOTS.remove(FORWARDS_SLOT_ID);
-    FILLER_SLOTS.remove(SORTING_SLOT_ID);
-    FILLER_SLOTS.remove(FILTERING_SLOT_ID);
-  }
 
   private final Plugin plugin;
   private final AsyncTaskQueue asyncQueue;
@@ -75,7 +55,7 @@ public class ResultDisplay implements ShopDistanceProvider {
     this.playerLocation = player.getLocation();
     this.displayData = displayData;
     this.shopDistanceByShopId = new HashMap<>();
-    this.slotMap = new CachedShop[INVENTORY_N_ROWS * 9];
+    this.slotMap = new CachedShop[9 * 6];
     this.selectionState = selectionState;
 
     onConfigReload(false);
@@ -134,15 +114,24 @@ public class ResultDisplay implements ShopDistanceProvider {
   }
 
   public void onConfigReload(boolean redraw) {
-    this.sortingEnvironment = this.selectionState.makeSortingEnvironment(player, config.rootSection);
-    this.filteringEnvironment = this.selectionState.makeFilteringEnvironment(player, config.rootSection);
-    this.pageEnvironment = config.rootSection.getBaseEnvironment()
+    this.pageEnvironment = new EvaluationEnvironmentBuilder()
       .withLiveVariable("current_page", () -> this.currentPage)
       .withLiveVariable("number_pages", () -> this.numberOfPages)
-      .build();
+      .build(config.rootSection.resultDisplay.inventoryEnvironment);
 
-    if (redraw)
+    this.sortingEnvironment = this.selectionState
+      .makeSortingEnvironment(player, config.rootSection)
+      .build(pageEnvironment);
+
+    this.filteringEnvironment = this.selectionState
+      .makeFilteringEnvironment(player, config.rootSection)
+      .build(pageEnvironment);
+
+    if (redraw) {
+      applyFiltering();
+      applySorting();
       show();
+    }
   }
 
   public @Nullable CachedShop getShopCorrespondingToSlot(int slot) {
@@ -272,7 +261,9 @@ public class ResultDisplay implements ShopDistanceProvider {
     this.filteredUnSortedShops = this.selectionState.applyFilter(displayData.shops());
 
     var oldNumberOfPages = this.numberOfPages;
-    this.numberOfPages = Math.max(1, (int) Math.ceil(filteredUnSortedShops.size() / (double) DISPLAY_SLOTS.size()));
+    var numberOfDisplaySlots = config.rootSection.resultDisplay.getPaginationSlots().size();
+
+    this.numberOfPages = Math.max(1, (int) Math.ceil(filteredUnSortedShops.size() / (double) numberOfDisplaySlots));
 
     var pageCountDelta = this.numberOfPages - oldNumberOfPages;
 
@@ -323,10 +314,11 @@ public class ResultDisplay implements ShopDistanceProvider {
   }
 
   private void renderItems() {
-    var itemsIndex = (currentPage - 1) * DISPLAY_SLOTS.size();
+    var displaySlots = config.rootSection.resultDisplay.getPaginationSlots();
+    var itemsIndex = (currentPage - 1) * displaySlots.size();
     var numberOfItems = filteredSortedShops.size();
 
-    for (var slot : DISPLAY_SLOTS) {
+    for (var slot : displaySlots) {
       var currentSlot = itemsIndex++;
 
       if (currentSlot >= numberOfItems) {
@@ -344,31 +336,11 @@ public class ResultDisplay implements ShopDistanceProvider {
       slotMap[slot] = cachedShop;
     }
 
-    inventory.setItem(
-      BACKWARDS_SLOT_ID,
-      config.rootSection.resultDisplay.previousPage.build(pageEnvironment)
-    );
-
-    inventory.setItem(
-      FORWARDS_SLOT_ID,
-      config.rootSection.resultDisplay.nextPage.build(pageEnvironment)
-    );
-
-    inventory.setItem(
-      SORTING_SLOT_ID,
-      config.rootSection.resultDisplay.sorting.build(sortingEnvironment)
-    );
-
-    inventory.setItem(
-      FILTERING_SLOT_ID,
-      config.rootSection.resultDisplay.filtering.build(filteringEnvironment)
-    );
-
-    if (config.rootSection.resultDisplay.filler != null) {
-      var fillerItem = config.rootSection.resultDisplay.filler.build();
-      for (var fillerSlot : FILLER_SLOTS)
-        inventory.setItem(fillerSlot, fillerItem);
-    }
+    config.rootSection.resultDisplay.items.previousPage.renderInto(inventory, pageEnvironment);
+    config.rootSection.resultDisplay.items.nextPage.renderInto(inventory, pageEnvironment);
+    config.rootSection.resultDisplay.items.sorting.renderInto(inventory, sortingEnvironment);
+    config.rootSection.resultDisplay.items.filtering.renderInto(inventory, filteringEnvironment);
+    config.rootSection.resultDisplay.items.filler.renderInto(inventory, pageEnvironment);
   }
 
   public IEvaluationEnvironment getDistanceExtendedShopEnvironment(CachedShop cachedShop) {
@@ -380,7 +352,6 @@ public class ResultDisplay implements ShopDistanceProvider {
   }
 
   private Inventory makeInventory() {
-    var title = config.rootSection.resultDisplay.title.stringify(pageEnvironment);
-    return Bukkit.createInventory(null, 9 * INVENTORY_N_ROWS, title);
+    return config.rootSection.resultDisplay.createInventory(pageEnvironment);
   }
 }
