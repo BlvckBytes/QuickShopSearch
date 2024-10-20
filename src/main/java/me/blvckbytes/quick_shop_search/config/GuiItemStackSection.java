@@ -1,6 +1,7 @@
 package me.blvckbytes.quick_shop_search.config;
 
 import me.blvckbytes.bbconfigmapper.ScalarType;
+import me.blvckbytes.bbconfigmapper.sections.CSIgnore;
 import me.blvckbytes.bukkitevaluable.BukkitEvaluable;
 import me.blvckbytes.bukkitevaluable.IItemBuildable;
 import me.blvckbytes.bukkitevaluable.section.ItemStackSection;
@@ -16,9 +17,12 @@ import java.util.Set;
 
 public class GuiItemStackSection extends ItemStackSection {
 
-  private @Nullable BukkitEvaluable slot;
+  private @Nullable BukkitEvaluable slots;
 
+  @CSIgnore
   private IItemBuildable buildable;
+
+  @CSIgnore
   private @Nullable Set<Integer> displaySlots;
 
   public GuiItemStackSection(EvaluationEnvironmentBuilder baseEnvironment) {
@@ -38,9 +42,9 @@ public class GuiItemStackSection extends ItemStackSection {
 
   public void initializeDisplaySlots(IEvaluationEnvironment inventoryEnvironment) {
     this.displaySlots = Collections.unmodifiableSet(
-      slot == null
+      slots == null
         ? Set.of()
-        : slot.asSet(ScalarType.INT, inventoryEnvironment)
+        : slots.asSet(ScalarType.INT, inventoryEnvironment)
     );
   }
 

@@ -3,6 +3,7 @@ package me.blvckbytes.quick_shop_search.config;
 import me.blvckbytes.bbconfigmapper.MappingError;
 import me.blvckbytes.bbconfigmapper.ScalarType;
 import me.blvckbytes.bbconfigmapper.sections.AConfigSection;
+import me.blvckbytes.bbconfigmapper.sections.CSIgnore;
 import me.blvckbytes.bukkitevaluable.BukkitEvaluable;
 import me.blvckbytes.gpeee.interpreter.EvaluationEnvironmentBuilder;
 import org.jetbrains.annotations.Nullable;
@@ -16,6 +17,7 @@ public class PaginatedGuiSection<T extends AConfigSection> extends GuiSection<T>
 
   protected @Nullable BukkitEvaluable paginationSlots;
 
+  @CSIgnore
   private Set<Integer> _paginationSlots;
 
   public PaginatedGuiSection(Class<T> itemsSectionClass, EvaluationEnvironmentBuilder baseEnvironment) {

@@ -22,7 +22,7 @@ resultDisplay:
   items:
     # https://github.com/BlvckBytes/BukkitEvaluable#itemstack-section
     previousPage:
-      slot$: 'last_slot - 8'
+      slots$: 'last_slot - 8'
       type: PLAYER_HEAD
       textures$: 'lut["textures"][if current_page > 1 then "ARROW_LEFT" else "ARROW_LEFT_RED"]'
       name$: 'if current_page > 1 then @{PREVIOUS-PAGE-NAME-HAS} else @{PREVIOUS-PAGE-NAME-HAS-NOT}'
@@ -34,7 +34,7 @@ resultDisplay:
       - '@{ANY-CONTROL-LORE-SPACER}'
     # https://github.com/BlvckBytes/BukkitEvaluable#itemstack-section
     nextPage:
-      slot$: 'last_slot'
+      slots$: 'last_slot'
       type: PLAYER_HEAD
       textures$: 'lut["textures"][if current_page < number_pages then "ARROW_RIGHT"
         else "ARROW_RIGHT_RED"]'
@@ -88,7 +88,7 @@ resultDisplay:
     # - has_permission: Boolean
     # https://github.com/BlvckBytes/BukkitEvaluable#itemstack-section
     sorting:
-      slot$: 'last_slot - 6'
+      slots$: 'last_slot - 6'
       type: COMPARATOR
       name$: '@{SORTING-NAME}'
       lore$:
@@ -119,7 +119,7 @@ resultDisplay:
   # - has_permission: Boolean
   # https://github.com/BlvckBytes/BukkitEvaluable#itemstack-section
     filtering:
-      slot$: 'last_slot - 2'
+      slots$: 'last_slot - 2'
       type: HOPPER
       name$: '@{FILTERING-NAME}'
       lore$:
@@ -146,7 +146,7 @@ resultDisplay:
           )
   # https://github.com/BlvckBytes/BukkitEvaluable#itemstack-section
     filler:
-      slot$:
+      slots$:
         - 'last_slot - 7'
         - 'last_slot - 5'
         - 'last_slot - 4'
