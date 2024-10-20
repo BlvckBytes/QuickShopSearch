@@ -73,8 +73,8 @@ public class ResultDisplayHandler implements Listener {
 
     // Only remove on inventory match, as to prevent removal on title update
     if (display != null && display.isInventory(event.getInventory())) {
-      displayByPlayer.remove(playerId);
       display.cleanup(false);
+      displayByPlayer.remove(playerId);
     }
   }
 
