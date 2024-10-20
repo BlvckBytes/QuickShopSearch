@@ -115,12 +115,7 @@ public class SelectionState {
         if (predicate == PredicateSelection.INVARIANT)
           continue;
 
-        var criteriaResult = entry.getKey().test(item);
-
-        if (predicate == PredicateSelection.NEGATIVE)
-          criteriaResult ^= true;
-
-        if (criteriaResult)
+        if (entry.getKey().test(item, predicate == PredicateSelection.NEGATIVE))
           continue;
 
         doesMatch = false;

@@ -4,27 +4,37 @@ import me.blvckbytes.quick_shop_search.cache.CachedShop;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.function.Predicate;
 
-public enum ShopFilteringCriteria {
+public enum ShopFilteringCriteria implements FilteringFunction {
 
-  IS_BUYING(shop -> shop.handle.isBuying()),
-  IS_SELLING(shop -> shop.handle.isSelling()),
-  IS_UNLIMITED(shop -> shop.handle.isUnlimited()),
-  HAS_STOCK_LEFT(shop -> shop.handle.isSelling() || shop.cachedStock > 0),
-  HAS_SPACE_LEFT(shop -> shop.handle.isBuying() || shop.cachedSpace > 0),
+  IS_BUYING((shop, negative) -> shop.handle.isBuying() ^ negative),
+  IS_SELLING((shop, negative) -> shop.handle.isSelling() ^ negative),
+  IS_UNLIMITED((shop, negative) -> shop.handle.isUnlimited() ^ negative),
+  HAS_STOCK_LEFT((shop, negative) -> {
+    if (!shop.handle.isSelling())
+      return false;
+
+    return (shop.handle.isUnlimited() || shop.cachedStock > 0) ^ negative;
+  }),
+  HAS_SPACE_LEFT((shop, negative) -> {
+    if (!shop.handle.isBuying())
+      return false;
+
+    return (shop.handle.isUnlimited() || shop.cachedSpace > 0) ^ negative;
+  }),
   ;
 
-  private final Predicate<CachedShop> predicate;
+  private final FilteringFunction predicate;
 
   public static final List<ShopFilteringCriteria> values = Arrays.stream(values()).toList();
 
-  ShopFilteringCriteria(Predicate<CachedShop> predicate) {
+  ShopFilteringCriteria(FilteringFunction predicate) {
     this.predicate = predicate;
   }
 
-  public boolean test(CachedShop shop) {
-    return predicate.test(shop);
+  @Override
+  public boolean test(CachedShop shop, boolean negative) {
+    return predicate.test(shop, negative);
   }
 
   public ShopFilteringCriteria next() {

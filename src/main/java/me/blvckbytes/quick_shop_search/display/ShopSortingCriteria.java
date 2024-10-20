@@ -6,7 +6,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Arrays;
 import java.util.List;
 
-public enum ShopSortingCriteria {
+public enum ShopSortingCriteria implements SortingFunction {
 
   PRICE((d, a, b) -> Double.compare(a.handle.getPrice(), b.handle.getPrice())),
   OWNER_NAME((d, a, b) -> a.handle.getOwner().getDisplay().compareTo(b.handle.getOwner().getDisplay())),
@@ -26,7 +26,8 @@ public enum ShopSortingCriteria {
     this.function = function;
   }
 
-  public Integer compare(ShopDistanceProvider distanceProvider, CachedShop a, CachedShop b) {
+  @Override
+  public int compare(ShopDistanceProvider distanceProvider, CachedShop a, CachedShop b) {
     return function.compare(distanceProvider, a, b);
   }
 
