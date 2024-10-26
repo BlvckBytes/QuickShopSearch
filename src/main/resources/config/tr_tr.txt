@@ -34,12 +34,12 @@ REPRESENTATIVE-LORE-REMAINING-STOCK          &8♦ &7Stok: &e{remaining_stock}
 # - loc_world: String
 REPRESENTATIVE-LORE-LOCATION                 &8♦ &7Koordinatlar: &e{loc_x} {loc_y} {loc_z}
 # distance: Integer
-REPRESENTATIVE-LORE-DISTANCE                 &8♦ &7Mesafe: &e{distance} Blocks
+REPRESENTATIVE-LORE-DISTANCE                 &8♦ &7Mesafe: &e{distance} Blok
 REPRESENTATIVE-LORE-DISTANCE-OTHER-WORLD     &8♦ &7Mesafe: &cFarklı Dünya
-REPRESENTATIVE-LORE-MODE-BUYING              &8♦ &7Yöntem: &eBuys Items
-REPRESENTATIVE-LORE-MODE-BUYING-UNLIMITED    &8♦ &7Yöntem: &eBuys Unlimited Items
-REPRESENTATIVE-LORE-MODE-SELLING             &8♦ &7Yöntem: &eSells Items
-REPRESENTATIVE-LORE-MODE-SELLING-UNLIMITED   &8♦ &7Yöntem: &eSells Unlimited Items
+REPRESENTATIVE-LORE-MODE-BUYING              &8♦ &7Yöntem: &eÖğe Alma
+REPRESENTATIVE-LORE-MODE-BUYING-UNLIMITED    &8♦ &7Yöntem: &eSınırsız Öğe Alma
+REPRESENTATIVE-LORE-MODE-SELLING             &8♦ &7Yöntem: &eEÖğe Satma
+REPRESENTATIVE-LORE-MODE-SELLING-UNLIMITED   &8♦ &7Yöntem: &eSınırsız Öğe Satma
 REPRESENTATIVE-LORE-LEFT-CLICK-DESCRIPTION   &8➥ &eSol Tıklama &7Dükkana ışınlan
 REPRESENTATIVE-LORE-RIGHT-CLICK-DESCRIPTION  &8➥ &eSağ Tıklama &7Açık önizleme
 
