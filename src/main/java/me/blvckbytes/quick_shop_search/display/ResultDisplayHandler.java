@@ -200,9 +200,10 @@ public class ResultDisplayHandler implements Listener {
     BukkitEvaluable message;
 
     if ((message = config.rootSection.playerMessages.beforeTeleporting) != null) {
-      player.sendMessage(message.stringify(
+      message.sendMessage(
+        player,
         config.rootSection.getBaseEnvironment().build(display.getDistanceExtendedShopEnvironment(cachedShop))
-      ));
+      );
     }
 
     var shop = cachedShop.handle;
@@ -264,6 +265,6 @@ public class ResultDisplayHandler implements Listener {
     }
 
     if (missingMessage != null)
-      player.sendMessage(missingMessage.stringify(config.rootSection.getBaseEnvironment().build()));
+      missingMessage.sendMessage(player, config.rootSection.builtBaseEnvironment);
   }
 }

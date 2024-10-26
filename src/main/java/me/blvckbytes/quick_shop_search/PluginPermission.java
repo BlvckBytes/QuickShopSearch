@@ -1,5 +1,7 @@
 package me.blvckbytes.quick_shop_search;
 
+import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 
 public enum PluginPermission {
@@ -20,7 +22,13 @@ public enum PluginPermission {
     this.node = PREFIX + "." + node;
   }
 
-  public boolean has(Player player) {
-    return player.hasPermission(node);
+  public boolean has(CommandSender sender) {
+    if (sender instanceof ConsoleCommandSender)
+      return true;
+
+    if (sender instanceof Player player)
+      return player.hasPermission(node);
+
+    return false;
   }
 }

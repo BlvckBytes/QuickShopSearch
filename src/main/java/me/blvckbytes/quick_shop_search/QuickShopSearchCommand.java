@@ -1,6 +1,7 @@
 package me.blvckbytes.quick_shop_search;
 
 import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
+import me.blvckbytes.bbconfigmapper.ScalarType;
 import me.blvckbytes.bukkitevaluable.BukkitEvaluable;
 import me.blvckbytes.bukkitevaluable.ConfigKeeper;
 import me.blvckbytes.item_predicate_parser.PredicateHelper;
@@ -66,7 +67,7 @@ public class QuickShopSearchCommand implements CommandExecutor, TabCompleter {
       if (command.getName().equals(config.rootSection.commands.quickShopSearchLanguage.evaluatedName)) {
         if (!PluginPermission.LANGUAGE_COMMAND.has(player)) {
           if ((message = config.rootSection.playerMessages.missingPermissionLanguageCommand) != null)
-            player.sendMessage(message.stringify(config.rootSection.getBaseEnvironment().build()));
+            message.applicator.sendMessage(player, message, config.rootSection.builtBaseEnvironment);
 
           return;
         }
@@ -75,12 +76,13 @@ public class QuickShopSearchCommand implements CommandExecutor, TabCompleter {
 
         if (args.length == 0 || (matchedLanguage = TranslationLanguage.matcher.matchFirst(args[0])) == null) {
           if ((message = config.rootSection.playerMessages.usageQsslCommandLanguage) != null) {
-            player.sendMessage(message.stringify(
+            message.sendMessage(
+              player,
               config.rootSection.getBaseEnvironment()
                 .withStaticVariable("label", label)
                 .withStaticVariable("languages", TranslationLanguage.matcher.createCompletions(null))
                 .build()
-            ));
+            );
           }
 
           return;
@@ -92,7 +94,7 @@ public class QuickShopSearchCommand implements CommandExecutor, TabCompleter {
 
       if (!PluginPermission.MAIN_COMMAND.has(player)) {
         if ((message = config.rootSection.playerMessages.missingPermissionMainCommand) != null)
-          player.sendMessage(message.stringify(config.rootSection.getBaseEnvironment().build()));
+          message.sendMessage(player, config.rootSection.builtBaseEnvironment);
 
         return;
       }
@@ -104,11 +106,12 @@ public class QuickShopSearchCommand implements CommandExecutor, TabCompleter {
         predicate = predicateHelper.parsePredicate(language, tokens);
       } catch (ItemPredicateParseException e) {
         if ((message = config.rootSection.playerMessages.predicateParseError) != null) {
-          player.sendMessage(message.stringify(
+          message.sendMessage(
+            player,
             config.rootSection.getBaseEnvironment()
               .withStaticVariable("error_message", predicateHelper.createExceptionMessage(e))
               .build()
-          ));
+          );
         }
         return;
       }
@@ -117,11 +120,12 @@ public class QuickShopSearchCommand implements CommandExecutor, TabCompleter {
         // Empty predicates on a command which requires specifying the desired language explicitly seem odd...
         if (argsOffset == 0 && PluginPermission.EMPTY_PREDICATE.has(player)) {
           if ((message = config.rootSection.playerMessages.queryingAllShops) != null) {
-            player.sendMessage(message.stringify(
+            message.sendMessage(
+              player,
               config.rootSection.getBaseEnvironment()
                 .withLiveVariable("number_shops", shopRegistry::getNumberOfExistingShops)
                 .build()
-            ));
+            );
           }
 
           resultDisplay.show(player, shopRegistry.getExistingShops());
@@ -129,18 +133,19 @@ public class QuickShopSearchCommand implements CommandExecutor, TabCompleter {
         }
 
         if ((message = config.rootSection.playerMessages.emptyPredicate) != null)
-          player.sendMessage(message.stringify(config.rootSection.getBaseEnvironment().build()));
+          message.sendMessage(player, config.rootSection.builtBaseEnvironment);
 
         return;
       }
 
       if ((message = config.rootSection.playerMessages.beforeQuerying) != null) {
-        player.sendMessage(message.stringify(
+        message.sendMessage(
+          player,
           config.rootSection.getBaseEnvironment()
             .withLiveVariable("number_shops", shopRegistry::getNumberOfExistingShops)
             .withStaticVariable("predicate", new StringifyState(true).appendPredicate(predicate).toString())
             .build()
-        ));
+        );
       }
 
       var matchingShops = new ArrayList<CachedShop>();
@@ -156,7 +161,7 @@ public class QuickShopSearchCommand implements CommandExecutor, TabCompleter {
 
       if (matchingShops.isEmpty()) {
         if ((message = config.rootSection.playerMessages.noMatches) != null)
-          player.sendMessage(message.stringify(config.rootSection.getBaseEnvironment().build()));
+          message.sendMessage(player, config.rootSection.builtBaseEnvironment);
         return;
       }
 
@@ -189,7 +194,8 @@ public class QuickShopSearchCommand implements CommandExecutor, TabCompleter {
 
       if (matchedLanguage == null) {
         if ((message = config.rootSection.playerMessages.unknownLanguageActionBar) != null) {
-          showActionBarMessage(player, message.stringify(
+          showActionBarMessage(player, message.asScalar(
+            ScalarType.STRING,
             config.rootSection.getBaseEnvironment()
               .withStaticVariable("user_input", args[0])
               .build()
