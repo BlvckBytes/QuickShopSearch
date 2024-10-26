@@ -4,11 +4,11 @@ import com.ghostchu.quickshop.api.event.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
-public class QuickShopListener implements Listener {
+public class QuickShopListener_LTE_6207 implements Listener {
 
   private final QuickShopEventConsumer consumer;
 
-  public QuickShopListener(QuickShopEventConsumer consumer) {
+  public QuickShopListener_LTE_6207(QuickShopEventConsumer consumer) {
     this.consumer = consumer;
   }
 

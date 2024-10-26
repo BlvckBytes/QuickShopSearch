@@ -79,7 +79,7 @@ public class GuiSection<T extends AConfigSection> extends AConfigSection {
     if (title == null)
       return Bukkit.createInventory(null, _rows * 9);
 
-    return Bukkit.createInventory(null, _rows * 9, title.stringify(environment));
+    return Bukkit.createInventory(null, _rows * 9, title.asScalar(ScalarType.STRING, environment));
   }
 
   public int getRows() {

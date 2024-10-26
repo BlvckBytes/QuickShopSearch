@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>me.blvckbytes</groupId>
+        <artifactId>quickshopsearch-root</artifactId>
+        <version>${revision}</version>
+    </parent>
+
+    <artifactId>core</artifactId>
+    <name>QuickShopSearch</name>
+
+    <properties>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.ghostchu</groupId>
+            <artifactId>quickshop-api</artifactId>
+            <version>6.2.0.6</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>me.blvckbytes</groupId>
+            <artifactId>common</artifactId>
+            <version>${revision}</version>
+        </dependency>
+        <dependency>
+            <groupId>me.blvckbytes</groupId>
+            <artifactId>qs_gt_6207</artifactId>
+            <version>${revision}</version>
+        </dependency>
+        <dependency>
+            <groupId>me.blvckbytes</groupId>
+            <artifactId>qs_lte_6207</artifactId>
+            <version>${revision}</version>
+        </dependency>
+        <dependency>
+            <groupId>me.blvckbytes</groupId>
+            <artifactId>BukkitEvaluable</artifactId>
+            <version>0.1</version>
+        </dependency>
+        <dependency>
+            <groupId>me.blvckbytes</groupId>
+            <artifactId>ItemPredicateParser</artifactId>
+            <version>0.0.8</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jetbrains</groupId>
+            <artifactId>annotations</artifactId>
+            <version>24.1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.yaml</groupId>
+            <artifactId>snakeyaml</artifactId>
+            <version>2.3</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.6.0</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <finalName>${project.name}-${project.version}</finalName>
+
+                    <artifactSet>
+                        <includes>
+                            <!-- Include all libs for shading -->
+                            <include>me.blvckbytes:BBConfigMapper</include>
+                            <include>me.blvckbytes:BukkitEvaluable</include>
+                            <include>me.blvckbytes:GPEEE</include>
+                            <include>me.blvckbytes:common</include>
+                            <include>me.blvckbytes:qs_lte_6207</include>
+                            <include>me.blvckbytes:qs_gt_6207</include>
+                            <!-- [1] Shouldn't be necessary anymore on newer versions of bukkit, but I prefer backwards-compatibility over file-size. -->
+                            <include>org.yaml:snakeyaml</include>
+                            <include>com.github.cryptomorin:XSeries</include>
+                        </includes>
+                    </artifactSet>
+
+                    <relocations>
+                        <!-- Relocate all libs into the root package -->
+                        <relocation>
+                            <pattern>me/blvckbytes/(bbconfigmapper|bukkitevaluable|gpeee)/(.*)</pattern>
+                            <shadedPattern>me/blvckbytes/quick_shop_search/$1/$2</shadedPattern>
+                            <rawString>true</rawString>
+                        </relocation>
+
+                        <relocation>
+                            <pattern>(com/cryptomorin/xseries)</pattern>
+                            <shadedPattern>me/blvckbytes/quick_shop_search/$1</shadedPattern>
+                            <rawString>true</rawString>
+                        </relocation>
+
+                        <!-- See [1] -->
+                        <relocation>
+                            <pattern>org/yaml/snakeyaml/(.*)</pattern>
+                            <shadedPattern>me/blvckbytes/quick_shop_search/org/yaml/snakeyaml/$1</shadedPattern>
+                            <rawString>true</rawString>
+                        </relocation>
+                    </relocations>
+
+                    <filters>
+                        <filter>
+                            <artifact>*:*</artifact>
+                            <excludes>
+                                <exclude>META-INF/license/**</exclude>
+                                <exclude>META-INF/*</exclude>
+                                <exclude>META-INF/maven/**</exclude>
+                                <exclude>LICENSE</exclude>
+                                <exclude>NOTICE</exclude>
+                                <exclude>/*.txt</exclude>
+                                <exclude>build.properties</exclude>
+                            </excludes>
+                        </filter>
+                    </filters>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>

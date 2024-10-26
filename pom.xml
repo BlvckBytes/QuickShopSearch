@@ -5,15 +5,23 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>me.blvckbytes</groupId>
-    <artifactId>QuickShopSearch</artifactId>
-    <version>0.0.20</version>
+    <artifactId>quickshopsearch-root</artifactId>
+    <version>${revision}</version>
+    <packaging>pom</packaging>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
-        <output.path>${user.home}/Documents/Projects/MCServerLagersuche/plugins</output.path>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <revision>0.0.21</revision>
     </properties>
+
+    <modules>
+        <module>core</module>
+        <module>qs_lte_6207</module>
+        <module>qs_gt_6207</module>
+        <module>common</module>
+    </modules>
 
     <repositories>
         <repository>
@@ -28,49 +36,10 @@
 
     <dependencies>
         <dependency>
-            <groupId>me.blvckbytes</groupId>
-            <artifactId>BukkitEvaluable</artifactId>
-            <version>0.1</version>
-        </dependency>
-        <dependency>
-            <groupId>com.ghostchu</groupId>
-            <artifactId>quickshop-bukkit</artifactId>
-            <version>6.2.0.6</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.ghostchu</groupId>
-            <artifactId>quickshop-api</artifactId>
-            <version>6.2.0.6</version>
-            <scope>provided</scope>
-        </dependency>
-        <!--You need also bring in quickshop-common module to your project so it will help you resolve our used 3rd-party libraries-->
-        <dependency>
-            <groupId>com.ghostchu</groupId>
-            <artifactId>quickshop-common</artifactId>
-            <version>6.2.0.6</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
             <version>1.18.2-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>me.blvckbytes</groupId>
-            <artifactId>ItemPredicateParser</artifactId>
-            <version>0.0.8</version>
-        </dependency>
-        <dependency>
-            <groupId>org.jetbrains</groupId>
-            <artifactId>annotations</artifactId>
-            <version>24.1.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.yaml</groupId>
-            <artifactId>snakeyaml</artifactId>
-            <version>2.3</version>
         </dependency>
     </dependencies>
 
@@ -85,95 +54,5 @@
                 </includes>
             </resource>
         </resources>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
-                <version>3.6.0</version>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>shade</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-
-                    <artifactSet>
-                        <includes>
-                            <!-- Include all libs for shading -->
-                            <include>me.blvckbytes:BBConfigMapper</include>
-                            <include>me.blvckbytes:BukkitEvaluable</include>
-                            <include>me.blvckbytes:GPEEE</include>
-                            <!-- [1] Shouldn't be necessary anymore on newer versions of bukkit, but I prefer backwards-compatibility over file-size. -->
-                            <include>org.yaml:snakeyaml</include>
-                            <include>com.github.cryptomorin:XSeries</include>
-                        </includes>
-                    </artifactSet>
-
-                    <relocations>
-                        <!-- Relocate all libs into the root package -->
-                        <relocation>
-                            <pattern>me/blvckbytes/(bbconfigmapper|bukkitevaluable|gpeee)/(.*)</pattern>
-                            <shadedPattern>me/blvckbytes/quick_shop_search/$1/$2</shadedPattern>
-                            <rawString>true</rawString>
-                        </relocation>
-
-                        <!-- See [1] -->
-                        <relocation>
-                            <pattern>org/yaml/snakeyaml/(.*)</pattern>
-                            <shadedPattern>me/blvckbytes/quick_shop_search/org/yaml/snakeyaml/$1</shadedPattern>
-                            <rawString>true</rawString>
-                        </relocation>
-                    </relocations>
-
-                    <filters>
-                        <filter>
-                            <artifact>*:*</artifact>
-                            <excludes>
-                                <exclude>META-INF/license/**</exclude>
-                                <exclude>META-INF/*</exclude>
-                                <exclude>META-INF/maven/**</exclude>
-                                <exclude>LICENSE</exclude>
-                                <exclude>NOTICE</exclude>
-                                <exclude>/*.txt</exclude>
-                                <exclude>build.properties</exclude>
-                            </excludes>
-                        </filter>
-                    </filters>
-                </configuration>
-            </plugin>
-
-            <!-- Install the final jar into the specified output path -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <version>3.4.0</version>
-                <executions>
-                    <execution>
-                        <id>copy</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>copy</goal>
-                        </goals>
-                        <configuration>
-                            <artifactItems>
-                                <artifactItem>
-                                    <groupId>${project.groupId}</groupId>
-                                    <artifactId>${project.artifactId}</artifactId>
-                                    <version>${project.version}</version>
-                                    <type>jar</type>
-
-                                    <!-- Overwrite if already present -->
-                                    <overWrite>true</overWrite>
-                                    <outputDirectory>${output.path}</outputDirectory>
-                                </artifactItem>
-                            </artifactItems>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
     </build>
 </project>

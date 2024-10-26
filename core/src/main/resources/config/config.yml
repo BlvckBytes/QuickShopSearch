@@ -65,7 +65,7 @@ resultDisplay:
       - '" "'
       - '@{ANY-CONTROL-LORE-SPACER}'
       - '@{REPRESENTATIVE-LORE-OWNER}'
-      - 'if name != null then @{REPRESENTATIVE-LORE-NAME} & name else null'
+      - 'if name != null then @{REPRESENTATIVE-LORE-NAME} else null'
       - '@{REPRESENTATIVE-LORE-PRICE(currency=currency ?? "")}'
       - |
         if is_buying then

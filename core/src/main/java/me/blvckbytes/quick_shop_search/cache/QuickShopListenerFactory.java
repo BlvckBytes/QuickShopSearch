@@ -4,15 +4,9 @@ import org.bukkit.Bukkit;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.lang.reflect.Constructor;
 import java.util.logging.Logger;
 
 public class QuickShopListenerFactory {
-
-  // TODO: There will be breaking Event-API-changes soon; create sub-modules linking against these
-  //       differing versions and load the class conditionally, based on QuickShop's version
-
-  private static final String LISTENER_PATH = "me/blvckbytes/quick_shop_search/cache/QuickShopListener";
 
   public static Listener create(Logger logger, QuickShopEventConsumer consumer) {
     var quickShopReference = Bukkit.getPluginManager().getPlugin("QuickShop-Hikari");
@@ -23,21 +17,21 @@ public class QuickShopListenerFactory {
     var quickShopVersionString = quickShopPlugin.getDescription().getVersion();
     var quickShopVersion = parseVersionString(quickShopVersionString);
 
-    Constructor<?> listenerConstructor;
+    if (quickShopVersion.length != 4)
+      throw new IllegalStateException("Expected QuickShop-Hikari's version to be comprised of four parts");
 
-    try {
-      listenerConstructor = Class.forName(LISTENER_PATH.replace('/', '.')).getConstructor(QuickShopEventConsumer.class);
-    } catch (Exception e) {
-      throw new IllegalStateException("Could not locate constructor of Listener for QuickShop-Hikari", e);
+    if (
+      quickShopVersion[0] >= 6 &&
+      quickShopVersion[1] >= 2 &&
+      quickShopVersion[2] >= 0 &&
+      quickShopVersion[3] >  7
+    ) {
+      logger.info("Loaded listener-support for > QS 6.2.0.7");
+      return new QuickShopListener_GT_6207(consumer);
     }
 
-    try {
-      var result = (Listener) listenerConstructor.newInstance(consumer);
-      logger.info("Instantiated Listener for QuickShop-Hikari version " + quickShopVersionString);
-      return result;
-    } catch (Exception e) {
-      throw new IllegalStateException("Could not instantiate Listener for QuickShop-Hikari", e);
-    }
+    logger.info("Loaded listener-support for <= QS 6.2.0.7");
+    return new QuickShopListener_LTE_6207(consumer);
   }
 
   private static int[] parseVersionString(String versionString) {
