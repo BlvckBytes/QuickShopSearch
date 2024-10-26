@@ -1,0 +1,138 @@
+# ==================== BEGIN ResultDisplay ====================
+
+# - current_page: Integer
+# - number_pages: Integer
+
+RESULT-DISPLAY-TITLE                        &8Market Arama &e{current_page}&8/&e{number_pages}
+
+ANY-CONTROL-LORE-SPACER                     &8&m                                                  \
+
+PREVIOUS-PAGE-NAME-HAS                      &8» &6Önceki Sayfa &8«
+PREVIOUS-PAGE-NAME-HAS-NOT                  &8» &cÖnceki Sayfa Yok &8«
+PREVIOUS-PAGE-LORE-LEFT-CLICK-DESCRIPTION   &8➥ &eSol Tıklama &7Önceki sayfaya git
+PREVIOUS-PAGE-LORE-RIGHT-CLICK-DESCRIPTION  &8➥ &eSağ Tıklama &7İlk sayfaya atla
+
+NEXT-PAGE-NAME-HAS                      &8» &6Sonraki Sayfa &8«
+NEXT-PAGE-NAME-HAS-NOT                  &8» &cSonraki Sayfa Yok &8«
+NEXT-PAGE-LORE-LEFT-CLICK-DESCRIPTION   &8➥ &eSol Tıklama &7Sonraki sayfaya git
+NEXT-PAGE-LORE-RIGHT-CLICK-DESCRIPTION  &8➥ &eSağ Tıklama &7En son sayfaya atla
+
+# - owner: String
+REPRESENTATIVE-LORE-OWNER                    &8♦ &7Sahibi: &e{owner}
+# - name: String
+REPRESENTATIVE-LORE-NAME                     &8♦ &7İsim: &e{name}
+# - price: String
+# - currency: String
+REPRESENTATIVE-LORE-PRICE                    &8♦ &7Fiyat: &e{price} {currency}
+# - remaining_space: Integer
+REPRESENTATIVE-LORE-REMAINING-SPACE          &8♦ &7Space: &e{remaining_space}
+# - remaining_stock: Integer
+REPRESENTATIVE-LORE-REMAINING-STOCK          &8♦ &7Stok: &e{remaining_stock}
+# - loc_x: Integer
+# - loc_y: Integer
+# - loc_z: Integer
+# - loc_world: String
+REPRESENTATIVE-LORE-LOCATION                 &8♦ &7Koordinatlar: &e{loc_x} {loc_y} {loc_z}
+# distance: Integer
+REPRESENTATIVE-LORE-DISTANCE                 &8♦ &7Mesafe: &e{distance} Blocks
+REPRESENTATIVE-LORE-DISTANCE-OTHER-WORLD     &8♦ &7Mesafe: &cFarklı Dünya
+REPRESENTATIVE-LORE-MODE-BUYING              &8♦ &7Yöntem: &eÖge Alma
+REPRESENTATIVE-LORE-MODE-BUYING-UNLIMITED    &8♦ &7Yöntem: &eSınırsız Öğe Alma
+REPRESENTATIVE-LORE-MODE-SELLING             &8♦ &7Yöntem: &eÖge Satma
+REPRESENTATIVE-LORE-MODE-SELLING-UNLIMITED   &8♦ &7Yöntem: &eSınırsız Öğe Satma
+REPRESENTATIVE-LORE-LEFT-CLICK-DESCRIPTION   &8➥ &eSol Tıklama &7Dükkana ışınlan
+REPRESENTATIVE-LORE-RIGHT-CLICK-DESCRIPTION  &8➥ &eSağ Tıklama &7Açık önizleme
+
+SORTING-NAME                              &8» &6Sıralama &8«
+SORTING-LORE-NO-PERMISSION                &8➥ &cSonuçları sıralama iznin bulunmuyor
+SORTING-LORE-ENTRY-PREFIX-ACTIVE          &e➥ \
+SORTING-LORE-ENTRY-PREFIX-INACTIVE        &8➥ \
+SORTING-LORE-SELECTION-STYLE-ASCENDING    &a+ \
+SORTING-LORE-SELECTION-STYLE-DESCENDING   &c- \
+SORTING-LORE-SELECTION-STYLE-INACTIVE     &7/ &m
+SORTING-LORE-CRITERIA-PRICE               Fiyat
+SORTING-LORE-CRITERIA-OWNER-NAME          Sahibinin Adı
+SORTING-LORE-CRITERIA-STOCK-LEFT          Stok Sol
+SORTING-LORE-CRITERIA-SPACE-LEFT          Space Sol
+SORTING-LORE-CRITERIA-ITEM-TYPE           Ürün tipi
+SORTING-LORE-CRITERIA-SHOP-TYPE           Mağaza Tipi
+SORTING-LORE-CRITERIA-SHOP-NAME           Mağaza adı
+SORTING-LORE-CRITERIA-DISTANCE            Mesafe
+SORTING-LORE-LEFT-CLICK-DESCRIPTION       &8➥ &eSol-Tıkla &Seçenekler üzerinden döngü
+SORTING-LORE-RIGHT-CLICK-DESCRIPTION      &8➥ &eSağ-Tıkla &7Sıralama düzenini değiştir
+SORTING-LORE-DROP-DESCRIPTION             &8➥ &eBırak &7Seçeneği aşağı taşı
+SORTING-LORE-DROP-ALL-DESCRIPTION         &8➥ &eHepsini Bırak &7Reset choices
+
+FILTERING-NAME                             &8» &6Filtreleme &8«
+FILTERING-LORE-NO-PERMISSION               &8➥ &cSonuçları filtreleme iznin yok
+FILTERING-LORE-ENTRY-PREFIX-ACTIVE         &e➥ \
+FILTERING-LORE-ENTRY-PREFIX-INACTIVE       &8➥ \
+FILTERING-LORE-SELECTION-STYLE-POSITIVE    &a
+FILTERING-LORE-SELECTION-STYLE-NEGATIVE    &c
+FILTERING-LORE-SELECTION-STYLE-INVARIANT   &7&m
+FILTERING-LORE-CRITERIA-IS-BUYING          Satın alma
+FILTERING-LORE-CRITERIA-IS-SELLING         Satış
+FILTERING-LORE-CRITERIA-IS-UNLIMITED       Sınırsız
+FILTERING-LORE-CRITERIA-HAS-STOCK-LEFT     Stok Tükendi
+FILTERING-LORE-CRITERIA-HAS-SPACE-LEFT     Space Tükendi
+FILTERING-LORE-LEFT-CLICK-DESCRIPTION      &8➥ &eSol Tıklama &7Seçenekler arasında döngü
+FILTERING-LORE-RIGHT-CLICK-DESCRIPTION     &8➥ &eSağ Tıklama &7Durum değiştir
+FILTERING-LORE-DROP-ALL-DESCRIPTION        &8➥ &eHepsini Bırak &7Seçenekleri sıfırla
+
+# ==================== END ResultDisplay ====================
+
+# ==================== BEGIN Messages ====================
+
+MESSAGE-PREFIX                              &7[&6QuickShopSearch&7]
+# - prefix: String
+MESSAGE-EMPTY-PREDICATE                     {prefix} &cLütfen boş olmayan bir metin sağlayın.
+# - prefix: String
+MESSAGE-NO-MATCHES                          {prefix} &cSorgunuza dair hiçbir eşleşme bulunamadı.
+# - owner: String
+# - loc_world: String
+# - loc_x: Integer
+# - loc_y: Integer
+# - loc_z: Integer
+# - prefix: String
+MESSAGE-BEFORE-TELEPORTING                  {prefix} &e{owner} &7kişisinin &7&e{loc_x}&7, &e{loc_y}&7, &e{loc_z}&7 &7konumundaki marketine ışınlandın.
+# - number_shops: Integer
+# - predicate: String
+# - prefix: String
+MESSAGE-BEFORE-QUERYING                     {prefix} &e{number_shops} &7adet market &e{predicate} &7için sorgulanıyor&7...
+# - number_shops: Integer
+# - prefix: String
+MESSAGE-QUERYING-ALL-SHOPS                  {prefix} &7(&e{number_shops}&7) &7Marketin hepsi sorgulanıyor&7...
+MESSAGE-USAGE-QSSL-LANGUAGE-ITEM-COLOR      &e
+MESSAGE-USAGE-QSSL-LANGUAGE-SEPARATOR-COLOR &7
+# label: String
+# language_list: String
+# - prefix: String
+MESSAGE-USAGE-QSSL-LANGUAGE                 {prefix} &7Kullanım: /{label} <{language_list}&7> [Predicate]
+# - user_input: String
+# - prefix: String
+# Displayed in the action-bar
+MESSAGE-UNKNOWN-LANGUAGE                    &cBilinmeyen dil: &4{user_input}&c.
+# - prefix: String
+MESSAGE-PLUGIN-RELOAD                       {prefix} &7Eklenti &ebaşarıyla &7yeniden yüklendi.
+# - prefix: String
+MESSAGE-PLUGIN-RELOAD-ERROR                 {prefix} &cEklentiyi yeniden yüklemeye çalışırken bir hata oluştu. Konsolu kontrol edin!
+# - error_message: String
+# - prefix: String
+MESSAGE-PREDICATE-ERROR                     {prefix} {error_message}
+
+# - prefix: String
+MESSAGE-MISSING-PERMISSION-MAIN-COMMAND                 {prefix} &cAna komutu kullanmak için izniniz yok.
+# - prefix: String
+MESSAGE-MISSING-PERMISSION-LANGUAGE-COMMAND             {prefix} &cDil komutunu kullanmak için izniniz yok.
+# - prefix: String
+MESSAGE-MISSING-PERMISSION-RELOAD-COMMAND               {prefix} &cEklentiyi yeniden yükleme komutunu kullanmak için izniniz yok.
+# - prefix: String
+MESSAGE-MISSING-PERMISSION-FEATURE-SORT                 {prefix} &cSıralamayı kullanma izniniz yok.
+# - prefix: String
+MESSAGE-MISSING-PERMISSION-FEATURE-FILTER               {prefix} &cFiltrelemeyi kullanma izniniz yok.
+# - prefix: String
+MESSAGE-MISSING-PERMISSION-FEATURE-TELEPORT             {prefix} &cIşınlanmayı kullanma izniniz yok.
+# - prefix: String
+MESSAGE-MISSING-PERMISSION-FEATURE-TELEPORT-OTHER-WORLD {prefix} &cDiğer dünyalara ışınlanma izniniz yok.
+
+# ==================== END Messages ====================
