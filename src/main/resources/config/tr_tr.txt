@@ -36,9 +36,9 @@ REPRESENTATIVE-LORE-LOCATION                 &8♦ &7Koordinatlar: &e{loc_x} {lo
 # distance: Integer
 REPRESENTATIVE-LORE-DISTANCE                 &8♦ &7Mesafe: &e{distance} Blocks
 REPRESENTATIVE-LORE-DISTANCE-OTHER-WORLD     &8♦ &7Mesafe: &cFarklı Dünya
-REPRESENTATIVE-LORE-MODE-BUYING              &8♦ &7Yöntem: &eÖğe Alma
+REPRESENTATIVE-LORE-MODE-BUYING              &8♦ &7Yöntem: &eÖge Alma
 REPRESENTATIVE-LORE-MODE-BUYING-UNLIMITED    &8♦ &7Yöntem: &eSınırsız Öğe Alma
-REPRESENTATIVE-LORE-MODE-SELLING             &8♦ &7Yöntem: &eÖğe Satma
+REPRESENTATIVE-LORE-MODE-SELLING             &8♦ &7Yöntem: &eÖge Satma
 REPRESENTATIVE-LORE-MODE-SELLING-UNLIMITED   &8♦ &7Yöntem: &eSınırsız Öğe Satma
 REPRESENTATIVE-LORE-LEFT-CLICK-DESCRIPTION   &8➥ &eSol Tıklama &7Dükkana ışınlan
 REPRESENTATIVE-LORE-RIGHT-CLICK-DESCRIPTION  &8➥ &eSağ Tıklama &7Açık önizleme
