@@ -201,15 +201,15 @@ predicates:
   mainLanguage: ENGLISH_US
 
 commands:
-  quickshopsearch:
+  quickShopSearch:
     name: quickshopsearch
     aliases:
     - qss
-  quickshopsearchlanguage:
+  quickShopSearchLanguage:
     name: quickshopsearchlanguage
     aliases:
     - qssl
-  quickshopsearchreload:
+  quickShopSearchReload:
     name: quickshopsearchreload
     aliases:
     - qssrl
