@@ -39,7 +39,8 @@ public class CachedShop {
       .withLiveVariable("owner", handle.getOwner()::getDisplay)
       .withLiveVariable("name", handle::getShopName)
       .withLiveVariable("price", handle::getPrice)
-      .withLiveVariable("currency", handle::getCurrency)
+      .withLiveVariable("item_type", () -> formatItemType(handle.getItem()))
+      .withLiveVariable("currency", () -> handle.getCurrency() == null ? "?" : handle.getCurrency())
       .withLiveVariable("remaining_stock", () -> this.cachedStock)
       .withLiveVariable("remaining_space", () -> this.cachedSpace)
       .withLiveVariable("is_buying", handle::isBuying)
@@ -59,6 +60,29 @@ public class CachedShop {
       this.cachedSpace = handle.getRemainingSpace();
       this.diff.update();
     });
+  }
+
+  private String formatItemType(ItemStack item) {
+    var typeEnumName = item.getType().name();
+    var formattedName = new char[typeEnumName.length()];
+
+    for (var i = 0; i < formattedName.length; ++i) {
+      var currentChar = typeEnumName.charAt(i);
+
+      if (currentChar == '_') {
+        formattedName[i] = ' ';
+        continue;
+      }
+
+      if (i == 0 || formattedName[i - 1] == ' ') {
+        formattedName[i] = Character.toUpperCase(currentChar);
+        continue;
+      }
+
+      formattedName[i] = Character.toLowerCase(currentChar);
+    }
+
+    return new String(formattedName);
   }
 
   public void onConfigReload() {

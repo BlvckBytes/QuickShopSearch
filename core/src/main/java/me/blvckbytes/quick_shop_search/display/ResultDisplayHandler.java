@@ -1,8 +1,16 @@
 package me.blvckbytes.quick_shop_search.display;
 
+import com.ghostchu.quickshop.QuickShop;
+import com.ghostchu.quickshop.api.QuickShopAPI;
+import com.ghostchu.quickshop.api.shop.ShopAction;
+import com.ghostchu.quickshop.api.shop.ShopType;
+import com.ghostchu.quickshop.shop.SimpleInfo;
+import com.ghostchu.quickshop.shop.inventory.BukkitInventoryWrapper;
 import com.tcoded.folialib.impl.PlatformScheduler;
 import me.blvckbytes.bukkitevaluable.BukkitEvaluable;
 import me.blvckbytes.bukkitevaluable.ConfigKeeper;
+import me.blvckbytes.gpeee.interpreter.EvaluationEnvironmentBuilder;
+import me.blvckbytes.quick_shop_search.ChatPromptManager;
 import me.blvckbytes.quick_shop_search.cache.CachedShop;
 import me.blvckbytes.quick_shop_search.PluginPermission;
 import me.blvckbytes.quick_shop_search.ShopUpdate;
@@ -37,15 +45,18 @@ public class ResultDisplayHandler implements Listener {
   private final ConfigKeeper<MainSection> config;
 
   private final SelectionStateStore stateStore;
+  private final ChatPromptManager chatPromptManager;
   private final Map<UUID, ResultDisplay> displayByPlayer;
 
   public ResultDisplayHandler(
     PlatformScheduler scheduler,
     ConfigKeeper<MainSection> config,
-    SelectionStateStore stateStore
+    SelectionStateStore stateStore,
+    ChatPromptManager chatPromptManager
   ) {
     this.scheduler = scheduler;
     this.stateStore = stateStore;
+    this.chatPromptManager = chatPromptManager;
     this.config = config;
     this.displayByPlayer = new HashMap<>();
 
@@ -195,6 +206,112 @@ public class ResultDisplayHandler implements Listener {
         ensurePermission(player, PluginPermission.FEATURE_FILTER, config.rootSection.playerMessages.missingPermissionFeatureFilter, display::resetFilteringState);
       }
     }
+
+    if (clickType == ClickType.SHIFT_LEFT && targetShop != null) {
+      var shopLocation = targetShop.handle.getLocation();
+
+      if (shopLocation.getWorld() != player.getWorld()) {
+        ensurePermission(
+          player, PluginPermission.FEATURE_INTERACT_OTHER_WORLD,
+          config.rootSection.playerMessages.missingPermissionFeatureInteractOtherWorld,
+          () -> initiateShopInteraction(player, display, targetShop)
+        );
+        return;
+      }
+
+      ensurePermission(
+        player, PluginPermission.FEATURE_INTERACT,
+        config.rootSection.playerMessages.missingPermissionFeatureInteract,
+        () -> initiateShopInteraction(player, display, targetShop)
+      );
+    }
+  }
+
+  private void initiateShopInteraction(Player player, ResultDisplay display, CachedShop cachedShop) {
+    var extendedEnvironment = config.rootSection.getBaseEnvironment().build(
+      display.getDistanceExtendedShopEnvironment(cachedShop)
+    );
+
+    scheduler.runAtEntity(player, scheduleTask -> player.closeInventory());
+
+    var didOverwritePrevious = chatPromptManager.register(
+      player,
+      input -> {
+        if (input.equalsIgnoreCase("cancel")) {
+          BukkitEvaluable.sendMessage(player, config.rootSection.playerMessages.shopInteractPromptCancelCurrent, config.rootSection.builtBaseEnvironment);
+          return;
+        }
+
+        var amount = tryParseStrictlyPositiveInteger(input);
+
+        if (amount <= 0) {
+          BukkitEvaluable.sendMessage(
+            player,
+            config.rootSection.playerMessages.shopInteractPromptInvalidInput,
+            config.rootSection.getBaseEnvironment()
+              .withStaticVariable("input", input)
+              .build()
+          );
+          return;
+        }
+
+        BukkitEvaluable.sendMessage(
+          player,
+          config.rootSection.playerMessages.shopInteractPromptDispatch,
+          new EvaluationEnvironmentBuilder()
+            .withStaticVariable("amount", amount)
+            .build(extendedEnvironment)
+        );
+
+        dispatchShopInteraction(player, cachedShop, amount);
+      },
+      () -> BukkitEvaluable.sendMessage(player, config.rootSection.playerMessages.shopInteractPromptTimeout, extendedEnvironment)
+    );
+
+    if (didOverwritePrevious)
+      BukkitEvaluable.sendMessage(player, config.rootSection.playerMessages.shopInteractPromptCancelPrevious, config.rootSection.builtBaseEnvironment);
+
+    if (cachedShop.handle.getShopType() == ShopType.BUYING)
+      BukkitEvaluable.sendMessage(player, config.rootSection.playerMessages.shopInteractPromptBuying, extendedEnvironment);
+    else
+      BukkitEvaluable.sendMessage(player, config.rootSection.playerMessages.shopInteractPromptSelling, extendedEnvironment);
+  }
+
+  private int tryParseStrictlyPositiveInteger(String input) {
+    try {
+      var result = Integer.parseInt(input);
+
+      if (result > 0)
+        return result;
+    } catch (NumberFormatException ignored) {}
+
+    return -1;
+  }
+
+  private void dispatchShopInteraction(Player player, CachedShop cachedShop, int amount) {
+    scheduler.runAtLocation(cachedShop.handle.getLocation(), scheduleTask -> {
+      var tradeInfo = new SimpleInfo(
+        cachedShop.handle.getLocation(),
+        cachedShop.handle.isBuying() ? ShopAction.PURCHASE_SELL : ShopAction.PURCHASE_BUY,
+        null, null, cachedShop.handle, false
+      );
+
+      var wrappedInventory = new BukkitInventoryWrapper(player.getInventory());
+
+      if (cachedShop.handle.isBuying()) {
+        QuickShopAPI.getInstance().getShopManager().actionBuying(
+          player, wrappedInventory,
+          QuickShop.getInstance().getEconomy(),
+          tradeInfo, cachedShop.handle, amount
+        );
+      } else {
+        QuickShopAPI.getInstance().getShopManager().actionSelling(
+          player, wrappedInventory,
+          QuickShop.getInstance().getEconomy(),
+          tradeInfo, cachedShop.handle, amount
+        );
+      }
+    });
   }
 
   private void teleportPlayerToShop(Player player, ResultDisplay display, CachedShop cachedShop) {
@@ -236,7 +353,7 @@ public class ResultDisplayHandler implements Listener {
       targetLocation = shopLocation.add(.5, 0, .5);
 
     scheduler.teleportAsync(player, targetLocation, PlayerTeleportEvent.TeleportCause.PLUGIN);
-    player.closeInventory();
+    scheduler.runAtEntity(player, scheduleTask -> player.closeInventory());
   }
 
   @EventHandler

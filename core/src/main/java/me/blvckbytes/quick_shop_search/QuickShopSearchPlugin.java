@@ -48,8 +48,11 @@ public class QuickShopSearchPlugin extends JavaPlugin {
 
       logger.info("Using language " + config.rootSection.predicates.mainLanguage.assetFileNameWithoutExtension + " for predicate parsing");
 
+      var chatPromptManager = new ChatPromptManager(scheduler);
+      Bukkit.getServer().getPluginManager().registerEvents(chatPromptManager, this);
+
       stateStore = new SelectionStateStore(this, logger);
-      displayHandler = new ResultDisplayHandler(scheduler, config, stateStore);
+      displayHandler = new ResultDisplayHandler(scheduler, config, stateStore, chatPromptManager);
 
       var quickShopApi = QuickShopAPI.getInstance();
       var shopRegistry = new CachedShopRegistry(scheduler, quickShopApi.getShopManager(), displayHandler, config, logger);

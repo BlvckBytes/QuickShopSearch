@@ -17,6 +17,13 @@ public class PlayerMessagesSection extends AConfigSection {
   public @Nullable BukkitEvaluable pluginReloadedSuccess;
   public @Nullable BukkitEvaluable pluginReloadedError;
   public @Nullable BukkitEvaluable predicateParseError;
+  public @Nullable BukkitEvaluable shopInteractPromptBuying;
+  public @Nullable BukkitEvaluable shopInteractPromptSelling;
+  public @Nullable BukkitEvaluable shopInteractPromptTimeout;
+  public @Nullable BukkitEvaluable shopInteractPromptDispatch;
+  public @Nullable BukkitEvaluable shopInteractPromptInvalidInput;
+  public @Nullable BukkitEvaluable shopInteractPromptCancelPrevious;
+  public @Nullable BukkitEvaluable shopInteractPromptCancelCurrent;
 
   public @Nullable BukkitEvaluable missingPermissionMainCommand;
   public @Nullable BukkitEvaluable missingPermissionLanguageCommand;
@@ -25,6 +32,8 @@ public class PlayerMessagesSection extends AConfigSection {
   public @Nullable BukkitEvaluable missingPermissionFeatureFilter;
   public @Nullable BukkitEvaluable missingPermissionFeatureTeleport;
   public @Nullable BukkitEvaluable missingPermissionFeatureTeleportOtherWorld;
+  public @Nullable BukkitEvaluable missingPermissionFeatureInteract;
+  public @Nullable BukkitEvaluable missingPermissionFeatureInteractOtherWorld;
 
   public PlayerMessagesSection(EvaluationEnvironmentBuilder baseEnvironment) {
     super(baseEnvironment);

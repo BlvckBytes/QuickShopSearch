@@ -82,6 +82,11 @@ resultDisplay:
       - '@{ANY-CONTROL-LORE-SPACER}'
       - '@{REPRESENTATIVE-LORE-LEFT-CLICK-DESCRIPTION}'
       - '@{REPRESENTATIVE-LORE-RIGHT-CLICK-DESCRIPTION}'
+      - |
+        if is_buying then
+           @{REPRESENTATIVE-LORE-SHIFT-LEFT-CLICK-BUYING-DESCRIPTION}
+        else
+           @{REPRESENTATIVE-LORE-SHIFT-LEFT-CLICK-SELLING-DESCRIPTION}
       - '@{ANY-CONTROL-LORE-SPACER}'
     # - sorting_selections: Iterable<SortingCriterionSelection>
     # - selected_index: Integer
@@ -189,6 +194,13 @@ playerMessages:
   pluginReloadedError$: '@{MESSAGE-PLUGIN-RELOAD-ERROR(prefix=lut["MESSAGE_PREFIX"])}'
   # - error_message: String
   predicateParseError$: '@{MESSAGE-PREDICATE-ERROR(prefix=lut["MESSAGE_PREFIX"])}'
+  shopInteractPromptBuying$: '@{MESSAGE-SHOP-INTERACT-PROMPT-BUYING(prefix=lut["MESSAGE_PREFIX"])}'
+  shopInteractPromptSelling$: '@{MESSAGE-SHOP-INTERACT-PROMPT-SELLING(prefix=lut["MESSAGE_PREFIX"])}'
+  shopInteractPromptTimeout$: '@{MESSAGE-SHOP-INTERACT-PROMPT-TIMEOUT(prefix=lut["MESSAGE_PREFIX"])}'
+  shopInteractPromptDispatch$: '@{MESSAGE-SHOP-INTERACT-PROMPT-DISPATCH(prefix=lut["MESSAGE_PREFIX"])}'
+  shopInteractPromptInvalidInput$: '@{MESSAGE-SHOP-INTERACT-PROMPT-INVALID-INPUT(prefix=lut["MESSAGE_PREFIX"])}'
+  shopInteractPromptCancelPrevious$: '@{MESSAGE-SHOP-INTERACT-PROMPT-CANCEL-PREVIOUS(prefix=lut["MESSAGE_PREFIX"])}'
+  shopInteractPromptCancelCurrent$: '@{MESSAGE-SHOP-INTERACT-PROMPT-CANCEL-CURRENT(prefix=lut["MESSAGE_PREFIX"])}'
   missingPermissionMainCommand$: '@{MESSAGE-MISSING-PERMISSION-MAIN-COMMAND(prefix=lut["MESSAGE_PREFIX"])}'
   missingPermissionLanguageCommand$: '@{MESSAGE-MISSING-PERMISSION-LANGUAGE-COMMAND(prefix=lut["MESSAGE_PREFIX"])}'
   missingPermissionReloadCommand$: '@{MESSAGE-MISSING-PERMISSION-RELOAD-COMMAND(prefix=lut["MESSAGE_PREFIX"])}'
@@ -196,6 +208,8 @@ playerMessages:
   missingPermissionFeatureFilter$: '@{MESSAGE-MISSING-PERMISSION-FEATURE-FILTER(prefix=lut["MESSAGE_PREFIX"])}'
   missingPermissionFeatureTeleport$: '@{MESSAGE-MISSING-PERMISSION-FEATURE-TELEPORT(prefix=lut["MESSAGE_PREFIX"])}'
   missingPermissionFeatureTeleportOtherWorld$: '@{MESSAGE-MISSING-PERMISSION-FEATURE-TELEPORT-OTHER-WORLD(prefix=lut["MESSAGE_PREFIX"])}'
+  missingPermissionFeatureInteract$: '@{MESSAGE-MISSING-PERMISSION-FEATURE-INTERACT(prefix=lut["MESSAGE_PREFIX"])}'
+  missingPermissionFeatureInteractOtherWorld$: '@{MESSAGE-MISSING-PERMISSION-FEATURE-INTERACT-OTHER-WORLD(prefix=lut["MESSAGE_PREFIX"])}'
 
 predicates:
   mainLanguage: ENGLISH_US

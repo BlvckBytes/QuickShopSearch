@@ -12,7 +12,9 @@ public enum PluginPermission {
   FEATURE_SORT("feature.sort"),
   FEATURE_FILTER("feature.filter"),
   FEATURE_TELEPORT("feature.teleport"),
-  FEATURE_TELEPORT_OTHER_WORLD("feature.teleport.other-world")
+  FEATURE_TELEPORT_OTHER_WORLD("feature.teleport.other-world"),
+  FEATURE_INTERACT("feature.interact"),
+  FEATURE_INTERACT_OTHER_WORLD("feature.interact.other-world"),
   ;
 
   private static final String PREFIX = "quickshopsearch";
