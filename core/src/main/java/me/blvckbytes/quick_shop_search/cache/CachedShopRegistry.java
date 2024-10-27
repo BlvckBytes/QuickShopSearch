@@ -3,36 +3,37 @@ package me.blvckbytes.quick_shop_search.cache;
 import com.ghostchu.quickshop.api.shop.Shop;
 import com.ghostchu.quickshop.api.shop.ShopManager;
 import com.ghostchu.quickshop.api.shop.ShopType;
+import com.tcoded.folialib.impl.PlatformScheduler;
 import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
 import me.blvckbytes.bukkitevaluable.ConfigKeeper;
 import me.blvckbytes.quick_shop_search.ShopUpdate;
 import me.blvckbytes.quick_shop_search.config.MainSection;
 import me.blvckbytes.quick_shop_search.display.DisplayData;
 import me.blvckbytes.quick_shop_search.display.ResultDisplayHandler;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.plugin.Plugin;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
+import java.util.logging.Logger;
 
 public class CachedShopRegistry implements QuickShopEventConsumer {
 
-  private final Plugin plugin;
+  private final PlatformScheduler scheduler;
   private final Map<Location, CachedShop> existingShopByLocation;
   private final LongOpenHashSet existingShopIds;
   private final ConfigKeeper<MainSection> config;
   private final ResultDisplayHandler displayHandler;
 
   public CachedShopRegistry(
-    Plugin plugin,
+    PlatformScheduler scheduler,
     ShopManager shopManager,
     ResultDisplayHandler displayHandler,
-    ConfigKeeper<MainSection> config
+    ConfigKeeper<MainSection> config,
+    Logger logger
   ) {
-    this.plugin = plugin;
+    this.scheduler = scheduler;
     this.config = config;
     this.displayHandler = displayHandler;
     this.existingShopByLocation = new HashMap<>();
@@ -45,12 +46,12 @@ public class CachedShopRegistry implements QuickShopEventConsumer {
       }
     });
 
-    plugin.getLogger().info("Getting all globally existing shops... This may take a while!");
+    logger.info("Getting all globally existing shops... This may take a while!");
 
     for (var shop : shopManager.getAllShops())
-      existingShopByLocation.put(shop.getLocation(), new CachedShop(shop, config));
+      existingShopByLocation.put(shop.getLocation(), new CachedShop(scheduler, shop, config));
 
-    plugin.getLogger().info("Found " + existingShopByLocation.size() + " shops in total");
+    logger.info("Found " + existingShopByLocation.size() + " shops in total");
   }
 
   public DisplayData getExistingShops() {
@@ -72,9 +73,9 @@ public class CachedShopRegistry implements QuickShopEventConsumer {
 
   @Override
   public void onShopCreate(Shop shop) {
-    Bukkit.getScheduler().runTask(plugin, () -> {
+    scheduler.runAsync(scheduleTask -> {
       synchronized (existingShopByLocation) {
-        var addedShop = new CachedShop(shop, config);
+        var addedShop = new CachedShop(scheduler, shop, config);
 
         existingShopByLocation.put(shop.getLocation(), addedShop);
         existingShopIds.add(shop.getShopId());

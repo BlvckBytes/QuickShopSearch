@@ -1,16 +1,15 @@
 package me.blvckbytes.quick_shop_search.display;
 
+import com.tcoded.folialib.impl.PlatformScheduler;
 import me.blvckbytes.bukkitevaluable.ConfigKeeper;
 import me.blvckbytes.gpeee.interpreter.EvaluationEnvironmentBuilder;
 import me.blvckbytes.gpeee.interpreter.IEvaluationEnvironment;
 import me.blvckbytes.quick_shop_search.cache.CachedShop;
 import me.blvckbytes.quick_shop_search.ShopUpdate;
 import me.blvckbytes.quick_shop_search.config.MainSection;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
@@ -19,7 +18,7 @@ public class ResultDisplay implements ShopDistanceProvider {
 
   private static final long SENTINEL_DISTANCE_UN_COMPUTABLE = -1;
 
-  private final Plugin plugin;
+  private final PlatformScheduler scheduler;
   private final AsyncTaskQueue asyncQueue;
   private final ConfigKeeper<MainSection> config;
 
@@ -42,15 +41,15 @@ public class ResultDisplay implements ShopDistanceProvider {
   private int currentPage = 1;
 
   public ResultDisplay(
-    Plugin plugin,
+    PlatformScheduler scheduler,
     ConfigKeeper<MainSection> config,
     Player player,
     DisplayData displayData,
     SelectionState selectionState
   ) {
-    this.plugin = plugin;
+    this.scheduler = scheduler;
     this.config = config;
-    this.asyncQueue = new AsyncTaskQueue(plugin);
+    this.asyncQueue = new AsyncTaskQueue(scheduler);
     this.player = player;
     this.playerLocation = player.getLocation();
     this.displayData = displayData;
@@ -288,7 +287,7 @@ public class ResultDisplay implements ShopDistanceProvider {
 
     renderItems();
 
-    Bukkit.getScheduler().runTask(plugin, () -> player.openInventory(inventory));
+    scheduler.runAtEntity(player, scheduleTask -> player.openInventory(inventory));
   }
 
   @Override

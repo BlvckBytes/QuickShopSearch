@@ -1,6 +1,7 @@
 package me.blvckbytes.quick_shop_search.cache;
 
 import com.ghostchu.quickshop.api.shop.Shop;
+import com.tcoded.folialib.impl.PlatformScheduler;
 import me.blvckbytes.bukkitevaluable.ConfigKeeper;
 import me.blvckbytes.bukkitevaluable.IItemBuildable;
 import me.blvckbytes.bukkitevaluable.ItemBuilder;
@@ -22,16 +23,15 @@ public class CachedShop {
   public int cachedStock;
   public int cachedSpace;
 
-  public CachedShop(Shop handle, ConfigKeeper<MainSection> config) {
+  public CachedShop(
+    PlatformScheduler scheduler,
+    Shop handle,
+    ConfigKeeper<MainSection> config
+  ) {
     this.handle = handle;
     this.diff = new ShopScalarDiff(this);
     this.config = config;
 
-    onConfigReload();
-
-    this.representativeBuildable = makeBuildable(handle.getItem());
-    this.cachedStock = handle.getRemainingStock();
-    this.cachedSpace = handle.getRemainingSpace();
     var shopLocation = handle.getLocation();
     var shopWorld = shopLocation.getWorld();
 
@@ -50,7 +50,15 @@ public class CachedShop {
       .withLiveVariable("loc_y", shopLocation::getBlockY)
       .withLiveVariable("loc_z", shopLocation::getBlockZ);
 
-    this.diff.update();
+    scheduler.runAtLocation(shopLocation, scheduleTask -> {
+      this.diff.update();
+      onConfigReload();
+
+      this.representativeBuildable = makeBuildable(handle.getItem());
+      this.cachedStock = handle.getRemainingStock();
+      this.cachedSpace = handle.getRemainingSpace();
+      this.diff.update();
+    });
   }
 
   public void onConfigReload() {

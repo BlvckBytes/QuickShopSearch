@@ -2,6 +2,7 @@ package me.blvckbytes.quick_shop_search;
 
 import com.cryptomorin.xseries.XMaterial;
 import com.ghostchu.quickshop.api.QuickShopAPI;
+import com.tcoded.folialib.FoliaLib;
 import me.blvckbytes.bukkitevaluable.CommandUpdater;
 import me.blvckbytes.bukkitevaluable.ConfigKeeper;
 import me.blvckbytes.bukkitevaluable.ConfigManager;
@@ -30,10 +31,13 @@ public class QuickShopSearchPlugin extends JavaPlugin {
   public void onEnable() {
     var logger = getLogger();
 
-    // First invocation is quite heavy - warm up cache
-    XMaterial.matchXMaterial(Material.AIR);
-
     try {
+      // First invocation is quite heavy - warm up cache
+      XMaterial.matchXMaterial(Material.AIR);
+
+      var foliaLib = new FoliaLib(this);
+      var scheduler = foliaLib.getScheduler();
+
       var configManager = new ConfigManager(this, "config");
       var config = new ConfigKeeper<>(configManager, "config.yml", MainSection.class);
 
@@ -45,10 +49,10 @@ public class QuickShopSearchPlugin extends JavaPlugin {
       logger.info("Using language " + config.rootSection.predicates.mainLanguage.assetFileNameWithoutExtension + " for predicate parsing");
 
       stateStore = new SelectionStateStore(this, logger);
-      displayHandler = new ResultDisplayHandler(this, config, stateStore);
+      displayHandler = new ResultDisplayHandler(scheduler, config, stateStore);
 
       var quickShopApi = QuickShopAPI.getInstance();
-      var shopRegistry = new CachedShopRegistry(this, quickShopApi.getShopManager(), displayHandler, config);
+      var shopRegistry = new CachedShopRegistry(scheduler, quickShopApi.getShopManager(), displayHandler, config, logger);
 
       var shopEventHandler = QuickShopListenerFactory.create(logger, shopRegistry);
 
@@ -56,7 +60,7 @@ public class QuickShopSearchPlugin extends JavaPlugin {
       Bukkit.getPluginManager().registerEvents(displayHandler, this);
 
       var commandUpdater = new CommandUpdater(this);
-      var commandExecutor = new QuickShopSearchCommand(this, parserPlugin.getPredicateHelper(), shopRegistry, config, displayHandler);
+      var commandExecutor = new QuickShopSearchCommand(scheduler, parserPlugin.getPredicateHelper(), shopRegistry, config, displayHandler);
 
       var mainCommand = Objects.requireNonNull(getCommand(QuickShopSearchCommandSection.INITIAL_NAME));
       var languageCommand = Objects.requireNonNull(getCommand(QuickShopSearchLanguageCommandSection.INITIAL_NAME));

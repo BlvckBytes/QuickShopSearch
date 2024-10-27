@@ -1,5 +1,6 @@
 package me.blvckbytes.quick_shop_search.display;
 
+import com.tcoded.folialib.impl.PlatformScheduler;
 import me.blvckbytes.bukkitevaluable.BukkitEvaluable;
 import me.blvckbytes.bukkitevaluable.ConfigKeeper;
 import me.blvckbytes.quick_shop_search.cache.CachedShop;
@@ -17,7 +18,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.plugin.Plugin;
+import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.Nullable;
 
@@ -31,7 +32,7 @@ public class ResultDisplayHandler implements Listener {
     BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST
   };
 
-  private final Plugin plugin;
+  private final PlatformScheduler scheduler;
 
   private final ConfigKeeper<MainSection> config;
 
@@ -39,11 +40,11 @@ public class ResultDisplayHandler implements Listener {
   private final Map<UUID, ResultDisplay> displayByPlayer;
 
   public ResultDisplayHandler(
-    Plugin plugin,
+    PlatformScheduler scheduler,
     ConfigKeeper<MainSection> config,
     SelectionStateStore stateStore
   ) {
-    this.plugin = plugin;
+    this.scheduler = scheduler;
     this.stateStore = stateStore;
     this.config = config;
     this.displayByPlayer = new HashMap<>();
@@ -60,7 +61,7 @@ public class ResultDisplayHandler implements Listener {
   }
 
   public void show(Player player, DisplayData displayData) {
-    displayByPlayer.put(player.getUniqueId(), new ResultDisplay(plugin, config, player, displayData, stateStore.loadState(player)));
+    displayByPlayer.put(player.getUniqueId(), new ResultDisplay(scheduler, config, player, displayData, stateStore.loadState(player)));
   }
 
   @EventHandler
@@ -234,7 +235,7 @@ public class ResultDisplayHandler implements Listener {
     if (targetLocation == null)
       targetLocation = shopLocation.add(.5, 0, .5);
 
-    player.teleport(targetLocation);
+    scheduler.teleportAsync(player, targetLocation, PlayerTeleportEvent.TeleportCause.PLUGIN);
     player.closeInventory();
   }
 

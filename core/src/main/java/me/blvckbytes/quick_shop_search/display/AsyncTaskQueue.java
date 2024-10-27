@@ -1,7 +1,6 @@
 package me.blvckbytes.quick_shop_search.display;
 
-import org.bukkit.Bukkit;
-import org.bukkit.plugin.Plugin;
+import com.tcoded.folialib.impl.PlatformScheduler;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,11 +17,11 @@ public class AsyncTaskQueue {
     }
   }
 
-  private final Plugin plugin;
+  private final PlatformScheduler scheduler;
   private final List<QueuedTask> taskQueue;
 
-  public AsyncTaskQueue(Plugin plugin) {
-    this.plugin = plugin;
+  public AsyncTaskQueue(PlatformScheduler scheduler) {
+    this.scheduler = scheduler;
     this.taskQueue = new ArrayList<>();
   }
 
@@ -46,7 +45,7 @@ public class AsyncTaskQueue {
 
       task.dispatched = true;
 
-      Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+      scheduler.runAsync(scheduleTask -> {
         task.runnable.run();
 
         synchronized (taskQueue) {

@@ -1,5 +1,6 @@
 package me.blvckbytes.quick_shop_search;
 
+import com.tcoded.folialib.impl.PlatformScheduler;
 import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
 import me.blvckbytes.bbconfigmapper.ScalarType;
 import me.blvckbytes.bukkitevaluable.BukkitEvaluable;
@@ -18,13 +19,11 @@ import me.blvckbytes.quick_shop_search.display.DisplayData;
 import me.blvckbytes.quick_shop_search.display.ResultDisplayHandler;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
-import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -33,20 +32,20 @@ import java.util.List;
 
 public class QuickShopSearchCommand implements CommandExecutor, TabCompleter {
 
-  private final Plugin plugin;
+  private final PlatformScheduler scheduler;
   private final PredicateHelper predicateHelper;
   private final CachedShopRegistry shopRegistry;
   private final ResultDisplayHandler resultDisplay;
   private final ConfigKeeper<MainSection> config;
 
   public QuickShopSearchCommand(
-    Plugin plugin,
+    PlatformScheduler scheduler,
     PredicateHelper predicateHelper,
     CachedShopRegistry shopRegistry,
     ConfigKeeper<MainSection> config,
     ResultDisplayHandler resultDisplay
   ) {
-    this.plugin = plugin;
+    this.scheduler = scheduler;
     this.predicateHelper = predicateHelper;
     this.shopRegistry = shopRegistry;
     this.config = config;
@@ -58,7 +57,7 @@ public class QuickShopSearchCommand implements CommandExecutor, TabCompleter {
     if (!(sender instanceof Player player))
       return false;
 
-    Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+    scheduler.runAsync(scheduleTask -> {
       BukkitEvaluable message;
 
       var language = config.rootSection.predicates.mainLanguage;

@@ -15,7 +15,6 @@ public class ShopScalarDiff {
 
   public ShopScalarDiff(CachedShop shop) {
     this.shop = shop;
-    this.update();
   }
 
   public boolean update() {

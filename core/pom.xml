@@ -18,6 +18,13 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
+    <repositories>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
+    </repositories>
+
     <dependencies>
         <dependency>
             <groupId>com.ghostchu</groupId>
@@ -60,6 +67,12 @@
             <artifactId>snakeyaml</artifactId>
             <version>2.3</version>
         </dependency>
+        <dependency>
+            <groupId>com.github.technicallycoded</groupId>
+            <artifactId>FoliaLib</artifactId>
+            <version>main-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -88,6 +101,7 @@
                             <include>me.blvckbytes:common</include>
                             <include>me.blvckbytes:qs_lte_6207</include>
                             <include>me.blvckbytes:qs_gt_6207</include>
+                            <include>com.github.technicallycoded:FoliaLib</include>
                             <!-- [1] Shouldn't be necessary anymore on newer versions of bukkit, but I prefer backwards-compatibility over file-size. -->
                             <include>org.yaml:snakeyaml</include>
                             <include>com.github.cryptomorin:XSeries</include>
@@ -104,6 +118,12 @@
 
                         <relocation>
                             <pattern>(com/cryptomorin/xseries)</pattern>
+                            <shadedPattern>me/blvckbytes/quick_shop_search/$1</shadedPattern>
+                            <rawString>true</rawString>
+                        </relocation>
+
+                        <relocation>
+                            <pattern>(com/tcoded/folialib)</pattern>
                             <shadedPattern>me/blvckbytes/quick_shop_search/$1</shadedPattern>
                             <rawString>true</rawString>
                         </relocation>

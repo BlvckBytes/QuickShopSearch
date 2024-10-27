@@ -4,6 +4,7 @@ version: ${project.version}
 author: BlvckBytes
 api-version: 1.18
 depend: [QuickShop-Hikari, ItemPredicateParser]
+folia-supported: true
 commands:
   quickshopsearch:
     description: 'Query shops using the main predicate language'
