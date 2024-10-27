@@ -42,6 +42,8 @@ REPRESENTATIVE-LORE-MODE-SELLING             &8♦ &7Modus: &eVerkauft Items
 REPRESENTATIVE-LORE-MODE-SELLING-UNLIMITED   &8♦ &7Modus: &eVerkauft unlimitiert Items
 REPRESENTATIVE-LORE-LEFT-CLICK-DESCRIPTION   &8➥ &eLinksklick &7Zum Shop teleportieren
 REPRESENTATIVE-LORE-RIGHT-CLICK-DESCRIPTION  &8➥ &eRechtsklick &7Vorschau öffnen
+REPRESENTATIVE-LORE-SHIFT-LEFT-CLICK-BUYING-DESCRIPTION  &8➥ &eShift-Left-Click &7An den Shop verkaufen
+REPRESENTATIVE-LORE-SHIFT-LEFT-CLICK-SELLING-DESCRIPTION &8➥ &eShift-Left-Click &7Vom Shop kaufen
 
 SORTING-NAME                              &8» &6Sortierung &8«
 SORTING-LORE-NO-PERMISSION                &8➥ &cKeine Berechtigung zum Sortieren der Ergebnisse
@@ -86,37 +88,92 @@ FILTERING-LORE-DROP-ALL-DESCRIPTION        &8➥ &eAlle werfen &7Auswahlen zurü
 MESSAGE-PREFIX                              &7[&6QuickShopSearch&7]
 # - prefix: String
 MESSAGE-EMPTY-PREDICATE                     {prefix} &cBitte gib ein nicht-leeres Prädikat an.
+# - prefix: String
 MESSAGE-NO-MATCHES                          {prefix} &cDeine Suche erzielte keine Ergebnisse.
+# - name: String
 # - owner: String
+# - item_type: String
 # - loc_world: String
 # - loc_x: Integer
 # - loc_y: Integer
 # - loc_z: Integer
+# - distance: Integer
+# - remaining_space: Integer
+# - remaining_stock: Integer
+# - currency: String
+# - price: Double
+# - prefix: String
 MESSAGE-BEFORE-TELEPORTING                  {prefix} &7Teleportiere zum Shop von &e{owner} &7bei &e{loc_x}&7, &e{loc_y}&7, &e{loc_z}&7.
 # - number_shops: Integer
 # - predicate: String
+# - prefix: String
 MESSAGE-BEFORE-QUERYING                     {prefix} &7Durchsuche &e{number_shops} Shops &7nach &e{predicate}&7...
 # - number_shops: Integer
+# - prefix: String
 MESSAGE-QUERYING-ALL-SHOPS                  {prefix} &7Durchsuche &ealle &7(&e{number_shops}&7) Shops...
 MESSAGE-USAGE-QSSL-LANGUAGE-ITEM-COLOR      &e
 MESSAGE-USAGE-QSSL-LANGUAGE-SEPARATOR-COLOR &7
 # label: String
 # language_list: String
+# - prefix: String
 MESSAGE-USAGE-QSSL-LANGUAGE                 {prefix} Benutzung: /{label} <{language_list}&7> [Prädikat]
 # - user_input: String
+# - prefix: String
 # Displayed in the action-bar
 MESSAGE-UNKNOWN-LANGUAGE                    &cUnbekannte Sprache: &4{user_input}&c.
+# - prefix: String
 MESSAGE-PLUGIN-RELOAD                       {prefix} &7Das Plugin wurde erfolgreich &eneu geladen&7.
+# - prefix: String
 MESSAGE-PLUGIN-RELOAD-ERROR                 {prefix} &cEin Fehler trat während des Ladeprozesses auf. Überprüfe die Konsole!
 # - error_message: String
+# - prefix: String
 MESSAGE-PREDICATE-ERROR                     {prefix} {error_message}
+# - name: String
+# - owner: String
+# - item_type: String
+# - loc_world: String
+# - loc_x: Integer
+# - loc_y: Integer
+# - loc_z: Integer
+# - distance: Integer
+# - remaining_space: Integer
+# - remaining_stock: Integer
+# - currency: String
+# - price: Double
+# - prefix: String
+MESSAGE-SHOP-INTERACT-PROMPT-BUYING          {prefix} &7Gib im Chat ein, wie viele Items an &e{item_type} &7du zum Preis von &e{price} {currency} &7je &eVERKAUFEN &7möchtest; tippe "&ccancel&7" um abzubrechen.
+# - prefix: String
+MESSAGE-SHOP-INTERACT-PROMPT-SELLING         {prefix} &7Gib im Chat ein, wie viele Items an &e{item_type} &7du zum Preis von &e{price} {currency} &7je &eKAUFEN &7möchtest; tippe "&ccancel&7" um abzubrechen.
+# - prefix: String
+MESSAGE-SHOP-INTERACT-PROMPT-TIMEOUT         {prefix} &cDeine vorherige Chat-Eingabeaufforderung ist abgelaufen!
+# - amount: Integer
+# - prefix: String
+MESSAGE-SHOP-INTERACT-PROMPT-DISPATCH        {prefix} &7Deine Anfrage bezüglich &e{amount}x {item_type} &7wird an den &eShop &7weitergeleitet...
+# - input: String
+# - prefix: String
+MESSAGE-SHOP-INTERACT-PROMPT-INVALID-INPUT   {prefix} &cDeine Eingabe &4{input} &cist keine positive Ganzzahl!
+# - prefix: String
+MESSAGE-SHOP-INTERACT-PROMPT-CANCEL-PREVIOUS {prefix} &cDeine vorherige Chat-Eingabeaufforderung wurde abgebrochen!
+# - prefix: String
+MESSAGE-SHOP-INTERACT-PROMPT-CANCEL-CURRENT  {prefix} &cDu hast die Chat-Eingabeaufforderung abgebrochen!
 
+# - prefix: String
 MESSAGE-MISSING-PERMISSION-MAIN-COMMAND                 {prefix} &cKeine Berechtigung zur Benutzung des Hauptbefehls.
+# - prefix: String
 MESSAGE-MISSING-PERMISSION-LANGUAGE-COMMAND             {prefix} &cKeine Berechtigung zur Benutzung des Sprachbefehls.
+# - prefix: String
 MESSAGE-MISSING-PERMISSION-RELOAD-COMMAND               {prefix} &cKeine Berechtigung zur Benutzung des Befehls zum neu laden.
+# - prefix: String
 MESSAGE-MISSING-PERMISSION-FEATURE-SORT                 {prefix} &cKeine Berechtigung zur Benutzung der Sortierfunktion.
+# - prefix: String
 MESSAGE-MISSING-PERMISSION-FEATURE-FILTER               {prefix} &cKeine Berechtigung zur Benutzung der Filterfunktion.
+# - prefix: String
 MESSAGE-MISSING-PERMISSION-FEATURE-TELEPORT             {prefix} &cKeine Berechtigung zur Benutzung der Teleportation.
+# - prefix: String
 MESSAGE-MISSING-PERMISSION-FEATURE-TELEPORT-OTHER-WORLD {prefix} &cKeine Berechtigung zur Teleportation in andere Welten.
+# - prefix: String
+MESSAGE-MISSING-PERMISSION-FEATURE-INTERACT             {prefix} &cKeine Berechtigung zur Benutzung der Interaktion.
+# - prefix: String
+MESSAGE-MISSING-PERMISSION-FEATURE-INTERACT-OTHER-WORLD {prefix} &cKeine Berechtigung zur Interaktion in andere Welten.
 
 # ==================== END Messages ====================

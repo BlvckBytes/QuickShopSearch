@@ -42,6 +42,8 @@ REPRESENTATIVE-LORE-MODE-SELLING             &8♦ &7Yöntem: &eÖge Satma
 REPRESENTATIVE-LORE-MODE-SELLING-UNLIMITED   &8♦ &7Yöntem: &eSınırsız Öğe Satma
 REPRESENTATIVE-LORE-LEFT-CLICK-DESCRIPTION   &8➥ &eSol Tıklama &7Dükkana ışınlan
 REPRESENTATIVE-LORE-RIGHT-CLICK-DESCRIPTION  &8➥ &eSağ Tıklama &7Açık önizleme
+REPRESENTATIVE-LORE-SHIFT-LEFT-CLICK-BUYING-DESCRIPTION  &8➥ &eShift-Left-Click &7Sell to shop
+REPRESENTATIVE-LORE-SHIFT-LEFT-CLICK-SELLING-DESCRIPTION &8➥ &eShift-Left-Click &7Buy from shop
 
 SORTING-NAME                              &8» &6Sıralama &8«
 SORTING-LORE-NO-PERMISSION                &8➥ &cSonuçları sıralama iznin bulunmuyor
@@ -88,11 +90,18 @@ MESSAGE-PREFIX                              &7[&6QuickShopSearch&7]
 MESSAGE-EMPTY-PREDICATE                     {prefix} &cLütfen boş olmayan bir metin sağlayın.
 # - prefix: String
 MESSAGE-NO-MATCHES                          {prefix} &cSorgunuza dair hiçbir eşleşme bulunamadı.
+# - name: String
 # - owner: String
+# - item_type: String
 # - loc_world: String
 # - loc_x: Integer
 # - loc_y: Integer
 # - loc_z: Integer
+# - distance: Integer
+# - remaining_space: Integer
+# - remaining_stock: Integer
+# - currency: String
+# - price: Double
 # - prefix: String
 MESSAGE-BEFORE-TELEPORTING                  {prefix} &e{owner} &7kişisinin &7&e{loc_x}&7, &e{loc_y}&7, &e{loc_z}&7 &7konumundaki marketine ışınlandın.
 # - number_shops: Integer
@@ -119,6 +128,34 @@ MESSAGE-PLUGIN-RELOAD-ERROR                 {prefix} &cEklentiyi yeniden yüklem
 # - error_message: String
 # - prefix: String
 MESSAGE-PREDICATE-ERROR                     {prefix} {error_message}
+# - name: String
+# - owner: String
+# - item_type: String
+# - loc_world: String
+# - loc_x: Integer
+# - loc_y: Integer
+# - loc_z: Integer
+# - distance: Integer
+# - remaining_space: Integer
+# - remaining_stock: Integer
+# - currency: String
+# - price: Double
+# - prefix: String
+MESSAGE-SHOP-INTERACT-PROMPT-BUYING          {prefix} &7Enter in chat, how many items of &e{item_type} &7you wish to &eSELL &7for &e{price} {currency} &7each; type "&ccancel&7" to exit.
+# - prefix: String
+MESSAGE-SHOP-INTERACT-PROMPT-SELLING         {prefix} &7Enter in chat, how many items of &e{item_type} &7you wish to &eBUY &7for &e{price} {currency} &7each; type "&ccancel&7" to exit.
+# - prefix: String
+MESSAGE-SHOP-INTERACT-PROMPT-TIMEOUT         {prefix} &cYour previous chat-prompt timed out!
+# - amount: Integer
+# - prefix: String
+MESSAGE-SHOP-INTERACT-PROMPT-DISPATCH        {prefix} &7Relaying your request of &e{amount}x {item_type} &7to the &eShop&7...
+# - input: String
+# - prefix: String
+MESSAGE-SHOP-INTERACT-PROMPT-INVALID-INPUT   {prefix} &cYour input &4{input} &cdoes not resemble an integer greater than zero!
+# - prefix: String
+MESSAGE-SHOP-INTERACT-PROMPT-CANCEL-PREVIOUS {prefix} &cYour previous chat-prompt has been cancelled!
+# - prefix: String
+MESSAGE-SHOP-INTERACT-PROMPT-CANCEL-CURRENT  {prefix} &cYour current chat-prompt has been cancelled!
 
 # - prefix: String
 MESSAGE-MISSING-PERMISSION-MAIN-COMMAND                 {prefix} &cAna komutu kullanmak için izniniz yok.
@@ -134,5 +171,9 @@ MESSAGE-MISSING-PERMISSION-FEATURE-FILTER               {prefix} &cFiltrelemeyi 
 MESSAGE-MISSING-PERMISSION-FEATURE-TELEPORT             {prefix} &cIşınlanmayı kullanma izniniz yok.
 # - prefix: String
 MESSAGE-MISSING-PERMISSION-FEATURE-TELEPORT-OTHER-WORLD {prefix} &cDiğer dünyalara ışınlanma izniniz yok.
+# - prefix: String
+MESSAGE-MISSING-PERMISSION-FEATURE-INTERACT             {prefix} &cYou don't have the permission to use interaction.
+# - prefix: String
+MESSAGE-MISSING-PERMISSION-FEATURE-INTERACT-OTHER-WORLD {prefix} &cYou don't have the permission to interact with other worlds.
 
 # ==================== END Messages ====================

@@ -42,6 +42,8 @@ REPRESENTATIVE-LORE-MODE-SELLING             &8♦ &7模式: &e出售
 REPRESENTATIVE-LORE-MODE-SELLING-UNLIMITED   &8♦ &7模式: &e出售无限的商品
 REPRESENTATIVE-LORE-LEFT-CLICK-DESCRIPTION   &8➥ &e鼠标左键 &7传送到商店
 REPRESENTATIVE-LORE-RIGHT-CLICK-DESCRIPTION  &8➥ &e鼠标右键 &7查看该商店的物品预览
+REPRESENTATIVE-LORE-SHIFT-LEFT-CLICK-BUYING-DESCRIPTION  &8➥ &eShift-Left-Click &7Sell to shop
+REPRESENTATIVE-LORE-SHIFT-LEFT-CLICK-SELLING-DESCRIPTION &8➥ &eShift-Left-Click &7Buy from shop
 
 SORTING-NAME                              &8» &6排序 &8«
 SORTING-LORE-NO-PERMISSION                &8➥ &c你没有权限进行排序
@@ -86,37 +88,92 @@ FILTERING-LORE-DROP-ALL-DESCRIPTION        &8➥ &e丢弃全部 &7重置选择
 MESSAGE-PREFIX                              &7[&6QuickShopSearch&7]
 # - prefix: String
 MESSAGE-EMPTY-PREDICATE                     {prefix} &c请重新提供一个谓词.
+# - prefix: String
 MESSAGE-NO-MATCHES                          {prefix} &c您的查询结果为零匹配.
+# - name: String
 # - owner: String
+# - item_type: String
 # - loc_world: String
 # - loc_x: Integer
 # - loc_y: Integer
 # - loc_z: Integer
+# - distance: Integer
+# - remaining_space: Integer
+# - remaining_stock: Integer
+# - currency: String
+# - price: Double
+# - prefix: String
 MESSAGE-BEFORE-TELEPORTING                  {prefix} &7正在传送到商店所有者 &e{owner} &7的商店，在 &e{loc_x}&7, &e{loc_y}&7, &e{loc_z}&7.
 # - number_shops: Integer
 # - predicate: String
+# - prefix: String
 MESSAGE-BEFORE-QUERYING                     {prefix} &7正在查询符合结果 &e{predicate} &7的 &e{number_shops} &7个商店...
 # - number_shops: Integer
+# - prefix: String
 MESSAGE-QUERYING-ALL-SHOPS                  {prefix} &7正在查询 &e所有 &7(&e{number_shops}&7) 个商店...
 MESSAGE-USAGE-QSSL-LANGUAGE-ITEM-COLOR      &e
 MESSAGE-USAGE-QSSL-LANGUAGE-SEPARATOR-COLOR &7
 # label: String
 # language_list: String
+# - prefix: String
 MESSAGE-USAGE-QSSL-LANGUAGE                 {prefix} 用法: /{label} <{language_list}&7> [谓词]
 # - user_input: String
+# - prefix: String
 # Displayed in the action-bar
 MESSAGE-UNKNOWN-LANGUAGE                    &c未知语言: &4{user_input}&c.
+# - prefix: String
 MESSAGE-PLUGIN-RELOAD                       {prefix} &7配置文件&e重新加载成功.
+# - prefix: String
 MESSAGE-PLUGIN-RELOAD-ERROR                 {prefix} &c在重新加载配置文件时发生错误，请检查服务器控制台!
 # - error_message: String
+# - prefix: String
 MESSAGE-PREDICATE-ERROR                     {prefix} {error_message}
+# - name: String
+# - owner: String
+# - item_type: String
+# - loc_world: String
+# - loc_x: Integer
+# - loc_y: Integer
+# - loc_z: Integer
+# - distance: Integer
+# - remaining_space: Integer
+# - remaining_stock: Integer
+# - currency: String
+# - price: Double
+# - prefix: String
+MESSAGE-SHOP-INTERACT-PROMPT-BUYING          {prefix} &7Enter in chat, how many items of &e{item_type} &7you wish to &eSELL &7for &e{price} {currency} &7each; type "&ccancel&7" to exit.
+# - prefix: String
+MESSAGE-SHOP-INTERACT-PROMPT-SELLING         {prefix} &7Enter in chat, how many items of &e{item_type} &7you wish to &eBUY &7for &e{price} {currency} &7each; type "&ccancel&7" to exit.
+# - prefix: String
+MESSAGE-SHOP-INTERACT-PROMPT-TIMEOUT         {prefix} &cYour previous chat-prompt timed out!
+# - amount: Integer
+# - prefix: String
+MESSAGE-SHOP-INTERACT-PROMPT-DISPATCH        {prefix} &7Relaying your request of &e{amount}x {item_type} &7to the &eShop&7...
+# - input: String
+# - prefix: String
+MESSAGE-SHOP-INTERACT-PROMPT-INVALID-INPUT   {prefix} &cYour input &4{input} &cdoes not resemble an integer greater than zero!
+# - prefix: String
+MESSAGE-SHOP-INTERACT-PROMPT-CANCEL-PREVIOUS {prefix} &cYour previous chat-prompt has been cancelled!
+# - prefix: String
+MESSAGE-SHOP-INTERACT-PROMPT-CANCEL-CURRENT  {prefix} &cYour current chat-prompt has been cancelled!
 
+# - prefix: String
 MESSAGE-MISSING-PERMISSION-MAIN-COMMAND                 {prefix} &c你没有权限使用主命令.
+# - prefix: String
 MESSAGE-MISSING-PERMISSION-LANGUAGE-COMMAND             {prefix} &c你没有权限使用语言命令.
+# - prefix: String
 MESSAGE-MISSING-PERMISSION-RELOAD-COMMAND               {prefix} &c你没有权限使用插件重载命令.
+# - prefix: String
 MESSAGE-MISSING-PERMISSION-FEATURE-SORT                 {prefix} &c你没有权限使用排序功能.
+# - prefix: String
 MESSAGE-MISSING-PERMISSION-FEATURE-FILTER               {prefix} &c你没有权限使用筛选功能.
+# - prefix: String
 MESSAGE-MISSING-PERMISSION-FEATURE-TELEPORT             {prefix} &c你没有权限进行传送.
+# - prefix: String
 MESSAGE-MISSING-PERMISSION-FEATURE-TELEPORT-OTHER-WORLD {prefix} &c你没有权限传送到其它世界.
+# - prefix: String
+MESSAGE-MISSING-PERMISSION-FEATURE-INTERACT             {prefix} &cYou don't have the permission to use interaction.
+# - prefix: String
+MESSAGE-MISSING-PERMISSION-FEATURE-INTERACT-OTHER-WORLD {prefix} &cYou don't have the permission to interact with other worlds.
 
 # ==================== END Messages ====================
