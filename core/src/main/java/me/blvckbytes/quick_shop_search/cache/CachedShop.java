@@ -39,8 +39,8 @@ public class CachedShop {
 
     this.shopEnvironment = new EvaluationEnvironmentBuilder()
       .withLiveVariable("owner", handle.getOwner()::getDisplay)
-      .withLiveVariable("name", () -> shopManager.format(handle.getPrice(), handle))
-      .withLiveVariable("price", handle::getPrice)
+      .withLiveVariable("name", handle::getShopName)
+      .withLiveVariable("price", () -> shopManager.format(handle.getPrice(), handle))
       .withLiveVariable("item_type", () -> formatItemType(handle.getItem()))
       .withLiveVariable("remaining_stock", () -> this.cachedStock)
       .withLiveVariable("remaining_space", () -> this.cachedSpace)
