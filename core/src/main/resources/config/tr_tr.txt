@@ -60,6 +60,7 @@ SORTING-LORE-CRITERIA-ITEM-TYPE           Ürün tipi
 SORTING-LORE-CRITERIA-SHOP-TYPE           Mağaza Tipi
 SORTING-LORE-CRITERIA-SHOP-NAME           Mağaza adı
 SORTING-LORE-CRITERIA-DISTANCE            Mesafe
+SORTING-LORE-CRITERIA-WORLD-NAME          World-Name
 SORTING-LORE-LEFT-CLICK-DESCRIPTION       &8➥ &eSol-Tıkla &Seçenekler üzerinden döngü
 SORTING-LORE-RIGHT-CLICK-DESCRIPTION      &8➥ &eSağ-Tıkla &7Sıralama düzenini değiştir
 SORTING-LORE-DROP-DESCRIPTION             &8➥ &eBırak &7Seçeneği aşağı taşı

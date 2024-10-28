@@ -60,6 +60,7 @@ SORTING-LORE-CRITERIA-ITEM-TYPE           Item-Type
 SORTING-LORE-CRITERIA-SHOP-TYPE           Shop-Type
 SORTING-LORE-CRITERIA-SHOP-NAME           Shop-Name
 SORTING-LORE-CRITERIA-DISTANCE            Distance
+SORTING-LORE-CRITERIA-WORLD-NAME          World-Name
 SORTING-LORE-LEFT-CLICK-DESCRIPTION       &8➥ &eLeft-Click &7Cycle through criteria
 SORTING-LORE-RIGHT-CLICK-DESCRIPTION      &8➥ &eRight-Click &7Toggle sorting-order
 SORTING-LORE-DROP-DESCRIPTION             &8➥ &eDrop &7Move criterion down

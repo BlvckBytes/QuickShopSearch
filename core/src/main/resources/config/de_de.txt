@@ -60,6 +60,7 @@ SORTING-LORE-CRITERIA-ITEM-TYPE           Typ des Items
 SORTING-LORE-CRITERIA-SHOP-TYPE           Typ des Shops
 SORTING-LORE-CRITERIA-SHOP-NAME           Name des Shops
 SORTING-LORE-CRITERIA-DISTANCE            Distanz
+SORTING-LORE-CRITERIA-WORLD-NAME          Name der Welt
 SORTING-LORE-LEFT-CLICK-DESCRIPTION       &8➥ &eLinksklick &7Kriterium auswählen
 SORTING-LORE-RIGHT-CLICK-DESCRIPTION      &8➥ &eRechtsklick &7Sortierrichtung ändern
 SORTING-LORE-DROP-DESCRIPTION             &8➥ &eWerfen &7Kriterium nach unten verschieben

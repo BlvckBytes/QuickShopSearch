@@ -15,7 +15,8 @@ public enum ShopSortingCriteria implements SortingFunction {
   ITEM_TYPE((d, a, b) -> a.handle.getItem().getType().compareTo(b.handle.getItem().getType())),
   SHOP_TYPE((d, a, b) -> a.handle.getShopType().compareTo(b.handle.getShopType())),
   SHOP_NAME((d, a, b) -> compareNullableStrings(a.handle.getShopName(), b.handle.getShopName())),
-  DISTANCE((d, a, b) -> Long.compare(d.getShopDistance(a), d.getShopDistance(b)))
+  DISTANCE((d, a, b) -> Long.compare(d.getShopDistance(a), d.getShopDistance(b))),
+  WORLD_NAME((d, a, b) -> a.shopWorldName.compareTo(b.shopWorldName)),
   ;
 
   private final SortingFunction function;
