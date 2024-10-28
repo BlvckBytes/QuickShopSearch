@@ -35,7 +35,9 @@ public class QuickShopListenerFactory {
       }
 
       // Fall through to loading the version which made the breaking changes
-      catch (Exception ignored) {}
+      catch (ClassNotFoundException ignored) {
+        logger.info("Detected dev-version of 6.2.0.8, which introduced breaking-changes to events");
+      }
     }
 
     logger.info("Loaded listener-support for > " + PLUGIN_NAME + " 6.2.0.7");
