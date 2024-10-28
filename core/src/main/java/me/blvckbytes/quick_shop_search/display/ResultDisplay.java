@@ -253,7 +253,7 @@ public class ResultDisplay implements ShopDistanceProvider {
   }
 
   private int applyFiltering() {
-    this.filteredUnSortedShops = this.selectionState.applyFilter(displayData.shops());
+    this.filteredUnSortedShops = this.selectionState.applyFilter(displayData.shops(), this);
 
     var oldNumberOfPages = this.numberOfPages;
     var numberOfDisplaySlots = config.rootSection.resultDisplay.getPaginationSlots().size();

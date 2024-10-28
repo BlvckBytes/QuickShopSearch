@@ -7,21 +7,22 @@ import java.util.List;
 
 public enum ShopFilteringCriteria implements FilteringFunction {
 
-  IS_BUYING((shop, negative) -> shop.handle.isBuying() ^ negative),
-  IS_SELLING((shop, negative) -> shop.handle.isSelling() ^ negative),
-  IS_UNLIMITED((shop, negative) -> shop.handle.isUnlimited() ^ negative),
-  HAS_STOCK_LEFT((shop, negative) -> {
+  IS_BUYING((shop, dP, negative) -> shop.handle.isBuying() ^ negative),
+  IS_SELLING((shop, dP, negative) -> shop.handle.isSelling() ^ negative),
+  IS_UNLIMITED((shop, dP, negative) -> shop.handle.isUnlimited() ^ negative),
+  HAS_STOCK_LEFT((shop, dP, negative) -> {
     if (!shop.handle.isSelling())
       return false;
 
     return (shop.handle.isUnlimited() || shop.cachedStock > 0) ^ negative;
   }),
-  HAS_SPACE_LEFT((shop, negative) -> {
+  HAS_SPACE_LEFT((shop, dP, negative) -> {
     if (!shop.handle.isBuying())
       return false;
 
     return (shop.handle.isUnlimited() || shop.cachedSpace > 0) ^ negative;
   }),
+  SAME_WORLD((shop, dP, negative) -> (dP.getShopDistance(shop) >= 0) ^ negative)
   ;
 
   private final FilteringFunction predicate;
@@ -33,8 +34,8 @@ public enum ShopFilteringCriteria implements FilteringFunction {
   }
 
   @Override
-  public boolean test(CachedShop shop, boolean negative) {
-    return predicate.test(shop, negative);
+  public boolean test(CachedShop shop, ShopDistanceProvider distanceProvider, boolean negative) {
+    return predicate.test(shop, distanceProvider, negative);
   }
 
   public ShopFilteringCriteria next() {

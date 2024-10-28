@@ -103,7 +103,7 @@ public class SelectionState {
     });
   }
 
-  public List<CachedShop> applyFilter(Collection<CachedShop> items) {
+  public List<CachedShop> applyFilter(Collection<CachedShop> items, ShopDistanceProvider distanceProvider) {
     List<CachedShop> result = new ArrayList<>();
 
     for (var item : items) {
@@ -115,7 +115,7 @@ public class SelectionState {
         if (predicate == PredicateSelection.INVARIANT)
           continue;
 
-        if (entry.getKey().test(item, predicate == PredicateSelection.NEGATIVE))
+        if (entry.getKey().test(item, distanceProvider, predicate == PredicateSelection.NEGATIVE))
           continue;
 
         doesMatch = false;
