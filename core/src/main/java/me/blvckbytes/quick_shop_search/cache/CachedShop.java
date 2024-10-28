@@ -1,5 +1,6 @@
 package me.blvckbytes.quick_shop_search.cache;
 
+import com.ghostchu.quickshop.api.QuickShopAPI;
 import com.ghostchu.quickshop.api.shop.Shop;
 import com.tcoded.folialib.impl.PlatformScheduler;
 import me.blvckbytes.bukkitevaluable.ConfigKeeper;
@@ -34,13 +35,13 @@ public class CachedShop {
 
     var shopLocation = handle.getLocation();
     var shopWorld = shopLocation.getWorld();
+    var shopManager = QuickShopAPI.getInstance().getShopManager();
 
     this.shopEnvironment = new EvaluationEnvironmentBuilder()
       .withLiveVariable("owner", handle.getOwner()::getDisplay)
-      .withLiveVariable("name", handle::getShopName)
+      .withLiveVariable("name", () -> shopManager.format(handle.getPrice(), handle))
       .withLiveVariable("price", handle::getPrice)
       .withLiveVariable("item_type", () -> formatItemType(handle.getItem()))
-      .withLiveVariable("currency", () -> handle.getCurrency() == null ? "?" : handle.getCurrency())
       .withLiveVariable("remaining_stock", () -> this.cachedStock)
       .withLiveVariable("remaining_space", () -> this.cachedSpace)
       .withLiveVariable("is_buying", handle::isBuying)

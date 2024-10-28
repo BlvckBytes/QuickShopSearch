@@ -1,7 +1,6 @@
 package me.blvckbytes.quick_shop_search;
 
 import com.cryptomorin.xseries.XMaterial;
-import com.ghostchu.quickshop.api.QuickShopAPI;
 import com.tcoded.folialib.FoliaLib;
 import me.blvckbytes.bukkitevaluable.CommandUpdater;
 import me.blvckbytes.bukkitevaluable.ConfigKeeper;
@@ -54,8 +53,7 @@ public class QuickShopSearchPlugin extends JavaPlugin {
       stateStore = new SelectionStateStore(this, logger);
       displayHandler = new ResultDisplayHandler(scheduler, config, stateStore, chatPromptManager);
 
-      var quickShopApi = QuickShopAPI.getInstance();
-      var shopRegistry = new CachedShopRegistry(scheduler, quickShopApi.getShopManager(), displayHandler, config, logger);
+      var shopRegistry = new CachedShopRegistry(scheduler, displayHandler, config, logger);
 
       var shopEventHandler = QuickShopListenerFactory.create(logger, shopRegistry);
 

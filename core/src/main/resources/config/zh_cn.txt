@@ -22,8 +22,7 @@ REPRESENTATIVE-LORE-OWNER                    &8♦ &7所有者: &e{owner}
 # - name: String
 REPRESENTATIVE-LORE-NAME                     &8♦ &7名称: &e{name}
 # - price: String
-# - currency: String
-REPRESENTATIVE-LORE-PRICE                    &8♦ &7价格: &e{price} {currency}
+REPRESENTATIVE-LORE-PRICE                    &8♦ &7价格: &e{price}
 # - remaining_space: Integer
 REPRESENTATIVE-LORE-REMAINING-SPACE          &8♦ &7空间: &e{remaining_space}
 # - remaining_stock: Integer
@@ -100,7 +99,6 @@ MESSAGE-NO-MATCHES                          {prefix} &c您的查询结果为零�
 # - distance: Integer
 # - remaining_space: Integer
 # - remaining_stock: Integer
-# - currency: String
 # - price: Double
 # - prefix: String
 MESSAGE-BEFORE-TELEPORTING                  {prefix} &7正在传送到商店所有者 &e{owner} &7的商店，在 &e{loc_x}&7, &e{loc_y}&7, &e{loc_z}&7.
@@ -138,12 +136,11 @@ MESSAGE-PREDICATE-ERROR                     {prefix} {error_message}
 # - distance: Integer
 # - remaining_space: Integer
 # - remaining_stock: Integer
-# - currency: String
 # - price: Double
 # - prefix: String
-MESSAGE-SHOP-INTERACT-PROMPT-BUYING          {prefix} &7在聊天中输入你想要购买的 &e{item_type} 的数量，每个 &e{price} {currency}；输入 “&ccancel&7” 以退出.
+MESSAGE-SHOP-INTERACT-PROMPT-BUYING          {prefix} &7在聊天中输入你想要购买的 &e{item_type} 的数量，每个 &e{price} “&ccancel&7” 以退出.
 # - prefix: String
-MESSAGE-SHOP-INTERACT-PROMPT-SELLING         {prefix} &7在聊天中输入你想要出售的 &e{item_type} 的数量，每个 &e{price} {currency}；输入 “&ccancel&7” 以退出.
+MESSAGE-SHOP-INTERACT-PROMPT-SELLING         {prefix} &7在聊天中输入你想要出售的 &e{item_type} 的数量，每个 &e{price} “&ccancel&7” 以退出.
 
 # - prefix: String
 MESSAGE-SHOP-INTERACT-PROMPT-TIMEOUT         {prefix} &c超时，请再试一次!

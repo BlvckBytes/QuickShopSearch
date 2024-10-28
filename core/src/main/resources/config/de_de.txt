@@ -22,8 +22,7 @@ REPRESENTATIVE-LORE-OWNER                    &8♦ &7Besitzer: &e{owner}
 # - name: String
 REPRESENTATIVE-LORE-NAME                     &8♦ &7Name: &e{name}
 # - price: String
-# - currency: String
-REPRESENTATIVE-LORE-PRICE                    &8♦ &7Preis: &e{price} {currency}
+REPRESENTATIVE-LORE-PRICE                    &8♦ &7Preis: &e{price}
 # - remaining_space: Integer
 REPRESENTATIVE-LORE-REMAINING-SPACE          &8♦ &7Kapazität: &e{remaining_space}
 # - remaining_stock: Integer
@@ -100,7 +99,6 @@ MESSAGE-NO-MATCHES                          {prefix} &cDeine Suche erzielte kein
 # - distance: Integer
 # - remaining_space: Integer
 # - remaining_stock: Integer
-# - currency: String
 # - price: Double
 # - prefix: String
 MESSAGE-BEFORE-TELEPORTING                  {prefix} &7Teleportiere zum Shop von &e{owner} &7bei &e{loc_x}&7, &e{loc_y}&7, &e{loc_z}&7.
@@ -138,12 +136,11 @@ MESSAGE-PREDICATE-ERROR                     {prefix} {error_message}
 # - distance: Integer
 # - remaining_space: Integer
 # - remaining_stock: Integer
-# - currency: String
 # - price: Double
 # - prefix: String
-MESSAGE-SHOP-INTERACT-PROMPT-BUYING          {prefix} &7Gib im Chat ein, wie viele Items an &e{item_type} &7du zum Preis von &e{price} {currency} &7je &eVERKAUFEN &7möchtest; tippe "&ccancel&7" um abzubrechen.
+MESSAGE-SHOP-INTERACT-PROMPT-BUYING          {prefix} &7Gib im Chat ein, wie viele Items an &e{item_type} &7du zum Preis von &e{price} &7je &eVERKAUFEN &7möchtest; tippe "&ccancel&7" um abzubrechen.
 # - prefix: String
-MESSAGE-SHOP-INTERACT-PROMPT-SELLING         {prefix} &7Gib im Chat ein, wie viele Items an &e{item_type} &7du zum Preis von &e{price} {currency} &7je &eKAUFEN &7möchtest; tippe "&ccancel&7" um abzubrechen.
+MESSAGE-SHOP-INTERACT-PROMPT-SELLING         {prefix} &7Gib im Chat ein, wie viele Items an &e{item_type} &7du zum Preis von &e{price} &7je &eKAUFEN &7möchtest; tippe "&ccancel&7" um abzubrechen.
 # - prefix: String
 MESSAGE-SHOP-INTERACT-PROMPT-TIMEOUT         {prefix} &cDeine vorherige Chat-Eingabeaufforderung ist abgelaufen!
 # - amount: Integer

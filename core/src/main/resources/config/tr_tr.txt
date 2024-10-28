@@ -22,8 +22,7 @@ REPRESENTATIVE-LORE-OWNER                    &8♦ &7Sahibi: &e{owner}
 # - name: String
 REPRESENTATIVE-LORE-NAME                     &8♦ &7İsim: &e{name}
 # - price: String
-# - currency: String
-REPRESENTATIVE-LORE-PRICE                    &8♦ &7Fiyat: &e{price} {currency}
+REPRESENTATIVE-LORE-PRICE                    &8♦ &7Fiyat: &e{price}
 # - remaining_space: Integer
 REPRESENTATIVE-LORE-REMAINING-SPACE          &8♦ &7Space: &e{remaining_space}
 # - remaining_stock: Integer
@@ -100,7 +99,6 @@ MESSAGE-NO-MATCHES                          {prefix} &cSorgunuza dair hiçbir e�
 # - distance: Integer
 # - remaining_space: Integer
 # - remaining_stock: Integer
-# - currency: String
 # - price: Double
 # - prefix: String
 MESSAGE-BEFORE-TELEPORTING                  {prefix} &e{owner} &7kişisinin &7&e{loc_x}&7, &e{loc_y}&7, &e{loc_z}&7 &7konumundaki marketine ışınlandın.
@@ -138,12 +136,11 @@ MESSAGE-PREDICATE-ERROR                     {prefix} {error_message}
 # - distance: Integer
 # - remaining_space: Integer
 # - remaining_stock: Integer
-# - currency: String
 # - price: Double
 # - prefix: String
-MESSAGE-SHOP-INTERACT-PROMPT-BUYING          {prefix} &7Sohbete, &e{item_type} &7öğesinden &e{price} {currency} &7karşılığında kaç adet &esatmak &7istediğinizi yazın; &7işlemi iptal etmek için "&ccancel&7" yazın.
+MESSAGE-SHOP-INTERACT-PROMPT-BUYING          {prefix} &7Sohbete, &e{item_type} &7öğesinden &e{price} &7karşılığında kaç adet &esatmak &7istediğinizi yazın; &7işlemi iptal etmek için "&ccancel&7" yazın.
 # - prefix: String
-MESSAGE-SHOP-INTERACT-PROMPT-SELLING         {prefix} &7Sohbete, &e{item_type} &7öğesinden &e{price} {currency} &7karşılığında kaç adet &esatın almak &7istediğinizi yazın; &7işlemi iptal etmek için "&ccancel&7" yazın.
+MESSAGE-SHOP-INTERACT-PROMPT-SELLING         {prefix} &7Sohbete, &e{item_type} &7öğesinden &e{price} &7karşılığında kaç adet &esatın almak &7istediğinizi yazın; &7işlemi iptal etmek için "&ccancel&7" yazın.
 # - prefix: String
 MESSAGE-SHOP-INTERACT-PROMPT-TIMEOUT         {prefix} &cÖnceki işleminiz zaman aşımına uğradı!
 # - amount: Integer

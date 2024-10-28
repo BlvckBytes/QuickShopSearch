@@ -1,7 +1,7 @@
 package me.blvckbytes.quick_shop_search.cache;
 
+import com.ghostchu.quickshop.api.QuickShopAPI;
 import com.ghostchu.quickshop.api.shop.Shop;
-import com.ghostchu.quickshop.api.shop.ShopManager;
 import com.ghostchu.quickshop.api.shop.ShopType;
 import com.tcoded.folialib.impl.PlatformScheduler;
 import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
@@ -28,7 +28,6 @@ public class CachedShopRegistry implements QuickShopEventConsumer {
 
   public CachedShopRegistry(
     PlatformScheduler scheduler,
-    ShopManager shopManager,
     ResultDisplayHandler displayHandler,
     ConfigKeeper<MainSection> config,
     Logger logger
@@ -48,7 +47,7 @@ public class CachedShopRegistry implements QuickShopEventConsumer {
 
     logger.info("Getting all globally existing shops... This may take a while!");
 
-    for (var shop : shopManager.getAllShops())
+    for (var shop : QuickShopAPI.getInstance().getShopManager().getAllShops())
       existingShopByLocation.put(shop.getLocation(), new CachedShop(scheduler, shop, config));
 
     logger.info("Found " + existingShopByLocation.size() + " shops in total");
