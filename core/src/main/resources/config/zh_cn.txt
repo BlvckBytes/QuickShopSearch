@@ -138,9 +138,9 @@ MESSAGE-PREDICATE-ERROR                     {prefix} {error_message}
 # - remaining_stock: Integer
 # - price: Double
 # - prefix: String
-MESSAGE-SHOP-INTERACT-PROMPT-BUYING          {prefix} &7在聊天中输入你想要购买的 &e{item_type} 的数量，每个 &e{price} “&ccancel&7” 以退出.
+MESSAGE-SHOP-INTERACT-PROMPT-BUYING          {prefix} &7在聊天中输入你想要购买的 &e{item_type} 的数量，每个 &e{price} 输入 “&ccancel&7” 以退出.
 # - prefix: String
-MESSAGE-SHOP-INTERACT-PROMPT-SELLING         {prefix} &7在聊天中输入你想要出售的 &e{item_type} 的数量，每个 &e{price} “&ccancel&7” 以退出.
+MESSAGE-SHOP-INTERACT-PROMPT-SELLING         {prefix} &7在聊天中输入你想要出售的 &e{item_type} 的数量，每个 &e{price} 输入 “&ccancel&7” 以退出.
 
 # - prefix: String
 MESSAGE-SHOP-INTERACT-PROMPT-TIMEOUT         {prefix} &c超时，请再试一次!
