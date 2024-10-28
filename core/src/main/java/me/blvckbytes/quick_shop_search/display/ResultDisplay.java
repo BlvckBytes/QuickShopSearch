@@ -4,6 +4,7 @@ import com.tcoded.folialib.impl.PlatformScheduler;
 import me.blvckbytes.bukkitevaluable.ConfigKeeper;
 import me.blvckbytes.gpeee.interpreter.EvaluationEnvironmentBuilder;
 import me.blvckbytes.gpeee.interpreter.IEvaluationEnvironment;
+import me.blvckbytes.quick_shop_search.PluginPermission;
 import me.blvckbytes.quick_shop_search.cache.CachedShop;
 import me.blvckbytes.quick_shop_search.ShopUpdate;
 import me.blvckbytes.quick_shop_search.config.MainSection;
@@ -338,10 +339,25 @@ public class ResultDisplay implements ShopDistanceProvider {
   }
 
   public IEvaluationEnvironment getDistanceExtendedShopEnvironment(CachedShop cachedShop) {
+    var distance = getShopDistance(cachedShop);
+    var isOtherWorld = distance < 0;
+
     return cachedShop
       .getShopEnvironment()
       .duplicate()
-      .withStaticVariable("distance", getShopDistance(cachedShop))
+      .withStaticVariable("distance", distance)
+      .withStaticVariable(
+        "can_teleport",
+        isOtherWorld
+          ? PluginPermission.FEATURE_TELEPORT_OTHER_WORLD.has(player)
+          : PluginPermission.FEATURE_TELEPORT.has(player)
+      )
+      .withStaticVariable(
+        "can_interact",
+        isOtherWorld
+          ? PluginPermission.FEATURE_INTERACT_OTHER_WORLD.has(player)
+          : PluginPermission.FEATURE_INTERACT.has(player)
+      )
       .build(pageEnvironment);
   }
 

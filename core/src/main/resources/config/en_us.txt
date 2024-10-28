@@ -31,7 +31,8 @@ REPRESENTATIVE-LORE-REMAINING-STOCK          &8♦ &7Stock: &e{remaining_stock}
 # - loc_y: Integer
 # - loc_z: Integer
 # - loc_world: String
-REPRESENTATIVE-LORE-LOCATION                 &8♦ &7Coordinates: &e{loc_x} {loc_y} {loc_z}
+REPRESENTATIVE-LORE-LOCATION-COORDINATES     &8♦ &7Coordinates: &e{loc_x} {loc_y} {loc_z}
+REPRESENTATIVE-LORE-LOCATION-WORLD           &8♦ &7World: &e{loc_world}
 # distance: Integer
 REPRESENTATIVE-LORE-DISTANCE                 &8♦ &7Distance: &e{distance} Blocks
 REPRESENTATIVE-LORE-DISTANCE-OTHER-WORLD     &8♦ &7Distance: &cDifferent World
