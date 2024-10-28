@@ -15,6 +15,7 @@ public enum PluginPermission {
   FEATURE_TELEPORT_OTHER_WORLD("feature.teleport.other-world"),
   FEATURE_INTERACT("feature.interact"),
   FEATURE_INTERACT_OTHER_WORLD("feature.interact.other-world"),
+  OTHER_WORLD("other-world"),
   ;
 
   private static final String PREFIX = "quickshopsearch";

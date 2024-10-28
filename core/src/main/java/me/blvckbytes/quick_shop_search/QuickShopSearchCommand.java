@@ -127,7 +127,7 @@ public class QuickShopSearchCommand implements CommandExecutor, TabCompleter {
             );
           }
 
-          resultDisplay.show(player, shopRegistry.getExistingShops());
+          resultDisplay.show(player, createFilteredDisplayData(player, null));
           return;
         }
 
@@ -147,24 +147,15 @@ public class QuickShopSearchCommand implements CommandExecutor, TabCompleter {
         );
       }
 
-      var matchingShops = new ArrayList<CachedShop>();
-      var matchingShopIds = new LongOpenHashSet();
+      var displayData = createFilteredDisplayData(player, predicate);
 
-      for (var shop : shopRegistry.getExistingShops().shops()) {
-        if (!predicate.test(new PredicateState(shop.handle.getItem())))
-          continue;
-
-        matchingShops.add(shop);
-        matchingShopIds.add(shop.handle.getShopId());
-      }
-
-      if (matchingShops.isEmpty()) {
+      if (displayData.shops().isEmpty()) {
         if ((message = config.rootSection.playerMessages.noMatches) != null)
           message.sendMessage(player, config.rootSection.builtBaseEnvironment);
         return;
       }
 
-      resultDisplay.show(player, new DisplayData(matchingShops, matchingShopIds, predicate, false));
+      resultDisplay.show(player, displayData);
     });
 
     return true;
@@ -223,6 +214,25 @@ public class QuickShopSearchCommand implements CommandExecutor, TabCompleter {
       showActionBarMessage(player, predicateHelper.createExceptionMessage(e));
       return List.of();
     }
+  }
+
+  private DisplayData createFilteredDisplayData(Player player, @Nullable ItemPredicate predicate) {
+    var matchingShops = new ArrayList<CachedShop>();
+    var matchingShopIds = new LongOpenHashSet();
+    var playerWorld = player.getWorld();
+
+    for (var shop : shopRegistry.getExistingShops()) {
+      if (!PluginPermission.OTHER_WORLD.has(player) && shop.handle.getLocation().getWorld() != playerWorld)
+        continue;
+
+      if (predicate != null && !predicate.test(new PredicateState(shop.handle.getItem())))
+        continue;
+
+      matchingShops.add(shop);
+      matchingShopIds.add(shop.handle.getShopId());
+    }
+
+    return new DisplayData(matchingShops, matchingShopIds, predicate);
   }
 
   private void showActionBarMessage(Player player, String message) {

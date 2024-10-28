@@ -66,11 +66,6 @@ public class ResultDisplay implements ShopDistanceProvider {
   }
 
   public void onShopUpdate(CachedShop shop, ShopUpdate update) {
-    if (displayData.isBackedByRegistry()) {
-      updateAll();
-      return;
-    }
-
     if (update == ShopUpdate.ITEM_CHANGED) {
       if (!displayData.contains(shop))
         return;

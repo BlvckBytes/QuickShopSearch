@@ -4,15 +4,14 @@ import com.ghostchu.quickshop.api.QuickShopAPI;
 import com.ghostchu.quickshop.api.shop.Shop;
 import com.ghostchu.quickshop.api.shop.ShopType;
 import com.tcoded.folialib.impl.PlatformScheduler;
-import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
 import me.blvckbytes.bukkitevaluable.ConfigKeeper;
 import me.blvckbytes.quick_shop_search.ShopUpdate;
 import me.blvckbytes.quick_shop_search.config.MainSection;
-import me.blvckbytes.quick_shop_search.display.DisplayData;
 import me.blvckbytes.quick_shop_search.display.ResultDisplayHandler;
 import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -22,7 +21,6 @@ public class CachedShopRegistry implements QuickShopEventConsumer {
 
   private final PlatformScheduler scheduler;
   private final Map<Location, CachedShop> existingShopByLocation;
-  private final LongOpenHashSet existingShopIds;
   private final ConfigKeeper<MainSection> config;
   private final ResultDisplayHandler displayHandler;
 
@@ -36,7 +34,6 @@ public class CachedShopRegistry implements QuickShopEventConsumer {
     this.config = config;
     this.displayHandler = displayHandler;
     this.existingShopByLocation = new HashMap<>();
-    this.existingShopIds = new LongOpenHashSet();
 
     config.registerReloadListener(() -> {
       synchronized (existingShopByLocation) {
@@ -53,14 +50,9 @@ public class CachedShopRegistry implements QuickShopEventConsumer {
     logger.info("Found " + existingShopByLocation.size() + " shops in total");
   }
 
-  public DisplayData getExistingShops() {
+  public Collection<CachedShop> getExistingShops() {
     synchronized (existingShopByLocation) {
-      return new DisplayData(
-        this.existingShopByLocation.values(),
-        existingShopIds,
-        null,
-        true
-      );
+      return this.existingShopByLocation.values();
     }
   }
 
@@ -77,8 +69,6 @@ public class CachedShopRegistry implements QuickShopEventConsumer {
         var addedShop = new CachedShop(scheduler, shop, config);
 
         existingShopByLocation.put(shop.getLocation(), addedShop);
-        existingShopIds.add(shop.getShopId());
-
         displayHandler.onShopUpdate(addedShop, ShopUpdate.CREATED);
       }
     });
@@ -91,8 +81,6 @@ public class CachedShopRegistry implements QuickShopEventConsumer {
 
       if (removedShop == null)
         return;
-
-      existingShopIds.remove(shop.getShopId());
 
       displayHandler.onShopUpdate(removedShop, ShopUpdate.REMOVED);
     }

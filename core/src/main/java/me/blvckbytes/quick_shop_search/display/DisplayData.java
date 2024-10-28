@@ -10,25 +10,18 @@ import java.util.Collection;
 public record DisplayData(
   Collection<CachedShop> shops,
   LongOpenHashSet shopIds,
-  @Nullable ItemPredicate query,
-  boolean isBackedByRegistry
+  @Nullable ItemPredicate query
 ) {
   public boolean contains(CachedShop shop) {
     return shopIds.contains(shop.handle.getShopId());
   }
 
   public void add(CachedShop shop) {
-    if (isBackedByRegistry)
-      return;
-
     this.shopIds.add(shop.handle.getShopId());
     this.shops.add(shop);
   }
 
   public void remove(CachedShop shop) {
-    if (isBackedByRegistry)
-      return;
-
     this.shopIds.remove(shop.handle.getShopId());
     this.shops.remove(shop);
   }

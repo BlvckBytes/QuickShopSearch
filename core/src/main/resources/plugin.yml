@@ -25,6 +25,9 @@ permissions:
   quickshopsearch.empty-predicate:
     description: 'Query all shops without a predicate'
     default: op
+  quickshopsearch.other-world:
+    description: 'Whether to display shops which are not in the same world as the player'
+    default: op
   quickshopsearch.feature.sort:
     description: 'Use the sorting feature'
     default: op
@@ -36,4 +39,10 @@ permissions:
     default: op
   quickshopsearch.feature.teleport.other-world:
     description: 'Teleport to shops within another world'
+    default: op
+  quickshopsearch.feature.interact:
+    description: 'Remotely interact with shops within the same world '
+    default: op
+  quickshopsearch.feature.interact.other-world:
+    description: 'Remotely interact with shops within another world '
     default: op
