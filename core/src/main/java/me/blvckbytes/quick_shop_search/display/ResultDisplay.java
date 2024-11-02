@@ -10,6 +10,7 @@ import me.blvckbytes.quick_shop_search.ShopUpdate;
 import me.blvckbytes.quick_shop_search.config.MainSection;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.Nullable;
 
@@ -20,6 +21,7 @@ public class ResultDisplay implements ShopDistanceProvider {
   private static final long SENTINEL_DISTANCE_UN_COMPUTABLE = -1;
 
   private final PlatformScheduler scheduler;
+  private final @Nullable ClickTranslator clickTranslator;
   private final AsyncTaskQueue asyncQueue;
   private final ConfigKeeper<MainSection> config;
 
@@ -46,7 +48,8 @@ public class ResultDisplay implements ShopDistanceProvider {
     ConfigKeeper<MainSection> config,
     Player player,
     DisplayData displayData,
-    SelectionState selectionState
+    SelectionState selectionState,
+    boolean useClickTranslator
   ) {
     this.scheduler = scheduler;
     this.config = config;
@@ -57,6 +60,7 @@ public class ResultDisplay implements ShopDistanceProvider {
     this.shopDistanceByShopId = new HashMap<>();
     this.slotMap = new CachedShop[9 * 6];
     this.selectionState = selectionState;
+    this.clickTranslator = useClickTranslator ? new ClickTranslator() : null;
 
     onConfigReload(false);
 
@@ -109,24 +113,81 @@ public class ResultDisplay implements ShopDistanceProvider {
   }
 
   public void onConfigReload(boolean redraw) {
+    var anyPageSlot = anyOfSet(config.rootSection.resultDisplay.items.nextPage.getDisplaySlots());
     this.pageEnvironment = new EvaluationEnvironmentBuilder()
       .withLiveVariable("current_page", () -> this.currentPage)
       .withLiveVariable("number_pages", () -> this.numberOfPages)
+      .withLiveVariable("click_translation", () -> anyPageSlot == null ? null : getClickTranslation(anyPageSlot))
       .build(config.rootSection.resultDisplay.inventoryEnvironment);
 
+    var anySortingSlot = anyOfSet(config.rootSection.resultDisplay.items.sorting.getDisplaySlots());
     this.sortingEnvironment = this.selectionState
       .makeSortingEnvironment(player, config.rootSection)
+      .withLiveVariable("click_translation", () -> anySortingSlot == null ? null : getClickTranslation(anySortingSlot))
       .build(pageEnvironment);
 
+    var anyFilteringSlot = anyOfSet(config.rootSection.resultDisplay.items.filtering.getDisplaySlots());
     this.filteringEnvironment = this.selectionState
       .makeFilteringEnvironment(player, config.rootSection)
+      .withLiveVariable("click_translation", () -> anyFilteringSlot == null ? null : getClickTranslation(anyFilteringSlot))
       .build(pageEnvironment);
+
+    this.setupTranslator();
 
     if (redraw) {
       applyFiltering();
       applySorting();
       show();
     }
+  }
+
+  private @Nullable Integer anyOfSet(Set<Integer> set) {
+    var iterator = set.iterator();
+
+    if (!iterator.hasNext())
+      return null;
+
+    return iterator.next();
+  }
+
+  private void setupTranslator() {
+    if (this.clickTranslator == null)
+      return;
+
+    var pageButtonSlots = new HashSet<Integer>();
+    pageButtonSlots.addAll(config.rootSection.resultDisplay.items.previousPage.getDisplaySlots());
+    pageButtonSlots.addAll(config.rootSection.resultDisplay.items.nextPage.getDisplaySlots());
+
+    clickTranslator.setup(
+      config.rootSection.resultDisplay.getRows(),
+      List.of(
+        config.rootSection.resultDisplay.getPaginationSlots(),
+        // Since previous- and next-page also use the same environment, and to make things easier in general,
+        // have them both share the same translation slot-group as well.
+        pageButtonSlots
+      ),
+      slot -> {
+
+        if (config.rootSection.resultDisplay.getPaginationSlots().contains(slot))
+          return EnumSet.of(TranslatedClick.LEFT, TranslatedClick.SHIFT_LEFT, TranslatedClick.RIGHT);
+
+        var targetSection = config.rootSection.resultDisplay.getItemSectionBySlot(slot);
+
+        if (targetSection == config.rootSection.resultDisplay.items.sorting)
+          return EnumSet.of(TranslatedClick.LEFT, TranslatedClick.RIGHT, TranslatedClick.DROP_ONE, TranslatedClick.DROP_ALL);
+
+        if (targetSection == config.rootSection.resultDisplay.items.filtering)
+          return EnumSet.of(TranslatedClick.LEFT, TranslatedClick.RIGHT, TranslatedClick.DROP_ALL);
+
+        if (
+          targetSection == config.rootSection.resultDisplay.items.nextPage
+          || targetSection == config.rootSection.resultDisplay.items.previousPage
+        )
+          return EnumSet.of(TranslatedClick.LEFT, TranslatedClick.RIGHT);
+
+        return null;
+      }
+    );
   }
 
   public @Nullable CachedShop getShopCorrespondingToSlot(int slot) {
@@ -308,6 +369,18 @@ public class ResultDisplay implements ShopDistanceProvider {
     return distance;
   }
 
+  public @Nullable TranslatedClick updateAndTranslate(InventoryClickEvent event) {
+    if (this.clickTranslator == null)
+      return TranslatedClick.fromClickEvent(event);
+
+    var result = clickTranslator.updateOrTranslate(event);
+
+    if (result == null)
+      renderItems();
+
+    return result;
+  }
+
   private void renderItems() {
     var displaySlots = config.rootSection.resultDisplay.getPaginationSlots();
     var itemsIndex = (currentPage - 1) * displaySlots.size();
@@ -325,7 +398,7 @@ public class ResultDisplay implements ShopDistanceProvider {
       var cachedShop = filteredSortedShops.get(currentSlot);
 
       inventory.setItem(slot, cachedShop.getRepresentativeBuildable().build(
-        getDistanceExtendedShopEnvironment(cachedShop)
+        getExtendedShopEnvironment(slot, cachedShop)
       ));
 
       slotMap[slot] = cachedShop;
@@ -338,7 +411,7 @@ public class ResultDisplay implements ShopDistanceProvider {
     config.rootSection.resultDisplay.items.filler.renderInto(inventory, pageEnvironment);
   }
 
-  public IEvaluationEnvironment getDistanceExtendedShopEnvironment(CachedShop cachedShop) {
+  public IEvaluationEnvironment getExtendedShopEnvironment(int slot, CachedShop cachedShop) {
     var distance = getShopDistance(cachedShop);
     var isOtherWorld = distance < 0;
 
@@ -346,6 +419,7 @@ public class ResultDisplay implements ShopDistanceProvider {
       .getShopEnvironment()
       .duplicate()
       .withStaticVariable("distance", distance)
+      .withLiveVariable("click_translation", () -> getClickTranslation(slot))
       .withStaticVariable(
         "can_teleport",
         isOtherWorld
@@ -363,5 +437,18 @@ public class ResultDisplay implements ShopDistanceProvider {
 
   private Inventory makeInventory() {
     return config.rootSection.resultDisplay.createInventory(pageEnvironment);
+  }
+
+  private @Nullable String getClickTranslation(int slot) {
+    String clickTranslation = null;
+
+    if (clickTranslator != null) {
+      var slotTranslation = clickTranslator.getCurrent(slot);
+
+      if (slotTranslation != null)
+        clickTranslation = slotTranslation.name();
+    }
+
+    return clickTranslation;
   }
 }

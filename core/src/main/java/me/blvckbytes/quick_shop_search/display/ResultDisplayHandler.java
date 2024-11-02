@@ -21,7 +21,6 @@ import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
@@ -72,7 +71,10 @@ public class ResultDisplayHandler implements Listener {
   }
 
   public void show(Player player, DisplayData displayData) {
-    displayByPlayer.put(player.getUniqueId(), new ResultDisplay(scheduler, config, player, displayData, stateStore.loadState(player)));
+    // TODO: Decide this based on whether the player's a geyser- or floodgate-player
+    var usesClickTranslator = true;
+
+    displayByPlayer.put(player.getUniqueId(), new ResultDisplay(scheduler, config, player, displayData, stateStore.loadState(player), usesClickTranslator));
   }
 
   @EventHandler
@@ -92,7 +94,8 @@ public class ResultDisplayHandler implements Listener {
 
   @EventHandler
   public void onQuit(PlayerQuitEvent event) {
-    var display = displayByPlayer.remove(event.getPlayer().getUniqueId());
+    var playerId = event.getPlayer().getUniqueId();
+    var display = displayByPlayer.remove(playerId);
 
     if (display != null)
       display.cleanup(false);
@@ -115,10 +118,14 @@ public class ResultDisplayHandler implements Listener {
     if (slot < 0 || slot >= config.rootSection.resultDisplay.getRows() * 9)
       return;
 
-    var targetShop = display.getShopCorrespondingToSlot(slot);
-    var clickType = event.getClick();
+    var click = display.updateAndTranslate(event);
 
-    if (clickType == ClickType.LEFT) {
+    if (click == null)
+      return;
+
+    var targetShop = display.getShopCorrespondingToSlot(slot);
+
+    if (click == TranslatedClick.LEFT) {
       if (config.rootSection.resultDisplay.items.previousPage.getDisplaySlots().contains(slot)) {
         display.previousPage();
         return;
@@ -130,31 +137,31 @@ public class ResultDisplayHandler implements Listener {
       }
 
       if (config.rootSection.resultDisplay.items.sorting.getDisplaySlots().contains(slot)) {
-        ensurePermission(player, PluginPermission.FEATURE_SORT, config.rootSection.playerMessages.missingPermissionFeatureSort, display::nextSortingSelection);
+        ensurePermission(display.player, PluginPermission.FEATURE_SORT, config.rootSection.playerMessages.missingPermissionFeatureSort, display::nextSortingSelection);
         return;
       }
 
       if (config.rootSection.resultDisplay.items.filtering.getDisplaySlots().contains(slot)) {
-        ensurePermission(player, PluginPermission.FEATURE_FILTER, config.rootSection.playerMessages.missingPermissionFeatureFilter, display::nextFilteringCriterion);
+        ensurePermission(display.player, PluginPermission.FEATURE_FILTER, config.rootSection.playerMessages.missingPermissionFeatureFilter, display::nextFilteringCriterion);
         return;
       }
 
       if (targetShop != null) {
         var shopLocation = targetShop.handle.getLocation();
 
-        if (shopLocation.getWorld() != player.getWorld()) {
+        if (shopLocation.getWorld() != display.player.getWorld()) {
           ensurePermission(
-            player, PluginPermission.FEATURE_TELEPORT_OTHER_WORLD,
+            display.player, PluginPermission.FEATURE_TELEPORT_OTHER_WORLD,
             config.rootSection.playerMessages.missingPermissionFeatureTeleportOtherWorld,
-            () -> teleportPlayerToShop(player, display, targetShop)
+            () -> teleportPlayerToShop(display.player, display, targetShop)
           );
           return;
         }
 
         ensurePermission(
-          player, PluginPermission.FEATURE_TELEPORT,
+          display.player, PluginPermission.FEATURE_TELEPORT,
           config.rootSection.playerMessages.missingPermissionFeatureTeleport,
-          () -> teleportPlayerToShop(player, display, targetShop)
+          () -> teleportPlayerToShop(display.player, display, targetShop)
         );
         return;
       }
@@ -162,7 +169,7 @@ public class ResultDisplayHandler implements Listener {
       return;
     }
 
-    if (clickType == ClickType.RIGHT) {
+    if (click == TranslatedClick.RIGHT) {
       if (config.rootSection.resultDisplay.items.previousPage.getDisplaySlots().contains(slot)) {
         display.firstPage();
         return;
@@ -174,62 +181,62 @@ public class ResultDisplayHandler implements Listener {
       }
 
       if (config.rootSection.resultDisplay.items.sorting.getDisplaySlots().contains(slot)) {
-        ensurePermission(player, PluginPermission.FEATURE_SORT, config.rootSection.playerMessages.missingPermissionFeatureSort, display::nextSortingOrder);
+        ensurePermission(display.player, PluginPermission.FEATURE_SORT, config.rootSection.playerMessages.missingPermissionFeatureSort, display::nextSortingOrder);
         return;
       }
 
       if (config.rootSection.resultDisplay.items.filtering.getDisplaySlots().contains(slot)) {
-        ensurePermission(player, PluginPermission.FEATURE_FILTER, config.rootSection.playerMessages.missingPermissionFeatureFilter, display::nextFilteringState);
+        ensurePermission(display.player, PluginPermission.FEATURE_FILTER, config.rootSection.playerMessages.missingPermissionFeatureFilter, display::nextFilteringState);
         return;
       }
 
       if (targetShop != null)
-        targetShop.handle.openPreview(player);
+        targetShop.handle.openPreview(display.player);
 
       return;
     }
 
-    if (clickType == ClickType.DROP) {
+    if (click == TranslatedClick.DROP_ONE) {
       if (config.rootSection.resultDisplay.items.sorting.getDisplaySlots().contains(slot))
-        ensurePermission(player, PluginPermission.FEATURE_SORT, config.rootSection.playerMessages.missingPermissionFeatureSort, display::moveSortingSelectionDown);
+        ensurePermission(display.player, PluginPermission.FEATURE_SORT, config.rootSection.playerMessages.missingPermissionFeatureSort, display::moveSortingSelectionDown);
 
       return;
     }
 
-    if (clickType == ClickType.CONTROL_DROP) {
+    if (click == TranslatedClick.DROP_ALL) {
       if (config.rootSection.resultDisplay.items.sorting.getDisplaySlots().contains(slot)) {
-        ensurePermission(player, PluginPermission.FEATURE_SORT, config.rootSection.playerMessages.missingPermissionFeatureSort, display::resetSortingState);
+        ensurePermission(display.player, PluginPermission.FEATURE_SORT, config.rootSection.playerMessages.missingPermissionFeatureSort, display::resetSortingState);
         return;
       }
 
       if (config.rootSection.resultDisplay.items.filtering.getDisplaySlots().contains(slot)) {
-        ensurePermission(player, PluginPermission.FEATURE_FILTER, config.rootSection.playerMessages.missingPermissionFeatureFilter, display::resetFilteringState);
+        ensurePermission(display.player, PluginPermission.FEATURE_FILTER, config.rootSection.playerMessages.missingPermissionFeatureFilter, display::resetFilteringState);
       }
     }
 
-    if (clickType == ClickType.SHIFT_LEFT && targetShop != null) {
+    if (click == TranslatedClick.SHIFT_LEFT && targetShop != null) {
       var shopLocation = targetShop.handle.getLocation();
 
-      if (shopLocation.getWorld() != player.getWorld()) {
+      if (shopLocation.getWorld() != display.player.getWorld()) {
         ensurePermission(
-          player, PluginPermission.FEATURE_INTERACT_OTHER_WORLD,
+          display.player, PluginPermission.FEATURE_INTERACT_OTHER_WORLD,
           config.rootSection.playerMessages.missingPermissionFeatureInteractOtherWorld,
-          () -> initiateShopInteraction(player, display, targetShop)
+          () -> initiateShopInteraction(display.player, display, targetShop)
         );
         return;
       }
 
       ensurePermission(
-        player, PluginPermission.FEATURE_INTERACT,
+        display.player, PluginPermission.FEATURE_INTERACT,
         config.rootSection.playerMessages.missingPermissionFeatureInteract,
-        () -> initiateShopInteraction(player, display, targetShop)
+        () -> initiateShopInteraction(display.player, display, targetShop)
       );
     }
   }
 
   private void initiateShopInteraction(Player player, ResultDisplay display, CachedShop cachedShop) {
     var extendedEnvironment = config.rootSection.getBaseEnvironment().build(
-      display.getDistanceExtendedShopEnvironment(cachedShop)
+      display.getExtendedShopEnvironment(0, cachedShop)
     );
 
     scheduler.runAtEntity(player, scheduleTask -> player.closeInventory());
@@ -320,7 +327,7 @@ public class ResultDisplayHandler implements Listener {
     if ((message = config.rootSection.playerMessages.beforeTeleporting) != null) {
       message.sendMessage(
         player,
-        config.rootSection.getBaseEnvironment().build(display.getDistanceExtendedShopEnvironment(cachedShop))
+        config.rootSection.getBaseEnvironment().build(display.getExtendedShopEnvironment(0, cachedShop))
       );
     }
 

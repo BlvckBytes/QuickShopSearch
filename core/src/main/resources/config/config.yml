@@ -15,6 +15,7 @@
 # - number_pages: Integer
 # - number_of_rows: Integer
 # - last_slot: Integer
+# - click_translation: String
 resultDisplay:
   title: '@{RESULT-DISPLAY-TITLE}'
   rows: 6
@@ -32,6 +33,7 @@ resultDisplay:
       - '@{PREVIOUS-PAGE-LORE-LEFT-CLICK-DESCRIPTION}'
       - '@{PREVIOUS-PAGE-LORE-RIGHT-CLICK-DESCRIPTION}'
       - '@{ANY-CONTROL-LORE-SPACER}'
+      - 'if click_translation != null then ("&8➥ &7Click-Translation: &e" & click_translation) else null'
     # https://github.com/BlvckBytes/BukkitEvaluable#itemstack-section
     nextPage:
       slots$: 'last_slot'
@@ -45,6 +47,7 @@ resultDisplay:
       - '@{NEXT-PAGE-LORE-LEFT-CLICK-DESCRIPTION}'
       - '@{NEXT-PAGE-LORE-RIGHT-CLICK-DESCRIPTION}'
       - '@{ANY-CONTROL-LORE-SPACER}'
+      - 'if click_translation != null then ("&8➥ &7Click-Translation: &e" & click_translation) else null'
     # - owner: String
     # - name: String?
     # - price: Double
@@ -98,6 +101,7 @@ resultDisplay:
         else
           null
       - '@{ANY-CONTROL-LORE-SPACER}'
+      - 'if click_translation != null then ("&8➥ &7Click-Translation: &e" & click_translation) else null'
     # - sorting_selections: Iterable<SortingCriterionSelection>
     # - selected_index: Integer
     # - has_permission: Boolean
@@ -129,10 +133,11 @@ resultDisplay:
             @{SORTING-LORE-DROP-ALL-DESCRIPTION},
             @{ANY-CONTROL-LORE-SPACER}
           )
-  # - filtering_selections: Map<ShopFilteringCriteria, PredicateSelection>
-  # - selected_criteria: ShopFilteringCriteria
-  # - has_permission: Boolean
-  # https://github.com/BlvckBytes/BukkitEvaluable#itemstack-section
+      - 'if click_translation != null then ("&8➥ &7Click-Translation: &e" & click_translation) else null'
+    # - filtering_selections: Map<ShopFilteringCriteria, PredicateSelection>
+    # - selected_criteria: ShopFilteringCriteria
+    # - has_permission: Boolean
+    # https://github.com/BlvckBytes/BukkitEvaluable#itemstack-section
     filtering:
       slots$: 'last_slot - 2'
       type: HOPPER
@@ -159,6 +164,7 @@ resultDisplay:
             @{FILTERING-LORE-DROP-ALL-DESCRIPTION},
             @{ANY-CONTROL-LORE-SPACER}
           )
+      - 'if click_translation != null then ("&8➥ &7Click-Translation: &e" & click_translation) else null'
   # https://github.com/BlvckBytes/BukkitEvaluable#itemstack-section
     filler:
       slots$:
