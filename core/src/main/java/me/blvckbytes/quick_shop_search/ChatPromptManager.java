@@ -1,8 +1,10 @@
 package me.blvckbytes.quick_shop_search;
 
 import com.tcoded.folialib.impl.PlatformScheduler;
+import me.blvckbytes.item_predicate_parser.translation.resolver.TranslationResolver;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -46,7 +48,7 @@ public class ChatPromptManager implements Listener {
     }
   }
 
-  @EventHandler
+  @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
   public void onChat(AsyncPlayerChatEvent event) {
     ChatPromptInstance handler;
 
@@ -54,9 +56,12 @@ public class ChatPromptManager implements Listener {
       handler = removeAndCancelIfExists(event.getPlayer());
     }
 
+    // Might not be the most decoupled solution, but since QSS depends on IPP, we're fine.
+    var sanitizedMessage = TranslationResolver.sanitize(event.getMessage());
+
     if (handler != null) {
       event.setCancelled(true);
-      handler.handler().accept(event.getMessage());
+      handler.handler().accept(sanitizedMessage);
     }
   }
 
