@@ -21,10 +21,7 @@ import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.inventory.ClickType;
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryCloseEvent;
-import org.bukkit.event.inventory.InventoryDragEvent;
+import org.bukkit.event.inventory.*;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.util.Vector;
@@ -34,6 +31,7 @@ import java.util.*;
 
 public class ResultDisplayHandler implements Listener {
 
+  private static final long MOVE_GHOST_ITEM_THRESHOLD_MS = 500;
   private static final double PLAYER_EYE_HEIGHT = 1.5;
 
   private static final BlockFace[] SHOP_SIGN_FACES = new BlockFace[] {
@@ -87,6 +85,13 @@ public class ResultDisplayHandler implements Listener {
     if (display != null && display.isInventory(event.getInventory())) {
       display.cleanup(false);
       displayByPlayer.remove(playerId);
+
+      if (
+        display.lastMoveToOwnInventoryStamp != 0 &&
+        System.currentTimeMillis() - display.lastMoveToOwnInventoryStamp < MOVE_GHOST_ITEM_THRESHOLD_MS
+      ) {
+        scheduler.runNextTick(task -> player.updateInventory());
+      }
     }
   }
 
@@ -105,10 +110,20 @@ public class ResultDisplayHandler implements Listener {
 
     var display = displayByPlayer.get(player.getUniqueId());
 
-    if (display == null || !display.isInventory(player.getOpenInventory().getTopInventory()))
+    if (display == null)
       return;
 
     event.setCancelled(true);
+
+    if (
+      event.getAction() == InventoryAction.MOVE_TO_OTHER_INVENTORY &&
+      event.getClickedInventory() != player.getInventory()
+    ) {
+      display.lastMoveToOwnInventoryStamp = System.currentTimeMillis();
+    }
+
+    if (!display.isInventory(player.getOpenInventory().getTopInventory()))
+      return;
 
     var slot = event.getRawSlot();
 
@@ -361,12 +376,8 @@ public class ResultDisplayHandler implements Listener {
     if (!(event.getWhoClicked() instanceof Player player))
       return;
 
-    var display = displayByPlayer.get(player.getUniqueId());
-
-    if (display == null || display.isInventory(event.getInventory()))
-      return;
-
-    event.setCancelled(true);
+    if (displayByPlayer.containsKey(player.getUniqueId()))
+      event.setCancelled(true);
   }
 
   public void onShutdown() {

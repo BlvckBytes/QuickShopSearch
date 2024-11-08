@@ -34,12 +34,21 @@ public class ResultDisplay implements ShopDistanceProvider {
   private int numberOfPages;
   public final SelectionState selectionState;
 
+  // If players move to their own inventory and close the UI quickly enough, the server will send back a packet
+  // undoing that slot which assumed the top-inventory to still be open, and thus the undo won't work. For survival,
+  // it's merely cosmetic, but for creative, the client will actually call this item into existence. While not
+  // necessarily critical, it just makes the plugin look bad. On closing the inventory, if the last move happened
+  // within a certain threshold of time, let's just update the player's inventory, as to make that ghost-item vanish.
+  public long lastMoveToOwnInventoryStamp;
+
   private IEvaluationEnvironment pageEnvironment;
   private IEvaluationEnvironment sortingEnvironment;
   private IEvaluationEnvironment filteringEnvironment;
 
   private Inventory inventory;
   private int currentPage = 1;
+
+  // TODO: Do not render whole UI only because selection-state is changed
 
   public ResultDisplay(
     PlatformScheduler scheduler,
