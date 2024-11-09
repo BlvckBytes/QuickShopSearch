@@ -330,7 +330,11 @@ public class ResultDisplay implements DynamicPropertyProvider {
   @Override
   public double getPlayerBalanceForShopCurrency(CachedShop cachedShop) {
     return this.balanceByCurrencyCache.computeIfAbsent(cachedShop.handle.getCurrency(), currency -> (
-      QuickShop.getInstance().getEconomy().getBalance(playerUser, player.getWorld(), currency)
+      QuickShop.getInstance().getEconomy().getBalance(
+        playerUser,
+        Objects.requireNonNull(cachedShop.handle.getLocation().getWorld()),
+        currency
+      )
     ));
   }
 
