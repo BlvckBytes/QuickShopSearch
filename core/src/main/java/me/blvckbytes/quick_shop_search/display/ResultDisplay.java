@@ -76,6 +76,9 @@ public class ResultDisplay implements ShopDistanceProvider {
   }
 
   public void onShopUpdate(CachedShop shop, ShopUpdate update) {
+    if (!PluginPermission.FEATURE_LIVE_UPDATES.has(player))
+      return;
+
     if (update == ShopUpdate.ITEM_CHANGED) {
       if (!displayData.contains(shop))
         return;

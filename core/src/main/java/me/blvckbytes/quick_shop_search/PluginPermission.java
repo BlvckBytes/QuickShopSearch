@@ -15,6 +15,7 @@ public enum PluginPermission {
   FEATURE_TELEPORT_OTHER_WORLD("feature.teleport.other-world"),
   FEATURE_INTERACT("feature.interact"),
   FEATURE_INTERACT_OTHER_WORLD("feature.interact.other-world"),
+  FEATURE_LIVE_UPDATES("feature.live-updates"),
   OTHER_WORLD("other-world"),
   ACCESS_LIST_BASE("access-list"),
   ACCESS_LISTS_BYPASS("bypass-access-lists")
