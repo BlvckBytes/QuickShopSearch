@@ -8,10 +8,7 @@ import me.blvckbytes.bukkitevaluable.ConfigManager;
 import me.blvckbytes.item_predicate_parser.ItemPredicateParserPlugin;
 import me.blvckbytes.quick_shop_search.cache.CachedShopRegistry;
 import me.blvckbytes.quick_shop_search.cache.QuickShopListenerFactory;
-import me.blvckbytes.quick_shop_search.config.MainSection;
-import me.blvckbytes.quick_shop_search.config.QuickShopSearchCommandSection;
-import me.blvckbytes.quick_shop_search.config.QuickShopSearchLanguageCommandSection;
-import me.blvckbytes.quick_shop_search.config.QuickShopSearchReloadCommandSection;
+import me.blvckbytes.quick_shop_search.config.*;
 import me.blvckbytes.quick_shop_search.display.ResultDisplayHandler;
 import me.blvckbytes.quick_shop_search.display.SelectionStateStore;
 import org.bukkit.Bukkit;
@@ -53,7 +50,7 @@ public class QuickShopSearchPlugin extends JavaPlugin {
       stateStore = new SelectionStateStore(this, logger);
       displayHandler = new ResultDisplayHandler(scheduler, config, stateStore, chatPromptManager);
 
-      var shopRegistry = new CachedShopRegistry(scheduler, displayHandler, config, logger);
+      var shopRegistry = new CachedShopRegistry(this, scheduler, displayHandler, config, logger);
 
       var shopEventHandler = QuickShopListenerFactory.create(logger, shopRegistry);
 
@@ -66,15 +63,18 @@ public class QuickShopSearchPlugin extends JavaPlugin {
       var mainCommand = Objects.requireNonNull(getCommand(QuickShopSearchCommandSection.INITIAL_NAME));
       var languageCommand = Objects.requireNonNull(getCommand(QuickShopSearchLanguageCommandSection.INITIAL_NAME));
       var reloadCommand = Objects.requireNonNull(getCommand(QuickShopSearchReloadCommandSection.INITIAL_NAME));
+      var advertiseCommand = Objects.requireNonNull(getCommand(QuickShopSearchAdvertiseCommandSection.INITIAL_NAME));
 
       mainCommand.setExecutor(commandExecutor);
       languageCommand.setExecutor(commandExecutor);
       reloadCommand.setExecutor(new ReloadCommand(logger, config));
+      advertiseCommand.setExecutor(new AdvertiseCommand(shopRegistry, config));
 
       Runnable updateCommands = () -> {
         config.rootSection.commands.quickShopSearch.apply(mainCommand, commandUpdater);
         config.rootSection.commands.quickShopSearchLanguage.apply(languageCommand, commandUpdater);
         config.rootSection.commands.quickShopSearchReload.apply(reloadCommand, commandUpdater);
+        config.rootSection.commands.quickShopSearchAdvertise.apply(advertiseCommand, commandUpdater);
 
         commandUpdater.trySyncCommands();
       };

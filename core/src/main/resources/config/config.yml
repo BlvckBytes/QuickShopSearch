@@ -214,12 +214,19 @@ playerMessages:
   missingPermissionMainCommand$: '@{MESSAGE-MISSING-PERMISSION-MAIN-COMMAND(prefix=lut["MESSAGE_PREFIX"])}'
   missingPermissionLanguageCommand$: '@{MESSAGE-MISSING-PERMISSION-LANGUAGE-COMMAND(prefix=lut["MESSAGE_PREFIX"])}'
   missingPermissionReloadCommand$: '@{MESSAGE-MISSING-PERMISSION-RELOAD-COMMAND(prefix=lut["MESSAGE_PREFIX"])}'
+  missingPermissionAdvertiseCommand$: '@{MESSAGE-MISSING-PERMISSION-ADVERTISE-COMMAND(prefix=lut["MESSAGE_PREFIX"])}'
   missingPermissionFeatureSort$: '@{MESSAGE-MISSING-PERMISSION-FEATURE-SORT(prefix=lut["MESSAGE_PREFIX"])}'
   missingPermissionFeatureFilter$: '@{MESSAGE-MISSING-PERMISSION-FEATURE-FILTER(prefix=lut["MESSAGE_PREFIX"])}'
   missingPermissionFeatureTeleport$: '@{MESSAGE-MISSING-PERMISSION-FEATURE-TELEPORT(prefix=lut["MESSAGE_PREFIX"])}'
   missingPermissionFeatureTeleportOtherWorld$: '@{MESSAGE-MISSING-PERMISSION-FEATURE-TELEPORT-OTHER-WORLD(prefix=lut["MESSAGE_PREFIX"])}'
   missingPermissionFeatureInteract$: '@{MESSAGE-MISSING-PERMISSION-FEATURE-INTERACT(prefix=lut["MESSAGE_PREFIX"])}'
   missingPermissionFeatureInteractOtherWorld$: '@{MESSAGE-MISSING-PERMISSION-FEATURE-INTERACT-OTHER-WORLD(prefix=lut["MESSAGE_PREFIX"])}'
+  commandAdvertiseNotLookingAtShop$: '@{MESSAGE-ADVERTISE-NOT-LOOKING-AT-SHOP(prefix=lut["MESSAGE_PREFIX"])}'
+  commandAdvertiseNotTheOwner$: '@{MESSAGE-ADVERTISE-NOT-THE-OWNER(prefix=lut["MESSAGE_PREFIX"])}'
+  commandAdvertiseEnabledSelf$: '@{MESSAGE-ADVERTISE-ENABLED-SELF(prefix=lut["MESSAGE_PREFIX"])}'
+  commandAdvertiseEnabledOther$: '@{MESSAGE-ADVERTISE-ENABLED-OTHER(prefix=lut["MESSAGE_PREFIX"])}'
+  commandAdvertiseDisabledSelf$: '@{MESSAGE-ADVERTISE-DISABLED-SELF(prefix=lut["MESSAGE_PREFIX"])}'
+  commandAdvertiseDisabledOther$: '@{MESSAGE-ADVERTISE-DISABLED-OTHER(prefix=lut["MESSAGE_PREFIX"])}'
 
 predicates:
   mainLanguage: ENGLISH_US
@@ -235,6 +242,10 @@ commands:
     name: quickshopsearchlanguage
     aliases:
     - qssl
+  quickShopSearchAdvertise:
+    name: quickshopsearchadvertise
+    aliases:
+      - qssa
   quickShopSearchReload:
     name: quickshopsearchreload
     aliases:

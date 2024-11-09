@@ -10,6 +10,8 @@ commands:
     description: 'Query shops using the main predicate language'
   quickshopsearchlanguage:
     description: 'Query shops using any supported predicate language'
+  quickshopsearchadvertise:
+    description: 'Toggle whether a shop is advertised'
   quickshopsearchreload:
     description: 'Reload the configuration-file'
 permissions:
@@ -19,11 +21,23 @@ permissions:
   quickshopsearch.command.qssl:
     description: 'Invoke the language command'
     default: op
+  quickshopsearch.command.qssa:
+    description: 'Invoke the advertise command'
+    default: op
+  quickshopsearch.command.qssa.owner-bypass:
+    description: 'Bypass having to be the owner of a shop to toggle advertising'
+    default: op
   quickshopsearch.command.qssrl:
     description: 'Invoke the reload command'
     default: op
   quickshopsearch.empty-predicate:
     description: 'Query all shops without a predicate'
+    default: op
+  quickshopsearch.bypass-non-advertise:
+    description: 'View non-advertising shops'
+    default: op
+  quickshopsearch.bypass-access-lists:
+    description: 'Bypass the permission-specific restrictions of access-lists'
     default: op
   quickshopsearch.other-world:
     description: 'Whether to display shops which are not in the same world as the player'

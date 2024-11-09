@@ -28,12 +28,20 @@ public class PlayerMessagesSection extends AConfigSection {
   public @Nullable BukkitEvaluable missingPermissionMainCommand;
   public @Nullable BukkitEvaluable missingPermissionLanguageCommand;
   public @Nullable BukkitEvaluable missingPermissionReloadCommand;
+  public @Nullable BukkitEvaluable missingPermissionAdvertiseCommand;
   public @Nullable BukkitEvaluable missingPermissionFeatureSort;
   public @Nullable BukkitEvaluable missingPermissionFeatureFilter;
   public @Nullable BukkitEvaluable missingPermissionFeatureTeleport;
   public @Nullable BukkitEvaluable missingPermissionFeatureTeleportOtherWorld;
   public @Nullable BukkitEvaluable missingPermissionFeatureInteract;
   public @Nullable BukkitEvaluable missingPermissionFeatureInteractOtherWorld;
+
+  public @Nullable BukkitEvaluable commandAdvertiseNotLookingAtShop;
+  public @Nullable BukkitEvaluable commandAdvertiseNotTheOwner;
+  public @Nullable BukkitEvaluable commandAdvertiseEnabledSelf;
+  public @Nullable BukkitEvaluable commandAdvertiseEnabledOther;
+  public @Nullable BukkitEvaluable commandAdvertiseDisabledSelf;
+  public @Nullable BukkitEvaluable commandAdvertiseDisabledOther;
 
   public PlayerMessagesSection(EvaluationEnvironmentBuilder baseEnvironment) {
     super(baseEnvironment);

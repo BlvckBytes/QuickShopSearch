@@ -9,7 +9,11 @@ import me.blvckbytes.bukkitevaluable.ItemBuilder;
 import me.blvckbytes.bukkitevaluable.section.ItemStackSection;
 import me.blvckbytes.gpeee.interpreter.EvaluationEnvironmentBuilder;
 import me.blvckbytes.quick_shop_search.config.MainSection;
+import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.persistence.PersistentDataContainer;
+import org.bukkit.persistence.PersistentDataType;
+import org.bukkit.plugin.Plugin;
 
 public class CachedShop {
 
@@ -20,12 +24,15 @@ public class CachedShop {
   private ItemStackSection representativePatch;
   private final EvaluationEnvironmentBuilder shopEnvironment;
   private final ConfigKeeper<MainSection> config;
+  private final NamespacedKey keyIsAdvertising;
 
   private IItemBuildable representativeBuildable;
   public int cachedStock;
   public int cachedSpace;
+  private boolean advertising;
 
   public CachedShop(
+    Plugin plugin,
     PlatformScheduler scheduler,
     Shop handle,
     ConfigKeeper<MainSection> config
@@ -33,6 +40,7 @@ public class CachedShop {
     this.handle = handle;
     this.diff = new ShopScalarDiff(this);
     this.config = config;
+    this.keyIsAdvertising = new NamespacedKey(plugin, "is_advertising");
 
     var shopLocation = handle.getLocation();
     var shopWorld = shopLocation.getWorld();
@@ -57,12 +65,12 @@ public class CachedShop {
       .withLiveVariable("loc_z", shopLocation::getBlockZ);
 
     scheduler.runAtLocation(shopLocation, scheduleTask -> {
-      this.diff.update();
       onConfigReload();
 
       this.representativeBuildable = makeBuildable(handle.getItem());
       this.cachedStock = handle.getRemainingStock();
       this.cachedSpace = handle.getRemainingSpace();
+      this.loadAdvertising();
       this.diff.update();
     });
   }
@@ -110,5 +118,33 @@ public class CachedShop {
   private IItemBuildable makeBuildable(ItemStack item) {
     return new ItemBuilder(item, item.getAmount())
       .patch(representativePatch);
+  }
+
+  public boolean toggleAdvertising() {
+    this.advertising ^= true;
+    this.storeAdvertising();
+    return this.advertising;
+  }
+
+  public boolean isAdvertising() {
+    return advertising;
+  }
+
+  private void storeAdvertising() {
+    getSignDataContainer().set(keyIsAdvertising, PersistentDataType.BYTE, (byte) (this.advertising ? 1 : 0));
+  }
+
+  private void loadAdvertising() {
+    var value = getSignDataContainer().get(keyIsAdvertising, PersistentDataType.BYTE);
+    this.advertising = value != null && value == 1;
+  }
+
+  private PersistentDataContainer getSignDataContainer() {
+    var signs = handle.getSigns();
+
+    if (signs.isEmpty())
+      throw new IllegalStateException("Expected there to be at least one shop-sign!");
+
+    return signs.get(0).getPersistentDataContainer();
   }
 }
