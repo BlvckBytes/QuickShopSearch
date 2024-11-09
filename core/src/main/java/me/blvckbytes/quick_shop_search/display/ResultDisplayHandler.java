@@ -252,44 +252,64 @@ public class ResultDisplayHandler implements Listener {
     var didOverwritePrevious = chatPromptManager.register(
       player,
       input -> {
+        BukkitEvaluable message;
+
         if (input.equalsIgnoreCase("cancel")) {
-          BukkitEvaluable.sendMessage(player, config.rootSection.playerMessages.shopInteractPromptCancelCurrent, config.rootSection.builtBaseEnvironment);
+          if ((message = config.rootSection.playerMessages.shopInteractPromptCancelCurrent) != null)
+            message.sendMessage(player, config.rootSection.builtBaseEnvironment);
+
           return;
         }
 
         var amount = tryParseStrictlyPositiveInteger(input);
 
         if (amount <= 0) {
-          BukkitEvaluable.sendMessage(
-            player,
-            config.rootSection.playerMessages.shopInteractPromptInvalidInput,
-            config.rootSection.getBaseEnvironment()
-              .withStaticVariable("input", input)
-              .build()
-          );
+          if ((message = config.rootSection.playerMessages.shopInteractPromptInvalidInput) != null) {
+            message.sendMessage(
+              player,
+              config.rootSection.getBaseEnvironment()
+                .withStaticVariable("input", input)
+                .build()
+            );
+          }
           return;
         }
 
-        BukkitEvaluable.sendMessage(
-          player,
-          config.rootSection.playerMessages.shopInteractPromptDispatch,
-          new EvaluationEnvironmentBuilder()
-            .withStaticVariable("amount", amount)
-            .build(extendedEnvironment)
-        );
+        if ((message = config.rootSection.playerMessages.shopInteractPromptDispatch) != null) {
+          message.sendMessage(
+            player,
+            new EvaluationEnvironmentBuilder()
+              .withStaticVariable("amount", amount)
+              .build(extendedEnvironment)
+          );
+        }
 
         dispatchShopInteraction(player, cachedShop, amount);
       },
-      () -> BukkitEvaluable.sendMessage(player, config.rootSection.playerMessages.shopInteractPromptTimeout, extendedEnvironment)
+      () -> {
+        BukkitEvaluable message;
+
+        if ((message = config.rootSection.playerMessages.shopInteractPromptTimeout) != null)
+          message.sendMessage(player, extendedEnvironment);
+      }
     );
 
-    if (didOverwritePrevious)
-      BukkitEvaluable.sendMessage(player, config.rootSection.playerMessages.shopInteractPromptCancelPrevious, config.rootSection.builtBaseEnvironment);
+    BukkitEvaluable message;
 
-    if (cachedShop.handle.getShopType() == ShopType.BUYING)
-      BukkitEvaluable.sendMessage(player, config.rootSection.playerMessages.shopInteractPromptBuying, extendedEnvironment);
-    else
-      BukkitEvaluable.sendMessage(player, config.rootSection.playerMessages.shopInteractPromptSelling, extendedEnvironment);
+    if (didOverwritePrevious) {
+      if ((message = config.rootSection.playerMessages.shopInteractPromptCancelPrevious) != null)
+        message.sendMessage(player, config.rootSection.builtBaseEnvironment);
+    }
+
+    if (cachedShop.handle.getShopType() == ShopType.BUYING) {
+      if ((message = config.rootSection.playerMessages.shopInteractPromptBuying) != null)
+        message.sendMessage(player, extendedEnvironment);
+
+      return;
+    }
+
+    if ((message = config.rootSection.playerMessages.shopInteractPromptSelling) != null)
+      message.sendMessage(player, extendedEnvironment);
   }
 
   private int tryParseStrictlyPositiveInteger(String input) {
