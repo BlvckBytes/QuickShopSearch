@@ -53,8 +53,6 @@ public class ResultDisplay implements DynamicPropertyProvider {
   private Inventory inventory;
   private int currentPage = 1;
 
-  // TODO: Do not render whole UI only because selection-state is changed
-
   public ResultDisplay(
     PlatformScheduler scheduler,
     ConfigKeeper<MainSection> config,
@@ -210,8 +208,7 @@ public class ResultDisplay implements DynamicPropertyProvider {
   public void nextSortingSelection() {
     asyncQueue.enqueue(() -> {
       this.selectionState.nextSortingSelection();
-      applySorting();
-      renderItems();
+      renderSortingItem();
     });
   }
 
@@ -242,7 +239,7 @@ public class ResultDisplay implements DynamicPropertyProvider {
   public void nextFilteringCriterion() {
     asyncQueue.enqueue(() -> {
       this.selectionState.nextFilteringCriterion();
-      renderItems();
+      renderFilteringItem();
     });
   }
 
@@ -338,6 +335,14 @@ public class ResultDisplay implements DynamicPropertyProvider {
     ));
   }
 
+  private void renderSortingItem() {
+    config.rootSection.resultDisplay.items.sorting.renderInto(inventory, sortingEnvironment);
+  }
+
+  private void renderFilteringItem() {
+    config.rootSection.resultDisplay.items.filtering.renderInto(inventory, filteringEnvironment);
+  }
+
   private void renderItems() {
     var displaySlots = config.rootSection.resultDisplay.getPaginationSlots();
     var itemsIndex = (currentPage - 1) * displaySlots.size();
@@ -363,8 +368,8 @@ public class ResultDisplay implements DynamicPropertyProvider {
 
     config.rootSection.resultDisplay.items.previousPage.renderInto(inventory, pageEnvironment);
     config.rootSection.resultDisplay.items.nextPage.renderInto(inventory, pageEnvironment);
-    config.rootSection.resultDisplay.items.sorting.renderInto(inventory, sortingEnvironment);
-    config.rootSection.resultDisplay.items.filtering.renderInto(inventory, filteringEnvironment);
+    renderSortingItem();
+    renderFilteringItem();
     config.rootSection.resultDisplay.items.filler.renderInto(inventory, pageEnvironment);
   }
 
