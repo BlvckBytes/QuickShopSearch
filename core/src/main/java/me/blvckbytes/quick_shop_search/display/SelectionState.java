@@ -84,7 +84,7 @@ public class SelectionState {
     this.filteringSelections.put(this.selectedFilteringCriteria, currentState.next());
   }
 
-  public void applySort(ShopDistanceProvider distanceProvider, List<CachedShop> items) {
+  public void applySort(DynamicPropertyProvider distanceProvider, List<CachedShop> items) {
     items.sort((a, b) -> {
       for (var sortingSelection : sortingSelections) {
         if (sortingSelection.selection == SortingSelection.INACTIVE)
@@ -103,7 +103,7 @@ public class SelectionState {
     });
   }
 
-  public List<CachedShop> applyFilter(Collection<CachedShop> items, ShopDistanceProvider distanceProvider) {
+  public List<CachedShop> applyFilter(Collection<CachedShop> items, DynamicPropertyProvider distanceProvider) {
     List<CachedShop> result = new ArrayList<>();
 
     for (var item : items) {

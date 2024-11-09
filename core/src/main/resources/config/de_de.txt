@@ -79,6 +79,7 @@ FILTERING-LORE-CRITERIA-IS-UNLIMITED       Unlimitiert
 FILTERING-LORE-CRITERIA-HAS-STOCK-LEFT     Lagerbestand übrig
 FILTERING-LORE-CRITERIA-HAS-SPACE-LEFT     Kapazität übrig
 FILTERING-LORE-CRITERIA-SAME-WORLD         In dieser Welt
+FILTERING-LORE-CRITERIA-CAN-BUY            Genügend Guthaben
 FILTERING-LORE-LEFT-CLICK-DESCRIPTION      &8➥ &eLinksklick &7Kriterium auswählen
 FILTERING-LORE-RIGHT-CLICK-DESCRIPTION     &8➥ &eRechtsklick &7Zustand umschalten
 FILTERING-LORE-DROP-ALL-DESCRIPTION        &8➥ &eAlle werfen &7Auswahlen zurücksetzen

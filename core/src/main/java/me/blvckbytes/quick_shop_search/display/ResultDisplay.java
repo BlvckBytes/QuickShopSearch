@@ -1,5 +1,8 @@
 package me.blvckbytes.quick_shop_search.display;
 
+import com.ghostchu.quickshop.QuickShop;
+import com.ghostchu.quickshop.api.obj.QUser;
+import com.ghostchu.quickshop.obj.QUserImpl;
 import com.tcoded.folialib.impl.PlatformScheduler;
 import me.blvckbytes.bukkitevaluable.ConfigKeeper;
 import me.blvckbytes.gpeee.interpreter.EvaluationEnvironmentBuilder;
@@ -15,7 +18,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-public class ResultDisplay implements ShopDistanceProvider {
+public class ResultDisplay implements DynamicPropertyProvider {
 
   private static final long SENTINEL_DISTANCE_UN_COMPUTABLE = -1;
 
@@ -25,10 +28,12 @@ public class ResultDisplay implements ShopDistanceProvider {
 
   private final DisplayData displayData;
   private final Map<Long, Long> shopDistanceByShopId;
+  private final Map<String, Double> balanceByCurrencyCache;
   private List<CachedShop> filteredUnSortedShops;
   private List<CachedShop> filteredSortedShops;
 
   public final Player player;
+  private final QUser playerUser;
   private final Location playerLocation;
   private final CachedShop[] slotMap;
   private int numberOfPages;
@@ -61,9 +66,11 @@ public class ResultDisplay implements ShopDistanceProvider {
     this.config = config;
     this.asyncQueue = new AsyncTaskQueue(scheduler);
     this.player = player;
+    this.playerUser = QUserImpl.createFullFilled(player);
     this.playerLocation = player.getLocation();
     this.displayData = displayData;
     this.shopDistanceByShopId = new HashMap<>();
+    this.balanceByCurrencyCache = new HashMap<>();
     this.slotMap = new CachedShop[9 * 6];
     this.selectionState = selectionState;
 
@@ -318,6 +325,13 @@ public class ResultDisplay implements ShopDistanceProvider {
     shopDistanceByShopId.put(shopId, distance);
 
     return distance;
+  }
+
+  @Override
+  public double getPlayerBalanceForShopCurrency(CachedShop cachedShop) {
+    return this.balanceByCurrencyCache.computeIfAbsent(cachedShop.handle.getCurrency(), currency -> (
+      QuickShop.getInstance().getEconomy().getBalance(playerUser, player.getWorld(), currency)
+    ));
   }
 
   private void renderItems() {

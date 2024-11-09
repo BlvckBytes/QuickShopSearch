@@ -7,22 +7,23 @@ import java.util.List;
 
 public enum ShopFilteringCriteria implements FilteringFunction {
 
-  IS_BUYING((shop, dP, negative) -> shop.handle.isBuying() ^ negative),
-  IS_SELLING((shop, dP, negative) -> shop.handle.isSelling() ^ negative),
-  IS_UNLIMITED((shop, dP, negative) -> shop.handle.isUnlimited() ^ negative),
-  HAS_STOCK_LEFT((shop, dP, negative) -> {
+  IS_BUYING((shop, d, negative) -> shop.handle.isBuying() ^ negative),
+  IS_SELLING((shop, d, negative) -> shop.handle.isSelling() ^ negative),
+  IS_UNLIMITED((shop, d, negative) -> shop.handle.isUnlimited() ^ negative),
+  HAS_STOCK_LEFT((shop, d, negative) -> {
     if (!shop.handle.isSelling())
       return false;
 
     return (shop.handle.isUnlimited() || shop.cachedStock > 0) ^ negative;
   }),
-  HAS_SPACE_LEFT((shop, dP, negative) -> {
+  HAS_SPACE_LEFT((shop, d, negative) -> {
     if (!shop.handle.isBuying())
       return false;
 
     return (shop.handle.isUnlimited() || shop.cachedSpace > 0) ^ negative;
   }),
-  SAME_WORLD((shop, dP, negative) -> (dP.getShopDistance(shop) >= 0) ^ negative)
+  SAME_WORLD((shop, d, negative) -> (d.getShopDistance(shop) >= 0) ^ negative),
+  CAN_BUY((shop, d, negative) -> (d.getPlayerBalanceForShopCurrency(shop) >= shop.handle.getPrice()) ^ negative)
   ;
 
   private final FilteringFunction predicate;
@@ -34,7 +35,7 @@ public enum ShopFilteringCriteria implements FilteringFunction {
   }
 
   @Override
-  public boolean test(CachedShop shop, ShopDistanceProvider distanceProvider, boolean negative) {
+  public boolean test(CachedShop shop, DynamicPropertyProvider distanceProvider, boolean negative) {
     return predicate.test(shop, distanceProvider, negative);
   }
 

@@ -1,5 +1,6 @@
 package me.blvckbytes.quick_shop_search.cache;
 
+import com.ghostchu.quickshop.QuickShop;
 import com.ghostchu.quickshop.api.QuickShopAPI;
 import com.ghostchu.quickshop.api.shop.Shop;
 import com.ghostchu.quickshop.api.shop.ShopType;

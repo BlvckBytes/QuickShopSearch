@@ -28,7 +28,7 @@ public enum ShopSortingCriteria implements SortingFunction {
   }
 
   @Override
-  public int compare(ShopDistanceProvider distanceProvider, CachedShop a, CachedShop b) {
+  public int compare(DynamicPropertyProvider distanceProvider, CachedShop a, CachedShop b) {
     return function.compare(distanceProvider, a, b);
   }
 
