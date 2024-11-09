@@ -224,6 +224,8 @@ playerMessages:
 predicates:
   mainLanguage: ENGLISH_US
 
+shopAccessLists:
+
 commands:
   quickShopSearch:
     name: quickshopsearch

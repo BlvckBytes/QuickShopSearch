@@ -16,6 +16,8 @@ public enum PluginPermission {
   FEATURE_INTERACT("feature.interact"),
   FEATURE_INTERACT_OTHER_WORLD("feature.interact.other-world"),
   OTHER_WORLD("other-world"),
+  ACCESS_LIST_BASE("access-list"),
+  ACCESS_LISTS_BYPASS("bypass-access-lists")
   ;
 
   private static final String PREFIX = "quickshopsearch";
@@ -23,6 +25,19 @@ public enum PluginPermission {
 
   PluginPermission(String node) {
     this.node = PREFIX + "." + node;
+  }
+
+  public String nodeWithSuffix(String suffix) {
+    var nodeTrailing = node.charAt(node.length() - 1) == '.';
+    var suffixLeading = suffix.charAt(0) == '.';
+
+    if (nodeTrailing && suffixLeading)
+      return node + suffix.substring(1);
+
+    if (!nodeTrailing && !suffixLeading)
+      return node + "." + suffix;
+
+    return node + suffix;
   }
 
   public boolean has(CommandSender sender) {

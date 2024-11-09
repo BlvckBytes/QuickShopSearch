@@ -15,6 +15,7 @@ import me.blvckbytes.item_predicate_parser.translation.TranslationLanguage;
 import me.blvckbytes.quick_shop_search.cache.CachedShop;
 import me.blvckbytes.quick_shop_search.cache.CachedShopRegistry;
 import me.blvckbytes.quick_shop_search.config.MainSection;
+import me.blvckbytes.quick_shop_search.config.ShopAccessListSection;
 import me.blvckbytes.quick_shop_search.display.DisplayData;
 import me.blvckbytes.quick_shop_search.display.ResultDisplayHandler;
 import net.md_5.bungee.api.ChatMessageType;
@@ -220,9 +221,13 @@ public class QuickShopSearchCommand implements CommandExecutor, TabCompleter {
     var matchingShops = new ArrayList<CachedShop>();
     var matchingShopIds = new LongOpenHashSet();
     var playerWorld = player.getWorld();
+    var accessList = decideAccessListFor(player);
 
     for (var shop : shopRegistry.getExistingShops()) {
       if (!PluginPermission.OTHER_WORLD.has(player) && shop.handle.getLocation().getWorld() != playerWorld)
+        continue;
+
+      if (accessList != null && !accessList.allowsShop(shop))
         continue;
 
       if (predicate != null && !predicate.test(new PredicateState(shop.handle.getItem())))
@@ -233,6 +238,18 @@ public class QuickShopSearchCommand implements CommandExecutor, TabCompleter {
     }
 
     return new DisplayData(matchingShops, matchingShopIds, predicate);
+  }
+
+  private @Nullable ShopAccessListSection decideAccessListFor(Player player) {
+    if (PluginPermission.ACCESS_LISTS_BYPASS.has(player))
+      return null;
+
+    for (var permissionEntry : config.rootSection.shopAccessLists.permissions.entrySet()) {
+      if (player.hasPermission(PluginPermission.ACCESS_LIST_BASE.nodeWithSuffix(permissionEntry.getKey())))
+        return permissionEntry.getValue();
+    }
+
+    return config.rootSection.shopAccessLists._default;
   }
 
   private void showActionBarMessage(Player player, String message) {
