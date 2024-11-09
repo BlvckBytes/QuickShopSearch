@@ -48,7 +48,7 @@ public class ChatPromptManager implements Listener {
     }
   }
 
-  @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+  @EventHandler(priority = EventPriority.LOWEST)
   public void onChat(AsyncPlayerChatEvent event) {
     ChatPromptInstance handler;
 
