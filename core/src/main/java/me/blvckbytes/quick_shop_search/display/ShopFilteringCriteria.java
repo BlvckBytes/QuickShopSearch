@@ -23,7 +23,12 @@ public enum ShopFilteringCriteria implements FilteringFunction {
     return (shop.handle.isUnlimited() || shop.cachedSpace > 0) ^ negative;
   }),
   SAME_WORLD((shop, d, negative) -> (d.getShopDistance(shop) >= 0) ^ negative),
-  CAN_BUY((shop, d, negative) -> (d.getPlayerBalanceForShopCurrency(shop) >= shop.handle.getPrice()) ^ negative)
+  CAN_BUY((shop, d, negative) -> {
+    if (!shop.handle.isSelling())
+      return true;
+
+    return d.getPlayerBalanceForShopCurrency(shop) >= shop.handle.getPrice() ^ negative;
+  })
   ;
 
   private final FilteringFunction predicate;
