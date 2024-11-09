@@ -165,6 +165,8 @@ MESSAGE-MISSING-PERMISSION-LANGUAGE-COMMAND             {prefix} &cDil komutunu 
 # - prefix: String
 MESSAGE-MISSING-PERMISSION-RELOAD-COMMAND               {prefix} &cEklentiyi yeniden yükleme komutunu kullanmak için izniniz yok.
 # - prefix: String
+MESSAGE-MISSING-PERMISSION-ADVERTISE-COMMAND            {prefix} &cYou don't have permission to use the advertise-command.
+# - prefix: String
 MESSAGE-MISSING-PERMISSION-FEATURE-SORT                 {prefix} &cSıralamayı kullanma izniniz yok.
 # - prefix: String
 MESSAGE-MISSING-PERMISSION-FEATURE-FILTER               {prefix} &cFiltrelemeyi kullanma izniniz yok.
@@ -176,5 +178,26 @@ MESSAGE-MISSING-PERMISSION-FEATURE-TELEPORT-OTHER-WORLD {prefix} &cDiğer dünya
 MESSAGE-MISSING-PERMISSION-FEATURE-INTERACT             {prefix} &cEtkileşimi kullanmak için izniniz yok.
 # - prefix: String
 MESSAGE-MISSING-PERMISSION-FEATURE-INTERACT-OTHER-WORLD {prefix} &cDiğer dünyalarda etkileşime geçme izniniz yok.
+
+# - prefix: String
+MESSAGE-ADVERTISE-NOT-LOOKING-AT-SHOP {prefix} &cYou're not currently looking at a shop.
+# - prefix: String
+MESSAGE-ADVERTISE-NOT-THE-OWNER       {prefix} &cYou're not the owner of that shop.
+# - name: String
+# - owner: String
+# - item_type: String
+# - loc_world: String
+# - loc_x: Integer
+# - loc_y: Integer
+# - loc_z: Integer
+# - distance: Integer
+# - remaining_space: Integer
+# - remaining_stock: Integer
+# - price: Double
+# - prefix: String
+MESSAGE-ADVERTISE-ENABLED-SELF        {prefix} &7You are &anow &7advertising your shop at &e{loc_x}&7, &e{loc_y}&7, &e{loc_z}&7.
+MESSAGE-ADVERTISE-ENABLED-OTHER       {prefix} &7The shop of &e{owner} &7at &e{loc_x}&7, &e{loc_y}&7, &e{loc_z} &7is &anow &7advertised.
+MESSAGE-ADVERTISE-DISABLED-SELF       {prefix} &7You are &cno longer &7advertising your shop at &e{loc_x}&7, &e{loc_y}&7, &e{loc_z}&7.
+MESSAGE-ADVERTISE-DISABLED-OTHER      {prefix} &7The shop of &e{owner} &7at &e{loc_x}&7, &e{loc_y}&7, &e{loc_z} &7is &cno longer &7advertised.
 
 # ==================== END Messages ====================

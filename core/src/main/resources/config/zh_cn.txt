@@ -166,6 +166,8 @@ MESSAGE-MISSING-PERMISSION-LANGUAGE-COMMAND             {prefix} &c你没有权�
 # - prefix: String
 MESSAGE-MISSING-PERMISSION-RELOAD-COMMAND               {prefix} &c你没有权限使用插件重载命令.
 # - prefix: String
+MESSAGE-MISSING-PERMISSION-ADVERTISE-COMMAND            {prefix} &cYou don't have permission to use the advertise-command.
+# - prefix: String
 MESSAGE-MISSING-PERMISSION-FEATURE-SORT                 {prefix} &c你没有权限使用排序功能.
 # - prefix: String
 MESSAGE-MISSING-PERMISSION-FEATURE-FILTER               {prefix} &c你没有权限使用筛选功能.
@@ -177,5 +179,26 @@ MESSAGE-MISSING-PERMISSION-FEATURE-TELEPORT-OTHER-WORLD {prefix} &c你没有权�
 MESSAGE-MISSING-PERMISSION-FEATURE-INTERACT             {prefix} &c你没有权限使用交互功能.
 # - prefix: String
 MESSAGE-MISSING-PERMISSION-FEATURE-INTERACT-OTHER-WORLD {prefix} &c你没有权限与其他世界交互.
+
+# - prefix: String
+MESSAGE-ADVERTISE-NOT-LOOKING-AT-SHOP {prefix} &cYou're not currently looking at a shop.
+# - prefix: String
+MESSAGE-ADVERTISE-NOT-THE-OWNER       {prefix} &cYou're not the owner of that shop.
+# - name: String
+# - owner: String
+# - item_type: String
+# - loc_world: String
+# - loc_x: Integer
+# - loc_y: Integer
+# - loc_z: Integer
+# - distance: Integer
+# - remaining_space: Integer
+# - remaining_stock: Integer
+# - price: Double
+# - prefix: String
+MESSAGE-ADVERTISE-ENABLED-SELF        {prefix} &7You are &anow &7advertising your shop at &e{loc_x}&7, &e{loc_y}&7, &e{loc_z}&7.
+MESSAGE-ADVERTISE-ENABLED-OTHER       {prefix} &7The shop of &e{owner} &7at &e{loc_x}&7, &e{loc_y}&7, &e{loc_z} &7is &anow &7advertised.
+MESSAGE-ADVERTISE-DISABLED-SELF       {prefix} &7You are &cno longer &7advertising your shop at &e{loc_x}&7, &e{loc_y}&7, &e{loc_z}&7.
+MESSAGE-ADVERTISE-DISABLED-OTHER      {prefix} &7The shop of &e{owner} &7at &e{loc_x}&7, &e{loc_y}&7, &e{loc_z} &7is &cno longer &7advertised.
 
 # ==================== END Messages ====================
