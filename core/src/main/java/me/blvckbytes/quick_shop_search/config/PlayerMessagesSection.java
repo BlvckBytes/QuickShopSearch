@@ -19,11 +19,23 @@ public class PlayerMessagesSection extends AConfigSection {
   public @Nullable BukkitEvaluable predicateParseError;
   public @Nullable BukkitEvaluable shopInteractPromptBuying;
   public @Nullable BukkitEvaluable shopInteractPromptSelling;
+  public @Nullable BukkitEvaluable shopInteractPromptLimitingFactorPlayerSpace;
+  public @Nullable BukkitEvaluable shopInteractPromptLimitingFactorPlayerStock;
+  public @Nullable BukkitEvaluable shopInteractPromptLimitingFactorShopSpace;
+  public @Nullable BukkitEvaluable shopInteractPromptLimitingFactorShopStock;
+  public @Nullable BukkitEvaluable shopInteractPromptLimitingFactorSellerFunds;
+  public @Nullable BukkitEvaluable shopInteractPromptLimitingFactorBuyerFunds;
   public @Nullable BukkitEvaluable shopInteractPromptTimeout;
   public @Nullable BukkitEvaluable shopInteractPromptDispatch;
   public @Nullable BukkitEvaluable shopInteractPromptInvalidInput;
   public @Nullable BukkitEvaluable shopInteractPromptCancelPrevious;
   public @Nullable BukkitEvaluable shopInteractPromptCancelCurrent;
+  public @Nullable BukkitEvaluable shopInteractPlayerHasNoSpace;
+  public @Nullable BukkitEvaluable shopInteractPlayerHasNoStock;
+  public @Nullable BukkitEvaluable shopInteractShopHasNoSpace;
+  public @Nullable BukkitEvaluable shopInteractShopHasNoStock;
+  public @Nullable BukkitEvaluable shopInteractSellerInsufficientFunds;
+  public @Nullable BukkitEvaluable shopInteractBuyerInsufficientFunds;
 
   public @Nullable BukkitEvaluable missingPermissionMainCommand;
   public @Nullable BukkitEvaluable missingPermissionLanguageCommand;
