@@ -243,10 +243,6 @@ commands:
     name: quickshopsearchlanguage
     aliases:
     - qssl
-  quickShopSearchAdvertise:
-    name: quickshopsearchadvertise
-    aliases:
-      - qssa
   quickShopSearchReload:
     name: quickshopsearchreload
     aliases:
