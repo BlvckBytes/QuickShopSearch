@@ -28,7 +28,6 @@ public class ResultDisplay implements DynamicPropertyProvider {
 
   private final DisplayData displayData;
   private final Map<Long, Long> shopDistanceByShopId;
-  private final Map<String, Double> balanceByCurrencyCache;
   private List<CachedShop> filteredUnSortedShops;
   private List<CachedShop> filteredSortedShops;
 
@@ -68,7 +67,6 @@ public class ResultDisplay implements DynamicPropertyProvider {
     this.playerLocation = player.getLocation();
     this.displayData = displayData;
     this.shopDistanceByShopId = new HashMap<>();
-    this.balanceByCurrencyCache = new HashMap<>();
     this.slotMap = new CachedShop[9 * 6];
     this.selectionState = selectionState;
 
@@ -326,13 +324,11 @@ public class ResultDisplay implements DynamicPropertyProvider {
 
   @Override
   public double getPlayerBalanceForShopCurrency(CachedShop cachedShop) {
-    return this.balanceByCurrencyCache.computeIfAbsent(cachedShop.handle.getCurrency(), currency -> (
-      QuickShop.getInstance().getEconomy().getBalance(
-        playerUser,
-        Objects.requireNonNull(cachedShop.handle.getLocation().getWorld()),
-        currency
-      )
-    ));
+    return QuickShop.getInstance().getEconomy().getBalance(
+      playerUser,
+      Objects.requireNonNull(cachedShop.handle.getLocation().getWorld()),
+      cachedShop.handle.getCurrency()
+    );
   }
 
   private void renderSortingItem() {
