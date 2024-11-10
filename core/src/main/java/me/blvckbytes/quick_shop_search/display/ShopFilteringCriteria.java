@@ -12,13 +12,13 @@ public enum ShopFilteringCriteria implements FilteringFunction {
   IS_UNLIMITED((shop, d, negative) -> shop.handle.isUnlimited() ^ negative),
   HAS_STOCK_LEFT((shop, d, negative) -> {
     if (!shop.handle.isSelling())
-      return false;
+      return true;
 
     return (shop.handle.isUnlimited() || shop.cachedStock > 0) ^ negative;
   }),
   HAS_SPACE_LEFT((shop, d, negative) -> {
     if (!shop.handle.isBuying())
-      return false;
+      return true;
 
     return (shop.handle.isUnlimited() || shop.cachedSpace > 0) ^ negative;
   }),
