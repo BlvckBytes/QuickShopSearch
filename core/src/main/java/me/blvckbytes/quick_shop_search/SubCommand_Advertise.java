@@ -1,40 +1,38 @@
 package me.blvckbytes.quick_shop_search;
 
+import com.ghostchu.quickshop.api.command.CommandHandler;
+import com.ghostchu.quickshop.api.command.CommandParser;
 import me.blvckbytes.bukkitevaluable.BukkitEvaluable;
 import me.blvckbytes.bukkitevaluable.ConfigKeeper;
 import me.blvckbytes.quick_shop_search.cache.CachedShop;
 import me.blvckbytes.quick_shop_search.cache.CachedShopRegistry;
 import me.blvckbytes.quick_shop_search.config.MainSection;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.util.BlockIterator;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class AdvertiseCommand implements CommandExecutor {
+import java.util.List;
+
+public class SubCommand_Advertise implements CommandHandler<Player> {
 
   private final CachedShopRegistry shopRegistry;
   private final ConfigKeeper<MainSection> config;
 
-  public AdvertiseCommand(CachedShopRegistry shopRegistry, ConfigKeeper<MainSection> config) {
+  public SubCommand_Advertise(CachedShopRegistry shopRegistry, ConfigKeeper<MainSection> config) {
     this.shopRegistry = shopRegistry;
     this.config = config;
   }
 
   @Override
-  public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
-    if (!(sender instanceof Player player))
-      return false;
-
+  public void onCommand(Player player, @NotNull String commandLabel, @NotNull CommandParser parser) {
     BukkitEvaluable message;
 
     if (!PluginPermission.ADVERTISE_COMMAND.has(player)) {
       if ((message = config.rootSection.playerMessages.missingPermissionAdvertiseCommand) != null)
         message.sendMessage(player, config.rootSection.builtBaseEnvironment);
 
-      return true;
+      return;
     }
 
     var targetShop = getLookedAtShop(player);
@@ -43,7 +41,7 @@ public class AdvertiseCommand implements CommandExecutor {
       if ((message = config.rootSection.playerMessages.commandAdvertiseNotLookingAtShop) != null)
         message.sendMessage(player, config.rootSection.builtBaseEnvironment);
 
-      return true;
+      return;
     }
 
     var shopOwner = targetShop.handle.getOwner().getBukkitPlayer().orElse(null);
@@ -53,7 +51,7 @@ public class AdvertiseCommand implements CommandExecutor {
       if ((message = config.rootSection.playerMessages.commandAdvertiseNotTheOwner) != null)
         message.sendMessage(player, config.rootSection.builtBaseEnvironment);
 
-      return true;
+      return;
     }
 
     var newState = targetShop.toggleAdvertising();
@@ -72,8 +70,11 @@ public class AdvertiseCommand implements CommandExecutor {
 
     if (message != null)
       message.sendMessage(player, targetShop.getShopEnvironment().build());
+  }
 
-    return true;
+  @Override
+  public @Nullable List<String> onTabComplete(@NotNull Player sender, @NotNull String commandLabel, @NotNull CommandParser parser) {
+    return List.of();
   }
 
   private @Nullable CachedShop getLookedAtShop(Player player) {

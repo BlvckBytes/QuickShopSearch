@@ -36,6 +36,7 @@ public class PlayerMessagesSection extends AConfigSection {
   public @Nullable BukkitEvaluable missingPermissionFeatureInteract;
   public @Nullable BukkitEvaluable missingPermissionFeatureInteractOtherWorld;
 
+  public @Nullable BukkitEvaluable commandAdvertiseDescription;
   public @Nullable BukkitEvaluable commandAdvertiseNotLookingAtShop;
   public @Nullable BukkitEvaluable commandAdvertiseNotTheOwner;
   public @Nullable BukkitEvaluable commandAdvertiseEnabledSelf;

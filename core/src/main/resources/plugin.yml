@@ -10,8 +10,6 @@ commands:
     description: 'Query shops using the main predicate language'
   quickshopsearchlanguage:
     description: 'Query shops using any supported predicate language'
-  quickshopsearchadvertise:
-    description: 'Toggle whether a shop is advertised'
   quickshopsearchreload:
     description: 'Reload the configuration-file'
 permissions:
@@ -21,10 +19,10 @@ permissions:
   quickshopsearch.command.qssl:
     description: 'Invoke the language command'
     default: op
-  quickshopsearch.command.qssa:
-    description: 'Invoke the advertise command'
+  quickshopsearch.command.advertise:
+    description: 'Invoke the advertise sub-command of QuickShop'
     default: op
-  quickshopsearch.command.qssa.owner-bypass:
+  quickshopsearch.command.advertise.owner-bypass:
     description: 'Bypass having to be the owner of a shop to toggle advertising'
     default: op
   quickshopsearch.command.qssrl:

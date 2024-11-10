@@ -221,6 +221,7 @@ playerMessages:
   missingPermissionFeatureTeleportOtherWorld$: '@{MESSAGE-MISSING-PERMISSION-FEATURE-TELEPORT-OTHER-WORLD(prefix=lut["MESSAGE_PREFIX"])}'
   missingPermissionFeatureInteract$: '@{MESSAGE-MISSING-PERMISSION-FEATURE-INTERACT(prefix=lut["MESSAGE_PREFIX"])}'
   missingPermissionFeatureInteractOtherWorld$: '@{MESSAGE-MISSING-PERMISSION-FEATURE-INTERACT-OTHER-WORLD(prefix=lut["MESSAGE_PREFIX"])}'
+  commandAdvertiseDescription$: '@{MESSAGE-ADVERTISE-DESCRIPTION(prefix=lut["MESSAGE_PREFIX"])}'
   commandAdvertiseNotLookingAtShop$: '@{MESSAGE-ADVERTISE-NOT-LOOKING-AT-SHOP(prefix=lut["MESSAGE_PREFIX"])}'
   commandAdvertiseNotTheOwner$: '@{MESSAGE-ADVERTISE-NOT-THE-OWNER(prefix=lut["MESSAGE_PREFIX"])}'
   commandAdvertiseEnabledSelf$: '@{MESSAGE-ADVERTISE-ENABLED-SELF(prefix=lut["MESSAGE_PREFIX"])}'

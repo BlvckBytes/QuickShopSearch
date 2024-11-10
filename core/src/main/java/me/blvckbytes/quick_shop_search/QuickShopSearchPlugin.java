@@ -1,7 +1,11 @@
 package me.blvckbytes.quick_shop_search;
 
 import com.cryptomorin.xseries.XMaterial;
+import com.ghostchu.quickshop.QuickShop;
+import com.ghostchu.quickshop.api.command.CommandContainer;
 import com.tcoded.folialib.FoliaLib;
+import me.blvckbytes.bbconfigmapper.ScalarType;
+import me.blvckbytes.bukkitevaluable.BukkitEvaluable;
 import me.blvckbytes.bukkitevaluable.CommandUpdater;
 import me.blvckbytes.bukkitevaluable.ConfigKeeper;
 import me.blvckbytes.bukkitevaluable.ConfigManager;
@@ -11,6 +15,7 @@ import me.blvckbytes.quick_shop_search.cache.QuickShopListenerFactory;
 import me.blvckbytes.quick_shop_search.config.*;
 import me.blvckbytes.quick_shop_search.display.ResultDisplayHandler;
 import me.blvckbytes.quick_shop_search.display.SelectionStateStore;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -63,18 +68,15 @@ public class QuickShopSearchPlugin extends JavaPlugin {
       var mainCommand = Objects.requireNonNull(getCommand(QuickShopSearchCommandSection.INITIAL_NAME));
       var languageCommand = Objects.requireNonNull(getCommand(QuickShopSearchLanguageCommandSection.INITIAL_NAME));
       var reloadCommand = Objects.requireNonNull(getCommand(QuickShopSearchReloadCommandSection.INITIAL_NAME));
-      var advertiseCommand = Objects.requireNonNull(getCommand(QuickShopSearchAdvertiseCommandSection.INITIAL_NAME));
 
       mainCommand.setExecutor(commandExecutor);
       languageCommand.setExecutor(commandExecutor);
       reloadCommand.setExecutor(new ReloadCommand(logger, config));
-      advertiseCommand.setExecutor(new AdvertiseCommand(shopRegistry, config));
 
       Runnable updateCommands = () -> {
         config.rootSection.commands.quickShopSearch.apply(mainCommand, commandUpdater);
         config.rootSection.commands.quickShopSearchLanguage.apply(languageCommand, commandUpdater);
         config.rootSection.commands.quickShopSearchReload.apply(reloadCommand, commandUpdater);
-        config.rootSection.commands.quickShopSearchAdvertise.apply(advertiseCommand, commandUpdater);
 
         commandUpdater.trySyncCommands();
       };
@@ -83,6 +85,25 @@ public class QuickShopSearchPlugin extends JavaPlugin {
       config.registerReloadListener(updateCommands);
 
       Bukkit.getPluginManager().registerEvents(new CommandSendListener(this, config), this);
+
+      var advertiseCommandContainer = CommandContainer.builder()
+        .prefix("advertise")
+        .permission(PluginPermission.ADVERTISE_COMMAND.node)
+        .executor(new SubCommand_Advertise(shopRegistry, config))
+        .build();
+
+      QuickShop.getInstance().getCommandManager().registerCmd(advertiseCommandContainer);
+
+      // Set description afterward, because at the time of writing this, the current version of
+      // QuickShop-Hikari annihilates the description when registering the container.
+      advertiseCommandContainer.setDescription(locale -> {
+        BukkitEvaluable description;
+
+        if ((description = config.rootSection.playerMessages.commandAdvertiseDescription) != null)
+          return Component.text(description.asScalar(ScalarType.STRING, config.rootSection.builtBaseEnvironment));
+
+        return Component.text("Missing corresponding config-key");
+      });
     } catch (Exception e) {
       logger.log(Level.SEVERE, "Could not initialize plugin", e);
       Bukkit.getPluginManager().disablePlugin(this);

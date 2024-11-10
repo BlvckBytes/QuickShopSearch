@@ -10,7 +10,6 @@ public class CommandsSection extends AConfigSection {
   public QuickShopSearchCommandSection quickShopSearch;
   public QuickShopSearchLanguageCommandSection quickShopSearchLanguage;
   public QuickShopSearchReloadCommandSection quickShopSearchReload;
-  public QuickShopSearchAdvertiseCommandSection quickShopSearchAdvertise;
 
   public CommandsSection(EvaluationEnvironmentBuilder baseEnvironment) {
     super(baseEnvironment);

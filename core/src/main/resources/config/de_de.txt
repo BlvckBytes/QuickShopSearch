@@ -180,6 +180,8 @@ MESSAGE-MISSING-PERMISSION-FEATURE-INTERACT             {prefix} &cKeine Berecht
 MESSAGE-MISSING-PERMISSION-FEATURE-INTERACT-OTHER-WORLD {prefix} &cKeine Berechtigung zur Interaktion in andere Welten.
 
 # - prefix: String
+MESSAGE-ADVERTISE-DESCRIPTION         &eÄndert ob der Shop bei /qss angezeigt wird
+# - prefix: String
 MESSAGE-ADVERTISE-NOT-LOOKING-AT-SHOP {prefix} &cDu siehst gerade keinen Shop an.
 # - prefix: String
 MESSAGE-ADVERTISE-NOT-THE-OWNER       {prefix} &cDieser Shop gehört dir nicht.
