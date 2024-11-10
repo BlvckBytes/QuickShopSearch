@@ -224,6 +224,7 @@ playerMessages:
   commandAdvertiseDescription$: '@{MESSAGE-ADVERTISE-DESCRIPTION(prefix=lut["MESSAGE_PREFIX"])}'
   commandAdvertiseNotLookingAtShop$: '@{MESSAGE-ADVERTISE-NOT-LOOKING-AT-SHOP(prefix=lut["MESSAGE_PREFIX"])}'
   commandAdvertiseNotTheOwner$: '@{MESSAGE-ADVERTISE-NOT-THE-OWNER(prefix=lut["MESSAGE_PREFIX"])}'
+  commandAdvertiseToggleError$: '@{MESSAGE-ADVERTISE-TOGGLE-ERROR(prefix=lut["MESSAGE_PREFIX"])}'
   commandAdvertiseEnabledSelf$: '@{MESSAGE-ADVERTISE-ENABLED-SELF(prefix=lut["MESSAGE_PREFIX"])}'
   commandAdvertiseEnabledOther$: '@{MESSAGE-ADVERTISE-ENABLED-OTHER(prefix=lut["MESSAGE_PREFIX"])}'
   commandAdvertiseDisabledSelf$: '@{MESSAGE-ADVERTISE-DISABLED-SELF(prefix=lut["MESSAGE_PREFIX"])}'

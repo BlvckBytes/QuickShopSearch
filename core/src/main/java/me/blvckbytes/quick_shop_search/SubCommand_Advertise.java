@@ -54,18 +54,29 @@ public class SubCommand_Advertise implements CommandHandler<Player> {
       return;
     }
 
-    var newState = targetShop.toggleAdvertising();
+    var toggleResult = targetShop.toggleAdvertising();
 
-    if (newState) {
-      if (isShopOwner)
-        message = config.rootSection.playerMessages.commandAdvertiseEnabledSelf;
-      else
-        message = config.rootSection.playerMessages.commandAdvertiseEnabledOther;
-    } else {
-      if (isShopOwner)
-        message = config.rootSection.playerMessages.commandAdvertiseDisabledSelf;
-      else
-        message = config.rootSection.playerMessages.commandAdvertiseDisabledOther;
+    switch (toggleResult) {
+      case NOW_ON: {
+        if (isShopOwner)
+          message = config.rootSection.playerMessages.commandAdvertiseEnabledSelf;
+        else
+          message = config.rootSection.playerMessages.commandAdvertiseEnabledOther;
+        break;
+      }
+
+      case NOW_OFF: {
+        if (isShopOwner)
+          message = config.rootSection.playerMessages.commandAdvertiseDisabledSelf;
+        else
+          message = config.rootSection.playerMessages.commandAdvertiseDisabledOther;
+        break;
+      }
+
+      default: {
+        message = config.rootSection.playerMessages.commandAdvertiseToggleError;
+        break;
+      }
     }
 
     if (message != null)

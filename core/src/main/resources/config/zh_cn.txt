@@ -186,6 +186,8 @@ MESSAGE-ADVERTISE-DESCRIPTION         &eToggle whether your shop is being advert
 MESSAGE-ADVERTISE-NOT-LOOKING-AT-SHOP {prefix} &cYou're not currently looking at a shop.
 # - prefix: String
 MESSAGE-ADVERTISE-NOT-THE-OWNER       {prefix} &cYou're not the owner of that shop.
+# - prefix: String
+MESSAGE-ADVERTISE-TOGGLE-ERROR        {prefix} &cAn internal error occurred while trying to toggle the advertising-state; please report this issue to a team-member.
 # - name: String
 # - owner: String
 # - item_type: String

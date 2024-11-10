@@ -39,6 +39,7 @@ public class PlayerMessagesSection extends AConfigSection {
   public @Nullable BukkitEvaluable commandAdvertiseDescription;
   public @Nullable BukkitEvaluable commandAdvertiseNotLookingAtShop;
   public @Nullable BukkitEvaluable commandAdvertiseNotTheOwner;
+  public @Nullable BukkitEvaluable commandAdvertiseToggleError;
   public @Nullable BukkitEvaluable commandAdvertiseEnabledSelf;
   public @Nullable BukkitEvaluable commandAdvertiseEnabledOther;
   public @Nullable BukkitEvaluable commandAdvertiseDisabledSelf;

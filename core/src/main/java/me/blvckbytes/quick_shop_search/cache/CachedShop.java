@@ -15,8 +15,12 @@ import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.Plugin;
 
+import java.util.function.Consumer;
+import java.util.logging.Logger;
+
 public class CachedShop {
 
+  private final Logger logger;
   public final Shop handle;
   public final String shopWorldName;
   public final ShopScalarDiff diff;
@@ -37,6 +41,7 @@ public class CachedShop {
     Shop handle,
     ConfigKeeper<MainSection> config
   ) {
+    this.logger = plugin.getLogger();
     this.handle = handle;
     this.diff = new ShopScalarDiff(this);
     this.config = config;
@@ -120,31 +125,53 @@ public class CachedShop {
       .patch(representativePatch);
   }
 
-  public boolean toggleAdvertising() {
+  public ToggleResult toggleAdvertising() {
+    var previousState = this.advertising;
     this.advertising ^= true;
-    this.storeAdvertising();
-    return this.advertising;
+
+    if (!this.storeAdvertising()) {
+      this.advertising = previousState;
+      return ToggleResult.ERROR;
+    }
+
+    return this.advertising ? ToggleResult.NOW_ON : ToggleResult.NOW_OFF;
   }
 
   public boolean isAdvertising() {
     return advertising;
   }
 
-  private void storeAdvertising() {
-    getSignDataContainer().set(keyIsAdvertising, PersistentDataType.BYTE, (byte) (this.advertising ? 1 : 0));
+  private boolean storeAdvertising() {
+    return tryAccessDataContainer(container -> {
+      container.set(keyIsAdvertising, PersistentDataType.BYTE, (byte) (this.advertising ? 1 : 0));
+    });
   }
 
   private void loadAdvertising() {
-    var value = getSignDataContainer().get(keyIsAdvertising, PersistentDataType.BYTE);
-    this.advertising = value != null && value == 1;
+    tryAccessDataContainer(container -> {
+      var value = container.get(keyIsAdvertising, PersistentDataType.BYTE);
+      this.advertising = value != null && value == 1;
+    });
   }
 
-  private PersistentDataContainer getSignDataContainer() {
+  private boolean tryAccessDataContainer(Consumer<PersistentDataContainer> handler) {
     var signs = handle.getSigns();
 
-    if (signs.isEmpty())
-      throw new IllegalStateException("Expected there to be at least one shop-sign!");
+    if (signs.isEmpty()) {
+      var location = handle.getLocation();
+      var locationWorld = location.getWorld();
 
-    return signs.get(0).getPersistentDataContainer();
+      logger.severe(
+        "Encountered a shop without its corresponding sign at (" +
+          location.getBlockX() + ", " +
+          location.getBlockY() + ", " +
+          location.getBlockZ() + ") in world \"" +
+          (locationWorld == null ? "null" : locationWorld.getName()) + "\""
+      );
+      return false;
+    }
+
+    handler.accept(signs.get(0).getPersistentDataContainer());
+    return true;
   }
 }
