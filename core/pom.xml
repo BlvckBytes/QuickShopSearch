@@ -27,6 +27,11 @@
 
     <dependencies>
         <dependency>
+            <groupId>net.kyori</groupId>
+            <artifactId>adventure-api</artifactId>
+            <version>4.17.0</version>
+        </dependency>
+        <dependency>
             <groupId>com.ghostchu</groupId>
             <artifactId>quickshop-api</artifactId>
             <version>6.2.0.6</version>
@@ -83,7 +88,7 @@
         <dependency>
             <groupId>com.github.technicallycoded</groupId>
             <artifactId>FoliaLib</artifactId>
-            <version>main-SNAPSHOT</version>
+            <version>0.4.3</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>

@@ -28,7 +28,6 @@ public class ResultDisplay implements DynamicPropertyProvider {
 
   private final DisplayData displayData;
   private final Map<Long, Long> shopDistanceByShopId;
-  private final Map<String, Double> balanceByCurrencyCache;
   private List<CachedShop> filteredUnSortedShops;
   private List<CachedShop> filteredSortedShops;
 
@@ -53,8 +52,6 @@ public class ResultDisplay implements DynamicPropertyProvider {
   private Inventory inventory;
   private int currentPage = 1;
 
-  // TODO: Do not render whole UI only because selection-state is changed
-
   public ResultDisplay(
     PlatformScheduler scheduler,
     ConfigKeeper<MainSection> config,
@@ -70,7 +67,6 @@ public class ResultDisplay implements DynamicPropertyProvider {
     this.playerLocation = player.getLocation();
     this.displayData = displayData;
     this.shopDistanceByShopId = new HashMap<>();
-    this.balanceByCurrencyCache = new HashMap<>();
     this.slotMap = new CachedShop[9 * 6];
     this.selectionState = selectionState;
 
@@ -210,8 +206,7 @@ public class ResultDisplay implements DynamicPropertyProvider {
   public void nextSortingSelection() {
     asyncQueue.enqueue(() -> {
       this.selectionState.nextSortingSelection();
-      applySorting();
-      renderItems();
+      renderSortingItem();
     });
   }
 
@@ -242,7 +237,7 @@ public class ResultDisplay implements DynamicPropertyProvider {
   public void nextFilteringCriterion() {
     asyncQueue.enqueue(() -> {
       this.selectionState.nextFilteringCriterion();
-      renderItems();
+      renderFilteringItem();
     });
   }
 
@@ -329,13 +324,19 @@ public class ResultDisplay implements DynamicPropertyProvider {
 
   @Override
   public double getPlayerBalanceForShopCurrency(CachedShop cachedShop) {
-    return this.balanceByCurrencyCache.computeIfAbsent(cachedShop.handle.getCurrency(), currency -> (
-      QuickShop.getInstance().getEconomy().getBalance(
-        playerUser,
-        Objects.requireNonNull(cachedShop.handle.getLocation().getWorld()),
-        currency
-      )
-    ));
+    return QuickShop.getInstance().getEconomy().getBalance(
+      playerUser,
+      Objects.requireNonNull(cachedShop.handle.getLocation().getWorld()),
+      cachedShop.handle.getCurrency()
+    );
+  }
+
+  private void renderSortingItem() {
+    config.rootSection.resultDisplay.items.sorting.renderInto(inventory, sortingEnvironment);
+  }
+
+  private void renderFilteringItem() {
+    config.rootSection.resultDisplay.items.filtering.renderInto(inventory, filteringEnvironment);
   }
 
   private void renderItems() {
@@ -363,8 +364,8 @@ public class ResultDisplay implements DynamicPropertyProvider {
 
     config.rootSection.resultDisplay.items.previousPage.renderInto(inventory, pageEnvironment);
     config.rootSection.resultDisplay.items.nextPage.renderInto(inventory, pageEnvironment);
-    config.rootSection.resultDisplay.items.sorting.renderInto(inventory, sortingEnvironment);
-    config.rootSection.resultDisplay.items.filtering.renderInto(inventory, filteringEnvironment);
+    renderSortingItem();
+    renderFilteringItem();
     config.rootSection.resultDisplay.items.filler.renderInto(inventory, pageEnvironment);
   }
 

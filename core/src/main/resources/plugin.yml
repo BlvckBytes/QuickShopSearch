@@ -19,11 +19,23 @@ permissions:
   quickshopsearch.command.qssl:
     description: 'Invoke the language command'
     default: op
+  quickshopsearch.command.advertise:
+    description: 'Invoke the advertise sub-command of QuickShop'
+    default: op
+  quickshopsearch.command.advertise.owner-bypass:
+    description: 'Bypass having to be the owner of a shop to toggle advertising'
+    default: op
   quickshopsearch.command.qssrl:
     description: 'Invoke the reload command'
     default: op
   quickshopsearch.empty-predicate:
     description: 'Query all shops without a predicate'
+    default: op
+  quickshopsearch.bypass-non-advertise:
+    description: 'View non-advertising shops'
+    default: op
+  quickshopsearch.bypass-access-lists:
+    description: 'Bypass the permission-specific restrictions of access-lists'
     default: op
   quickshopsearch.other-world:
     description: 'Whether to display shops which are not in the same world as the player'

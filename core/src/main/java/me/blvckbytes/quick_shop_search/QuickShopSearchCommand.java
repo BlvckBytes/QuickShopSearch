@@ -119,16 +119,18 @@ public class QuickShopSearchCommand implements CommandExecutor, TabCompleter {
       if (predicate == null) {
         // Empty predicates on a command which requires specifying the desired language explicitly seem odd...
         if (argsOffset == 0 && PluginPermission.EMPTY_PREDICATE.has(player)) {
+          var displayData = createFilteredDisplayData(player, null);
+
           if ((message = config.rootSection.playerMessages.queryingAllShops) != null) {
             message.sendMessage(
               player,
               config.rootSection.getBaseEnvironment()
-                .withLiveVariable("number_shops", shopRegistry::getNumberOfExistingShops)
+                .withStaticVariable("number_shops", displayData.shops().size())
                 .build()
             );
           }
 
-          resultDisplay.show(player, createFilteredDisplayData(player, null));
+          resultDisplay.show(player, displayData);
           return;
         }
 
@@ -138,17 +140,17 @@ public class QuickShopSearchCommand implements CommandExecutor, TabCompleter {
         return;
       }
 
+      var displayData = createFilteredDisplayData(player, predicate);
+
       if ((message = config.rootSection.playerMessages.beforeQuerying) != null) {
         message.sendMessage(
           player,
           config.rootSection.getBaseEnvironment()
-            .withLiveVariable("number_shops", shopRegistry::getNumberOfExistingShops)
+            .withStaticVariable("number_shops", displayData.shops().size())
             .withStaticVariable("predicate", new StringifyState(true).appendPredicate(predicate).toString())
             .build()
         );
       }
-
-      var displayData = createFilteredDisplayData(player, predicate);
 
       if (displayData.shops().isEmpty()) {
         if ((message = config.rootSection.playerMessages.noMatches) != null)
@@ -223,18 +225,24 @@ public class QuickShopSearchCommand implements CommandExecutor, TabCompleter {
     var playerWorld = player.getWorld();
     var accessList = decideAccessListFor(player);
 
-    for (var shop : shopRegistry.getExistingShops()) {
-      if (!PluginPermission.OTHER_WORLD.has(player) && shop.handle.getLocation().getWorld() != playerWorld)
+    var canViewOtherWorld = PluginPermission.OTHER_WORLD.has(player);
+    var canViewNonAdvertising = PluginPermission.NON_ADVERTISE_BYPASS.has(player);
+
+    for (var cachedShop : shopRegistry.getExistingShops()) {
+      if (!cachedShop.isAdvertising() && !canViewNonAdvertising)
         continue;
 
-      if (accessList != null && !accessList.allowsShop(shop))
+      if (!canViewOtherWorld && cachedShop.handle.getLocation().getWorld() != playerWorld)
         continue;
 
-      if (predicate != null && !predicate.test(new PredicateState(shop.handle.getItem())))
+      if (accessList != null && !accessList.allowsShop(cachedShop))
         continue;
 
-      matchingShops.add(shop);
-      matchingShopIds.add(shop.handle.getShopId());
+      if (predicate != null && !predicate.test(new PredicateState(cachedShop.handle.getItem())))
+        continue;
+
+      matchingShops.add(cachedShop);
+      matchingShopIds.add(cachedShop.handle.getShopId());
     }
 
     return new DisplayData(matchingShops, matchingShopIds, predicate);

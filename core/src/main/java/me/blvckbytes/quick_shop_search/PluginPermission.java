@@ -8,6 +8,8 @@ public enum PluginPermission {
   MAIN_COMMAND("command.qss"),
   LANGUAGE_COMMAND("command.qssl"),
   RELOAD_COMMAND("command.qssrl"),
+  ADVERTISE_COMMAND("command.advertise"),
+  ADVERTISE_COMMAND_OWNER_BYPASS("command.advertise.owner-bypass"),
   EMPTY_PREDICATE("empty-predicate"),
   FEATURE_SORT("feature.sort"),
   FEATURE_FILTER("feature.filter"),
@@ -17,12 +19,13 @@ public enum PluginPermission {
   FEATURE_INTERACT_OTHER_WORLD("feature.interact.other-world"),
   FEATURE_LIVE_UPDATES("feature.live-updates"),
   OTHER_WORLD("other-world"),
+  NON_ADVERTISE_BYPASS("bypass-non-advertise"),
   ACCESS_LIST_BASE("access-list"),
   ACCESS_LISTS_BYPASS("bypass-access-lists")
   ;
 
   private static final String PREFIX = "quickshopsearch";
-  private final String node;
+  public final String node;
 
   PluginPermission(String node) {
     this.node = PREFIX + "." + node;
