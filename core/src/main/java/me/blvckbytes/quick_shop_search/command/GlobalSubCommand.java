@@ -39,9 +39,6 @@ public class GlobalSubCommand extends PredicateContainingSubCommand {
     if (!(sender instanceof Player player))
       return ExitCode.PLAYER_ONLY;
 
-    if (args.length > 1)
-      return ExitCode.MALFORMED_USAGE;
-
     ItemPredicate predicate;
 
     if (args.length == 0) {

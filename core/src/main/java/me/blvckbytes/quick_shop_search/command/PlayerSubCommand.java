@@ -43,7 +43,7 @@ public class PlayerSubCommand extends PredicateContainingSubCommand {
     if (!(sender instanceof Player player))
       return ExitCode.PLAYER_ONLY;
 
-    if (args.length > 2 || args.length == 0)
+    if (args.length == 0)
       return ExitCode.MALFORMED_USAGE;
 
     var shopOwner = offlinePlayerCache.getByName(args[0]);
