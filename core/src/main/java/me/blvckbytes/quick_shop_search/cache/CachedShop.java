@@ -14,6 +14,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.Plugin;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Consumer;
 import java.util.logging.Logger;
@@ -33,7 +34,7 @@ public class CachedShop {
   private IItemBuildable representativeBuildable;
   public int cachedStock;
   public int cachedSpace;
-  private boolean advertising;
+  private @Nullable Boolean advertising;
 
   public CachedShop(
     Plugin plugin,
@@ -113,7 +114,7 @@ public class CachedShop {
   }
 
   public EvaluationEnvironmentBuilder getShopEnvironment() {
-    return shopEnvironment;
+    return shopEnvironment.duplicate();
   }
 
   public void onItemChange(ItemStack newItem) {
@@ -125,24 +126,36 @@ public class CachedShop {
       .patch(representativePatch);
   }
 
-  public ToggleResult toggleAdvertising() {
+  public AdvertiseChangeResult setAdvertising(@Nullable Boolean state) {
     var previousState = this.advertising;
-    this.advertising ^= true;
+    this.advertising = state;
 
     if (!this.storeAdvertising()) {
       this.advertising = previousState;
-      return ToggleResult.ERROR;
+      return AdvertiseChangeResult.ERROR;
     }
 
-    return this.advertising ? ToggleResult.NOW_ON : ToggleResult.NOW_OFF;
+    if (advertising == null)
+      return AdvertiseChangeResult.NOW_UNSET;
+
+    return advertising ? AdvertiseChangeResult.NOW_ON : AdvertiseChangeResult.NOW_OFF;
+  }
+
+  public boolean isAdvertisingSet() {
+    return advertising != null;
   }
 
   public boolean isAdvertising() {
-    return advertising;
+    return advertising != null && advertising;
   }
 
   private boolean storeAdvertising() {
     return tryAccessDataContainer(container -> {
+      if (this.advertising == null) {
+        container.remove(keyIsAdvertising);
+        return;
+      }
+
       container.set(keyIsAdvertising, PersistentDataType.BYTE, (byte) (this.advertising ? 1 : 0));
     });
   }
@@ -150,7 +163,13 @@ public class CachedShop {
   private void loadAdvertising() {
     tryAccessDataContainer(container -> {
       var value = container.get(keyIsAdvertising, PersistentDataType.BYTE);
-      this.advertising = value != null && value == 1;
+
+      if (value == null) {
+        this.advertising = null;
+        return;
+      }
+
+      this.advertising = value == 1;
     });
   }
 

@@ -24,16 +24,6 @@ public class CommandSendListener implements Listener {
       plugin.getCommand(config.rootSection.commands.quickShopSearch.evaluatedName),
       PluginPermission.MAIN_COMMAND
     );
-
-    pluginCommands.put(
-      plugin.getCommand(config.rootSection.commands.quickShopSearchLanguage.evaluatedName),
-      PluginPermission.LANGUAGE_COMMAND
-    );
-
-    pluginCommands.put(
-      plugin.getCommand(config.rootSection.commands.quickShopSearchReload.evaluatedName),
-      PluginPermission.RELOAD_COMMAND
-    );
   }
 
   @EventHandler

@@ -3,47 +3,89 @@ package me.blvckbytes.quick_shop_search.config;
 import me.blvckbytes.bbconfigmapper.sections.AConfigSection;
 import me.blvckbytes.bukkitevaluable.BukkitEvaluable;
 import me.blvckbytes.gpeee.interpreter.EvaluationEnvironmentBuilder;
-import org.jetbrains.annotations.Nullable;
+
+import javax.annotation.Nullable;
 
 public class PlayerMessagesSection extends AConfigSection {
 
-  public @Nullable BukkitEvaluable emptyPredicate;
-  public @Nullable BukkitEvaluable noMatches;
-  public @Nullable BukkitEvaluable beforeQuerying;
-  public @Nullable BukkitEvaluable beforeTeleporting;
-  public @Nullable BukkitEvaluable queryingAllShops;
-  public @Nullable BukkitEvaluable usageQsslCommandLanguage;
-  public @Nullable BukkitEvaluable unknownLanguageActionBar;
-  public @Nullable BukkitEvaluable pluginReloadedSuccess;
-  public @Nullable BukkitEvaluable pluginReloadedError;
-  public @Nullable BukkitEvaluable predicateParseError;
-  public @Nullable BukkitEvaluable shopInteractPromptBuying;
-  public @Nullable BukkitEvaluable shopInteractPromptSelling;
-  public @Nullable BukkitEvaluable shopInteractPromptTimeout;
-  public @Nullable BukkitEvaluable shopInteractPromptDispatch;
-  public @Nullable BukkitEvaluable shopInteractPromptInvalidInput;
-  public @Nullable BukkitEvaluable shopInteractPromptCancelPrevious;
-  public @Nullable BukkitEvaluable shopInteractPromptCancelCurrent;
+  public BukkitEvaluable emptyPredicate;
+  public BukkitEvaluable noMatches;
+  public BukkitEvaluable beforeQueryingGlobal;
+  public BukkitEvaluable beforeQueryingNear;
+  public BukkitEvaluable beforeQueryingPlayer;
+  public BukkitEvaluable beforeQueryingGlobalNoPredicate;
+  public BukkitEvaluable beforeQueryingNearNoPredicate;
+  public BukkitEvaluable beforeQueryingPlayerNoPredicate;
+  public BukkitEvaluable beforeTeleporting;
 
-  public @Nullable BukkitEvaluable missingPermissionMainCommand;
-  public @Nullable BukkitEvaluable missingPermissionLanguageCommand;
-  public @Nullable BukkitEvaluable missingPermissionReloadCommand;
-  public @Nullable BukkitEvaluable missingPermissionAdvertiseCommand;
-  public @Nullable BukkitEvaluable missingPermissionFeatureSort;
-  public @Nullable BukkitEvaluable missingPermissionFeatureFilter;
-  public @Nullable BukkitEvaluable missingPermissionFeatureTeleport;
-  public @Nullable BukkitEvaluable missingPermissionFeatureTeleportOtherWorld;
-  public @Nullable BukkitEvaluable missingPermissionFeatureInteract;
-  public @Nullable BukkitEvaluable missingPermissionFeatureInteractOtherWorld;
+  public BukkitEvaluable pluginReloadedSuccess;
+  public BukkitEvaluable pluginReloadedError;
+  public BukkitEvaluable predicateParseError;
+  public BukkitEvaluable shopInteractPromptBuying;
+  public BukkitEvaluable shopInteractPromptSelling;
+  public BukkitEvaluable shopInteractPromptTimeout;
+  public BukkitEvaluable shopInteractPromptDispatch;
+  public BukkitEvaluable shopInteractPromptInvalidInput;
+  public BukkitEvaluable shopInteractPromptCancelPrevious;
+  public BukkitEvaluable shopInteractPromptCancelCurrent;
 
-  public @Nullable BukkitEvaluable commandAdvertiseDescription;
-  public @Nullable BukkitEvaluable commandAdvertiseNotLookingAtShop;
-  public @Nullable BukkitEvaluable commandAdvertiseNotTheOwner;
-  public @Nullable BukkitEvaluable commandAdvertiseToggleError;
-  public @Nullable BukkitEvaluable commandAdvertiseEnabledSelf;
-  public @Nullable BukkitEvaluable commandAdvertiseEnabledOther;
-  public @Nullable BukkitEvaluable commandAdvertiseDisabledSelf;
-  public @Nullable BukkitEvaluable commandAdvertiseDisabledOther;
+  public BukkitEvaluable missingPermissionMainCommand;
+  public BukkitEvaluable missingPermissionSubCommand;
+  public BukkitEvaluable missingPermissionFeatureSort;
+  public BukkitEvaluable missingPermissionFeatureFilter;
+  public BukkitEvaluable missingPermissionFeatureTeleport;
+  public BukkitEvaluable missingPermissionFeatureTeleportOtherWorld;
+  public BukkitEvaluable missingPermissionFeatureInteract;
+  public BukkitEvaluable missingPermissionFeatureInteractOtherWorld;
+  public BukkitEvaluable missingPermissionAdvertiseMultiOther;
+
+  public BukkitEvaluable commandAdvertiseNotLookingAtShop;
+  public BukkitEvaluable commandAdvertiseNotTheOwner;
+  public BukkitEvaluable commandAdvertiseInternalError;
+  public BukkitEvaluable commandAdvertiseEnabledSelf;
+  public BukkitEvaluable commandAdvertiseEnabledOther;
+  public BukkitEvaluable commandAdvertiseDisabledSelf;
+  public BukkitEvaluable commandAdvertiseDisabledOther;
+  public BukkitEvaluable commandAdvertiseUnsetSelf;
+  public BukkitEvaluable commandAdvertiseUnsetOther;
+
+  public BukkitEvaluable commandAdvertiseMultiOwnsNoShopsSelf;
+  public BukkitEvaluable commandAdvertiseMultiOwnsNoShopsOther;
+  public BukkitEvaluable commandAdvertiseMultiNoShopsMatchedTargetSelf;
+  public BukkitEvaluable commandAdvertiseMultiNoShopsMatchedTargetOther;
+  public @Nullable BukkitEvaluable commandAdvertiseMultiAlteredScreenHeader;
+  public BukkitEvaluable commandAdvertiseMultiAlteredScreenLine;
+  public @Nullable BukkitEvaluable commandAdvertiseMultiAlteredScreenFooter;
+
+  public BukkitEvaluable commandArgumentUnknownPlayerName;
+  public BukkitEvaluable commandArgumentMalformedInteger;
+  public BukkitEvaluable commandArgumentNegativeOrZeroInteger;
+  public @Nullable BukkitEvaluable commandHelpScreenHeader;
+  public BukkitEvaluable commandHelpScreenLine;
+  public @Nullable BukkitEvaluable commandHelpScreenFooter;
+  public BukkitEvaluable unknownSubCommand;
+  public BukkitEvaluable subCommandUsage;
+  public BukkitEvaluable subCommandPlayerOnly;
+
+  public BukkitEvaluable commandAdvertiseMultiUsageSelf;
+  public BukkitEvaluable commandAdvertiseMultiUsageOther;
+  public BukkitEvaluable commandAdvertiseMultiDescriptionSelf;
+  public BukkitEvaluable commandAdvertiseMultiDescriptionOther;
+  public BukkitEvaluable commandAdvertiseUsage;
+  public BukkitEvaluable commandAdvertiseDescription;
+  public BukkitEvaluable commandReloadUsage;
+  public BukkitEvaluable commandReloadDescription;
+  public BukkitEvaluable commandPlayerUsage;
+  public BukkitEvaluable commandPlayerDescription;
+  public BukkitEvaluable commandNearUsage;
+  public BukkitEvaluable commandNearDescription;
+  public BukkitEvaluable commandGlobalUsage;
+  public BukkitEvaluable commandGlobalDescription;
+  public BukkitEvaluable commandAboutUsage;
+  public BukkitEvaluable commandAboutDescription;
+  public @Nullable  BukkitEvaluable commandAboutScreenHeader;
+  public BukkitEvaluable commandAboutScreen;
+  public @Nullable  BukkitEvaluable commandAboutScreenFooter;
 
   public PlayerMessagesSection(EvaluationEnvironmentBuilder baseEnvironment) {
     super(baseEnvironment);

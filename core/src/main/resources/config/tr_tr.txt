@@ -110,19 +110,6 @@ MESSAGE-BEFORE-TELEPORTING                  {prefix} &e{owner} &7kişisinin &7&e
 # - predicate: String
 # - prefix: String
 MESSAGE-BEFORE-QUERYING                     {prefix} &e{number_shops} &7adet market &e{predicate} &7için sorgulanıyor&7...
-# - number_shops: Integer
-# - prefix: String
-MESSAGE-QUERYING-ALL-SHOPS                  {prefix} &7(&e{number_shops}&7) &7Marketin hepsi sorgulanıyor&7...
-MESSAGE-USAGE-QSSL-LANGUAGE-ITEM-COLOR      &e
-MESSAGE-USAGE-QSSL-LANGUAGE-SEPARATOR-COLOR &7
-# label: String
-# language_list: String
-# - prefix: String
-MESSAGE-USAGE-QSSL-LANGUAGE                 {prefix} &7Kullanım: /{label} <{language_list}&7> [Predicate]
-# - user_input: String
-# - prefix: String
-# Displayed in the action-bar
-MESSAGE-UNKNOWN-LANGUAGE                    &cBilinmeyen dil: &4{user_input}&c.
 # - prefix: String
 MESSAGE-PLUGIN-RELOAD                       {prefix} &7Eklenti &ebaşarıyla &7yeniden yüklendi.
 # - prefix: String
@@ -180,13 +167,13 @@ MESSAGE-MISSING-PERMISSION-FEATURE-INTERACT             {prefix} &cEtkileşimi k
 MESSAGE-MISSING-PERMISSION-FEATURE-INTERACT-OTHER-WORLD {prefix} &cDiğer dünyalarda etkileşime geçme izniniz yok.
 
 # - prefix: String
-MESSAGE-ADVERTISE-DESCRIPTION         &eToggle whether your shop is being advertised on /qss
+MESSAGE-ADVERTISE-DESCRIPTION         &eAlters the looked-at shops advertising-state on /qss
 # - prefix: String
 MESSAGE-ADVERTISE-NOT-LOOKING-AT-SHOP {prefix} &cYou're not currently looking at a shop.
 # - prefix: String
 MESSAGE-ADVERTISE-NOT-THE-OWNER       {prefix} &cYou're not the owner of that shop.
 # - prefix: String
-MESSAGE-ADVERTISE-TOGGLE-ERROR        {prefix} &cAn internal error occurred while trying to toggle the advertising-state; please report this issue to a team-member.
+MESSAGE-ADVERTISE-INTERNAL-ERROR        {prefix} &cAn internal error occurred while trying to toggle the advertising-state; please report this issue to a team-member.
 # - name: String
 # - owner: String
 # - item_type: String

@@ -188,18 +188,6 @@ playerMessages:
   # - loc_z: Integer
   # - distance: Integer
   beforeTeleporting$: '@{MESSAGE-BEFORE-TELEPORTING(prefix=lut["MESSAGE_PREFIX"])}'
-  # - number_shops: Integer
-  # - predicate: String
-  beforeQuerying$: '@{MESSAGE-BEFORE-QUERYING(prefix=lut["MESSAGE_PREFIX"])}'
-  # - number_shops: Integer
-  queryingAllShops$: '@{MESSAGE-QUERYING-ALL-SHOPS(prefix=lut["MESSAGE_PREFIX"])}'
-  # - label: String
-  # - languages: Collection<String>
-  usageQsslCommandLanguage$: |
-    language_list = iter_cat(languages, (language) => @{MESSAGE-USAGE-QSSL-LANGUAGE-ITEM-COLOR} & language, @{MESSAGE-USAGE-QSSL-LANGUAGE-SEPARATOR-COLOR} & ", ")
-    @{MESSAGE-USAGE-QSSL-LANGUAGE(prefix=lut["MESSAGE_PREFIX"])}
-# - user_input: String
-  unknownLanguageActionBar$: '@{MESSAGE-UNKNOWN-LANGUAGE(prefix=lut["MESSAGE_PREFIX"])}'
   pluginReloadedSuccess$: '@{MESSAGE-PLUGIN-RELOAD(prefix=lut["MESSAGE_PREFIX"])}'
   pluginReloadedError$: '@{MESSAGE-PLUGIN-RELOAD-ERROR(prefix=lut["MESSAGE_PREFIX"])}'
   # - error_message: String
@@ -212,23 +200,135 @@ playerMessages:
   shopInteractPromptCancelPrevious$: '@{MESSAGE-SHOP-INTERACT-PROMPT-CANCEL-PREVIOUS(prefix=lut["MESSAGE_PREFIX"])}'
   shopInteractPromptCancelCurrent$: '@{MESSAGE-SHOP-INTERACT-PROMPT-CANCEL-CURRENT(prefix=lut["MESSAGE_PREFIX"])}'
   missingPermissionMainCommand$: '@{MESSAGE-MISSING-PERMISSION-MAIN-COMMAND(prefix=lut["MESSAGE_PREFIX"])}'
-  missingPermissionLanguageCommand$: '@{MESSAGE-MISSING-PERMISSION-LANGUAGE-COMMAND(prefix=lut["MESSAGE_PREFIX"])}'
-  missingPermissionReloadCommand$: '@{MESSAGE-MISSING-PERMISSION-RELOAD-COMMAND(prefix=lut["MESSAGE_PREFIX"])}'
-  missingPermissionAdvertiseCommand$: '@{MESSAGE-MISSING-PERMISSION-ADVERTISE-COMMAND(prefix=lut["MESSAGE_PREFIX"])}'
   missingPermissionFeatureSort$: '@{MESSAGE-MISSING-PERMISSION-FEATURE-SORT(prefix=lut["MESSAGE_PREFIX"])}'
   missingPermissionFeatureFilter$: '@{MESSAGE-MISSING-PERMISSION-FEATURE-FILTER(prefix=lut["MESSAGE_PREFIX"])}'
   missingPermissionFeatureTeleport$: '@{MESSAGE-MISSING-PERMISSION-FEATURE-TELEPORT(prefix=lut["MESSAGE_PREFIX"])}'
   missingPermissionFeatureTeleportOtherWorld$: '@{MESSAGE-MISSING-PERMISSION-FEATURE-TELEPORT-OTHER-WORLD(prefix=lut["MESSAGE_PREFIX"])}'
   missingPermissionFeatureInteract$: '@{MESSAGE-MISSING-PERMISSION-FEATURE-INTERACT(prefix=lut["MESSAGE_PREFIX"])}'
   missingPermissionFeatureInteractOtherWorld$: '@{MESSAGE-MISSING-PERMISSION-FEATURE-INTERACT-OTHER-WORLD(prefix=lut["MESSAGE_PREFIX"])}'
-  commandAdvertiseDescription$: '@{MESSAGE-ADVERTISE-DESCRIPTION(prefix=lut["MESSAGE_PREFIX"])}'
   commandAdvertiseNotLookingAtShop$: '@{MESSAGE-ADVERTISE-NOT-LOOKING-AT-SHOP(prefix=lut["MESSAGE_PREFIX"])}'
   commandAdvertiseNotTheOwner$: '@{MESSAGE-ADVERTISE-NOT-THE-OWNER(prefix=lut["MESSAGE_PREFIX"])}'
-  commandAdvertiseToggleError$: '@{MESSAGE-ADVERTISE-TOGGLE-ERROR(prefix=lut["MESSAGE_PREFIX"])}'
+  commandAdvertiseInternalError$: '@{MESSAGE-ADVERTISE-INTERNAl-ERROR(prefix=lut["MESSAGE_PREFIX"])}'
   commandAdvertiseEnabledSelf$: '@{MESSAGE-ADVERTISE-ENABLED-SELF(prefix=lut["MESSAGE_PREFIX"])}'
   commandAdvertiseEnabledOther$: '@{MESSAGE-ADVERTISE-ENABLED-OTHER(prefix=lut["MESSAGE_PREFIX"])}'
   commandAdvertiseDisabledSelf$: '@{MESSAGE-ADVERTISE-DISABLED-SELF(prefix=lut["MESSAGE_PREFIX"])}'
   commandAdvertiseDisabledOther$: '@{MESSAGE-ADVERTISE-DISABLED-OTHER(prefix=lut["MESSAGE_PREFIX"])}'
+  commandAdvertiseUnsetSelf$: '@{MESSAGE-ADVERTISE-UNSET-SELF(prefix=lut["MESSAGE_PREFIX"])}'
+  commandAdvertiseUnsetOther$: '@{MESSAGE-ADVERTISE-UNSET-OTHER(prefix=lut["MESSAGE_PREFIX"])}'
+
+  commandHelpScreenHeader$: '"&8&m                    &8[&6QuickShopSearch Help&8]&8&m                    "'
+  # - label: String
+  # - sub_command_usage: String
+  # - sub_command_description: String
+  commandHelpScreenLine$:
+    - '"&8+ &7/" & label & " &e" & sub_command_usage'
+    - '"&8| - &e" & sub_command_description'
+  commandHelpScreenFooter$: '"&8&m                    &8[&6QuickShopSearch Help&8]&8&m                    "'
+
+  # - name: String
+  commandArgumentUnknownPlayerName$: 'lut["MESSAGE_PREFIX"] & " &cThe player &4" & name & " &ccould not be located."'
+  # - input: String
+  commandArgumentMalformedInteger$: 'lut["MESSAGE_PREFIX"] & " &cThe input &4" & input & " &cis not a valid integer."'
+  # - input: String
+  commandArgumentNegativeOrZeroInteger$: 'lut["MESSAGE_PREFIX"] & " &cThe input &4" & input & " &cis not greater than zero."'
+
+  # - label: String
+  # - sub_label: String
+  unknownSubCommand$: 'lut["MESSAGE_PREFIX"] & " &cUnknown sub-command &4" & sub_label'
+  # - label: String
+  # - sub_command_usage: String
+  subCommandUsage$: 'lut["MESSAGE_PREFIX"] & " &cUsage: &e/" & label & " &e" & sub_command_usage'
+  subCommandPlayerOnly$: 'lut["MESSAGE_PREFIX"] & " &cThis command can only be executed by players"'
+
+  # - number_shops: Integer
+  # - predicate: String
+  beforeQueryingGlobal$: 'lut["MESSAGE_PREFIX"] & " &7Querying &e" & number_shops & " &7global shops for &e" & predicate & "&7..."'
+  # - number_shops: Integer
+  # - predicate: String
+  # - distance: Integer
+  beforeQueryingNear$: 'lut["MESSAGE_PREFIX"] & " &7Querying &e" & number_shops & " &7shops within &e" & distance & " blocks &7for &e" & predicate & "&7..."'
+  # - number_shops: Integer
+  # - predicate: String
+  # - owner: String
+  beforeQueryingPlayer$: 'lut["MESSAGE_PREFIX"] & " &7Querying &e" & number_shops & " &7shops of &e" & owner & " &7for &e" & predicate & "&7..."'
+  # - number_shops: Integer
+  beforeQueryingGlobalNoPredicate$: 'lut["MESSAGE_PREFIX"] & " &7Querying &e" & number_shops & " &7global shops..."'
+  # - number_shops: Integer
+  beforeQueryingNearNoPredicate$: 'lut["MESSAGE_PREFIX"] & " &7Querying &e" & number_shops & " &7shops within &e" & distance & " &eblocks&7..."'
+  # - number_shops: Integer
+  beforeQueryingPlayerNoPredicate$: 'lut["MESSAGE_PREFIX"] & " &7Querying &e" & number_shops & " &7shops of &e" & owner & "&7..."'
+
+  # - sub_label: String
+  # - multi_target_names: List<String>
+  # - advertise_mode_names: List<String>
+  commandAdvertiseMultiUsageSelf$: |
+    sub_label
+      & " <target: "
+      & iter_cat(multi_target_names, (name) => "&e" & name, "&7, ") 
+      & "&e> <state: "
+      & iter_cat(advertise_mode_names, (name) => "&e" & name, "&7, ") 
+      & "&e>"
+  # - sub_label: String
+  # - multi_target_names: List<String>
+  # - advertise_mode_names: List<String>
+  commandAdvertiseMultiUsageOther$: |
+    sub_label
+      & " <target: "
+      & iter_cat(multi_target_names, (name) => "&e" & name, "&7, ") 
+      & "&e> <state: "
+      & iter_cat(advertise_mode_names, (name) => "&e" & name, "&7, ") 
+      & "&e> [player]"
+  commandAdvertiseMultiDescriptionSelf$: '"Change the advertising-state of multiple shops"'
+  commandAdvertiseMultiDescriptionOther$: '"Change the advertising-state of multiple shops of any player"'
+  # - sub_label: String
+  # - advertise_mode_names: List<String>
+  commandAdvertiseUsage$: 'sub_label & " <" & iter_cat(advertise_mode_names, (name) => "&e" & name, "&7, ") & ">"'
+  commandAdvertiseDescription$: '@{MESSAGE-ADVERTISE-DESCRIPTION(prefix=lut["MESSAGE_PREFIX"])}'
+  # - sub_label: String
+  commandReloadUsage$: 'sub_label'
+  commandReloadDescription$: '"Reload the configuration-file"'
+  # - sub_label: String
+  commandPlayerUsage$: 'sub_label & " <name> [predicate]"'
+  commandPlayerDescription$: '"Search through shops of a specific owner"'
+  # - sub_label: String
+  commandNearUsage$: 'sub_label & " <distance> [predicate]"'
+  commandNearDescription$: '"Search for shops within a specified distance"'
+  # - sub_label: String
+  commandGlobalUsage$: 'sub_label & " [predicate]"'
+  commandGlobalDescription$: '"Search through all existing shops"'
+  # - sub_label: String
+  commandAboutUsage$: 'sub_label'
+  commandAboutDescription$: '"Retrieve information about this plugin"'
+  commandAboutScreenHeader$: '"&8&m                    &8[&6About QuickShopSearch&8]&8&m                    "'
+  # - version: String
+  # - authors: List<String>
+  commandAboutScreen$:
+    - '"&8> &7Version: &e" & version'
+    - '"&8> &7Authors: &e" & iter_cat(authors, (author) => "&e" & author)'
+    - '"&8> &7Plugin Documentation: &ehttps://blvckbytes.github.io/docs-quick-shop-search/"'
+    - '"&8> &7Predicate Documentation: &ehttps://blvckbytes.github.io/docs-item-predicate-parser/"'
+  commandAboutScreenFooter$: '"&8&m                    &8[&6About QuickShopSearch&8]&8&m                    "'
+
+  # - advertise_mode: String
+  commandAdvertiseMultiAlteredScreenHeader$: '"&8&m                    &8[&6Advertising &e" & advertise_mode & "&8]&8&m                    "'
+  # - advertise_mode: String
+  # - owner: String
+  # - name: String?
+  # - price: Double
+  # - currency: String?
+  # - remaining_stock: Integer
+  # - remaining_space: Integer
+  # - is_selling: Boolean
+  # - is_buying: Boolean
+  # - is_unlimited: Boolean
+  # - loc_world: String?
+  # - loc_x: Integer
+  # - loc_y: Integer
+  # - loc_z: Integer
+  # - distance: Integer
+  commandAdvertiseMultiAlteredScreenLine$: '"&8> &7Updated shop at &e" & loc_x & "&7, &e" & loc_y & "&7, &e" & loc_z'
+  # - advertise_mode: String
+  commandAdvertiseMultiAlteredScreenFooter$: '"&8&m                    &8[&6Advertising &e" & advertise_mode & "&8]&8&m                    "'
 
 predicates:
   mainLanguage: ENGLISH_US

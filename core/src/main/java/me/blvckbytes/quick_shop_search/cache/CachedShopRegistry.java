@@ -11,6 +11,7 @@ import me.blvckbytes.quick_shop_search.ShopUpdate;
 import me.blvckbytes.quick_shop_search.config.MainSection;
 import me.blvckbytes.quick_shop_search.display.ResultDisplayHandler;
 import org.bukkit.Location;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.Nullable;
@@ -80,6 +81,23 @@ public class CachedShopRegistry implements QuickShopEventConsumer {
   public Collection<CachedShop> getExistingShops() {
     synchronized (existingShopByLocation) {
       return this.existingShopByLocation.values();
+    }
+  }
+
+  public Collection<CachedShop> getShopsWithOwner(OfflinePlayer owner) {
+    synchronized (existingShopByLocation) {
+      var result = new ArrayList<CachedShop>();
+
+      for (var shop : existingShopByLocation.values()) {
+        var shopOwner = shop.handle.getOwner().getBukkitPlayer().orElse(null);
+
+        if (!owner.equals(shopOwner))
+          continue;
+
+        result.add(shop);
+      }
+
+      return result;
     }
   }
 

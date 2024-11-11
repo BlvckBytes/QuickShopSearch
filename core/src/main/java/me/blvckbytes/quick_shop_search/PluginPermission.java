@@ -6,10 +6,16 @@ import org.bukkit.entity.Player;
 
 public enum PluginPermission {
   MAIN_COMMAND("command.qss"),
-  LANGUAGE_COMMAND("command.qssl"),
-  RELOAD_COMMAND("command.qssrl"),
-  ADVERTISE_COMMAND("command.advertise"),
-  ADVERTISE_COMMAND_OWNER_BYPASS("command.advertise.owner-bypass"),
+  SUB_COMMAND_ADVERTISE("command.advertise"),
+  SUB_COMMAND_ADVERTISE_OWNER_BYPASS("command.advertise.owner-bypass"),
+  SUB_COMMAND_ADVERTISE_MANY("command.advertise-many"),
+  SUB_COMMAND_ADVERTISE_MANY_OTHER("command.advertise-many.other"),
+  SUB_COMMAND_GLOBAL("command.global"),
+  SUB_COMMAND_PLAYER("command.player"),
+  SUB_COMMAND_NEAR("command.near"),
+  SUB_COMMAND_RELOAD("command.reload"),
+  SUB_COMMAND_ABOUT("command.about"),
+
   EMPTY_PREDICATE("empty-predicate"),
   FEATURE_SORT("feature.sort"),
   FEATURE_FILTER("feature.filter"),

@@ -8,8 +8,6 @@ import me.blvckbytes.gpeee.interpreter.EvaluationEnvironmentBuilder;
 public class CommandsSection extends AConfigSection {
 
   public QuickShopSearchCommandSection quickShopSearch;
-  public QuickShopSearchLanguageCommandSection quickShopSearchLanguage;
-  public QuickShopSearchReloadCommandSection quickShopSearchReload;
 
   public CommandsSection(EvaluationEnvironmentBuilder baseEnvironment) {
     super(baseEnvironment);

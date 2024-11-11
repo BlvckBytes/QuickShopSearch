@@ -25,7 +25,6 @@ import org.bukkit.event.inventory.*;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.util.Vector;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
@@ -252,11 +251,10 @@ public class ResultDisplayHandler implements Listener {
     var didOverwritePrevious = chatPromptManager.register(
       player,
       input -> {
-        BukkitEvaluable message;
-
         if (input.equalsIgnoreCase("cancel")) {
-          if ((message = config.rootSection.playerMessages.shopInteractPromptCancelCurrent) != null)
-            message.sendMessage(player, config.rootSection.builtBaseEnvironment);
+          config.rootSection.playerMessages.shopInteractPromptCancelCurrent.sendMessage(
+            player, config.rootSection.builtBaseEnvironment
+          );
 
           return;
         }
@@ -264,52 +262,40 @@ public class ResultDisplayHandler implements Listener {
         var amount = tryParseStrictlyPositiveInteger(input);
 
         if (amount <= 0) {
-          if ((message = config.rootSection.playerMessages.shopInteractPromptInvalidInput) != null) {
-            message.sendMessage(
-              player,
-              config.rootSection.getBaseEnvironment()
-                .withStaticVariable("input", input)
-                .build()
-            );
-          }
+          config.rootSection.playerMessages.shopInteractPromptInvalidInput.sendMessage(
+            player,
+            config.rootSection.getBaseEnvironment()
+              .withStaticVariable("input", input)
+              .build()
+          );
+
           return;
         }
 
-        if ((message = config.rootSection.playerMessages.shopInteractPromptDispatch) != null) {
-          message.sendMessage(
-            player,
-            new EvaluationEnvironmentBuilder()
-              .withStaticVariable("amount", amount)
-              .build(extendedEnvironment)
-          );
-        }
+        config.rootSection.playerMessages.shopInteractPromptDispatch.sendMessage(
+          player,
+          new EvaluationEnvironmentBuilder()
+            .withStaticVariable("amount", amount)
+            .build(extendedEnvironment)
+        );
 
         dispatchShopInteraction(player, cachedShop, amount);
       },
-      () -> {
-        BukkitEvaluable message;
-
-        if ((message = config.rootSection.playerMessages.shopInteractPromptTimeout) != null)
-          message.sendMessage(player, extendedEnvironment);
-      }
+      () -> config.rootSection.playerMessages.shopInteractPromptTimeout.sendMessage(
+        player, extendedEnvironment
+      )
     );
 
-    BukkitEvaluable message;
-
-    if (didOverwritePrevious) {
-      if ((message = config.rootSection.playerMessages.shopInteractPromptCancelPrevious) != null)
-        message.sendMessage(player, config.rootSection.builtBaseEnvironment);
-    }
+    if (didOverwritePrevious)
+      config.rootSection.playerMessages.shopInteractPromptCancelPrevious.sendMessage(player, config.rootSection.builtBaseEnvironment);
 
     if (cachedShop.handle.getShopType() == ShopType.BUYING) {
-      if ((message = config.rootSection.playerMessages.shopInteractPromptBuying) != null)
-        message.sendMessage(player, extendedEnvironment);
+      config.rootSection.playerMessages.shopInteractPromptBuying.sendMessage(player, extendedEnvironment);
 
       return;
     }
 
-    if ((message = config.rootSection.playerMessages.shopInteractPromptSelling) != null)
-      message.sendMessage(player, extendedEnvironment);
+    config.rootSection.playerMessages.shopInteractPromptSelling.sendMessage(player, extendedEnvironment);
   }
 
   private int tryParseStrictlyPositiveInteger(String input) {
@@ -350,14 +336,10 @@ public class ResultDisplayHandler implements Listener {
   }
 
   private void teleportPlayerToShop(Player player, ResultDisplay display, CachedShop cachedShop) {
-    BukkitEvaluable message;
-
-    if ((message = config.rootSection.playerMessages.beforeTeleporting) != null) {
-      message.sendMessage(
-        player,
-        config.rootSection.getBaseEnvironment().build(display.getDistanceExtendedShopEnvironment(cachedShop))
-      );
-    }
+    config.rootSection.playerMessages.beforeTeleporting.sendMessage(
+      player,
+      config.rootSection.getBaseEnvironment().build(display.getDistanceExtendedShopEnvironment(cachedShop))
+    );
 
     var shop = cachedShop.handle;
     var shopLocation = shop.getLocation().clone(); // Not cloning can mess shops up (direct reference)!
@@ -407,13 +389,12 @@ public class ResultDisplayHandler implements Listener {
     }
   }
 
-  private void ensurePermission(Player player, PluginPermission permission, @Nullable BukkitEvaluable missingMessage, Runnable handler) {
+  private void ensurePermission(Player player, PluginPermission permission, BukkitEvaluable missingMessage, Runnable handler) {
     if (permission.has(player)) {
       handler.run();
       return;
     }
 
-    if (missingMessage != null)
-      missingMessage.sendMessage(player, config.rootSection.builtBaseEnvironment);
+    missingMessage.sendMessage(player, config.rootSection.builtBaseEnvironment);
   }
 }

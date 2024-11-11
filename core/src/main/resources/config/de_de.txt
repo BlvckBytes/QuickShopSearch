@@ -110,19 +110,6 @@ MESSAGE-BEFORE-TELEPORTING                  {prefix} &7Teleportiere zum Shop von
 # - predicate: String
 # - prefix: String
 MESSAGE-BEFORE-QUERYING                     {prefix} &7Durchsuche &e{number_shops} Shops &7nach &e{predicate}&7...
-# - number_shops: Integer
-# - prefix: String
-MESSAGE-QUERYING-ALL-SHOPS                  {prefix} &7Durchsuche &ealle &7(&e{number_shops}&7) Shops...
-MESSAGE-USAGE-QSSL-LANGUAGE-ITEM-COLOR      &e
-MESSAGE-USAGE-QSSL-LANGUAGE-SEPARATOR-COLOR &7
-# label: String
-# language_list: String
-# - prefix: String
-MESSAGE-USAGE-QSSL-LANGUAGE                 {prefix} Benutzung: /{label} <{language_list}&7> [Prädikat]
-# - user_input: String
-# - prefix: String
-# Displayed in the action-bar
-MESSAGE-UNKNOWN-LANGUAGE                    &cUnbekannte Sprache: &4{user_input}&c.
 # - prefix: String
 MESSAGE-PLUGIN-RELOAD                       {prefix} &7Das Plugin wurde erfolgreich &eneu geladen&7.
 # - prefix: String
@@ -161,12 +148,6 @@ MESSAGE-SHOP-INTERACT-PROMPT-CANCEL-CURRENT  {prefix} &cDu hast die Chat-Eingabe
 # - prefix: String
 MESSAGE-MISSING-PERMISSION-MAIN-COMMAND                 {prefix} &cKeine Berechtigung zur Benutzung des Hauptbefehls.
 # - prefix: String
-MESSAGE-MISSING-PERMISSION-LANGUAGE-COMMAND             {prefix} &cKeine Berechtigung zur Benutzung des Sprachbefehls.
-# - prefix: String
-MESSAGE-MISSING-PERMISSION-RELOAD-COMMAND               {prefix} &cKeine Berechtigung zur Benutzung des Befehls zum neu laden.
-# - prefix: String
-MESSAGE-MISSING-PERMISSION-ADVERTISE-COMMAND            {prefix} &cKeine Berechtigung zur Benutzung des Befehls zum inserieren.
-# - prefix: String
 MESSAGE-MISSING-PERMISSION-FEATURE-SORT                 {prefix} &cKeine Berechtigung zur Benutzung der Sortierfunktion.
 # - prefix: String
 MESSAGE-MISSING-PERMISSION-FEATURE-FILTER               {prefix} &cKeine Berechtigung zur Benutzung der Filterfunktion.
@@ -180,13 +161,13 @@ MESSAGE-MISSING-PERMISSION-FEATURE-INTERACT             {prefix} &cKeine Berecht
 MESSAGE-MISSING-PERMISSION-FEATURE-INTERACT-OTHER-WORLD {prefix} &cKeine Berechtigung zur Interaktion in andere Welten.
 
 # - prefix: String
-MESSAGE-ADVERTISE-DESCRIPTION         &eÄndert ob der Shop bei /qss angezeigt wird
+MESSAGE-ADVERTISE-DESCRIPTION         &eAlters the looked-at shops advertising-state on /qss
 # - prefix: String
 MESSAGE-ADVERTISE-NOT-LOOKING-AT-SHOP {prefix} &cDu siehst gerade keinen Shop an.
 # - prefix: String
 MESSAGE-ADVERTISE-NOT-THE-OWNER       {prefix} &cDieser Shop gehört dir nicht.
 # - prefix: String
-MESSAGE-ADVERTISE-TOGGLE-ERROR        {prefix} &cEin interner Fehler trat während der Umschaltung des Inserats auf; bitte melde dieses Problem einem Teammitglied.
+MESSAGE-ADVERTISE-INTERNAL-ERROR        {prefix} &cEin interner Fehler trat während der Umschaltung des Inserats auf; bitte melde dieses Problem einem Teammitglied.
 # - name: String
 # - owner: String
 # - item_type: String
