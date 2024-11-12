@@ -13,9 +13,9 @@ import org.bukkit.entity.Player;
 
 import java.util.List;
 
-public class AdvertiseMultiSubCommand extends SubCommand {
+public class AdvertiseManySubCommand extends SubCommand {
 
-  private enum MultiTarget {
+  private enum ManyTarget {
     ALL,
     SET,
     ON,
@@ -28,7 +28,7 @@ public class AdvertiseMultiSubCommand extends SubCommand {
   private final AdvertiseSubCommand advertiseSubCommand;
   private final ConfigKeeper<MainSection> config;
 
-  public AdvertiseMultiSubCommand(
+  public AdvertiseManySubCommand(
     CachedShopRegistry shopRegistry,
     OfflinePlayerCache offlinePlayerCache,
     AdvertiseSubCommand advertiseSubCommand,
@@ -58,7 +58,7 @@ public class AdvertiseMultiSubCommand extends SubCommand {
       shopOwner = player;
     } else {
       if (!PluginPermission.SUB_COMMAND_ADVERTISE_MANY_OTHER.has(sender)) {
-        config.rootSection.playerMessages.missingPermissionAdvertiseMultiOther.sendMessage(
+        config.rootSection.playerMessages.missingPermissionAdvertiseManyOther.sendMessage(
           sender, config.rootSection.builtBaseEnvironment
         );
 
@@ -79,9 +79,9 @@ public class AdvertiseMultiSubCommand extends SubCommand {
       }
     }
 
-    var multiTarget = parseEnumConstant(MultiTarget.class, args[0]);
+    var manyTarget = parseEnumConstant(ManyTarget.class, args[0]);
 
-    if (multiTarget == null)
+    if (manyTarget == null)
       return ExitCode.MALFORMED_USAGE;
 
     var mode = parseEnumConstant(AdvertiseMode.class, args[1]);
@@ -93,14 +93,14 @@ public class AdvertiseMultiSubCommand extends SubCommand {
 
     if (targetShops.isEmpty()) {
       if (shopOwner == sender) {
-        config.rootSection.playerMessages.commandAdvertiseMultiOwnsNoShopsSelf.sendMessage(
+        config.rootSection.playerMessages.commandAdvertiseManyOwnsNoShopsSelf.sendMessage(
           sender, config.rootSection.builtBaseEnvironment
         );
 
         return ExitCode.SUCCESS;
       }
 
-      config.rootSection.playerMessages.commandAdvertiseMultiOwnsNoShopsOther.sendMessage(
+      config.rootSection.playerMessages.commandAdvertiseManyOwnsNoShopsOther.sendMessage(
         sender,
         config.rootSection.getBaseEnvironment()
           .withStaticVariable("name", shopOwner.getName())
@@ -116,7 +116,7 @@ public class AdvertiseMultiSubCommand extends SubCommand {
     var numberOfChangedShops = 0;
 
     for (var targetShop : targetShops) {
-      var isShopTargeted = switch (multiTarget) {
+      var isShopTargeted = switch (manyTarget) {
         case ALL -> true;
         case SET -> targetShop.isAdvertisingSet();
         case UNSET -> !targetShop.isAdvertisingSet();
@@ -130,7 +130,7 @@ public class AdvertiseMultiSubCommand extends SubCommand {
       if (!hasHeaderBeenSent) {
         hasHeaderBeenSent = true;
 
-        if ((message = config.rootSection.playerMessages.commandAdvertiseMultiAlteredScreenHeader) != null) {
+        if ((message = config.rootSection.playerMessages.commandAdvertiseManyAlteredScreenHeader) != null) {
           message.sendMessage(
             sender,
             config.rootSection.getBaseEnvironment()
@@ -146,19 +146,19 @@ public class AdvertiseMultiSubCommand extends SubCommand {
 
     if (!hasHeaderBeenSent) {
       if (shopOwner == sender) {
-        config.rootSection.playerMessages.commandAdvertiseMultiNoShopsMatchedTargetSelf.sendMessage(
+        config.rootSection.playerMessages.commandAdvertiseManyNoShopsMatchedTargetSelf.sendMessage(
           sender, config.rootSection.getBaseEnvironment()
-            .withStaticVariable("target_mode", getEnumName(multiTarget))
+            .withStaticVariable("target_mode", getEnumName(manyTarget))
             .build()
         );
 
         return ExitCode.SUCCESS;
       }
 
-      config.rootSection.playerMessages.commandAdvertiseMultiNoShopsMatchedTargetOther.sendMessage(
+      config.rootSection.playerMessages.commandAdvertiseManyNoShopsMatchedTargetOther.sendMessage(
         sender,
         config.rootSection.getBaseEnvironment()
-          .withStaticVariable("target_mode", getEnumName(multiTarget))
+          .withStaticVariable("target_mode", getEnumName(manyTarget))
           .withStaticVariable("name", shopOwner.getName())
           .build()
       );
@@ -166,7 +166,7 @@ public class AdvertiseMultiSubCommand extends SubCommand {
       return ExitCode.SUCCESS;
     }
 
-    if ((message = config.rootSection.playerMessages.commandAdvertiseMultiAlteredScreenFooter) != null) {
+    if ((message = config.rootSection.playerMessages.commandAdvertiseManyAlteredScreenFooter) != null) {
       message.sendMessage(
         sender,
         config.rootSection.getBaseEnvironment()
@@ -182,7 +182,7 @@ public class AdvertiseMultiSubCommand extends SubCommand {
   @Override
   public List<String> onTabComplete(CommandSender sender, String[] args) {
     if (args.length == 1)
-      return suggestEnumConstants(MultiTarget.class, args[0]);
+      return suggestEnumConstants(ManyTarget.class, args[0]);
 
     if (args.length == 2)
       return suggestEnumConstants(AdvertiseMode.class, args[1]);
@@ -197,16 +197,16 @@ public class AdvertiseMultiSubCommand extends SubCommand {
   public String getUsage(CommandSender sender) {
     var usageEnvironment = config.rootSection.getBaseEnvironment()
       .withStaticVariable("sub_label", label)
-      .withStaticVariable("multi_target_names", suggestEnumConstants(MultiTarget.class, null))
+      .withStaticVariable("many_target_names", suggestEnumConstants(ManyTarget.class, null))
       .withStaticVariable("advertise_mode_names", suggestEnumConstants(AdvertiseMode.class, null))
       .build();
 
     BukkitEvaluable usage;
 
     if (PluginPermission.SUB_COMMAND_ADVERTISE_MANY_OTHER.has(sender))
-      usage = config.rootSection.playerMessages.commandAdvertiseMultiUsageOther;
+      usage = config.rootSection.playerMessages.commandAdvertiseManyUsageOther;
     else
-      usage = config.rootSection.playerMessages.commandAdvertiseMultiUsageSelf;
+      usage = config.rootSection.playerMessages.commandAdvertiseManyUsageSelf;
 
     return usage.asScalar(ScalarType.STRING, usageEnvironment);
   }
@@ -216,9 +216,9 @@ public class AdvertiseMultiSubCommand extends SubCommand {
     BukkitEvaluable description;
 
     if (PluginPermission.SUB_COMMAND_ADVERTISE_MANY_OTHER.has(sender))
-      description = config.rootSection.playerMessages.commandAdvertiseMultiDescriptionOther;
+      description = config.rootSection.playerMessages.commandAdvertiseManyDescriptionOther;
     else
-      description = config.rootSection.playerMessages.commandAdvertiseMultiDescriptionSelf;
+      description = config.rootSection.playerMessages.commandAdvertiseManyDescriptionSelf;
 
     return description.asScalar(ScalarType.STRING, config.rootSection.builtBaseEnvironment);
   }

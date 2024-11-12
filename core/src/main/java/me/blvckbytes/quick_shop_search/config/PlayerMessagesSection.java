@@ -37,7 +37,7 @@ public class PlayerMessagesSection extends AConfigSection {
   public BukkitEvaluable missingPermissionFeatureTeleportOtherWorld;
   public BukkitEvaluable missingPermissionFeatureInteract;
   public BukkitEvaluable missingPermissionFeatureInteractOtherWorld;
-  public BukkitEvaluable missingPermissionAdvertiseMultiOther;
+  public BukkitEvaluable missingPermissionAdvertiseManyOther;
 
   public BukkitEvaluable commandAdvertiseNotLookingAtShop;
   public BukkitEvaluable commandAdvertiseNotTheOwner;
@@ -49,12 +49,12 @@ public class PlayerMessagesSection extends AConfigSection {
   public BukkitEvaluable commandAdvertiseReadSelf;
   public BukkitEvaluable commandAdvertiseReadOther;
 
-  public BukkitEvaluable commandAdvertiseMultiOwnsNoShopsSelf;
-  public BukkitEvaluable commandAdvertiseMultiOwnsNoShopsOther;
-  public BukkitEvaluable commandAdvertiseMultiNoShopsMatchedTargetSelf;
-  public BukkitEvaluable commandAdvertiseMultiNoShopsMatchedTargetOther;
-  public @Nullable BukkitEvaluable commandAdvertiseMultiAlteredScreenHeader;
-  public @Nullable BukkitEvaluable commandAdvertiseMultiAlteredScreenFooter;
+  public BukkitEvaluable commandAdvertiseManyOwnsNoShopsSelf;
+  public BukkitEvaluable commandAdvertiseManyOwnsNoShopsOther;
+  public BukkitEvaluable commandAdvertiseManyNoShopsMatchedTargetSelf;
+  public BukkitEvaluable commandAdvertiseManyNoShopsMatchedTargetOther;
+  public @Nullable BukkitEvaluable commandAdvertiseManyAlteredScreenHeader;
+  public @Nullable BukkitEvaluable commandAdvertiseManyAlteredScreenFooter;
 
   public BukkitEvaluable commandArgumentUnknownPlayerName;
   public BukkitEvaluable commandArgumentMalformedInteger;
@@ -66,10 +66,10 @@ public class PlayerMessagesSection extends AConfigSection {
   public BukkitEvaluable subCommandUsage;
   public BukkitEvaluable subCommandPlayerOnly;
 
-  public BukkitEvaluable commandAdvertiseMultiUsageSelf;
-  public BukkitEvaluable commandAdvertiseMultiUsageOther;
-  public BukkitEvaluable commandAdvertiseMultiDescriptionSelf;
-  public BukkitEvaluable commandAdvertiseMultiDescriptionOther;
+  public BukkitEvaluable commandAdvertiseManyUsageSelf;
+  public BukkitEvaluable commandAdvertiseManyUsageOther;
+  public BukkitEvaluable commandAdvertiseManyDescriptionSelf;
+  public BukkitEvaluable commandAdvertiseManyDescriptionOther;
   public BukkitEvaluable commandAdvertiseUsage;
   public BukkitEvaluable commandAdvertiseDescription;
   public BukkitEvaluable commandReloadUsage;

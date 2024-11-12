@@ -259,27 +259,27 @@ playerMessages:
   beforeQueryingPlayerNoPredicate$: 'lut["MESSAGE_PREFIX"] & " &7Querying &e" & number_shops & " &7shops of &e" & owner & "&7..."'
 
   # - sub_label: String
-  # - multi_target_names: List<String>
+  # - many_target_names: List<String>
   # - advertise_mode_names: List<String>
-  commandAdvertiseMultiUsageSelf$: |
+  commandAdvertiseManyUsageSelf$: |
     sub_label
       & " <target: "
-      & iter_cat(multi_target_names, (name) => "&e" & name, "&7, ") 
+      & iter_cat(many_target_names, (name) => "&e" & name, "&7, ") 
       & "&e> <state: "
       & iter_cat(advertise_mode_names, (name) => "&e" & name, "&7, ") 
       & "&e>"
   # - sub_label: String
-  # - multi_target_names: List<String>
+  # - many_target_names: List<String>
   # - advertise_mode_names: List<String>
-  commandAdvertiseMultiUsageOther$: |
+  commandAdvertiseManyUsageOther$: |
     sub_label
       & " <target: "
-      & iter_cat(multi_target_names, (name) => "&e" & name, "&7, ") 
+      & iter_cat(many_target_names, (name) => "&e" & name, "&7, ") 
       & "&e> <state: "
       & iter_cat(advertise_mode_names, (name) => "&e" & name, "&7, ") 
       & "&e> [player]"
-  commandAdvertiseMultiDescriptionSelf$: '"Change the advertising-state of multiple shops"'
-  commandAdvertiseMultiDescriptionOther$: '"Change the advertising-state of multiple shops of any player"'
+  commandAdvertiseManyDescriptionSelf$: '"Change the advertising-state of multiple shops"'
+  commandAdvertiseManyDescriptionOther$: '"Change the advertising-state of multiple shops of any player"'
   # - sub_label: String
   # - advertise_mode_names: List<String>
   commandAdvertiseUsage$: 'sub_label & " [" & iter_cat(advertise_mode_names, (name) => "&e" & name, "&7, ") & "]"'
@@ -309,20 +309,20 @@ playerMessages:
     - '"&8> &7Predicate Documentation: &ehttps://blvckbytes.github.io/docs-item-predicate-parser/"'
   commandAboutScreenFooter$: '"&8&m                    &8[&6About QuickShopSearch&8]&8&m                    "'
   # - advertise_mode: String
-  commandAdvertiseMultiAlteredScreenHeader$: '"&8&m                    &8[&6Advertising &e" & advertise_mode & "&8]&8&m                    "'
+  commandAdvertiseManyAlteredScreenHeader$: '"&8&m                    &8[&6Advertising &e" & advertise_mode & "&8]&8&m                    "'
   # - advertise_mode: String
   # - number_of_changed_shops: Integer
-  commandAdvertiseMultiAlteredScreenFooter$:
+  commandAdvertiseManyAlteredScreenFooter$:
     - '"&8&m                    &8[&6Advertising &e" & advertise_mode & "&8]&8&m                    "'
     - 'lut["MESSAGE_PREFIX"] & " &7Total number of altered shops: &e" & number_of_changed_shops'
-  commandAdvertiseMultiOwnsNoShopsSelf$: 'lut["MESSAGE_PREFIX"] & " &cYou do not yet own any shops."'
+  commandAdvertiseManyOwnsNoShopsSelf$: 'lut["MESSAGE_PREFIX"] & " &cYou do not yet own any shops."'
   # - name: String
-  commandAdvertiseMultiOwnsNoShopsOther$: 'lut["MESSAGE_PREFIX"] & " &4" & name & " &cdoes not yet own any shops."'
+  commandAdvertiseManyOwnsNoShopsOther$: 'lut["MESSAGE_PREFIX"] & " &4" & name & " &cdoes not yet own any shops."'
   # - target_mode: String
-  commandAdvertiseMultiNoShopsMatchedTargetSelf$: 'lut["MESSAGE_PREFIX"] & " &cNone of your shops matched the target &4" & target_mode & "&c."'
+  commandAdvertiseManyNoShopsMatchedTargetSelf$: 'lut["MESSAGE_PREFIX"] & " &cNone of your shops matched the target &4" & target_mode & "&c."'
   # - target_mode: String
   # - name: String
-  commandAdvertiseMultiNoShopsMatchedTargetOther$: 'lut["MESSAGE_PREFIX"] & " &cNone of &4" & name & "''s &cshops matched the target &4" & target_mode & "&c."'
+  commandAdvertiseManyNoShopsMatchedTargetOther$: 'lut["MESSAGE_PREFIX"] & " &cNone of &4" & name & "''s &cshops matched the target &4" & target_mode & "&c."'
 
 predicates:
   mainLanguage: ENGLISH_US
