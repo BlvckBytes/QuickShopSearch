@@ -55,6 +55,8 @@ public class AdvertiseSubCommand extends SubCommand {
     }
 
     var previousMode = getCurrentAdvertiseMode(targetShop);
+
+
     BukkitEvaluable message;
 
     if (args.length == 0) {
@@ -66,7 +68,7 @@ public class AdvertiseSubCommand extends SubCommand {
       message.sendMessage(
         sender,
         targetShop.getShopEnvironment()
-          .withStaticVariable("current_mode", getEnumName(previousMode))
+          .withStaticVariable("current_mode", AdvertiseMode.matcher.getNormalizedName(previousMode))
           .build(config.rootSection.builtBaseEnvironment)
       );
 
@@ -76,12 +78,12 @@ public class AdvertiseSubCommand extends SubCommand {
     if (args.length != 1)
       return ExitCode.MALFORMED_USAGE;
 
-    var mode = parseEnumConstant(AdvertiseMode.class, args[0]);
+    var normalizedMode = AdvertiseMode.matcher.matchFirst(args[0]);
 
-    if (mode == null)
+    if (normalizedMode == null)
       return ExitCode.MALFORMED_USAGE;
 
-    alterAdvertisingMode(sender, targetShop, mode, isShopOwner, previousMode);
+    alterAdvertisingMode(sender, targetShop, normalizedMode.constant, isShopOwner, previousMode);
 
     return ExitCode.SUCCESS;
   }
@@ -121,7 +123,7 @@ public class AdvertiseSubCommand extends SubCommand {
       message.sendMessage(
         sender,
         targetShop.getShopEnvironment()
-          .withStaticVariable("current_mode", getEnumName(previousMode))
+          .withStaticVariable("current_mode", AdvertiseMode.matcher.getNormalizedName(previousMode))
           .build(config.rootSection.builtBaseEnvironment)
       );
 
@@ -138,7 +140,7 @@ public class AdvertiseSubCommand extends SubCommand {
       config.rootSection.playerMessages.commandAdvertiseInternalError.sendMessage(
         sender,
         targetShop.getShopEnvironment()
-          .withStaticVariable("current_mode", getEnumName(previousMode))
+          .withStaticVariable("current_mode", AdvertiseMode.matcher.getNormalizedName(previousMode))
           .build(config.rootSection.builtBaseEnvironment)
       );
 
@@ -159,8 +161,8 @@ public class AdvertiseSubCommand extends SubCommand {
     message.sendMessage(
       sender,
       targetShop.getShopEnvironment()
-        .withStaticVariable("previous_mode", getEnumName(previousMode))
-        .withStaticVariable("current_mode", getEnumName(currentMode))
+        .withStaticVariable("previous_mode", AdvertiseMode.matcher.getNormalizedName(previousMode))
+        .withStaticVariable("current_mode", AdvertiseMode.matcher.getNormalizedName(currentMode))
         .build(config.rootSection.builtBaseEnvironment)
     );
 
@@ -186,7 +188,7 @@ public class AdvertiseSubCommand extends SubCommand {
   @Override
   public List<String> onTabComplete(CommandSender sender, String[] args) {
     if (args.length == 1)
-      return suggestEnumConstants(AdvertiseMode.class, args[0]);
+      return AdvertiseMode.matcher.createCompletions(args[0]);
 
     return List.of();
   }
@@ -197,7 +199,7 @@ public class AdvertiseSubCommand extends SubCommand {
       ScalarType.STRING,
       config.rootSection.getBaseEnvironment()
         .withStaticVariable("sub_label", label)
-        .withStaticVariable("advertise_mode_names", suggestEnumConstants(AdvertiseMode.class, null))
+        .withStaticVariable("advertise_mode_names", AdvertiseMode.matcher.createCompletions(null))
         .build()
     );
   }

@@ -3,7 +3,6 @@ package me.blvckbytes.quick_shop_search.command;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public abstract class SubCommand {
@@ -30,37 +29,5 @@ public abstract class SubCommand {
     } catch (NumberFormatException e) {
       return null;
     }
-  }
-
-  // TODO: Enum-names should be title-cased, and not all upper in-your-face
-
-  protected String getEnumName(Enum<?> value) {
-    return value.name();
-  }
-
-  protected <T extends Enum<T>> @Nullable T parseEnumConstant(Class<T> enumType, String input) {
-    for (var constant : enumType.getEnumConstants()) {
-      if (constant.name().equalsIgnoreCase(input))
-        return constant;
-    }
-
-    return null;
-  }
-
-  protected List<String> suggestEnumConstants(Class<? extends Enum<?>> enumType, @Nullable String input) {
-    var constants = enumType.getEnumConstants();
-    var result = new ArrayList<String>(constants.length);
-    var inputLower = input == null ? null : input.toLowerCase();
-
-    for (var constant : constants) {
-      var constantName = constant.name();
-
-      if (inputLower != null && !constantName.toLowerCase().startsWith(inputLower))
-        continue;
-
-      result.add(constantName);
-    }
-
-    return result;
   }
 }

@@ -7,6 +7,7 @@ import me.blvckbytes.quick_shop_search.PluginPermission;
 import me.blvckbytes.quick_shop_search.cache.CachedShopRegistry;
 import me.blvckbytes.quick_shop_search.cache.OfflinePlayerCache;
 import me.blvckbytes.quick_shop_search.config.MainSection;
+import me.blvckbytes.syllables_matcher.EnumMatcher;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -21,6 +22,9 @@ public class AdvertiseManySubCommand extends SubCommand {
     ON,
     OFF,
     UNSET,
+    ;
+
+    static final EnumMatcher<ManyTarget> matcher = new EnumMatcher<>(values());
   }
 
   private final CachedShopRegistry shopRegistry;
@@ -79,14 +83,14 @@ public class AdvertiseManySubCommand extends SubCommand {
       }
     }
 
-    var manyTarget = parseEnumConstant(ManyTarget.class, args[0]);
+    var normalizedManyTarget = ManyTarget.matcher.matchFirst(args[0]);
 
-    if (manyTarget == null)
+    if (normalizedManyTarget == null)
       return ExitCode.MALFORMED_USAGE;
 
-    var mode = parseEnumConstant(AdvertiseMode.class, args[1]);
+    var normalizedMode = AdvertiseMode.matcher.matchFirst(args[1]);
 
-    if (mode == null)
+    if (normalizedMode == null)
       return ExitCode.MALFORMED_USAGE;
 
     var targetShops = shopRegistry.getShopsWithOwner(shopOwner);
@@ -116,7 +120,7 @@ public class AdvertiseManySubCommand extends SubCommand {
     var numberOfChangedShops = 0;
 
     for (var targetShop : targetShops) {
-      var isShopTargeted = switch (manyTarget) {
+      var isShopTargeted = switch (normalizedManyTarget.constant) {
         case ALL -> true;
         case SET -> targetShop.isAdvertisingSet();
         case UNSET -> !targetShop.isAdvertisingSet();
@@ -134,13 +138,13 @@ public class AdvertiseManySubCommand extends SubCommand {
           message.sendMessage(
             sender,
             config.rootSection.getBaseEnvironment()
-              .withStaticVariable("advertise_mode", getEnumName(mode))
+              .withStaticVariable("advertise_mode", normalizedMode.normalizedName)
               .build()
           );
         }
       }
 
-      if (advertiseSubCommand.alterAdvertisingMode(sender, targetShop, mode))
+      if (advertiseSubCommand.alterAdvertisingMode(sender, targetShop, normalizedMode.constant))
         ++numberOfChangedShops;
     }
 
@@ -148,7 +152,7 @@ public class AdvertiseManySubCommand extends SubCommand {
       if (shopOwner == sender) {
         config.rootSection.playerMessages.commandAdvertiseManyNoShopsMatchedTargetSelf.sendMessage(
           sender, config.rootSection.getBaseEnvironment()
-            .withStaticVariable("target_mode", getEnumName(manyTarget))
+            .withStaticVariable("target_mode", normalizedManyTarget.normalizedName)
             .build()
         );
 
@@ -158,7 +162,7 @@ public class AdvertiseManySubCommand extends SubCommand {
       config.rootSection.playerMessages.commandAdvertiseManyNoShopsMatchedTargetOther.sendMessage(
         sender,
         config.rootSection.getBaseEnvironment()
-          .withStaticVariable("target_mode", getEnumName(manyTarget))
+          .withStaticVariable("target_mode", normalizedManyTarget.normalizedName)
           .withStaticVariable("name", shopOwner.getName())
           .build()
       );
@@ -171,7 +175,7 @@ public class AdvertiseManySubCommand extends SubCommand {
         sender,
         config.rootSection.getBaseEnvironment()
           .withStaticVariable("number_of_changed_shops", numberOfChangedShops)
-          .withStaticVariable("advertise_mode", getEnumName(mode))
+          .withStaticVariable("advertise_mode", normalizedMode.normalizedName)
           .build()
       );
     }
@@ -182,10 +186,10 @@ public class AdvertiseManySubCommand extends SubCommand {
   @Override
   public List<String> onTabComplete(CommandSender sender, String[] args) {
     if (args.length == 1)
-      return suggestEnumConstants(ManyTarget.class, args[0]);
+      return ManyTarget.matcher.createCompletions(args[0]);
 
     if (args.length == 2)
-      return suggestEnumConstants(AdvertiseMode.class, args[1]);
+      return AdvertiseMode.matcher.createCompletions(args[1]);
 
     if (args.length == 3 && PluginPermission.SUB_COMMAND_ADVERTISE_MANY_OTHER.has(sender))
       return offlinePlayerCache.createSuggestions(args[2]);
@@ -197,8 +201,8 @@ public class AdvertiseManySubCommand extends SubCommand {
   public String getUsage(CommandSender sender) {
     var usageEnvironment = config.rootSection.getBaseEnvironment()
       .withStaticVariable("sub_label", label)
-      .withStaticVariable("many_target_names", suggestEnumConstants(ManyTarget.class, null))
-      .withStaticVariable("advertise_mode_names", suggestEnumConstants(AdvertiseMode.class, null))
+      .withStaticVariable("many_target_names", ManyTarget.matcher.createCompletions(null))
+      .withStaticVariable("advertise_mode_names", AdvertiseMode.matcher.createCompletions(null))
       .build();
 
     BukkitEvaluable usage;
