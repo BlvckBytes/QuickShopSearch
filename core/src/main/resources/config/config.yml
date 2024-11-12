@@ -209,12 +209,12 @@ playerMessages:
   commandAdvertiseNotLookingAtShop$: '@{MESSAGE-ADVERTISE-NOT-LOOKING-AT-SHOP(prefix=lut["MESSAGE_PREFIX"])}'
   commandAdvertiseNotTheOwner$: '@{MESSAGE-ADVERTISE-NOT-THE-OWNER(prefix=lut["MESSAGE_PREFIX"])}'
   commandAdvertiseInternalError$: '@{MESSAGE-ADVERTISE-INTERNAl-ERROR(prefix=lut["MESSAGE_PREFIX"])}'
-  commandAdvertiseEnabledSelf$: '@{MESSAGE-ADVERTISE-ENABLED-SELF(prefix=lut["MESSAGE_PREFIX"])}'
-  commandAdvertiseEnabledOther$: '@{MESSAGE-ADVERTISE-ENABLED-OTHER(prefix=lut["MESSAGE_PREFIX"])}'
-  commandAdvertiseDisabledSelf$: '@{MESSAGE-ADVERTISE-DISABLED-SELF(prefix=lut["MESSAGE_PREFIX"])}'
-  commandAdvertiseDisabledOther$: '@{MESSAGE-ADVERTISE-DISABLED-OTHER(prefix=lut["MESSAGE_PREFIX"])}'
-  commandAdvertiseUnsetSelf$: '@{MESSAGE-ADVERTISE-UNSET-SELF(prefix=lut["MESSAGE_PREFIX"])}'
-  commandAdvertiseUnsetOther$: '@{MESSAGE-ADVERTISE-UNSET-OTHER(prefix=lut["MESSAGE_PREFIX"])}'
+  commandAdvertiseUnchangedSelf$: '@{MESSAGE-ADVERTISE-UNCHANGED-SELF(prefix=lut["MESSAGE_PREFIX"])}'
+  commandAdvertiseUnchangedOther$: '@{MESSAGE-ADVERTISE-UNCHANGED-OTHER(prefix=lut["MESSAGE_PREFIX"])}'
+  commandAdvertiseChangedSelf$: '@{MESSAGE-ADVERTISE-CHANGED-SELF(prefix=lut["MESSAGE_PREFIX"])}'
+  commandAdvertiseChangedOther$: '@{MESSAGE-ADVERTISE-CHANGED-OTHER(prefix=lut["MESSAGE_PREFIX"])}'
+  commandAdvertiseReadSelf$: '@{MESSAGE-ADVERTISE-READ-SELF(prefix=lut["MESSAGE_PREFIX"])}'
+  commandAdvertiseReadOther$: '@{MESSAGE-ADVERTISE-READ-OTHER(prefix=lut["MESSAGE_PREFIX"])}'
 
   commandHelpScreenHeader$: '"&8&m                    &8[&6QuickShopSearch Help&8]&8&m                    "'
   # - label: String
@@ -282,7 +282,7 @@ playerMessages:
   commandAdvertiseMultiDescriptionOther$: '"Change the advertising-state of multiple shops of any player"'
   # - sub_label: String
   # - advertise_mode_names: List<String>
-  commandAdvertiseUsage$: 'sub_label & " <" & iter_cat(advertise_mode_names, (name) => "&e" & name, "&7, ") & ">"'
+  commandAdvertiseUsage$: 'sub_label & " [" & iter_cat(advertise_mode_names, (name) => "&e" & name, "&7, ") & "]"'
   commandAdvertiseDescription$: '@{MESSAGE-ADVERTISE-DESCRIPTION(prefix=lut["MESSAGE_PREFIX"])}'
   # - sub_label: String
   commandReloadUsage$: 'sub_label'
@@ -308,27 +308,21 @@ playerMessages:
     - '"&8> &7Plugin Documentation: &ehttps://blvckbytes.github.io/docs-quick-shop-search/"'
     - '"&8> &7Predicate Documentation: &ehttps://blvckbytes.github.io/docs-item-predicate-parser/"'
   commandAboutScreenFooter$: '"&8&m                    &8[&6About QuickShopSearch&8]&8&m                    "'
-
   # - advertise_mode: String
   commandAdvertiseMultiAlteredScreenHeader$: '"&8&m                    &8[&6Advertising &e" & advertise_mode & "&8]&8&m                    "'
   # - advertise_mode: String
-  # - owner: String
-  # - name: String?
-  # - price: Double
-  # - currency: String?
-  # - remaining_stock: Integer
-  # - remaining_space: Integer
-  # - is_selling: Boolean
-  # - is_buying: Boolean
-  # - is_unlimited: Boolean
-  # - loc_world: String?
-  # - loc_x: Integer
-  # - loc_y: Integer
-  # - loc_z: Integer
-  # - distance: Integer
-  commandAdvertiseMultiAlteredScreenLine$: '"&8> &7Updated shop at &e" & loc_x & "&7, &e" & loc_y & "&7, &e" & loc_z'
-  # - advertise_mode: String
-  commandAdvertiseMultiAlteredScreenFooter$: '"&8&m                    &8[&6Advertising &e" & advertise_mode & "&8]&8&m                    "'
+  # - number_of_changed_shops: Integer
+  commandAdvertiseMultiAlteredScreenFooter$:
+    - '"&8&m                    &8[&6Advertising &e" & advertise_mode & "&8]&8&m                    "'
+    - 'lut["MESSAGE_PREFIX"] & " &7Total number of altered shops: &e" & number_of_changed_shops'
+  commandAdvertiseMultiOwnsNoShopsSelf$: 'lut["MESSAGE_PREFIX"] & " &cYou do not yet own any shops."'
+  # - name: String
+  commandAdvertiseMultiOwnsNoShopsOther$: 'lut["MESSAGE_PREFIX"] & " &4" & name & " &cdoes not yet own any shops."'
+  # - target_mode: String
+  commandAdvertiseMultiNoShopsMatchedTargetSelf$: 'lut["MESSAGE_PREFIX"] & " &cNone of your shops matched the target &4" & target_mode & "&c."'
+  # - target_mode: String
+  # - name: String
+  commandAdvertiseMultiNoShopsMatchedTargetOther$: 'lut["MESSAGE_PREFIX"] & " &cNone of &4" & name & "''s &cshops matched the target &4" & target_mode & "&c."'
 
 predicates:
   mainLanguage: ENGLISH_US

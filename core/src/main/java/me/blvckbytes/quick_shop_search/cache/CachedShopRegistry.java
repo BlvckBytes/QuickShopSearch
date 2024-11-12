@@ -85,13 +85,15 @@ public class CachedShopRegistry implements QuickShopEventConsumer {
   }
 
   public Collection<CachedShop> getShopsWithOwner(OfflinePlayer owner) {
+
     synchronized (existingShopByLocation) {
       var result = new ArrayList<CachedShop>();
+      var targetUniqueId = owner.getUniqueId();
 
       for (var shop : existingShopByLocation.values()) {
-        var shopOwner = shop.handle.getOwner().getBukkitPlayer().orElse(null);
+        var shopOwnerId = shop.handle.getOwner().getUniqueId();
 
-        if (!owner.equals(shopOwner))
+        if (!targetUniqueId.equals(shopOwnerId))
           continue;
 
         result.add(shop);

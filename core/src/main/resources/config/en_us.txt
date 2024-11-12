@@ -166,8 +166,6 @@ MESSAGE-ADVERTISE-DESCRIPTION         &eAlters the looked-at shops advertising-s
 MESSAGE-ADVERTISE-NOT-LOOKING-AT-SHOP {prefix} &cYou're not currently looking at a shop.
 # - prefix: String
 MESSAGE-ADVERTISE-NOT-THE-OWNER       {prefix} &cYou're not the owner of that shop.
-# - prefix: String
-MESSAGE-ADVERTISE-INTERNAL-ERROR        {prefix} &cAn internal error occurred while trying to toggle the advertising-state; please report this issue to a team-member.
 # - name: String
 # - owner: String
 # - item_type: String
@@ -180,11 +178,52 @@ MESSAGE-ADVERTISE-INTERNAL-ERROR        {prefix} &cAn internal error occurred wh
 # - remaining_stock: Integer
 # - price: Double
 # - prefix: String
-MESSAGE-ADVERTISE-ENABLED-SELF        {prefix} &7You are &anow &7advertising your shop at &e{loc_x}&7, &e{loc_y}&7, &e{loc_z}&7.
-MESSAGE-ADVERTISE-ENABLED-OTHER       {prefix} &7The shop of &e{owner} &7at &e{loc_x}&7, &e{loc_y}&7, &e{loc_z} &7is &anow &7advertised.
-MESSAGE-ADVERTISE-DISABLED-SELF       {prefix} &7You are &cno longer &7advertising your shop at &e{loc_x}&7, &e{loc_y}&7, &e{loc_z}&7.
-MESSAGE-ADVERTISE-DISABLED-OTHER      {prefix} &7The shop of &e{owner} &7at &e{loc_x}&7, &e{loc_y}&7, &e{loc_z} &7is &cno longer &7advertised.
-MESSAGE-ADVERTISE-UNSET-SELF          {prefix} &7You &ecleared &7the advertising-state of your shop at &e{loc_x}&7, &e{loc_y}&7, &e{loc_z}&7.
-MESSAGE-ADVERTISE-UNSET-OTHER         {prefix} &7The advertising-flag of the shop of &e{owner} &7at &e{loc_x}&7, &e{loc_y}&7, &e{loc_z} &7is now &ecleared &7advertised.
+MESSAGE-ADVERTISE-INTERNAL-ERROR        {prefix} &cAn internal error occurred while trying to alter the advertising-state of the shop at &4{loc_x}&c, &4{loc_y}&c, &4{loc_z}&c in world &4{loc_world}&c; please report this issue to a team-member.
+# - name: String
+# - owner: String
+# - item_type: String
+# - loc_world: String
+# - loc_x: Integer
+# - loc_y: Integer
+# - loc_z: Integer
+# - distance: Integer
+# - remaining_space: Integer
+# - remaining_stock: Integer
+# - price: Double
+# - previous_mode: String
+# - current_mode: String
+# - prefix: String
+MESSAGE-ADVERTISE-CHANGED-SELF        {prefix} &7You have changed the advertising-mode of your shop at &e{loc_x}&7, &e{loc_y}&7, &e{loc_z} &7from &e{previous_mode} &7to &e{current_mode}&7.
+MESSAGE-ADVERTISE-CHANGED-OTHER       {prefix} &7You have changed the advertising-mode of &e{owner}'s &7shop at &e{loc_x}&7, &e{loc_y}&7, &e{loc_z} &7from &e{previous_mode} &7to &e{current_mode}&7.
+# - name: String
+# - owner: String
+# - item_type: String
+# - loc_world: String
+# - loc_x: Integer
+# - loc_y: Integer
+# - loc_z: Integer
+# - distance: Integer
+# - remaining_space: Integer
+# - remaining_stock: Integer
+# - price: Double
+# - current_mode: String
+# - prefix: String
+MESSAGE-ADVERTISE-UNCHANGED-SELF        {prefix} &cThe current advertising-mode of your shop at &4{loc_x}&c, &4{loc_y}&c, &4{loc_z} &cis already set to &4{current_mode}&c.
+MESSAGE-ADVERTISE-UNCHANGED-OTHER       {prefix} &cThe current advertising-mode of &4{owner}'s &cshop at &4{loc_x}&c, &4{loc_y}&c, &4{loc_z} &cis already set to &4{current_mode}&c.
+# - name: String
+# - owner: String
+# - item_type: String
+# - loc_world: String
+# - loc_x: Integer
+# - loc_y: Integer
+# - loc_z: Integer
+# - distance: Integer
+# - remaining_space: Integer
+# - remaining_stock: Integer
+# - price: Double
+# - current_mode: String
+# - prefix: String
+MESSAGE-ADVERTISE-READ-SELF       {prefix} &7The current advertising-mode of your shop at &e{loc_x}&7, &e{loc_y}&7, &e{loc_z} &7is &e{current_mode}&7.
+MESSAGE-ADVERTISE-READ-OTHER      {prefix} &7The current advertising-mode of &e{owner}'s &7shop at &e{loc_x}&7, &e{loc_y}&7, &e{loc_z} &7is &e{current_mode}&7.
 
 # ==================== END Messages ====================

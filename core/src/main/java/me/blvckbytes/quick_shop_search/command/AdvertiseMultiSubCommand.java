@@ -3,9 +3,7 @@ package me.blvckbytes.quick_shop_search.command;
 import me.blvckbytes.bbconfigmapper.ScalarType;
 import me.blvckbytes.bukkitevaluable.BukkitEvaluable;
 import me.blvckbytes.bukkitevaluable.ConfigKeeper;
-import me.blvckbytes.gpeee.interpreter.EvaluationEnvironmentBuilder;
 import me.blvckbytes.quick_shop_search.PluginPermission;
-import me.blvckbytes.quick_shop_search.cache.CachedShop;
 import me.blvckbytes.quick_shop_search.cache.CachedShopRegistry;
 import me.blvckbytes.quick_shop_search.cache.OfflinePlayerCache;
 import me.blvckbytes.quick_shop_search.config.MainSection;
@@ -13,37 +11,34 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class AdvertiseMultiSubCommand extends SubCommand {
 
   private enum MultiTarget {
-    // All shops of the target-user
     ALL,
-    // All shops of the target-user which have an advertising-state flag set
     SET,
-    // All shops of the target-user which do not have an advertising-state flag set
-    UNSET,
-    // Has advertising enabled
     ON,
-    // Has advertising disabled
-    OFF
+    OFF,
+    UNSET,
   }
 
   private final CachedShopRegistry shopRegistry;
   private final OfflinePlayerCache offlinePlayerCache;
+  private final AdvertiseSubCommand advertiseSubCommand;
   private final ConfigKeeper<MainSection> config;
 
   public AdvertiseMultiSubCommand(
     CachedShopRegistry shopRegistry,
     OfflinePlayerCache offlinePlayerCache,
+    AdvertiseSubCommand advertiseSubCommand,
     ConfigKeeper<MainSection> config
   ) {
     super("advertise-many", PluginPermission.SUB_COMMAND_ADVERTISE_MANY.node);
 
     this.shopRegistry = shopRegistry;
     this.offlinePlayerCache = offlinePlayerCache;
+    this.advertiseSubCommand = advertiseSubCommand;
     this.config = config;
   }
 
@@ -115,7 +110,10 @@ public class AdvertiseMultiSubCommand extends SubCommand {
       return ExitCode.SUCCESS;
     }
 
-    var alteredShops = new ArrayList<CachedShop>();
+    BukkitEvaluable message;
+
+    var hasHeaderBeenSent = false;
+    var numberOfChangedShops = 0;
 
     for (var targetShop : targetShops) {
       var isShopTargeted = switch (multiTarget) {
@@ -129,19 +127,29 @@ public class AdvertiseMultiSubCommand extends SubCommand {
       if (!isShopTargeted)
         continue;
 
-      switch (mode) {
-        case ON -> targetShop.setAdvertising(true);
-        case OFF -> targetShop.setAdvertising(false);
-        case UNSET -> targetShop.setAdvertising(null);
+      if (!hasHeaderBeenSent) {
+        hasHeaderBeenSent = true;
+
+        if ((message = config.rootSection.playerMessages.commandAdvertiseMultiAlteredScreenHeader) != null) {
+          message.sendMessage(
+            sender,
+            config.rootSection.getBaseEnvironment()
+              .withStaticVariable("advertise_mode", getEnumName(mode))
+              .build()
+          );
+        }
       }
 
-      alteredShops.add(targetShop);
+      if (advertiseSubCommand.alterAdvertisingMode(sender, targetShop, mode))
+        ++numberOfChangedShops;
     }
 
-    if (alteredShops.isEmpty()) {
+    if (!hasHeaderBeenSent) {
       if (shopOwner == sender) {
         config.rootSection.playerMessages.commandAdvertiseMultiNoShopsMatchedTargetSelf.sendMessage(
-          sender, config.rootSection.builtBaseEnvironment
+          sender, config.rootSection.getBaseEnvironment()
+            .withStaticVariable("target_mode", getEnumName(multiTarget))
+            .build()
         );
 
         return ExitCode.SUCCESS;
@@ -150,6 +158,7 @@ public class AdvertiseMultiSubCommand extends SubCommand {
       config.rootSection.playerMessages.commandAdvertiseMultiNoShopsMatchedTargetOther.sendMessage(
         sender,
         config.rootSection.getBaseEnvironment()
+          .withStaticVariable("target_mode", getEnumName(multiTarget))
           .withStaticVariable("name", shopOwner.getName())
           .build()
       );
@@ -157,20 +166,15 @@ public class AdvertiseMultiSubCommand extends SubCommand {
       return ExitCode.SUCCESS;
     }
 
-    BukkitEvaluable message;
-
-    var modeEnvironment = new EvaluationEnvironmentBuilder()
-      .withStaticVariable("advertise_mode", mode.name())
-      .build();
-
-    if ((message = config.rootSection.playerMessages.commandAdvertiseMultiAlteredScreenHeader) != null)
-      message.sendMessage(sender, modeEnvironment);
-
-    for (var alteredShop : alteredShops)
-      config.rootSection.playerMessages.commandAdvertiseMultiAlteredScreenLine.sendMessage(sender, alteredShop.getShopEnvironment().build(modeEnvironment));
-
-    if ((message = config.rootSection.playerMessages.commandAdvertiseMultiAlteredScreenFooter) != null)
-      message.sendMessage(sender, modeEnvironment);
+    if ((message = config.rootSection.playerMessages.commandAdvertiseMultiAlteredScreenFooter) != null) {
+      message.sendMessage(
+        sender,
+        config.rootSection.getBaseEnvironment()
+          .withStaticVariable("number_of_changed_shops", numberOfChangedShops)
+          .withStaticVariable("advertise_mode", getEnumName(mode))
+          .build()
+      );
+    }
 
     return ExitCode.SUCCESS;
   }

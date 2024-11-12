@@ -42,19 +42,18 @@ public class PlayerMessagesSection extends AConfigSection {
   public BukkitEvaluable commandAdvertiseNotLookingAtShop;
   public BukkitEvaluable commandAdvertiseNotTheOwner;
   public BukkitEvaluable commandAdvertiseInternalError;
-  public BukkitEvaluable commandAdvertiseEnabledSelf;
-  public BukkitEvaluable commandAdvertiseEnabledOther;
-  public BukkitEvaluable commandAdvertiseDisabledSelf;
-  public BukkitEvaluable commandAdvertiseDisabledOther;
-  public BukkitEvaluable commandAdvertiseUnsetSelf;
-  public BukkitEvaluable commandAdvertiseUnsetOther;
+  public BukkitEvaluable commandAdvertiseUnchangedSelf;
+  public BukkitEvaluable commandAdvertiseUnchangedOther;
+  public BukkitEvaluable commandAdvertiseChangedSelf;
+  public BukkitEvaluable commandAdvertiseChangedOther;
+  public BukkitEvaluable commandAdvertiseReadSelf;
+  public BukkitEvaluable commandAdvertiseReadOther;
 
   public BukkitEvaluable commandAdvertiseMultiOwnsNoShopsSelf;
   public BukkitEvaluable commandAdvertiseMultiOwnsNoShopsOther;
   public BukkitEvaluable commandAdvertiseMultiNoShopsMatchedTargetSelf;
   public BukkitEvaluable commandAdvertiseMultiNoShopsMatchedTargetOther;
   public @Nullable BukkitEvaluable commandAdvertiseMultiAlteredScreenHeader;
-  public BukkitEvaluable commandAdvertiseMultiAlteredScreenLine;
   public @Nullable BukkitEvaluable commandAdvertiseMultiAlteredScreenFooter;
 
   public BukkitEvaluable commandArgumentUnknownPlayerName;

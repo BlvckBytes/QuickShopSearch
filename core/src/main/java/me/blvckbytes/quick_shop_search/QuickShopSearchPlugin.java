@@ -66,8 +66,10 @@ public class QuickShopSearchPlugin extends JavaPlugin {
       var commandUpdater = new CommandUpdater(this);
       var commandExecutor = new QuickShopSearchCommand(config);
 
-      commandExecutor.registerSubCommand(new AdvertiseMultiSubCommand(shopRegistry, offlinePlayerCache, config));
-      commandExecutor.registerSubCommand(new AdvertiseSubCommand(shopRegistry, config));
+      var advertiseSubCommand = new AdvertiseSubCommand(shopRegistry, config);
+
+      commandExecutor.registerSubCommand(advertiseSubCommand);
+      commandExecutor.registerSubCommand(new AdvertiseMultiSubCommand(shopRegistry, offlinePlayerCache, advertiseSubCommand, config));
       commandExecutor.registerSubCommand(new GlobalSubCommand(displayHandler, parserPlugin.getPredicateHelper(), shopRegistry, config));
       commandExecutor.registerSubCommand(new NearSubCommand(displayHandler, parserPlugin.getPredicateHelper(), shopRegistry, config));
       commandExecutor.registerSubCommand(new PlayerSubCommand(offlinePlayerCache, displayHandler, parserPlugin.getPredicateHelper(), shopRegistry, config));

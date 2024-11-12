@@ -32,6 +32,12 @@ public abstract class SubCommand {
     }
   }
 
+  // TODO: Enum-names should be title-cased, and not all upper in-your-face
+
+  protected String getEnumName(Enum<?> value) {
+    return value.name();
+  }
+
   protected <T extends Enum<T>> @Nullable T parseEnumConstant(Class<T> enumType, String input) {
     for (var constant : enumType.getEnumConstants()) {
       if (constant.name().equalsIgnoreCase(input))

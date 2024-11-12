@@ -4,6 +4,7 @@ import me.blvckbytes.bbconfigmapper.ScalarType;
 import me.blvckbytes.bukkitevaluable.BukkitEvaluable;
 import me.blvckbytes.bukkitevaluable.ConfigKeeper;
 import me.blvckbytes.quick_shop_search.PluginPermission;
+import me.blvckbytes.quick_shop_search.cache.AdvertiseChangeResult;
 import me.blvckbytes.quick_shop_search.cache.CachedShop;
 import me.blvckbytes.quick_shop_search.cache.CachedShopRegistry;
 import me.blvckbytes.quick_shop_search.config.MainSection;
@@ -26,20 +27,12 @@ public class AdvertiseSubCommand extends SubCommand {
     this.config = config;
   }
 
-  // /qss advertise <on|off|unset>
+  // /qss advertise [on|off|unset]
 
   @Override
   public ExitCode onCommand(CommandSender sender, String[] args) {
     if (!(sender instanceof Player player))
       return ExitCode.PLAYER_ONLY;
-
-    if (args.length != 1)
-      return ExitCode.MALFORMED_USAGE;
-
-    var mode = parseEnumConstant(AdvertiseMode.class, args[0]);
-
-    if (mode == null)
-      return ExitCode.MALFORMED_USAGE;
 
     var targetShop = getLookedAtShop(player);
 
@@ -51,8 +44,7 @@ public class AdvertiseSubCommand extends SubCommand {
       return ExitCode.SUCCESS;
     }
 
-    var shopOwner = targetShop.handle.getOwner().getBukkitPlayer().orElse(null);
-    var isShopOwner = shopOwner != null && shopOwner == player;
+    var isShopOwner = isShopOwnerOf(player, targetShop);
 
     if (!PluginPermission.SUB_COMMAND_ADVERTISE_OWNER_BYPASS.has(player) && !isShopOwner) {
       config.rootSection.playerMessages.commandAdvertiseNotTheOwner.sendMessage(
@@ -62,48 +54,117 @@ public class AdvertiseSubCommand extends SubCommand {
       return ExitCode.SUCCESS;
     }
 
+    var previousMode = getCurrentAdvertiseMode(targetShop);
+    BukkitEvaluable message;
+
+    if (args.length == 0) {
+      if (isShopOwner)
+        message = config.rootSection.playerMessages.commandAdvertiseReadSelf;
+      else
+        message = config.rootSection.playerMessages.commandAdvertiseReadOther;
+
+      message.sendMessage(
+        sender,
+        targetShop.getShopEnvironment()
+          .withStaticVariable("current_mode", getEnumName(previousMode))
+          .build(config.rootSection.builtBaseEnvironment)
+      );
+
+      return ExitCode.SUCCESS;
+    }
+
+    if (args.length != 1)
+      return ExitCode.MALFORMED_USAGE;
+
+    var mode = parseEnumConstant(AdvertiseMode.class, args[0]);
+
+    if (mode == null)
+      return ExitCode.MALFORMED_USAGE;
+
+    alterAdvertisingMode(sender, targetShop, mode, isShopOwner, previousMode);
+
+    return ExitCode.SUCCESS;
+  }
+
+  /**
+   * @return Whether any actual changes have been made to this shop's advertising-state
+   */
+  public boolean alterAdvertisingMode(CommandSender sender, CachedShop targetShop, AdvertiseMode mode) {
+    return alterAdvertisingMode(sender, targetShop, mode, isShopOwnerOf(sender, targetShop), getCurrentAdvertiseMode(targetShop));
+  }
+
+  private AdvertiseMode getCurrentAdvertiseMode(CachedShop targetShop) {
+    AdvertiseMode currentMode;
+
+    if (!targetShop.isAdvertisingSet())
+      currentMode = AdvertiseMode.UNSET;
+    else
+      currentMode = targetShop.isAdvertising() ? AdvertiseMode.ON : AdvertiseMode.OFF;
+
+    return currentMode;
+  }
+
+  private boolean isShopOwnerOf(CommandSender sender, CachedShop targetShop) {
+    var shopOwner = targetShop.handle.getOwner().getBukkitPlayer().orElse(null);
+    return shopOwner != null && shopOwner == sender;
+  }
+
+  private boolean alterAdvertisingMode(CommandSender sender, CachedShop targetShop, AdvertiseMode mode, boolean isShopOwner, AdvertiseMode previousMode) {
+    BukkitEvaluable message;
+
+    if (previousMode == mode) {
+      if (isShopOwner)
+        message = config.rootSection.playerMessages.commandAdvertiseUnchangedSelf;
+      else
+        message = config.rootSection.playerMessages.commandAdvertiseUnchangedOther;
+
+      message.sendMessage(
+        sender,
+        targetShop.getShopEnvironment()
+          .withStaticVariable("current_mode", getEnumName(previousMode))
+          .build(config.rootSection.builtBaseEnvironment)
+      );
+
+      return false;
+    }
+
     var toggleResult = targetShop.setAdvertising(switch (mode) {
       case ON -> true;
       case OFF -> false;
       case UNSET -> null;
     });
 
-    BukkitEvaluable message;
+    if (toggleResult == AdvertiseChangeResult.ERROR) {
+      config.rootSection.playerMessages.commandAdvertiseInternalError.sendMessage(
+        sender,
+        targetShop.getShopEnvironment()
+          .withStaticVariable("current_mode", getEnumName(previousMode))
+          .build(config.rootSection.builtBaseEnvironment)
+      );
 
-    switch (toggleResult) {
-      case NOW_ON: {
-        if (isShopOwner)
-          message = config.rootSection.playerMessages.commandAdvertiseEnabledSelf;
-        else
-          message = config.rootSection.playerMessages.commandAdvertiseEnabledOther;
-        break;
-      }
-
-      case NOW_OFF: {
-        if (isShopOwner)
-          message = config.rootSection.playerMessages.commandAdvertiseDisabledSelf;
-        else
-          message = config.rootSection.playerMessages.commandAdvertiseDisabledOther;
-        break;
-      }
-
-      case NOW_UNSET: {
-        if (isShopOwner)
-          message = config.rootSection.playerMessages.commandAdvertiseUnsetSelf;
-        else
-          message = config.rootSection.playerMessages.commandAdvertiseUnsetOther;
-        break;
-      }
-
-      default: {
-        message = config.rootSection.playerMessages.commandAdvertiseInternalError;
-        break;
-      }
+      return false;
     }
 
-    message.sendMessage(player, targetShop.getShopEnvironment().build());
+    if (isShopOwner)
+      message = config.rootSection.playerMessages.commandAdvertiseChangedSelf;
+    else
+      message = config.rootSection.playerMessages.commandAdvertiseChangedOther;
 
-    return ExitCode.SUCCESS;
+    var currentMode = switch (toggleResult) {
+      case NOW_ON -> AdvertiseMode.ON;
+      case NOW_OFF -> AdvertiseMode.OFF;
+      default -> AdvertiseMode.UNSET;
+    };
+
+    message.sendMessage(
+      sender,
+      targetShop.getShopEnvironment()
+        .withStaticVariable("previous_mode", getEnumName(previousMode))
+        .withStaticVariable("current_mode", getEnumName(currentMode))
+        .build(config.rootSection.builtBaseEnvironment)
+    );
+
+    return true;
   }
 
   private @Nullable CachedShop getLookedAtShop(Player player) {
