@@ -16,7 +16,7 @@ public class ReloadSubCommand extends SubCommand {
   private final ConfigKeeper<MainSection> config;
 
   public ReloadSubCommand(Logger logger, ConfigKeeper<MainSection> config) {
-    super("reload", PluginPermission.SUB_COMMAND_RELOAD.node);
+    super(SubCommandLabel.RELOAD, PluginPermission.SUB_COMMAND_RELOAD.node);
 
     this.logger = logger;
     this.config = config;
@@ -53,7 +53,7 @@ public class ReloadSubCommand extends SubCommand {
   public String getUsage(CommandSender sender) {
     return config.rootSection.playerMessages.commandReloadUsage.asScalar(
       ScalarType.STRING, config.rootSection.getBaseEnvironment()
-        .withStaticVariable("sub_label", label)
+        .withStaticVariable("sub_label", SubCommandLabel.matcher.getNormalizedName(label))
         .build()
     );
   }

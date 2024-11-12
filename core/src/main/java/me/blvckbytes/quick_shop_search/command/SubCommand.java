@@ -7,10 +7,10 @@ import java.util.List;
 
 public abstract class SubCommand {
 
-  public final String label;
+  public final SubCommandLabel label;
   public final String permission;
 
-  public SubCommand(String label, String permission) {
+  public SubCommand(SubCommandLabel label, String permission) {
     this.label = label;
     this.permission = permission;
   }

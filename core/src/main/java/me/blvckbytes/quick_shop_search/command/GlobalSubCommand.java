@@ -25,7 +25,7 @@ public class GlobalSubCommand extends PredicateContainingSubCommand {
     ConfigKeeper<MainSection> config
   ) {
     super(
-      "global", PluginPermission.SUB_COMMAND_GLOBAL.node,
+      SubCommandLabel.GLOBAL, PluginPermission.SUB_COMMAND_GLOBAL.node,
       predicateHelper, shopRegistry, config
     );
 
@@ -106,7 +106,7 @@ public class GlobalSubCommand extends PredicateContainingSubCommand {
   public String getUsage(CommandSender sender) {
     return config.rootSection.playerMessages.commandGlobalUsage.asScalar(
       ScalarType.STRING, config.rootSection.getBaseEnvironment()
-        .withStaticVariable("sub_label", label)
+        .withStaticVariable("sub_label", SubCommandLabel.matcher.getNormalizedName(label))
         .build()
     );
   }

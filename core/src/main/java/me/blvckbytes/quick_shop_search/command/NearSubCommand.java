@@ -25,7 +25,7 @@ public class NearSubCommand extends PredicateContainingSubCommand {
     ConfigKeeper<MainSection> config
   ) {
     super(
-      "near", PluginPermission.SUB_COMMAND_NEAR.node,
+      SubCommandLabel.NEAR, PluginPermission.SUB_COMMAND_NEAR.node,
       predicateHelper, shopRegistry, config
     );
 
@@ -138,7 +138,7 @@ public class NearSubCommand extends PredicateContainingSubCommand {
   public String getUsage(CommandSender sender) {
     return config.rootSection.playerMessages.commandNearUsage.asScalar(
       ScalarType.STRING, config.rootSection.getBaseEnvironment()
-        .withStaticVariable("sub_label", label)
+        .withStaticVariable("sub_label", SubCommandLabel.matcher.getNormalizedName(label))
         .build()
     );
   }

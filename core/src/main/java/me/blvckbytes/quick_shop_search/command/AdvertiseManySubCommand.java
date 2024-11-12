@@ -38,7 +38,7 @@ public class AdvertiseManySubCommand extends SubCommand {
     AdvertiseSubCommand advertiseSubCommand,
     ConfigKeeper<MainSection> config
   ) {
-    super("advertise-many", PluginPermission.SUB_COMMAND_ADVERTISE_MANY.node);
+    super(SubCommandLabel.ADVERTISE_MANY, PluginPermission.SUB_COMMAND_ADVERTISE_MANY.node);
 
     this.shopRegistry = shopRegistry;
     this.offlinePlayerCache = offlinePlayerCache;
@@ -200,7 +200,7 @@ public class AdvertiseManySubCommand extends SubCommand {
   @Override
   public String getUsage(CommandSender sender) {
     var usageEnvironment = config.rootSection.getBaseEnvironment()
-      .withStaticVariable("sub_label", label)
+      .withStaticVariable("sub_label", SubCommandLabel.matcher.getNormalizedName(label))
       .withStaticVariable("many_target_names", ManyTarget.matcher.createCompletions(null))
       .withStaticVariable("advertise_mode_names", AdvertiseMode.matcher.createCompletions(null))
       .build();

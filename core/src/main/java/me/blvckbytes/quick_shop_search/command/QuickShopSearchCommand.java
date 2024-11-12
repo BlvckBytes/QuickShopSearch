@@ -15,28 +15,16 @@ import java.util.*;
 
 public class QuickShopSearchCommand implements CommandExecutor, TabExecutor {
 
-  private final Map<String, SubCommand> subCommandByLabelLower;
-  private final List<String> sortedSubCommandLabelsLower;
+  private final Map<SubCommandLabel, SubCommand> subCommandByLabel;
   private final ConfigKeeper<MainSection> config;
 
   public QuickShopSearchCommand(ConfigKeeper<MainSection> config) {
-    this.subCommandByLabelLower = new HashMap<>();
-    this.sortedSubCommandLabelsLower = new ArrayList<>();
+    this.subCommandByLabel = new HashMap<>();
     this.config = config;
   }
 
   public void registerSubCommand(SubCommand subCommand) {
-    var subCommandLabelLower = subCommand.label.toLowerCase().trim();
-
-    if (subCommandByLabelLower.containsKey(subCommandLabelLower))
-      return;
-
-    int sortedLabelsIndex = Collections.binarySearch(sortedSubCommandLabelsLower, subCommandLabelLower);
-
-    if (sortedLabelsIndex < 0)
-      sortedSubCommandLabelsLower.add(-sortedLabelsIndex - 1, subCommandLabelLower);
-
-    subCommandByLabelLower.put(subCommandLabelLower, subCommand);
+    subCommandByLabel.put(subCommand.label, subCommand);
   }
 
   @Override
@@ -54,9 +42,11 @@ public class QuickShopSearchCommand implements CommandExecutor, TabExecutor {
       return true;
     }
 
-    var subCommand = subCommandByLabelLower.get(args[0].toLowerCase());
+    SubCommand subCommand;
 
-    if (subCommand == null) {
+    var normalizedSubCommandLabel = SubCommandLabel.matcher.matchFirst(args[0]);
+
+    if (normalizedSubCommandLabel == null || (subCommand = subCommandByLabel.get(normalizedSubCommandLabel.constant)) == null) {
       config.rootSection.playerMessages.unknownSubCommand.sendMessage(
         sender,
         config.rootSection.getBaseEnvironment()
@@ -73,7 +63,7 @@ public class QuickShopSearchCommand implements CommandExecutor, TabExecutor {
         player,
         config.rootSection.getBaseEnvironment()
           .withStaticVariable("label", label)
-          .withStaticVariable("sub_label", subCommand.label)
+          .withStaticVariable("sub_label", SubCommandLabel.matcher.getNormalizedName(subCommand.label))
           .build()
       );
 
@@ -120,8 +110,8 @@ public class QuickShopSearchCommand implements CommandExecutor, TabExecutor {
     if ((message = config.rootSection.playerMessages.commandHelpScreenHeader) != null)
       message.sendMessage(sender, config.rootSection.builtBaseEnvironment);
 
-    for (var lowerLabel : sortedSubCommandLabelsLower) {
-      var subCommand = subCommandByLabelLower.get(lowerLabel);
+    for (var subCommandLabel : SubCommandLabel.values) {
+      var subCommand = subCommandByLabel.get(subCommandLabel);
 
       if (sender instanceof Player player && !player.hasPermission(subCommand.permission))
         continue;
@@ -145,17 +135,14 @@ public class QuickShopSearchCommand implements CommandExecutor, TabExecutor {
     if (!PluginPermission.MAIN_COMMAND.has(sender) || args.length == 0)
       return List.of();
 
-    var labelLower = args[0].toLowerCase();
+    if (args.length == 1)
+      return SubCommandLabel.matcher.createCompletions(args[0]);
 
-    if (args.length == 1) {
-      return subCommandByLabelLower.keySet().stream()
-        .filter(key -> key.startsWith(labelLower))
-        .toList();
-    }
+    SubCommand subCommand;
 
-    var subCommand = subCommandByLabelLower.get(labelLower);
+    var normalizedSubCommandLabel = SubCommandLabel.matcher.matchFirst(args[0]);
 
-    if (subCommand == null)
+    if (normalizedSubCommandLabel == null || (subCommand = subCommandByLabel.get(normalizedSubCommandLabel.constant)) == null)
       return List.of();
 
     if (sender instanceof Player player && !player.hasPermission(subCommand.permission))

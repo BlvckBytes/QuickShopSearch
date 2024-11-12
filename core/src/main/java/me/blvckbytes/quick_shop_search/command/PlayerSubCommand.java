@@ -28,7 +28,7 @@ public class PlayerSubCommand extends PredicateContainingSubCommand {
     ConfigKeeper<MainSection> config
   ) {
     super(
-      "player", PluginPermission.SUB_COMMAND_PLAYER.node,
+      SubCommandLabel.PLAYER, PluginPermission.SUB_COMMAND_PLAYER.node,
       predicateHelper, shopRegistry, config
     );
 
@@ -131,7 +131,7 @@ public class PlayerSubCommand extends PredicateContainingSubCommand {
   public String getUsage(CommandSender sender) {
     return config.rootSection.playerMessages.commandPlayerUsage.asScalar(
       ScalarType.STRING, config.rootSection.getBaseEnvironment()
-        .withStaticVariable("sub_label", label)
+        .withStaticVariable("sub_label", SubCommandLabel.matcher.getNormalizedName(label))
         .build()
     );
   }

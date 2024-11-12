@@ -30,7 +30,7 @@ public abstract class PredicateContainingSubCommand extends SubCommand {
   protected final ConfigKeeper<MainSection> config;
 
   public PredicateContainingSubCommand(
-    String label, String permission,
+    SubCommandLabel label, String permission,
     PredicateHelper predicateHelper,
     CachedShopRegistry shopRegistry,
     ConfigKeeper<MainSection> config

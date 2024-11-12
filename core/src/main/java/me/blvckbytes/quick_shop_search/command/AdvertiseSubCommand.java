@@ -21,7 +21,7 @@ public class AdvertiseSubCommand extends SubCommand {
   private final ConfigKeeper<MainSection> config;
 
   public AdvertiseSubCommand(CachedShopRegistry shopRegistry, ConfigKeeper<MainSection> config) {
-    super("advertise", PluginPermission.SUB_COMMAND_ADVERTISE.node);
+    super(SubCommandLabel.ADVERTISE, PluginPermission.SUB_COMMAND_ADVERTISE.node);
 
     this.shopRegistry = shopRegistry;
     this.config = config;
@@ -198,7 +198,7 @@ public class AdvertiseSubCommand extends SubCommand {
     return config.rootSection.playerMessages.commandAdvertiseUsage.asScalar(
       ScalarType.STRING,
       config.rootSection.getBaseEnvironment()
-        .withStaticVariable("sub_label", label)
+        .withStaticVariable("sub_label", SubCommandLabel.matcher.getNormalizedName(label))
         .withStaticVariable("advertise_mode_names", AdvertiseMode.matcher.createCompletions(null))
         .build()
     );

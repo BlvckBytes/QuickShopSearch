@@ -16,7 +16,7 @@ public class AboutSubCommand extends SubCommand {
   private final ConfigKeeper<MainSection> config;
 
   public AboutSubCommand(Plugin plugin, ConfigKeeper<MainSection> config) {
-    super("about", PluginPermission.SUB_COMMAND_ABOUT.node);
+    super(SubCommandLabel.ABOUT, PluginPermission.SUB_COMMAND_ABOUT.node);
 
     this.config = config;
     this.plugin = plugin;
@@ -57,7 +57,7 @@ public class AboutSubCommand extends SubCommand {
   public String getUsage(CommandSender sender) {
     return config.rootSection.playerMessages.commandAboutUsage.asScalar(
       ScalarType.STRING, config.rootSection.getBaseEnvironment()
-        .withStaticVariable("sub_label", label)
+        .withStaticVariable("sub_label", SubCommandLabel.matcher.getNormalizedName(label))
         .build()
     );
   }
@@ -65,9 +65,7 @@ public class AboutSubCommand extends SubCommand {
   @Override
   public String getDescription(CommandSender sender) {
     return config.rootSection.playerMessages.commandAboutDescription.asScalar(
-      ScalarType.STRING, config.rootSection.getBaseEnvironment()
-        .withStaticVariable("sub_label", label)
-        .build()
+      ScalarType.STRING, config.rootSection.builtBaseEnvironment
     );
   }
 }
