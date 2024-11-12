@@ -88,15 +88,16 @@ public abstract class PredicateContainingSubCommand extends SubCommand {
 
     var canViewOtherWorld = PluginPermission.OTHER_WORLD.has(player);
     var canViewNonAdvertising = PluginPermission.NON_ADVERTISE_BYPASS.has(player);
+    var shopOwnerId = shopOwner == null ? null : shopOwner.getUniqueId();
 
     for (var cachedShop : shopRegistry.getExistingShops()) {
       if (!cachedShop.isAdvertising() && !canViewNonAdvertising)
         continue;
 
-      if (shopOwner != null) {
-        var targetOwner = cachedShop.handle.getOwner().getBukkitPlayer().orElse(null);
+      if (shopOwnerId != null) {
+        var targetOwnerId = cachedShop.handle.getOwner().getUniqueId();
 
-        if (!shopOwner.equals(targetOwner))
+        if (!shopOwnerId.equals(targetOwnerId))
           continue;
       }
 
