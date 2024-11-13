@@ -107,8 +107,10 @@ public class AdvertiseSubCommand extends SubCommand {
   }
 
   private boolean isShopOwnerOf(CommandSender sender, CachedShop targetShop) {
-    var shopOwner = targetShop.handle.getOwner().getBukkitPlayer().orElse(null);
-    return shopOwner != null && shopOwner == sender;
+    if (!(sender instanceof Player player))
+      return false;
+
+    return player.getUniqueId().equals(targetShop.handle.getOwner().getUniqueId());
   }
 
   private boolean alterAdvertisingMode(CommandSender sender, CachedShop targetShop, AdvertiseMode mode, boolean isShopOwner, AdvertiseMode previousMode) {
