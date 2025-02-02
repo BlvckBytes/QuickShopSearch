@@ -1,6 +1,7 @@
 package me.blvckbytes.quick_shop_search.command;
 
 import org.bukkit.command.CommandSender;
+import org.bukkit.permissions.Permissible;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -8,7 +9,7 @@ import java.util.List;
 public abstract class SubCommand {
 
   public final SubCommandLabel label;
-  public final String permission;
+  private final String permission;
 
   public SubCommand(SubCommandLabel label, String permission) {
     this.label = label;
@@ -29,5 +30,12 @@ public abstract class SubCommand {
     } catch (NumberFormatException e) {
       return null;
     }
+  }
+
+  public boolean hasPermission(Permissible permissible) {
+    if (permission == null)
+      return true;
+
+    return permissible.hasPermission(permission);
   }
 }

@@ -8,7 +8,6 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
-import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -58,9 +57,9 @@ public class QuickShopSearchCommand implements CommandExecutor, TabExecutor {
       return true;
     }
 
-    if (sender instanceof Player player && !player.hasPermission(subCommand.permission)) {
+    if (!subCommand.hasPermission(sender)) {
       config.rootSection.playerMessages.missingPermissionSubCommand.sendMessage(
-        player,
+        sender,
         config.rootSection.getBaseEnvironment()
           .withStaticVariable("label", label)
           .withStaticVariable("sub_label", SubCommandLabel.matcher.getNormalizedName(subCommand.label))
@@ -113,7 +112,7 @@ public class QuickShopSearchCommand implements CommandExecutor, TabExecutor {
     for (var subCommandLabel : SubCommandLabel.values) {
       var subCommand = subCommandByLabel.get(subCommandLabel);
 
-      if (sender instanceof Player player && !player.hasPermission(subCommand.permission))
+      if (subCommand == null || !subCommand.hasPermission(sender))
         continue;
 
       config.rootSection.playerMessages.commandHelpScreenLine.sendMessage(
@@ -145,7 +144,7 @@ public class QuickShopSearchCommand implements CommandExecutor, TabExecutor {
     if (normalizedSubCommandLabel == null || (subCommand = subCommandByLabel.get(normalizedSubCommandLabel.constant)) == null)
       return List.of();
 
-    if (sender instanceof Player player && !player.hasPermission(subCommand.permission))
+    if (!subCommand.hasPermission(sender))
       return List.of();
 
     var subCommandArgs = Arrays.copyOfRange(args, 1, args.length);
