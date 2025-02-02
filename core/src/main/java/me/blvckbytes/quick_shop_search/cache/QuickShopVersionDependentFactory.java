@@ -6,25 +6,33 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.logging.Logger;
 
-public class QuickShopListenerFactory {
+public class QuickShopVersionDependentFactory {
 
   private static final String PLUGIN_NAME = "QuickShop-Hikari";
+  private static final int[] OLD_VERSION = new int[] { 6, 2, 0, 7 };
 
-  public static Listener create(Logger logger, QuickShopEventConsumer consumer) {
+  private final Logger logger;
+  private final int[] quickShopVersion;
+
+  public QuickShopVersionDependentFactory(Logger logger) {
+    this.logger = logger;
+
     var quickShopReference = Bukkit.getPluginManager().getPlugin(PLUGIN_NAME);
 
     if (!(quickShopReference instanceof JavaPlugin quickShopPlugin))
       throw new IllegalStateException("Could not get a reference to " + PLUGIN_NAME);
 
     var quickShopVersionString = quickShopPlugin.getDescription().getVersion();
-    var quickShopVersion = parseVersionString(quickShopVersionString);
+    quickShopVersion = parseVersionString(quickShopVersionString);
 
     logger.info("Detected " + PLUGIN_NAME + " version " + quickShopVersionString);
 
     if (quickShopVersion.length != 4)
       throw new IllegalStateException("Expected " + PLUGIN_NAME + "'s version to be comprised of four parts");
+  }
 
-    if (compareVersions(quickShopVersion, new int[] { 6, 2, 0, 7 }) <= 0) {
+  public Listener createListener(QuickShopEventConsumer consumer) {
+    if (compareVersions(quickShopVersion, OLD_VERSION) <= 0) {
       try {
         // On dev-builds, they like to make breaking changes, but not bump the version-string, :)
         // Thus, ensure that it's actually a version prior to 6.2.0.7, by trying to access an event-class
@@ -42,6 +50,23 @@ public class QuickShopListenerFactory {
 
     logger.info("Loaded listener-support for > " + PLUGIN_NAME + " 6.2.0.7");
     return new QuickShopListener_GT_6207(consumer);
+  }
+
+  public RemoteInteractionApi createInteractionApi() {
+    if (compareVersions(quickShopVersion, OLD_VERSION) <= 0) {
+      try {
+        var result = new RemoteInteractionApi_LTE_6207();
+        logger.info("Loaded remote-interaction-support for <= " + PLUGIN_NAME + " 6.2.0.7");
+        return result;
+      }
+
+      catch (Exception ignored) {
+        logger.info("Detected dev-version of 6.2.0.8, which introduced breaking-changes to remote-interaction");
+      }
+    }
+
+    logger.info("Loaded remote-interaction-support for > " + PLUGIN_NAME + " 6.2.0.7");
+    return new RemoteInteractionApi_GT_6207();
   }
 
   private static int compareVersions(int[] a, int[] b) {

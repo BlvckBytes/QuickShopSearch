@@ -20,6 +20,12 @@
     <dependencies>
         <dependency>
             <groupId>com.ghostchu</groupId>
+            <artifactId>quickshop-bukkit</artifactId>
+            <version>6.2.0.8</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.ghostchu</groupId>
             <artifactId>quickshop-api</artifactId>
             <version>6.2.0.8</version>
             <scope>provided</scope>
@@ -28,6 +34,13 @@
             <groupId>me.blvckbytes</groupId>
             <artifactId>common</artifactId>
             <version>${revision}</version>
+        </dependency>
+        <!-- Made use of in AbstractEconomy, which I need to access, and somehow, this dependency doesn't trickle down... -->
+        <dependency>
+            <groupId>com.ghostchu</groupId>
+            <artifactId>simplereloadlib</artifactId>
+            <version>1.1.2</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 

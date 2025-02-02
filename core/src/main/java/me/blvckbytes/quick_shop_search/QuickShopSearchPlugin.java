@@ -11,7 +11,7 @@ import me.blvckbytes.bukkitevaluable.ConfigKeeper;
 import me.blvckbytes.bukkitevaluable.ConfigManager;
 import me.blvckbytes.item_predicate_parser.ItemPredicateParserPlugin;
 import me.blvckbytes.quick_shop_search.cache.CachedShopRegistry;
-import me.blvckbytes.quick_shop_search.cache.QuickShopListenerFactory;
+import me.blvckbytes.quick_shop_search.cache.QuickShopVersionDependentFactory;
 import me.blvckbytes.quick_shop_search.config.*;
 import me.blvckbytes.quick_shop_search.display.ResultDisplayHandler;
 import me.blvckbytes.quick_shop_search.display.SelectionStateStore;
@@ -52,12 +52,14 @@ public class QuickShopSearchPlugin extends JavaPlugin {
       var chatPromptManager = new ChatPromptManager(scheduler);
       Bukkit.getServer().getPluginManager().registerEvents(chatPromptManager, this);
 
+      var versionDependentFactory = new QuickShopVersionDependentFactory(logger);
+      var remoteInteractionApi = versionDependentFactory.createInteractionApi();
+
       stateStore = new SelectionStateStore(this, logger);
-      displayHandler = new ResultDisplayHandler(scheduler, config, stateStore, chatPromptManager);
+      displayHandler = new ResultDisplayHandler(scheduler, remoteInteractionApi, config, stateStore, chatPromptManager);
 
       var shopRegistry = new CachedShopRegistry(this, scheduler, displayHandler, config, logger);
-
-      var shopEventHandler = QuickShopListenerFactory.create(logger, shopRegistry);
+      var shopEventHandler = versionDependentFactory.createListener(shopRegistry);
 
       Bukkit.getPluginManager().registerEvents(shopEventHandler, this);
       Bukkit.getPluginManager().registerEvents(displayHandler, this);

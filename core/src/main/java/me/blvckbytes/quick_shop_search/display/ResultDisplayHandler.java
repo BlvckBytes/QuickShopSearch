@@ -1,11 +1,6 @@
 package me.blvckbytes.quick_shop_search.display;
 
-import com.ghostchu.quickshop.QuickShop;
-import com.ghostchu.quickshop.api.QuickShopAPI;
-import com.ghostchu.quickshop.api.shop.ShopAction;
 import com.ghostchu.quickshop.api.shop.ShopType;
-import com.ghostchu.quickshop.shop.SimpleInfo;
-import com.ghostchu.quickshop.shop.inventory.BukkitInventoryWrapper;
 import com.tcoded.folialib.impl.PlatformScheduler;
 import me.blvckbytes.bukkitevaluable.BukkitEvaluable;
 import me.blvckbytes.bukkitevaluable.ConfigKeeper;
@@ -14,6 +9,7 @@ import me.blvckbytes.quick_shop_search.ChatPromptManager;
 import me.blvckbytes.quick_shop_search.cache.CachedShop;
 import me.blvckbytes.quick_shop_search.PluginPermission;
 import me.blvckbytes.quick_shop_search.ShopUpdate;
+import me.blvckbytes.quick_shop_search.cache.RemoteInteractionApi;
 import me.blvckbytes.quick_shop_search.config.MainSection;
 import org.bukkit.Location;
 import org.bukkit.block.BlockFace;
@@ -39,8 +35,8 @@ public class ResultDisplayHandler implements Listener {
   };
 
   private final PlatformScheduler scheduler;
-
   private final ConfigKeeper<MainSection> config;
+  private final RemoteInteractionApi remoteInteractionApi;
 
   private final SelectionStateStore stateStore;
   private final ChatPromptManager chatPromptManager;
@@ -48,11 +44,13 @@ public class ResultDisplayHandler implements Listener {
 
   public ResultDisplayHandler(
     PlatformScheduler scheduler,
+    RemoteInteractionApi remoteInteractionApi,
     ConfigKeeper<MainSection> config,
     SelectionStateStore stateStore,
     ChatPromptManager chatPromptManager
   ) {
     this.scheduler = scheduler;
+    this.remoteInteractionApi = remoteInteractionApi;
     this.stateStore = stateStore;
     this.chatPromptManager = chatPromptManager;
     this.config = config;
@@ -284,7 +282,9 @@ public class ResultDisplayHandler implements Listener {
           );
         }
 
-        dispatchShopInteraction(player, cachedShop, amount);
+        scheduler.runAtLocation(cachedShop.handle.getLocation(), scheduleTask ->
+          remoteInteractionApi.interact(player, cachedShop.handle, amount)
+        );
       },
       () -> {
         BukkitEvaluable message;
@@ -321,32 +321,6 @@ public class ResultDisplayHandler implements Listener {
     } catch (NumberFormatException ignored) {}
 
     return -1;
-  }
-
-  private void dispatchShopInteraction(Player player, CachedShop cachedShop, int amount) {
-    scheduler.runAtLocation(cachedShop.handle.getLocation(), scheduleTask -> {
-      var tradeInfo = new SimpleInfo(
-        cachedShop.handle.getLocation(),
-        cachedShop.handle.isBuying() ? ShopAction.PURCHASE_SELL : ShopAction.PURCHASE_BUY,
-        null, null, cachedShop.handle, false
-      );
-
-      var wrappedInventory = new BukkitInventoryWrapper(player.getInventory());
-
-      if (cachedShop.handle.isBuying()) {
-        QuickShopAPI.getInstance().getShopManager().actionBuying(
-          player, wrappedInventory,
-          QuickShop.getInstance().getEconomy(),
-          tradeInfo, cachedShop.handle, amount
-        );
-      } else {
-        QuickShopAPI.getInstance().getShopManager().actionSelling(
-          player, wrappedInventory,
-          QuickShop.getInstance().getEconomy(),
-          tradeInfo, cachedShop.handle, amount
-        );
-      }
-    });
   }
 
   private void teleportPlayerToShop(Player player, ResultDisplay display, CachedShop cachedShop) {
