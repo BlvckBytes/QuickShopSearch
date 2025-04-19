@@ -92,7 +92,18 @@ public class QuickShopVersionDependentFactory {
 
     for (var i = 0; i < versionParts.length; ++i) {
       try {
-        versionNumbers[i] = Integer.parseInt(versionParts[i]);
+        var versionPart = versionParts[i];
+
+        // They've decided to append additional information with a dash to the last part
+        // Example: "6.2.0.9-RELEASE-1"
+        if (i == versionParts.length - 1) {
+          var dashIndex = versionPart.indexOf('-');
+
+          if (dashIndex > 0)
+            versionPart = versionPart.substring(0, dashIndex);
+        }
+
+        versionNumbers[i] = Integer.parseInt(versionPart);
       } catch (NumberFormatException e) {
         throw new IllegalStateException("Could not parse " + (i + 1) + "-th version-part of version " + versionString, e);
       }
