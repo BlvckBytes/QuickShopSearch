@@ -205,4 +205,22 @@ MESSAGE-ADVERTISE-ENABLED-OTHER       {prefix} &7The shop of &e{owner} &7at &e{l
 MESSAGE-ADVERTISE-DISABLED-SELF       {prefix} &7You are &cno longer &7advertising your shop at &e{loc_x}&7, &e{loc_y}&7, &e{loc_z}&7.
 MESSAGE-ADVERTISE-DISABLED-OTHER      {prefix} &7The shop of &e{owner} &7at &e{loc_x}&7, &e{loc_y}&7, &e{loc_z} &7is &cno longer &7advertised.
 
+# - duration: String
+MESSAGE-PENDING-COOLDOWN-FEATURE-TELEPORT-SAME-SHOP         {prefix} &7Please wait another {duration}&7, until you teleport to the &csame shop &7again!
+# - duration: String
+MESSAGE-PENDING-COOLDOWN-FEATURE-TELEPORT-ANY-SHOP          {prefix} &7Please wait another {duration}&7, until you teleport to a &cshop &7again!
+# - duration: String
+MESSAGE-PENDING-COOLDOWN-FEATURE-TELEPORT-OTHER-WORLD-SHOP  {prefix} &7Please wait another {duration}&7, until you teleport to a &cshop in another world &7again!
+
+MESSAGE-COOLDOWN-FORMAT-DAYS-SINGULAR-SUFFIX      \ &cday
+MESSAGE-COOLDOWN-FORMAT-DAYS-PLURAL-SUFFIX        \ &cdays
+MESSAGE-COOLDOWN-FORMAT-HOURS-SINGULAR-SUFFIX     \ &chour
+MESSAGE-COOLDOWN-FORMAT-HOURS-PLURAL-SUFFIX       \ &chours
+MESSAGE-COOLDOWN-FORMAT-MINUTES-SINGULAR-SUFFIX   \ &cminute
+MESSAGE-COOLDOWN-FORMAT-MINUTES-PLURAL-SUFFIX     \ &cminutes
+MESSAGE-COOLDOWN-FORMAT-SECONDS-SINGULAR-SUFFIX   \ &csecond
+MESSAGE-COOLDOWN-FORMAT-SECONDS-PLURAL-SUFFIX     \ &cseconds
+MESSAGE-COOLDOWN-FORMAT-PART-SEPARATOR            &7, \
+MESSAGE-COOLDOWN-FORMAT-PART-PREFIX               &c
+
 # ==================== END Messages ====================

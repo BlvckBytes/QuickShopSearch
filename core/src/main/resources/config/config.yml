@@ -198,7 +198,7 @@ playerMessages:
   usageQsslCommandLanguage$: |
     language_list = iter_cat(languages, (language) => @{MESSAGE-USAGE-QSSL-LANGUAGE-ITEM-COLOR} & language, @{MESSAGE-USAGE-QSSL-LANGUAGE-SEPARATOR-COLOR} & ", ")
     @{MESSAGE-USAGE-QSSL-LANGUAGE(prefix=lut["MESSAGE_PREFIX"])}
-# - user_input: String
+  # - user_input: String
   unknownLanguageActionBar$: '@{MESSAGE-UNKNOWN-LANGUAGE(prefix=lut["MESSAGE_PREFIX"])}'
   pluginReloadedSuccess$: '@{MESSAGE-PLUGIN-RELOAD(prefix=lut["MESSAGE_PREFIX"])}'
   pluginReloadedError$: '@{MESSAGE-PLUGIN-RELOAD-ERROR(prefix=lut["MESSAGE_PREFIX"])}'
@@ -229,11 +229,59 @@ playerMessages:
   commandAdvertiseEnabledOther$: '@{MESSAGE-ADVERTISE-ENABLED-OTHER(prefix=lut["MESSAGE_PREFIX"])}'
   commandAdvertiseDisabledSelf$: '@{MESSAGE-ADVERTISE-DISABLED-SELF(prefix=lut["MESSAGE_PREFIX"])}'
   commandAdvertiseDisabledOther$: '@{MESSAGE-ADVERTISE-DISABLED-OTHER(prefix=lut["MESSAGE_PREFIX"])}'
+  # - duration: String
+  pendingCooldownFeatureTeleportSameShop$: '@{MESSAGE-PENDING-COOLDOWN-FEATURE-TELEPORT-SAME-SHOP(prefix=lut["MESSAGE_PREFIX"])}'
+  # - duration: String
+  pendingCooldownFeatureTeleportAnyShop$: '@{MESSAGE-PENDING-COOLDOWN-FEATURE-TELEPORT-ANY-SHOP(prefix=lut["MESSAGE_PREFIX"])}'
+  # - duration: String
+  pendingCooldownFeatureTeleportOtherWorldShop$: '@{MESSAGE-PENDING-COOLDOWN-FEATURE-TELEPORT-OTHER-WORLD-SHOP(prefix=lut["MESSAGE_PREFIX"])}'
 
 predicates:
   mainLanguage: ENGLISH_US
 
 shopAccessLists:
+
+cooldowns:
+  # - days: Integer
+  # - hours: Integer
+  # - minutes: Integer
+  # - seconds: Integer
+  cooldownFormat$: |
+    iter_cat(
+      filter(list_of(
+        if days == 0 then null else days & (
+          if days == 1 then
+            @{MESSAGE-COOLDOWN-FORMAT-DAYS-SINGULAR-SUFFIX}
+          else
+            @{MESSAGE-COOLDOWN-FORMAT-DAYS-PLURAL-SUFFIX}
+        ),
+        if hours == 0 then null else hours & (
+          if hours == 1 then
+            @{MESSAGE-COOLDOWN-FORMAT-HOURS-SINGULAR-SUFFIX}
+          else
+            @{MESSAGE-COOLDOWN-FORMAT-HOURS-PLURAL-SUFFIX}
+        ),
+        if minutes == 0 then null else minutes & (
+          if minutes == 1 then
+            @{MESSAGE-COOLDOWN-FORMAT-MINUTES-SINGULAR-SUFFIX}
+          else
+            @{MESSAGE-COOLDOWN-FORMAT-MINUTES-PLURAL-SUFFIX}
+        ),
+        if seconds == 0 then null else seconds & (
+          if seconds == 1 then
+            @{MESSAGE-COOLDOWN-FORMAT-SECONDS-SINGULAR-SUFFIX}
+          else
+            @{MESSAGE-COOLDOWN-FORMAT-SECONDS-PLURAL-SUFFIX}
+        )
+      ), (it) => it != null),
+      (it) => @{MESSAGE-COOLDOWN-FORMAT-PART-PREFIX} & it,
+      @{MESSAGE-COOLDOWN-FORMAT-PART-SEPARATOR}
+    )
+  # Specify the cooldown-duration in seconds
+  teleportToShop:
+    sameShop: 30
+    anyShop: 20
+    otherWorldShop: 120
 
 commands:
   quickShopSearch:

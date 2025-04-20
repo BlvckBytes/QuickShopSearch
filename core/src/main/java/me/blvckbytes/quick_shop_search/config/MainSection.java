@@ -12,6 +12,7 @@ public class MainSection extends AConfigSection {
   public PredicatesSection predicates;
   public CommandsSection commands;
   public ShopAccessListsSection shopAccessLists;
+  public CooldownsSection cooldowns;
 
   public MainSection(EvaluationEnvironmentBuilder baseEnvironment) {
     super(baseEnvironment);
