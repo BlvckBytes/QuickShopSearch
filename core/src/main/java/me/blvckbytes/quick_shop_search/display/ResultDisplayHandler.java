@@ -2,6 +2,7 @@ package me.blvckbytes.quick_shop_search.display;
 
 import com.ghostchu.quickshop.api.shop.ShopType;
 import com.tcoded.folialib.impl.PlatformScheduler;
+import me.blvckbytes.bbconfigmapper.ScalarType;
 import me.blvckbytes.bukkitevaluable.BukkitEvaluable;
 import me.blvckbytes.bukkitevaluable.ConfigKeeper;
 import me.blvckbytes.gpeee.interpreter.EvaluationEnvironmentBuilder;
@@ -30,6 +31,7 @@ public class ResultDisplayHandler implements Listener {
 
   private static final long MOVE_GHOST_ITEM_THRESHOLD_MS = 500;
   private static final double PLAYER_EYE_HEIGHT = 1.5;
+  private static final String TELEPORT_COOLDOWN_KEY = "teleport-to-shop";
 
   private static final BlockFace[] SHOP_SIGN_FACES = new BlockFace[] {
     BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST
@@ -327,8 +329,101 @@ public class ResultDisplayHandler implements Listener {
     return -1;
   }
 
+  private String formatDuration(long milliseconds) {
+    long seconds = (milliseconds + 999) / 1000;
+    long durationSeconds = seconds % 60;
+    long durationMinutes = seconds % 3600 / 60;
+    long durationHours = seconds % 86400 / 3600;
+    long durationDays = seconds / 86400;
+
+    return config.rootSection.cooldowns.cooldownFormat.asScalar(
+      ScalarType.STRING,
+      config.rootSection.getBaseEnvironment()
+        .withStaticVariable("days", durationDays)
+        .withStaticVariable("hours", durationHours)
+        .withStaticVariable("minutes", durationMinutes)
+        .withStaticVariable("seconds", durationSeconds)
+        .build()
+    );
+  }
+
+  private boolean checkAndNotifyOfCooldown(
+    Player player,
+    TeleportCooldownType cooldownType
+  ) {
+    if (cooldownType.bypassPermission().has(player))
+      return false;
+
+    var currentStamp = System.currentTimeMillis();
+    var lastTeleportStamp = stampStore.read(player.getUniqueId(), cooldownType.stampKey());
+
+    if (lastTeleportStamp > 0) {
+      long elapsedDuration = currentStamp - lastTeleportStamp;
+      if (elapsedDuration < cooldownType.durationMillis()) {
+
+        if (cooldownType.cooldownMessage() != null) {
+          cooldownType.cooldownMessage().sendMessage(
+            player,
+            config.rootSection.getBaseEnvironment()
+              .withStaticVariable("duration", formatDuration(cooldownType.durationMillis() - elapsedDuration))
+              .build()
+          );
+        }
+
+        return true;
+      }
+    }
+
+    return false;
+  }
+
   private void teleportPlayerToShop(Player player, ResultDisplay display, CachedShop cachedShop) {
     BukkitEvaluable message;
+
+    var shop = cachedShop.handle;
+    var shopId = cachedShop.handle.getShopId();
+    var shopLocation = shop.getLocation().clone(); // Not cloning can mess shops up (direct reference)!
+
+    var applicableCooldowns = new ArrayList<TeleportCooldownType>();
+    TeleportCooldownType cooldownType;
+
+    if (shopLocation.getWorld() != player.getWorld()) {
+      cooldownType = new TeleportCooldownType(
+        PluginPermission.FEATURE_TELEPORT_OTHER_WORLD_BYPASS_COOLDOWN,
+        TELEPORT_COOLDOWN_KEY + "-other-world",
+        config.rootSection.cooldowns.teleportToShop.otherWorldShop * 1000,
+        config.rootSection.playerMessages.pendingCooldownFeatureTeleportOtherWorldShop
+      );
+
+      if (checkAndNotifyOfCooldown(player, cooldownType))
+        return;
+
+      applicableCooldowns.add(cooldownType);
+    }
+
+    cooldownType = new TeleportCooldownType(
+      PluginPermission.FEATURE_TELEPORT_BYPASS_COOLDOWN_SAME_SHOP,
+      TELEPORT_COOLDOWN_KEY + "-shopId-" + shopId,
+      config.rootSection.cooldowns.teleportToShop.sameShop * 1000,
+      config.rootSection.playerMessages.pendingCooldownFeatureTeleportSameShop
+    );
+
+    if (checkAndNotifyOfCooldown(player, cooldownType))
+      return;
+
+    applicableCooldowns.add(cooldownType);
+
+    cooldownType = new TeleportCooldownType(
+      PluginPermission.FEATURE_TELEPORT_BYPASS_COOLDOWN_ANY_SHOP,
+      TELEPORT_COOLDOWN_KEY,
+      config.rootSection.cooldowns.teleportToShop.anyShop * 1000,
+      config.rootSection.playerMessages.pendingCooldownFeatureTeleportAnyShop
+    );
+
+    if (checkAndNotifyOfCooldown(player, cooldownType))
+      return;
+
+    applicableCooldowns.add(cooldownType);
 
     if ((message = config.rootSection.playerMessages.beforeTeleporting) != null) {
       message.sendMessage(
@@ -337,8 +432,6 @@ public class ResultDisplayHandler implements Listener {
       );
     }
 
-    var shop = cachedShop.handle;
-    var shopLocation = shop.getLocation().clone(); // Not cloning can mess shops up (direct reference)!
     var shopBlock = shopLocation.getBlock();
 
     Location targetLocation = null;
@@ -364,6 +457,9 @@ public class ResultDisplayHandler implements Listener {
     // This fallback should never be reached, but better safe than sorry.
     if (targetLocation == null)
       targetLocation = shopLocation.add(.5, 0, .5);
+
+    for (var applicableCooldown : applicableCooldowns)
+      stampStore.write(player.getUniqueId(), applicableCooldown.stampKey(), System.currentTimeMillis());
 
     scheduler.teleportAsync(player, targetLocation, PlayerTeleportEvent.TeleportCause.PLUGIN);
     scheduler.runAtEntity(player, scheduleTask -> player.closeInventory());
