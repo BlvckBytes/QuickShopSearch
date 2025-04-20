@@ -389,10 +389,22 @@ public class ResultDisplayHandler implements Listener {
 
     if (shopLocation.getWorld() != player.getWorld()) {
       cooldownType = new TeleportCooldownType(
-        PluginPermission.FEATURE_TELEPORT_OTHER_WORLD_BYPASS_COOLDOWN,
+        PluginPermission.FEATURE_TELEPORT_OTHER_WORLD_BYPASS_COOLDOWN_SAME_SHOP,
+        TELEPORT_COOLDOWN_KEY + "-other-world-shopId-" + shopId,
+        config.rootSection.cooldowns.teleportToShop.otherWorldSameShop * 1000,
+        config.rootSection.playerMessages.pendingCooldownFeatureTeleportOtherWorldSameShop
+      );
+
+      if (checkAndNotifyOfCooldown(player, cooldownType))
+        return;
+
+      applicableCooldowns.add(cooldownType);
+
+      cooldownType = new TeleportCooldownType(
+        PluginPermission.FEATURE_TELEPORT_OTHER_WORLD_BYPASS_COOLDOWN_ANY_SHOP,
         TELEPORT_COOLDOWN_KEY + "-other-world",
-        config.rootSection.cooldowns.teleportToShop.otherWorldShop * 1000,
-        config.rootSection.playerMessages.pendingCooldownFeatureTeleportOtherWorldShop
+        config.rootSection.cooldowns.teleportToShop.otherWorldAnyShop * 1000,
+        config.rootSection.playerMessages.pendingCooldownFeatureTeleportOtherWorldAnyShop
       );
 
       if (checkAndNotifyOfCooldown(player, cooldownType))

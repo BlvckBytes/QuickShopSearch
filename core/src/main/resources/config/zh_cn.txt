@@ -210,7 +210,9 @@ MESSAGE-PENDING-COOLDOWN-FEATURE-TELEPORT-SAME-SHOP         {prefix} &7Please wa
 # - duration: String
 MESSAGE-PENDING-COOLDOWN-FEATURE-TELEPORT-ANY-SHOP          {prefix} &7Please wait another {duration}&7, until you teleport to a &cshop &7again!
 # - duration: String
-MESSAGE-PENDING-COOLDOWN-FEATURE-TELEPORT-OTHER-WORLD-SHOP  {prefix} &7Please wait another {duration}&7, until you teleport to a &cshop in another world &7again!
+MESSAGE-PENDING-COOLDOWN-FEATURE-TELEPORT-OTHER-WORLD-SAME-SHOP  {prefix} &7Please wait another {duration}&7, until you teleport to the &csame shop in another world &7again!
+# - duration: String
+MESSAGE-PENDING-COOLDOWN-FEATURE-TELEPORT-OTHER-WORLD-ANY-SHOP   {prefix} &7Please wait another {duration}&7, until you teleport to a &cshop in another world &7again!
 
 MESSAGE-COOLDOWN-FORMAT-DAYS-SINGULAR-SUFFIX      \ &cday
 MESSAGE-COOLDOWN-FORMAT-DAYS-PLURAL-SUFFIX        \ &cdays

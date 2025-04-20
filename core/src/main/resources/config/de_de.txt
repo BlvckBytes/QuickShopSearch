@@ -205,11 +205,13 @@ MESSAGE-ADVERTISE-DISABLED-SELF       {prefix} &7Du inserierst deinen Shop bei &
 MESSAGE-ADVERTISE-DISABLED-OTHER      {prefix} &7Der Shop von &e{owner} &7bei &e{loc_x}&7, &e{loc_y}&7, &e{loc_z} &7ist &cnicht mehr &7inseriert.
 
 # - duration: String
-MESSAGE-PENDING-COOLDOWN-FEATURE-TELEPORT-SAME-SHOP         {prefix} &7Bitte warte noch {duration}&7, bevor du dich erneut zum &cselben Shop &7teleportierst!
+MESSAGE-PENDING-COOLDOWN-FEATURE-TELEPORT-SAME-SHOP              {prefix} &7Bitte warte noch {duration}&7, bevor du dich erneut zum &cselben Shop &7teleportierst!
 # - duration: String
-MESSAGE-PENDING-COOLDOWN-FEATURE-TELEPORT-ANY-SHOP          {prefix} &7Bitte warte noch {duration}&7, bevor du dich erneut zu einem &cShop &7teleportierst!
+MESSAGE-PENDING-COOLDOWN-FEATURE-TELEPORT-ANY-SHOP               {prefix} &7Bitte warte noch {duration}&7, bevor du dich erneut zu einem &cShop &7teleportierst!
 # - duration: String
-MESSAGE-PENDING-COOLDOWN-FEATURE-TELEPORT-OTHER-WORLD-SHOP  {prefix} &7Bitte warte noch {duration}&7, bevor du dich erneut zu einem &cShop in anderen Welten &7teleportierst!
+MESSAGE-PENDING-COOLDOWN-FEATURE-TELEPORT-OTHER-WORLD-SAME-SHOP  {prefix} &7Bitte warte noch {duration}&7, bevor du dich erneut zum &cselben Shop in anderen Welten &7teleportierst!
+# - duration: String
+MESSAGE-PENDING-COOLDOWN-FEATURE-TELEPORT-OTHER-WORLD-ANY-SHOP   {prefix} &7Bitte warte noch {duration}&7, bevor du dich erneut zu einem &cShop in anderen Welten &7teleportierst!
 
 MESSAGE-COOLDOWN-FORMAT-DAYS-SINGULAR-SUFFIX      \ &cTag
 MESSAGE-COOLDOWN-FORMAT-DAYS-PLURAL-SUFFIX        \ &cTage

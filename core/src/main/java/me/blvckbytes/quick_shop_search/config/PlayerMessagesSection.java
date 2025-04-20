@@ -47,7 +47,8 @@ public class PlayerMessagesSection extends AConfigSection {
 
   public @Nullable BukkitEvaluable pendingCooldownFeatureTeleportSameShop;
   public @Nullable BukkitEvaluable pendingCooldownFeatureTeleportAnyShop;
-  public @Nullable BukkitEvaluable pendingCooldownFeatureTeleportOtherWorldShop;
+  public @Nullable BukkitEvaluable pendingCooldownFeatureTeleportOtherWorldSameShop;
+  public @Nullable BukkitEvaluable pendingCooldownFeatureTeleportOtherWorldAnyShop;
 
   public PlayerMessagesSection(EvaluationEnvironmentBuilder baseEnvironment) {
     super(baseEnvironment);

@@ -234,7 +234,9 @@ playerMessages:
   # - duration: String
   pendingCooldownFeatureTeleportAnyShop$: '@{MESSAGE-PENDING-COOLDOWN-FEATURE-TELEPORT-ANY-SHOP(prefix=lut["MESSAGE_PREFIX"])}'
   # - duration: String
-  pendingCooldownFeatureTeleportOtherWorldShop$: '@{MESSAGE-PENDING-COOLDOWN-FEATURE-TELEPORT-OTHER-WORLD-SHOP(prefix=lut["MESSAGE_PREFIX"])}'
+  pendingCooldownFeatureTeleportOtherWorldSameShop$: '@{MESSAGE-PENDING-COOLDOWN-FEATURE-TELEPORT-OTHER-WORLD-SAME-SHOP(prefix=lut["MESSAGE_PREFIX"])}'
+  # - duration: String
+  pendingCooldownFeatureTeleportOtherWorldAnyShop$: '@{MESSAGE-PENDING-COOLDOWN-FEATURE-TELEPORT-OTHER-WORLD-ANY-SHOP(prefix=lut["MESSAGE_PREFIX"])}'
 
 predicates:
   mainLanguage: ENGLISH_US
@@ -281,7 +283,8 @@ cooldowns:
   teleportToShop:
     sameShop: 30
     anyShop: 20
-    otherWorldShop: 120
+    otherWorldSameShop: 60
+    otherWorldAnyShop: 40
 
 commands:
   quickShopSearch:

@@ -7,7 +7,8 @@ public class TeleportToShopSection extends AConfigSection {
 
   public long sameShop;
   public long anyShop;
-  public long otherWorldShop;
+  public long otherWorldSameShop;
+  public long otherWorldAnyShop;
 
   public TeleportToShopSection(EvaluationEnvironmentBuilder baseEnvironment) {
     super(baseEnvironment);
