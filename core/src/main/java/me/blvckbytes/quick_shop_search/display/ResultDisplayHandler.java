@@ -6,6 +6,7 @@ import me.blvckbytes.bukkitevaluable.BukkitEvaluable;
 import me.blvckbytes.bukkitevaluable.ConfigKeeper;
 import me.blvckbytes.gpeee.interpreter.EvaluationEnvironmentBuilder;
 import me.blvckbytes.quick_shop_search.ChatPromptManager;
+import me.blvckbytes.quick_shop_search.UidScopedNamedStampStore;
 import me.blvckbytes.quick_shop_search.cache.CachedShop;
 import me.blvckbytes.quick_shop_search.PluginPermission;
 import me.blvckbytes.quick_shop_search.ShopUpdate;
@@ -39,6 +40,7 @@ public class ResultDisplayHandler implements Listener {
   private final RemoteInteractionApi remoteInteractionApi;
 
   private final SelectionStateStore stateStore;
+  private final UidScopedNamedStampStore stampStore;
   private final ChatPromptManager chatPromptManager;
   private final Map<UUID, ResultDisplay> displayByPlayer;
 
@@ -47,11 +49,13 @@ public class ResultDisplayHandler implements Listener {
     RemoteInteractionApi remoteInteractionApi,
     ConfigKeeper<MainSection> config,
     SelectionStateStore stateStore,
+    UidScopedNamedStampStore stampStore,
     ChatPromptManager chatPromptManager
   ) {
     this.scheduler = scheduler;
     this.remoteInteractionApi = remoteInteractionApi;
     this.stateStore = stateStore;
+    this.stampStore = stampStore;
     this.chatPromptManager = chatPromptManager;
     this.config = config;
     this.displayByPlayer = new HashMap<>();

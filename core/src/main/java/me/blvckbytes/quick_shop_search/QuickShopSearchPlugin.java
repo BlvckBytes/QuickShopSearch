@@ -27,6 +27,7 @@ public class QuickShopSearchPlugin extends JavaPlugin {
 
   private ResultDisplayHandler displayHandler;
   private SelectionStateStore stateStore;
+  private UidScopedNamedStampStore stampStore;
 
   @Override
   public void onEnable() {
@@ -56,7 +57,8 @@ public class QuickShopSearchPlugin extends JavaPlugin {
       var remoteInteractionApi = versionDependentFactory.createInteractionApi();
 
       stateStore = new SelectionStateStore(this, logger);
-      displayHandler = new ResultDisplayHandler(scheduler, remoteInteractionApi, config, stateStore, chatPromptManager);
+      stampStore = new UidScopedNamedStampStore(this, logger);
+      displayHandler = new ResultDisplayHandler(scheduler, remoteInteractionApi, config, stateStore, stampStore, chatPromptManager);
 
       var shopRegistry = new CachedShopRegistry(this, scheduler, displayHandler, config, logger);
       var shopEventHandler = versionDependentFactory.createListener(shopRegistry);
@@ -117,12 +119,10 @@ public class QuickShopSearchPlugin extends JavaPlugin {
     if (displayHandler != null)
       displayHandler.onShutdown();
 
-    if (stateStore != null) {
-      try {
-        stateStore.onShutdown();
-      } catch (Exception e) {
-        getLogger().log(Level.SEVERE, "Could not save state-store", e);
-      }
-    }
+    if (stateStore != null)
+      stateStore.onShutdown();
+
+    if (stampStore != null)
+      stampStore.onShutdown();
   }
 }

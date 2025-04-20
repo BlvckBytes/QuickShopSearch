@@ -14,6 +14,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class SelectionStateStore {
@@ -59,13 +60,17 @@ public class SelectionStateStore {
     return result;
   }
 
-  public void onShutdown() throws Exception {
-    var stateData = new JsonObject();
+  public void onShutdown() {
+    try {
+      var stateData = new JsonObject();
 
-    for (var state : this.states.entrySet())
-      stateData.add(state.getKey().toString(), state.getValue().toJson());
+      for (var state : this.states.entrySet())
+        stateData.add(state.getKey().toString(), state.getValue().toJson());
 
-    FileUtils.writeStringToFile(stateFile, gson.toJson(stateData), StandardCharsets.UTF_8);
+      FileUtils.writeStringToFile(stateFile, gson.toJson(stateData), StandardCharsets.UTF_8);
+    } catch (Exception e) {
+      logger.log(Level.SEVERE, "Could not write state-file to " + stateFile, e);
+    }
   }
 
   private void load() throws Exception {
