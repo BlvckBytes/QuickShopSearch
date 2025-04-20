@@ -11,6 +11,12 @@ import me.blvckbytes.quick_shop_search.ShopUpdate;
 import me.blvckbytes.quick_shop_search.config.MainSection;
 import me.blvckbytes.quick_shop_search.display.ResultDisplayHandler;
 import org.bukkit.Location;
+import org.bukkit.block.Chest;
+import org.bukkit.block.DoubleChest;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.Nullable;
@@ -19,7 +25,7 @@ import java.util.*;
 import java.util.function.Consumer;
 import java.util.logging.Logger;
 
-public class CachedShopRegistry implements QuickShopEventConsumer {
+public class CachedShopRegistry implements QuickShopEventConsumer, Listener {
 
   private final Plugin plugin;
   private final PlatformScheduler scheduler;
@@ -137,10 +143,10 @@ public class CachedShopRegistry implements QuickShopEventConsumer {
   @Override
   public void onShopInventoryCalculate(Shop shop, int stock, int space) {
     tryAccessCache(shop, cachedShop -> {
-      if (cachedShop.handle.getShopType() == ShopType.BUYING && space >= 0)
+      if (cachedShop.cachedType == ShopType.BUYING && space >= 0)
         cachedShop.cachedSpace = space;
 
-      if (cachedShop.handle.getShopType() == ShopType.SELLING && stock >= 0)
+      if (cachedShop.cachedType == ShopType.SELLING && stock >= 0)
         cachedShop.cachedStock = stock;
 
       if (cachedShop.diff.update())
@@ -175,6 +181,50 @@ public class CachedShopRegistry implements QuickShopEventConsumer {
 
       if (cachedShop.diff.update())
         displayHandler.onShopUpdate(cachedShop, ShopUpdate.PROPERTIES_CHANGED);
+    });
+  }
+
+  @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
+  public void onClose(InventoryCloseEvent event) {
+    var closedInventoryHolder = event.getInventory().getHolder();
+
+    CachedShop closedShop;
+
+    if (closedInventoryHolder instanceof Chest chest) {
+      if ((closedShop = findByLocation(chest.getLocation())) != null)
+        onShopInventoryClose(closedShop);
+
+      return;
+    }
+
+    if (closedInventoryHolder instanceof DoubleChest doubleChest) {
+      if (doubleChest.getLeftSide() instanceof Chest chest) {
+        if ((closedShop = findByLocation(chest.getLocation())) != null) {
+          onShopInventoryClose(closedShop);
+          return;
+        }
+      }
+
+      if (doubleChest.getRightSide() instanceof Chest chest) {
+        if ((closedShop = findByLocation(chest.getLocation())) != null)
+          onShopInventoryClose(closedShop);
+      }
+    }
+  }
+
+  private void onShopInventoryClose(CachedShop cachedShop) {
+    scheduler.runNextTick(task -> {
+      int result;
+
+      if (cachedShop.cachedType == ShopType.BUYING) {
+        if ((result = cachedShop.handle.getRemainingSpace()) >= 0)
+          cachedShop.cachedSpace = result;
+      }
+
+      if (cachedShop.cachedType == ShopType.SELLING) {
+        if ((result = cachedShop.handle.getRemainingStock()) >= 0)
+          cachedShop.cachedStock = result;
+      }
     });
   }
 

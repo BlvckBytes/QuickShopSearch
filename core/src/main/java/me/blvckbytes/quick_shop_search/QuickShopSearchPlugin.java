@@ -63,6 +63,7 @@ public class QuickShopSearchPlugin extends JavaPlugin {
       var shopRegistry = new CachedShopRegistry(this, scheduler, displayHandler, config, logger);
       var shopEventHandler = versionDependentFactory.createListener(shopRegistry);
 
+      Bukkit.getPluginManager().registerEvents(shopRegistry, this);
       Bukkit.getPluginManager().registerEvents(shopEventHandler, this);
       Bukkit.getPluginManager().registerEvents(displayHandler, this);
 
