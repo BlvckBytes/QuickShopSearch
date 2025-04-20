@@ -1,5 +1,6 @@
 package me.blvckbytes.quick_shop_search.cache;
 
+import com.ghostchu.quickshop.api.event.Phase;
 import com.ghostchu.quickshop.api.event.general.ShopSignUpdateEvent;
 import com.ghostchu.quickshop.api.event.inventory.ShopInventoryCalculateEvent;
 import com.ghostchu.quickshop.api.event.management.ShopCreateEvent;
@@ -18,12 +19,15 @@ public class QuickShopListener_GT_6208 implements Listener {
 
   @EventHandler
   public void onShopCreate(ShopCreateEvent event) {
+    if (event.isCancelled() || event.phase() != Phase.POST)
+      return;
+
     event.shop().ifPresent(consumer::onShopCreate);
   }
 
   @EventHandler
   public void onShopDelete(ShopDeleteEvent event) {
-    if (event.isCancelled())
+    if (event.isCancelled() || event.phase() != Phase.POST)
       return;
 
     event.shop().ifPresent(consumer::onShopDelete);
@@ -31,7 +35,7 @@ public class QuickShopListener_GT_6208 implements Listener {
 
   @EventHandler
   public void onShopItemChange(ShopItemEvent event) {
-    if (event.isCancelled())
+    if (event.isCancelled() || event.phase() != Phase.POST)
       return;
 
     consumer.onShopItemChange(event.shop(), event.updated());
@@ -39,7 +43,7 @@ public class QuickShopListener_GT_6208 implements Listener {
 
   @EventHandler
   public void onShopOwnerChange(ShopOwnerEvent event) {
-    if (event.isCancelled())
+    if (event.isCancelled() || event.phase() != Phase.POST)
       return;
 
     consumer.onShopOwnerChange(event.shop());
@@ -57,7 +61,7 @@ public class QuickShopListener_GT_6208 implements Listener {
 
   @EventHandler
   public void onShopNameChange(ShopNameEvent event) {
-    if (event.isCancelled())
+    if (event.isCancelled() || event.phase() != Phase.POST)
       return;
 
     consumer.onShopNameChange(event.shop());
@@ -65,7 +69,7 @@ public class QuickShopListener_GT_6208 implements Listener {
 
   @EventHandler
   public void onShopPriceChange(ShopPriceEvent event) {
-    if (event.isCancelled())
+    if (event.isCancelled() || event.phase() != Phase.POST)
       return;
 
     consumer.onShopPriceChange(event.shop());
@@ -73,7 +77,7 @@ public class QuickShopListener_GT_6208 implements Listener {
 
   @EventHandler
   public void onShopTypeChange(ShopTypeEvent event) {
-    if (event.isCancelled())
+    if (event.isCancelled() || event.phase() != Phase.POST)
       return;
 
     consumer.onShopTypeChange(event.shop());
@@ -81,7 +85,7 @@ public class QuickShopListener_GT_6208 implements Listener {
 
   @EventHandler
   public void onShopUnlimitedChange(ShopUnlimitedEvent event) {
-    if (event.isCancelled())
+    if (event.isCancelled() || event.phase() != Phase.POST)
       return;
 
     consumer.onShopTypeChange(event.shop());
