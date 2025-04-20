@@ -289,15 +289,23 @@ public class ResultDisplay implements DynamicPropertyProvider {
   }
 
   private void show() {
-    // Avoid the case of the client not accepting opening the new inventory
-    // and then being able to take items out of there. This way, we're safe.
-    this.cleanup(false);
+    for (var i = 0; i < slotMap.length; ++i)
+      this.slotMap[i] = null;
 
+    var priorInventory = inventory;
     inventory = makeInventory();
 
     renderItems();
 
-    scheduler.runAtEntity(player, scheduleTask -> player.openInventory(inventory));
+    scheduler.runAtEntity(player, scheduleTask -> {
+      // Make sure to open the newly rendered inventory first as to avoid flicker
+      player.openInventory(inventory);
+
+      // Avoid the case of the client not accepting opening the new inventory
+      // and then being able to take items out of there. This way, we're safe.
+      if (priorInventory != null)
+        priorInventory.clear();
+    });
   }
 
   @Override
