@@ -1,24 +1,24 @@
 package me.blvckbytes.quick_shop_search.cache;
 
-import com.ghostchu.quickshop.api.event.details.*;
 import com.ghostchu.quickshop.api.event.general.ShopSignUpdateEvent;
 import com.ghostchu.quickshop.api.event.inventory.ShopInventoryCalculateEvent;
-import com.ghostchu.quickshop.api.event.modification.ShopCreateSuccessEvent;
-import com.ghostchu.quickshop.api.event.modification.ShopDeleteEvent;
+import com.ghostchu.quickshop.api.event.management.ShopCreateEvent;
+import com.ghostchu.quickshop.api.event.management.ShopDeleteEvent;
+import com.ghostchu.quickshop.api.event.settings.type.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
-public class QuickShopListener_GT_6207 implements Listener {
+public class QuickShopListener_GT_6208 implements Listener {
 
   private final QuickShopEventConsumer consumer;
 
-  public QuickShopListener_GT_6207(QuickShopEventConsumer consumer) {
+  public QuickShopListener_GT_6208(QuickShopEventConsumer consumer) {
     this.consumer = consumer;
   }
 
   @EventHandler
-  public void onShopCreate(ShopCreateSuccessEvent event) {
-    consumer.onShopCreate(event.getShop());
+  public void onShopCreate(ShopCreateEvent event) {
+    event.shop().ifPresent(consumer::onShopCreate);
   }
 
   @EventHandler
@@ -26,23 +26,23 @@ public class QuickShopListener_GT_6207 implements Listener {
     if (event.isCancelled())
       return;
 
-    consumer.onShopDelete(event.getShop());
+    event.shop().ifPresent(consumer::onShopDelete);
   }
 
   @EventHandler
-  public void onShopItemChange(ShopItemChangeEvent event) {
+  public void onShopItemChange(ShopItemEvent event) {
     if (event.isCancelled())
       return;
 
-    consumer.onShopItemChange(event.getShop(), event.getNewItem());
+    consumer.onShopItemChange(event.shop(), event.updated());
   }
 
   @EventHandler
-  public void onShopOwnerChange(ShopOwnershipTransferEvent event) {
+  public void onShopOwnerChange(ShopOwnerEvent event) {
     if (event.isCancelled())
       return;
 
-    consumer.onShopOwnerChange(event.getShop());
+    consumer.onShopOwnerChange(event.shop());
   }
 
   @EventHandler
@@ -56,34 +56,34 @@ public class QuickShopListener_GT_6207 implements Listener {
   }
 
   @EventHandler
-  public void onShopNameChange(ShopNamingEvent event) {
+  public void onShopNameChange(ShopNameEvent event) {
     if (event.isCancelled())
       return;
 
-    consumer.onShopNameChange(event.getShop());
+    consumer.onShopNameChange(event.shop());
   }
 
   @EventHandler
-  public void onShopPriceChange(ShopPriceChangeEvent event) {
+  public void onShopPriceChange(ShopPriceEvent event) {
     if (event.isCancelled())
       return;
 
-    consumer.onShopPriceChange(event.getShop());
+    consumer.onShopPriceChange(event.shop());
   }
 
   @EventHandler
-  public void onShopTypeChange(ShopTypeChangeEvent event) {
+  public void onShopTypeChange(ShopTypeEvent event) {
     if (event.isCancelled())
       return;
 
-    consumer.onShopTypeChange(event.getShop());
+    consumer.onShopTypeChange(event.shop());
   }
 
   @EventHandler
-  public void onShopUnlimitedChange(ShopUnlimitedStatusEvent event) {
+  public void onShopUnlimitedChange(ShopUnlimitedEvent event) {
     if (event.isCancelled())
       return;
 
-    consumer.onShopTypeChange(event.getShop());
+    consumer.onShopTypeChange(event.shop());
   }
 }

@@ -9,7 +9,10 @@ import java.util.logging.Logger;
 public class QuickShopVersionDependentFactory {
 
   private static final String PLUGIN_NAME = "QuickShop-Hikari";
-  private static final int[] OLD_VERSION = new int[] { 6, 2, 0, 7 };
+  private static final int[]
+    VER_6207 = new int[] { 6, 2, 0, 7 },
+    VER_6208 = new int[] { 6, 2, 0, 8 }
+    ;
 
   private final Logger logger;
   private final int[] quickShopVersion;
@@ -32,7 +35,7 @@ public class QuickShopVersionDependentFactory {
   }
 
   public Listener createListener(QuickShopEventConsumer consumer) {
-    if (compareVersions(quickShopVersion, OLD_VERSION) <= 0) {
+    if (compareVersions(quickShopVersion, VER_6207) <= 0) {
       try {
         // On dev-builds, they like to make breaking changes, but not bump the version-string, :)
         // Thus, ensure that it's actually a version prior to 6.2.0.7, by trying to access an event-class
@@ -48,12 +51,17 @@ public class QuickShopVersionDependentFactory {
       }
     }
 
-    logger.info("Loaded listener-support for > " + PLUGIN_NAME + " 6.2.0.7");
-    return new QuickShopListener_GT_6207(consumer);
+    if (compareVersions(quickShopVersion, VER_6208) <= 0) {
+      logger.info("Loaded listener-support for <= " + PLUGIN_NAME + " 6.2.0.8 and > 6.2.0.7");
+      return new QuickShopListener_GT_6207_LTE_6208(consumer);
+    }
+
+    logger.info("Loaded listener-support for > " + PLUGIN_NAME + " 6.2.0.8");
+    return new QuickShopListener_GT_6208(consumer);
   }
 
   public RemoteInteractionApi createInteractionApi() {
-    if (compareVersions(quickShopVersion, OLD_VERSION) <= 0) {
+    if (compareVersions(quickShopVersion, VER_6207) <= 0) {
       try {
         var result = new RemoteInteractionApi_LTE_6207();
         logger.info("Loaded remote-interaction-support for <= " + PLUGIN_NAME + " 6.2.0.7");
@@ -65,8 +73,13 @@ public class QuickShopVersionDependentFactory {
       }
     }
 
-    logger.info("Loaded remote-interaction-support for > " + PLUGIN_NAME + " 6.2.0.7");
-    return new RemoteInteractionApi_GT_6207();
+    if (compareVersions(quickShopVersion, VER_6208) <= 0) {
+      logger.info("Loaded remote-interaction-support for <= " + PLUGIN_NAME + " 6.2.0.8 and > 6.2.0.7");
+      return new RemoteInteractionApi_GT_6207_LTE_6208();
+    }
+
+    logger.info("Loaded remote-interaction-support for > " + PLUGIN_NAME + " 6.2.0.8");
+    return new RemoteInteractionApi_GT_6208();
   }
 
   private static int compareVersions(int[] a, int[] b) {

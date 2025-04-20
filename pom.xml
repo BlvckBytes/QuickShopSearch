@@ -13,14 +13,15 @@
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <revision>0.0.35</revision>
+        <revision>0.0.36</revision>
     </properties>
 
     <modules>
         <module>core</module>
         <module>qs_lte_6207</module>
-        <module>qs_gt_6207</module>
+        <module>qs_gt_6207_lte_6208</module>
         <module>common</module>
+        <module>qs_gt_6208</module>
     </modules>
 
     <repositories>

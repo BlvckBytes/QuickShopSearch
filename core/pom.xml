@@ -57,12 +57,17 @@
         </dependency>
         <dependency>
             <groupId>me.blvckbytes</groupId>
-            <artifactId>qs_gt_6207</artifactId>
+            <artifactId>qs_gt_6207_lte_6208</artifactId>
             <version>${revision}</version>
         </dependency>
         <dependency>
             <groupId>me.blvckbytes</groupId>
             <artifactId>qs_lte_6207</artifactId>
+            <version>${revision}</version>
+        </dependency>
+        <dependency>
+            <groupId>me.blvckbytes</groupId>
+            <artifactId>qs_gt_6208</artifactId>
             <version>${revision}</version>
         </dependency>
         <dependency>
@@ -118,7 +123,8 @@
                             <include>me.blvckbytes:GPEEE</include>
                             <include>me.blvckbytes:common</include>
                             <include>me.blvckbytes:qs_lte_6207</include>
-                            <include>me.blvckbytes:qs_gt_6207</include>
+                            <include>me.blvckbytes:qs_gt_6207_lte_6208</include>
+                            <include>me.blvckbytes:qs_gt_6208</include>
                             <include>com.github.technicallycoded:FoliaLib</include>
                             <!-- [1] Shouldn't be necessary anymore on newer versions of bukkit, but I prefer backwards-compatibility over file-size. -->
                             <include>org.yaml:snakeyaml</include>

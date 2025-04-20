@@ -9,7 +9,7 @@
         <version>${revision}</version>
     </parent>
 
-    <artifactId>qs_gt_6207</artifactId>
+    <artifactId>qs_gt_6208</artifactId>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
@@ -21,13 +21,13 @@
         <dependency>
             <groupId>com.ghostchu</groupId>
             <artifactId>quickshop-bukkit</artifactId>
-            <version>6.2.0.8</version>
+            <version>6.2.0.9-RELEASE-1</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.ghostchu</groupId>
             <artifactId>quickshop-api</artifactId>
-            <version>6.2.0.8</version>
+            <version>6.2.0.9-RELEASE-1</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
