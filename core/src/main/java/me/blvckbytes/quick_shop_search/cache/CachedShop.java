@@ -2,6 +2,7 @@ package me.blvckbytes.quick_shop_search.cache;
 
 import com.ghostchu.quickshop.api.QuickShopAPI;
 import com.ghostchu.quickshop.api.shop.Shop;
+import com.ghostchu.quickshop.api.shop.ShopType;
 import com.tcoded.folialib.impl.PlatformScheduler;
 import me.blvckbytes.bukkitevaluable.ConfigKeeper;
 import me.blvckbytes.bukkitevaluable.IItemBuildable;
@@ -14,6 +15,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.Plugin;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Consumer;
 import java.util.logging.Logger;
@@ -33,6 +35,9 @@ public class CachedShop {
   private IItemBuildable representativeBuildable;
   public int cachedStock;
   public int cachedSpace;
+  public ShopType cachedType;
+  public double cachedPrice;
+  public @Nullable String cachedName;
   private boolean advertising;
 
   public CachedShop(
@@ -75,6 +80,9 @@ public class CachedShop {
       this.representativeBuildable = makeBuildable(handle.getItem());
       this.cachedStock = handle.getRemainingStock();
       this.cachedSpace = handle.getRemainingSpace();
+      this.cachedType = handle.getShopType();
+      this.cachedPrice = handle.getPrice();
+      this.cachedName = handle.getShopName();
       this.loadAdvertising();
       this.diff.update();
     });

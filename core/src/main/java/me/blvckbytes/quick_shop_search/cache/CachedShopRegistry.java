@@ -121,7 +121,8 @@ public class CachedShopRegistry implements QuickShopEventConsumer {
   @Override
   public void onShopOwnerChange(Shop shop) {
     tryAccessCache(shop, cachedShop -> {
-      displayHandler.onShopUpdate(cachedShop, ShopUpdate.PROPERTIES_CHANGED);
+      if (cachedShop.diff.update())
+        displayHandler.onShopUpdate(cachedShop, ShopUpdate.PROPERTIES_CHANGED);
     });
   }
 
@@ -150,21 +151,30 @@ public class CachedShopRegistry implements QuickShopEventConsumer {
   @Override
   public void onShopNameChange(Shop shop) {
     tryAccessCache(shop, cachedShop -> {
-      displayHandler.onShopUpdate(cachedShop, ShopUpdate.PROPERTIES_CHANGED);
+      cachedShop.cachedName = shop.getShopName();
+
+      if (cachedShop.diff.update())
+        displayHandler.onShopUpdate(cachedShop, ShopUpdate.PROPERTIES_CHANGED);
     });
   }
 
   @Override
   public void onShopPriceChange(Shop shop) {
     tryAccessCache(shop, cachedShop -> {
-      displayHandler.onShopUpdate(cachedShop, ShopUpdate.PROPERTIES_CHANGED);
+      cachedShop.cachedPrice = shop.getPrice();
+
+      if (cachedShop.diff.update())
+        displayHandler.onShopUpdate(cachedShop, ShopUpdate.PROPERTIES_CHANGED);
     });
   }
 
   @Override
   public void onShopTypeChange(Shop shop) {
     tryAccessCache(shop, cachedShop -> {
-      displayHandler.onShopUpdate(cachedShop, ShopUpdate.PROPERTIES_CHANGED);
+      cachedShop.cachedType = shop.getShopType();
+
+      if (cachedShop.diff.update())
+        displayHandler.onShopUpdate(cachedShop, ShopUpdate.PROPERTIES_CHANGED);
     });
   }
 

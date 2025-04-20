@@ -1,5 +1,6 @@
 package me.blvckbytes.quick_shop_search.cache;
 
+import com.ghostchu.quickshop.api.shop.ShopType;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
@@ -12,6 +13,8 @@ public class ShopScalarDiff {
   private int lastCachedStock;
   private boolean lastIsUnlimited;
   private @Nullable String lastShopName;
+  private double lastPrice;
+  private @Nullable ShopType lastShopType;
 
   public ShopScalarDiff(CachedShop shop) {
     this.shop = shop;
@@ -19,23 +22,26 @@ public class ShopScalarDiff {
 
   public boolean update() {
     var unlimited = shop.handle.isUnlimited();
-    var shopName = shop.handle.getShopName();
-    var cachedSpace = shop.cachedSpace;
-    var cachedStock = shop.cachedStock;
 
     boolean hadDelta;
 
     hadDelta = lastIsUnlimited != unlimited;
     lastIsUnlimited = unlimited;
 
-    hadDelta |= !Objects.equals(lastShopName, shopName);
-    lastShopName = shopName;
+    hadDelta |= !Objects.equals(lastShopName, shop.cachedName);
+    lastShopName = shop.cachedName;
 
-    hadDelta |= lastCachedSpace != cachedSpace;
-    lastCachedSpace = cachedSpace;
+    hadDelta |= lastPrice != shop.cachedPrice;
+    lastPrice = shop.cachedPrice;
 
-    hadDelta |= lastCachedStock != cachedStock;
-    lastCachedStock = cachedStock;
+    hadDelta |= !Objects.equals(lastShopType, shop.cachedType);
+    lastShopType = shop.cachedType;
+
+    hadDelta |= lastCachedSpace != shop.cachedSpace;
+    lastCachedSpace = shop.cachedSpace;
+
+    hadDelta |= lastCachedStock != shop.cachedStock;
+    lastCachedStock = shop.cachedStock;
 
     return hadDelta;
   }
