@@ -12,6 +12,7 @@ import me.blvckbytes.quick_shop_search.cache.CachedShop;
 import me.blvckbytes.quick_shop_search.PluginPermission;
 import me.blvckbytes.quick_shop_search.ShopUpdate;
 import me.blvckbytes.quick_shop_search.cache.RemoteInteractionApi;
+import me.blvckbytes.quick_shop_search.config.CooldownType;
 import me.blvckbytes.quick_shop_search.config.MainSection;
 import org.bukkit.Location;
 import org.bukkit.block.BlockFace;
@@ -391,7 +392,7 @@ public class ResultDisplayHandler implements Listener {
       cooldownType = new TeleportCooldownType(
         PluginPermission.FEATURE_TELEPORT_OTHER_WORLD_BYPASS_COOLDOWN_SAME_SHOP,
         TELEPORT_COOLDOWN_KEY + "-other-world-shopId-" + shopId,
-        config.rootSection.cooldowns.teleportToShop.otherWorldSameShop * 1000,
+        config.rootSection.cooldowns.teleportToShop.getCooldownMillis(player, CooldownType.OTHER_WORLD_SAME_SHOP),
         config.rootSection.playerMessages.pendingCooldownFeatureTeleportOtherWorldSameShop
       );
 
@@ -403,7 +404,7 @@ public class ResultDisplayHandler implements Listener {
       cooldownType = new TeleportCooldownType(
         PluginPermission.FEATURE_TELEPORT_OTHER_WORLD_BYPASS_COOLDOWN_ANY_SHOP,
         TELEPORT_COOLDOWN_KEY + "-other-world",
-        config.rootSection.cooldowns.teleportToShop.otherWorldAnyShop * 1000,
+        config.rootSection.cooldowns.teleportToShop.getCooldownMillis(player, CooldownType.OTHER_WORLD_ANY_SHOP),
         config.rootSection.playerMessages.pendingCooldownFeatureTeleportOtherWorldAnyShop
       );
 
@@ -416,7 +417,7 @@ public class ResultDisplayHandler implements Listener {
     cooldownType = new TeleportCooldownType(
       PluginPermission.FEATURE_TELEPORT_BYPASS_COOLDOWN_SAME_SHOP,
       TELEPORT_COOLDOWN_KEY + "-shopId-" + shopId,
-      config.rootSection.cooldowns.teleportToShop.sameShop * 1000,
+      config.rootSection.cooldowns.teleportToShop.getCooldownMillis(player, CooldownType.SAME_SHOP),
       config.rootSection.playerMessages.pendingCooldownFeatureTeleportSameShop
     );
 
@@ -428,7 +429,7 @@ public class ResultDisplayHandler implements Listener {
     cooldownType = new TeleportCooldownType(
       PluginPermission.FEATURE_TELEPORT_BYPASS_COOLDOWN_ANY_SHOP,
       TELEPORT_COOLDOWN_KEY,
-      config.rootSection.cooldowns.teleportToShop.anyShop * 1000,
+      config.rootSection.cooldowns.teleportToShop.getCooldownMillis(player, CooldownType.ANY_SHOP),
       config.rootSection.playerMessages.pendingCooldownFeatureTeleportAnyShop
     );
 

@@ -25,7 +25,8 @@ public enum PluginPermission {
   OTHER_WORLD("other-world"),
   NON_ADVERTISE_BYPASS("bypass-non-advertise"),
   ACCESS_LIST_BASE("access-list"),
-  ACCESS_LISTS_BYPASS("bypass-access-lists")
+  ACCESS_LISTS_BYPASS("bypass-access-lists"),
+  TELEPORT_COOLDOWN_GROUP_BASE("teleport-cooldown"),
   ;
 
   private static final String PREFIX = "quickshopsearch";

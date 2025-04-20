@@ -243,6 +243,7 @@ predicates:
 
 shopAccessLists:
 
+# Specify the cooldown-duration in seconds
 cooldowns:
   # - days: Integer
   # - hours: Integer
@@ -279,12 +280,13 @@ cooldowns:
       (it) => @{MESSAGE-COOLDOWN-FORMAT-PART-PREFIX} & it,
       @{MESSAGE-COOLDOWN-FORMAT-PART-SEPARATOR}
     )
-  # Specify the cooldown-duration in seconds
   teleportToShop:
-    sameShop: 30
-    anyShop: 20
-    otherWorldSameShop: 60
-    otherWorldAnyShop: 40
+    default:
+      sameShop: 30
+      anyShop: 20
+      otherWorldSameShop: 60
+      otherWorldAnyShop: 40
+    groups:
 
 commands:
   quickShopSearch:
