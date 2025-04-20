@@ -26,7 +26,7 @@ public class TeleportToShopSection extends AConfigSection {
 
   public long getCooldownMillis(Player player, CooldownType type) {
     for (var groupEntry : groups.entrySet()) {
-      var groupPermission = PluginPermission.TELEPORT_COOLDOWN_GROUP_BASE + "." + groupEntry.getKey();
+      var groupPermission = PluginPermission.TELEPORT_COOLDOWN_GROUP_BASE.nodeWithSuffix(groupEntry.getKey());
 
       if (player.hasPermission(groupPermission))
         return groupEntry.getValue().getCooldownMillis(type);
