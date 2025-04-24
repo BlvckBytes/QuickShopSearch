@@ -13,6 +13,7 @@ public class MainSection extends AConfigSection {
   public CommandsSection commands;
   public ShopAccessListsSection shopAccessLists;
   public CooldownsSection cooldowns;
+  public SlowTeleportSection slowTeleport;
 
   public MainSection(EvaluationEnvironmentBuilder baseEnvironment) {
     super(baseEnvironment);

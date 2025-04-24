@@ -3,7 +3,8 @@ package me.blvckbytes.quick_shop_search.config;
 import me.blvckbytes.bbconfigmapper.sections.AConfigSection;
 import me.blvckbytes.bukkitevaluable.BukkitEvaluable;
 import me.blvckbytes.gpeee.interpreter.EvaluationEnvironmentBuilder;
-import org.jetbrains.annotations.Nullable;
+
+import javax.annotation.Nullable;
 
 public class PlayerMessagesSection extends AConfigSection {
 
@@ -49,6 +50,11 @@ public class PlayerMessagesSection extends AConfigSection {
   public @Nullable BukkitEvaluable pendingCooldownFeatureTeleportAnyShop;
   public @Nullable BukkitEvaluable pendingCooldownFeatureTeleportOtherWorldSameShop;
   public @Nullable BukkitEvaluable pendingCooldownFeatureTeleportOtherWorldAnyShop;
+
+  public @Nullable BukkitEvaluable slowTeleportHasMoved;
+  public @Nullable BukkitEvaluable slowTeleportHasBeenAttacked;
+  public @Nullable BukkitEvaluable slowTeleportAttackedSomebody;
+  public @Nullable BukkitEvaluable slowTeleportTookDamageByNonPlayer;
 
   public PlayerMessagesSection(EvaluationEnvironmentBuilder baseEnvironment) {
     super(baseEnvironment);

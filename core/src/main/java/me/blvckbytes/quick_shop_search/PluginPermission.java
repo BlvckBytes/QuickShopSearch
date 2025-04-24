@@ -27,6 +27,7 @@ public enum PluginPermission {
   ACCESS_LIST_BASE("access-list"),
   ACCESS_LISTS_BYPASS("bypass-access-lists"),
   TELEPORT_COOLDOWN_GROUP_BASE("teleport-cooldown"),
+  SLOW_TELEPORT_BYPASS("bypass-slow-teleport")
   ;
 
   private static final String PREFIX = "quickshopsearch";

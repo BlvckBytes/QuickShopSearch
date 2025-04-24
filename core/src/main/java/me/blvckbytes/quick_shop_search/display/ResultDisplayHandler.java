@@ -6,11 +6,8 @@ import me.blvckbytes.bbconfigmapper.ScalarType;
 import me.blvckbytes.bukkitevaluable.BukkitEvaluable;
 import me.blvckbytes.bukkitevaluable.ConfigKeeper;
 import me.blvckbytes.gpeee.interpreter.EvaluationEnvironmentBuilder;
-import me.blvckbytes.quick_shop_search.ChatPromptManager;
-import me.blvckbytes.quick_shop_search.UidScopedNamedStampStore;
+import me.blvckbytes.quick_shop_search.*;
 import me.blvckbytes.quick_shop_search.cache.CachedShop;
-import me.blvckbytes.quick_shop_search.PluginPermission;
-import me.blvckbytes.quick_shop_search.ShopUpdate;
 import me.blvckbytes.quick_shop_search.cache.RemoteInteractionApi;
 import me.blvckbytes.quick_shop_search.config.CooldownType;
 import me.blvckbytes.quick_shop_search.config.MainSection;
@@ -22,7 +19,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.*;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.Nullable;
 
@@ -45,6 +41,7 @@ public class ResultDisplayHandler implements Listener {
   private final SelectionStateStore stateStore;
   private final UidScopedNamedStampStore stampStore;
   private final ChatPromptManager chatPromptManager;
+  private final SlowTeleportManager slowTeleportManager;
   private final Map<UUID, ResultDisplay> displayByPlayer;
 
   public ResultDisplayHandler(
@@ -53,13 +50,15 @@ public class ResultDisplayHandler implements Listener {
     ConfigKeeper<MainSection> config,
     SelectionStateStore stateStore,
     UidScopedNamedStampStore stampStore,
-    ChatPromptManager chatPromptManager
+    ChatPromptManager chatPromptManager,
+    SlowTeleportManager slowTeleportManager
   ) {
     this.scheduler = scheduler;
     this.remoteInteractionApi = remoteInteractionApi;
     this.stateStore = stateStore;
     this.stampStore = stampStore;
     this.chatPromptManager = chatPromptManager;
+    this.slowTeleportManager = slowTeleportManager;
     this.config = config;
     this.displayByPlayer = new HashMap<>();
 
@@ -471,11 +470,12 @@ public class ResultDisplayHandler implements Listener {
     if (targetLocation == null)
       targetLocation = shopLocation.add(.5, 0, .5);
 
-    for (var applicableCooldown : applicableCooldowns)
-      stampStore.write(player.getUniqueId(), applicableCooldown.stampKey(), System.currentTimeMillis());
-
-    scheduler.teleportAsync(player, targetLocation, PlayerTeleportEvent.TeleportCause.PLUGIN);
     scheduler.runAtEntity(player, scheduleTask -> player.closeInventory());
+
+    slowTeleportManager.initializeTeleportation(player, targetLocation, () -> {
+      for (var applicableCooldown : applicableCooldowns)
+        stampStore.write(player.getUniqueId(), applicableCooldown.stampKey(), System.currentTimeMillis());
+    });
   }
 
   @EventHandler

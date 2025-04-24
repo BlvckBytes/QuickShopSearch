@@ -237,6 +237,12 @@ playerMessages:
   pendingCooldownFeatureTeleportOtherWorldSameShop$: '@{MESSAGE-PENDING-COOLDOWN-FEATURE-TELEPORT-OTHER-WORLD-SAME-SHOP(prefix=lut["MESSAGE_PREFIX"])}'
   # - duration: String
   pendingCooldownFeatureTeleportOtherWorldAnyShop$: '@{MESSAGE-PENDING-COOLDOWN-FEATURE-TELEPORT-OTHER-WORLD-ANY-SHOP(prefix=lut["MESSAGE_PREFIX"])}'
+  slowTeleportHasMoved: '@{MESSAGE-SLOW-TELEPORT-HAS-MOVED(prefix=lut["MESSAGE_PREFIX"])}'
+  # - attacker: String
+  slowTeleportHasBeenAttacked: '@{MESSAGE-SLOW-TELEPORT-HAS-BEEN-ATTACKED(prefix=lut["MESSAGE_PREFIX"])}'
+  # - victim: String
+  slowTeleportAttackedSomebody: '@{MESSAGE-SLOW-TELEPORT-ATTACKED-SOMEBODY(prefix=lut["MESSAGE_PREFIX"])}'
+  slowTeleportTookDamageByNonPlayer: '@{MESSAGE-SLOW-TELEPORT-TOOK-DAMAGE-BY-NON-PLAYER(prefix=lut["MESSAGE_PREFIX"])}'
 
 predicates:
   mainLanguage: ENGLISH_US
@@ -287,6 +293,54 @@ cooldowns:
       otherWorldSameShop: 60
       otherWorldAnyShop: 40
     groups:
+
+# Countdowns before teleporting
+slowTeleport:
+  cancelIfDamagedByPlayer: true
+  cancelIfDamagedByNonPlayer: false
+  combatLogCoolOffDurationSeconds: 10
+  whenInCombat:
+    durationSeconds: 5
+    fallbackNotification:
+      sound: 'BLOCK_NOTE_BLOCK_PLING'
+      # - remaining_seconds: Integer
+      messages:
+        messageTitle$: '@{MESSAGE-SLOW-TELEPORT-IN-COMBAT-TITLE(prefix=lut["MESSAGE_PREFIX"])}'
+        messageSubTitle$: '@{MESSAGE-SLOW-TELEPORT-IN-COMBAT-SUBTITLE(prefix=lut["MESSAGE_PREFIX"])}'
+        messageActionBar: null
+        messageChat: null
+    notificationAtSeconds:
+      5: null
+      4: null
+      3: null
+      2: null
+      1: null
+      0:
+        sound: 'BLOCK_NOTE_BLOCK_PLING'
+        soundVolume: 1.1
+        soundPitch: 1.2
+        messages:
+          messageChat$: '@{MESSAGE-SLOW-TELEPORT-TELEPORTED(prefix=lut["MESSAGE_PREFIX"])}'
+  whenNotInCombat:
+    durationSeconds: 3
+    fallbackNotification:
+      sound: 'BLOCK_NOTE_BLOCK_PLING'
+      # - remaining_seconds: Integer
+      messages:
+        messageTitle$: '@{MESSAGE-SLOW-TELEPORT-NOT-IN-COMBAT-TITLE(prefix=lut["MESSAGE_PREFIX"])}'
+        messageSubTitle$: '@{MESSAGE-SLOW-TELEPORT-NOT-IN-COMBAT-SUBTITLE(prefix=lut["MESSAGE_PREFIX"])}'
+        messageActionBar: null
+        messageChat: null
+    notificationAtSeconds:
+      3: null
+      2: null
+      1: null
+      0:
+        sound: 'BLOCK_NOTE_BLOCK_PLING'
+        soundVolume: 1.1
+        soundPitch: 1.2
+        messages:
+          messageChat$: '@{MESSAGE-SLOW-TELEPORT-TELEPORTED(prefix=lut["MESSAGE_PREFIX"])}'
 
 commands:
   quickShopSearch:

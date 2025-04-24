@@ -224,4 +224,18 @@ MESSAGE-COOLDOWN-FORMAT-SECONDS-PLURAL-SUFFIX     \ &cseconds
 MESSAGE-COOLDOWN-FORMAT-PART-SEPARATOR            &7, \
 MESSAGE-COOLDOWN-FORMAT-PART-PREFIX               &c
 
+MESSAGE-SLOW-TELEPORT-HAS-MOVED                 {prefix} &cYou have moved - cancelling teleport!
+# - attacker: String
+MESSAGE-SLOW-TELEPORT-HAS-BEEN-ATTACKED         {prefix} &cYou were attacked by &4{attacker} &c- cancelling teleport!
+# - victim: String
+MESSAGE-SLOW-TELEPORT-ATTACKED-SOMEBODY         {prefix} &cYou attacked &4{victim} &c- cancelling teleport!
+MESSAGE-SLOW-TELEPORT-TOOK-DAMAGE-BY-NON-PLAYER {prefix} &cYou took damage - cancelling teleport!
+MESSAGE-SLOW-TELEPORT-TELEPORTED                {prefix} &aYou have been teleported!
+MESSAGE-SLOW-TELEPORT-IN-COMBAT-TITLE           &c&lIn Combat
+# - remaining_seconds: Integer
+MESSAGE-SLOW-TELEPORT-IN-COMBAT-SUBTITLE        &cStand still for {remaining_seconds}s
+MESSAGE-SLOW-TELEPORT-NOT-IN-COMBAT-TITLE       &3&lTeleporting
+# - remaining_seconds: Integer
+MESSAGE-SLOW-TELEPORT-NOT-IN-COMBAT-SUBTITLE    &bStand still for {remaining_seconds}s
+
 # ==================== END Messages ====================

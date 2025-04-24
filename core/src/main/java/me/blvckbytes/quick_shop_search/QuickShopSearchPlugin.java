@@ -58,7 +58,11 @@ public class QuickShopSearchPlugin extends JavaPlugin {
 
       stateStore = new SelectionStateStore(this, logger);
       stampStore = new UidScopedNamedStampStore(this, logger);
-      displayHandler = new ResultDisplayHandler(scheduler, remoteInteractionApi, config, stateStore, stampStore, chatPromptManager);
+
+      var slowTeleportManager = new SlowTeleportManager(scheduler, config);
+      Bukkit.getServer().getPluginManager().registerEvents(slowTeleportManager, this);
+
+      displayHandler = new ResultDisplayHandler(scheduler, remoteInteractionApi, config, stateStore, stampStore, chatPromptManager, slowTeleportManager);
 
       var shopRegistry = new CachedShopRegistry(this, scheduler, displayHandler, config, logger);
       var shopEventHandler = versionDependentFactory.createListener(shopRegistry);
