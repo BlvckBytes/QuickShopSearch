@@ -106,6 +106,25 @@ MESSAGE-NO-MATCHES                          {prefix} &cSorgunuza dair hiçbir e�
 # - price: Double
 # - prefix: String
 MESSAGE-BEFORE-TELEPORTING                  {prefix} &e{owner} &7kişisinin &7&e{loc_x}&7, &e{loc_y}&7, &e{loc_z}&7 &7konumundaki marketine ışınlandın.
+# - name: String
+# - owner: String
+# - item_type: String
+# - loc_world: String
+# - loc_x: Integer
+# - loc_y: Integer
+# - loc_z: Integer
+# - distance: Integer
+# - remaining_space: Integer
+# - remaining_stock: Integer
+# - price: Double
+# - prefix: String
+# - player_warp_owner: String
+# - player_warp_name: String
+# - player_warp_world: String
+# - player_warp_x: String
+# - player_warp_y: String
+# - player_warp_z: String
+MESSAGE-BEFORE-TELEPORTING-NEAREST-PLAYER-WARP {prefix} &7Teleporting to the nearest player-warp &e{player_warp_name} &7at &e{player_warp_x}&7, &e{player_warp_y}&7, &e{player_warp_z} &7of the Shop of &e{owner} &7at &e{loc_x}&7, &e{loc_y}&7, &e{loc_z}&7.
 # - number_shops: Integer
 # - predicate: String
 # - prefix: String
@@ -237,5 +256,14 @@ MESSAGE-SLOW-TELEPORT-IN-COMBAT-SUBTITLE        &cStand still for {remaining_sec
 MESSAGE-SLOW-TELEPORT-NOT-IN-COMBAT-TITLE       &3&lTeleporting
 # - remaining_seconds: Integer
 MESSAGE-SLOW-TELEPORT-NOT-IN-COMBAT-SUBTITLE    &bStand still for {remaining_seconds}s
+
+# - prefix: String
+# - player_warp_owner: String
+# - player_warp_name: String
+# - player_warp_world: String
+# - player_warp_x: String
+# - player_warp_y: String
+# - player_warp_z: String
+MESSAGE-NEAREST-PLAYER-WARP-BANNED {prefix} &cYou're banned from the nearest player-warp &4{player_warp_name} &cby &4{player_warp_owner} &c- teleporting to the shop instead!
 
 # ==================== END Messages ====================

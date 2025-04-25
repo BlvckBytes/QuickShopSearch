@@ -23,6 +23,10 @@
             <id>jitpack.io</id>
             <url>https://jitpack.io</url>
         </repository>
+        <repository>
+            <id>olzie-repo</id>
+            <url>https://repo.olziedev.com/</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -95,6 +99,12 @@
             <artifactId>FoliaLib</artifactId>
             <version>0.4.3</version>
             <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.olziedev</groupId>
+            <artifactId>playerwarps-api</artifactId>
+            <version>7.7.1</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 

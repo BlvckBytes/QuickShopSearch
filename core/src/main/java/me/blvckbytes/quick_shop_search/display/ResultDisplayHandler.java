@@ -6,11 +6,13 @@ import me.blvckbytes.bbconfigmapper.ScalarType;
 import me.blvckbytes.bukkitevaluable.BukkitEvaluable;
 import me.blvckbytes.bukkitevaluable.ConfigKeeper;
 import me.blvckbytes.gpeee.interpreter.EvaluationEnvironmentBuilder;
+import me.blvckbytes.gpeee.interpreter.IEvaluationEnvironment;
 import me.blvckbytes.quick_shop_search.*;
 import me.blvckbytes.quick_shop_search.cache.CachedShop;
 import me.blvckbytes.quick_shop_search.cache.RemoteInteractionApi;
 import me.blvckbytes.quick_shop_search.config.CooldownType;
 import me.blvckbytes.quick_shop_search.config.MainSection;
+import me.blvckbytes.quick_shop_search.integration.player_warps.IPlayerWarpsIntegration;
 import org.bukkit.Location;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Sign;
@@ -42,6 +44,7 @@ public class ResultDisplayHandler implements Listener {
   private final UidScopedNamedStampStore stampStore;
   private final ChatPromptManager chatPromptManager;
   private final SlowTeleportManager slowTeleportManager;
+  private final @Nullable IPlayerWarpsIntegration playerWarpsIntegration;
   private final Map<UUID, ResultDisplay> displayByPlayer;
 
   public ResultDisplayHandler(
@@ -51,7 +54,8 @@ public class ResultDisplayHandler implements Listener {
     SelectionStateStore stateStore,
     UidScopedNamedStampStore stampStore,
     ChatPromptManager chatPromptManager,
-    SlowTeleportManager slowTeleportManager
+    SlowTeleportManager slowTeleportManager,
+    @Nullable IPlayerWarpsIntegration playerWarpsIntegration
   ) {
     this.scheduler = scheduler;
     this.remoteInteractionApi = remoteInteractionApi;
@@ -59,6 +63,7 @@ public class ResultDisplayHandler implements Listener {
     this.stampStore = stampStore;
     this.chatPromptManager = chatPromptManager;
     this.slowTeleportManager = slowTeleportManager;
+    this.playerWarpsIntegration = playerWarpsIntegration;
     this.config = config;
     this.displayByPlayer = new HashMap<>();
 
@@ -437,13 +442,6 @@ public class ResultDisplayHandler implements Listener {
 
     applicableCooldowns.add(cooldownType);
 
-    if ((message = config.rootSection.playerMessages.beforeTeleporting) != null) {
-      message.sendMessage(
-        player,
-        config.rootSection.getBaseEnvironment().build(display.getDistanceExtendedShopEnvironment(cachedShop))
-      );
-    }
-
     var shopBlock = shopLocation.getBlock();
 
     Location targetLocation = null;
@@ -469,6 +467,46 @@ public class ResultDisplayHandler implements Listener {
     // This fallback should never be reached, but better safe than sorry.
     if (targetLocation == null)
       targetLocation = shopLocation.add(.5, 0, .5);
+
+    IEvaluationEnvironment playerWarpExtendedEnvironment = null;
+
+    if (playerWarpsIntegration != null && PluginPermission.FEATURE_TELEPORT_CLOSEST_PLAYER_WARP.has(player)) {
+      var result = playerWarpsIntegration.locateNearestWithinRange(player, targetLocation, config.rootSection.playerWarpsIntegration.nearestWarpBlockRadius);
+
+      if (result != null) {
+        playerWarpExtendedEnvironment =
+          config.rootSection.getBaseEnvironment()
+            .withStaticVariable("player_warp_owner", result.ownerName())
+            .withStaticVariable("player_warp_name", result.warpName())
+            .withStaticVariable("player_warp_world", Objects.requireNonNull(result.location().getWorld()).getName())
+            .withStaticVariable("player_warp_x", result.location().getBlockX())
+            .withStaticVariable("player_warp_y", result.location().getBlockY())
+            .withStaticVariable("player_warp_z", result.location().getBlockZ())
+            .build(display.getDistanceExtendedShopEnvironment(cachedShop));
+
+        if (result.isBanned() && !PluginPermission.FEATURE_TELEPORT_CLOSEST_PLAYER_WARP_BAN_BYPASS.has(player)) {
+          if ((message = config.rootSection.playerMessages.nearestPlayerWarpBanned) != null)
+            message.sendMessage(player, playerWarpExtendedEnvironment);
+
+          playerWarpExtendedEnvironment = null;
+        }
+
+        else
+          targetLocation = result.location();
+      }
+    }
+
+    if (playerWarpExtendedEnvironment != null) {
+      if ((message = config.rootSection.playerMessages.beforeTeleportingNearestPlayerWarp) != null)
+        message.sendMessage(player, playerWarpExtendedEnvironment);
+    }
+
+    else if ((message = config.rootSection.playerMessages.beforeTeleporting) != null) {
+      message.sendMessage(
+        player,
+        config.rootSection.getBaseEnvironment().build(display.getDistanceExtendedShopEnvironment(cachedShop))
+      );
+    }
 
     scheduler.runAtEntity(player, scheduleTask -> player.closeInventory());
 

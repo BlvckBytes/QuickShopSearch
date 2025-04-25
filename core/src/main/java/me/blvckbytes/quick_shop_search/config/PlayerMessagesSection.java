@@ -12,6 +12,7 @@ public class PlayerMessagesSection extends AConfigSection {
   public @Nullable BukkitEvaluable noMatches;
   public @Nullable BukkitEvaluable beforeQuerying;
   public @Nullable BukkitEvaluable beforeTeleporting;
+  public @Nullable BukkitEvaluable beforeTeleportingNearestPlayerWarp;
   public @Nullable BukkitEvaluable queryingAllShops;
   public @Nullable BukkitEvaluable usageQsslCommandLanguage;
   public @Nullable BukkitEvaluable unknownLanguageActionBar;
@@ -55,6 +56,8 @@ public class PlayerMessagesSection extends AConfigSection {
   public @Nullable BukkitEvaluable slowTeleportHasBeenAttacked;
   public @Nullable BukkitEvaluable slowTeleportAttackedSomebody;
   public @Nullable BukkitEvaluable slowTeleportTookDamageByNonPlayer;
+
+  public @Nullable BukkitEvaluable nearestPlayerWarpBanned;
 
   public PlayerMessagesSection(EvaluationEnvironmentBuilder baseEnvironment) {
     super(baseEnvironment);

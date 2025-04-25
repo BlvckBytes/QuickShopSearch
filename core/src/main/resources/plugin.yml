@@ -4,6 +4,7 @@ version: ${project.version}
 author: BlvckBytes
 api-version: 1.18
 depend: [QuickShop-Hikari, ItemPredicateParser]
+softdepend: [PlayerWarps]
 folia-supported: true
 commands:
   quickshopsearch:
@@ -72,4 +73,10 @@ permissions:
     default: op
   quickshopsearch.feature.interact.other-world:
     description: 'Remotely interact with shops within another world '
+    default: op
+  quickshopsearch.feature.teleport.closest-player-warp:
+    description: 'Be teleported to the closest player-warp instead, if it exists'
+    default: op
+  quickshopsearch.feature.teleport.closest-player-warp.ban-bypass:
+    description: 'Bypass player-warp bans when teleporting'
     default: op

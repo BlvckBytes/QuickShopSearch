@@ -106,6 +106,25 @@ MESSAGE-NO-MATCHES                          {prefix} &cDeine Suche erzielte kein
 # - price: Double
 # - prefix: String
 MESSAGE-BEFORE-TELEPORTING                  {prefix} &7Teleportiere zum Shop von &e{owner} &7bei &e{loc_x}&7, &e{loc_y}&7, &e{loc_z}&7.
+# - name: String
+# - owner: String
+# - item_type: String
+# - loc_world: String
+# - loc_x: Integer
+# - loc_y: Integer
+# - loc_z: Integer
+# - distance: Integer
+# - remaining_space: Integer
+# - remaining_stock: Integer
+# - price: Double
+# - prefix: String
+# - player_warp_owner: String
+# - player_warp_name: String
+# - player_warp_world: String
+# - player_warp_x: String
+# - player_warp_y: String
+# - player_warp_z: String
+MESSAGE-BEFORE-TELEPORTING-NEAREST-PLAYER-WARP {prefix} &7Teleportiere zum nächsten Spieler-Warp &e{player_warp_name} &7bei &e{player_warp_x}&7, &e{player_warp_y}&7, &e{player_warp_z} &7vom Shop von &e{owner} &7bei &e{loc_x}&7, &e{loc_y}&7, &e{loc_z}&7.
 # - number_shops: Integer
 # - predicate: String
 # - prefix: String
@@ -237,5 +256,14 @@ MESSAGE-SLOW-TELEPORT-IN-COMBAT-SUBTITLE        &cBleibe für {remaining_seconds
 MESSAGE-SLOW-TELEPORT-NOT-IN-COMBAT-TITLE       &3&lTeleportiere
 # - remaining_seconds: Integer
 MESSAGE-SLOW-TELEPORT-NOT-IN-COMBAT-SUBTITLE    &bBleibe für {remaining_seconds}s still stehen
+
+# - prefix: String
+# - player_warp_owner: String
+# - player_warp_name: String
+# - player_warp_world: String
+# - player_warp_x: String
+# - player_warp_y: String
+# - player_warp_z: String
+MESSAGE-NEAREST-PLAYER-WARP-BANNED {prefix} &cDu bist vom nächsten Spieler-Warp &4{player_warp_name} &cvon &4{player_warp_owner} &cgebannt - teleportiere stattdessen zum Shop!
 
 # ==================== END Messages ====================

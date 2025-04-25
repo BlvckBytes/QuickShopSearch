@@ -15,6 +15,8 @@ import me.blvckbytes.quick_shop_search.cache.QuickShopVersionDependentFactory;
 import me.blvckbytes.quick_shop_search.config.*;
 import me.blvckbytes.quick_shop_search.display.ResultDisplayHandler;
 import me.blvckbytes.quick_shop_search.display.SelectionStateStore;
+import me.blvckbytes.quick_shop_search.integration.player_warps.IPlayerWarpsIntegration;
+import me.blvckbytes.quick_shop_search.integration.player_warps.PlayerWarpsIntegration;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -62,7 +64,28 @@ public class QuickShopSearchPlugin extends JavaPlugin {
       var slowTeleportManager = new SlowTeleportManager(scheduler, config);
       Bukkit.getServer().getPluginManager().registerEvents(slowTeleportManager, this);
 
-      displayHandler = new ResultDisplayHandler(scheduler, remoteInteractionApi, config, stateStore, stampStore, chatPromptManager, slowTeleportManager);
+      IPlayerWarpsIntegration playerWarpsIntegration = null;
+
+      if (Bukkit.getPluginManager().isPluginEnabled("PlayerWarps")) {
+        try {
+          playerWarpsIntegration = new PlayerWarpsIntegration(logger, scheduler);
+          Bukkit.getPluginManager().registerEvents(playerWarpsIntegration, this);
+          logger.info("Successfully loaded the PlayerWarps-integration!");
+        } catch (Exception e) {
+          logger.log(Level.SEVERE, "Could not load PlayerWarps-integration!", e);
+        }
+      }
+
+      displayHandler = new ResultDisplayHandler(
+        scheduler,
+        remoteInteractionApi,
+        config,
+        stateStore,
+        stampStore,
+        chatPromptManager,
+        slowTeleportManager,
+        playerWarpsIntegration
+      );
 
       var shopRegistry = new CachedShopRegistry(this, scheduler, displayHandler, config, logger);
       var shopEventHandler = versionDependentFactory.createListener(shopRegistry);

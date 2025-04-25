@@ -14,6 +14,7 @@ public class MainSection extends AConfigSection {
   public ShopAccessListsSection shopAccessLists;
   public CooldownsSection cooldowns;
   public SlowTeleportSection slowTeleport;
+  public PlayerWarpsIntegrationSection playerWarpsIntegration;
 
   public MainSection(EvaluationEnvironmentBuilder baseEnvironment) {
     super(baseEnvironment);

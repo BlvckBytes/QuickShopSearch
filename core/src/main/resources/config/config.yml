@@ -188,6 +188,27 @@ playerMessages:
   # - loc_z: Integer
   # - distance: Integer
   beforeTeleporting$: '@{MESSAGE-BEFORE-TELEPORTING(prefix=lut["MESSAGE_PREFIX"])}'
+  # - owner: String
+  # - name: String?
+  # - price: Double
+  # - currency: String?
+  # - remaining_stock: Integer
+  # - remaining_space: Integer
+  # - is_selling: Boolean
+  # - is_buying: Boolean
+  # - is_unlimited: Boolean
+  # - loc_world: String?
+  # - loc_x: Integer
+  # - loc_y: Integer
+  # - loc_z: Integer
+  # - distance: Integer
+  # - player_warp_owner: String
+  # - player_warp_name: String
+  # - player_warp_world: String
+  # - player_warp_x: String
+  # - player_warp_y: String
+  # - player_warp_z: String
+  beforeTeleportingNearestPlayerWarp$: '@{MESSAGE-BEFORE-TELEPORTING-NEAREST-PLAYER-WARP(prefix=lut["MESSAGE_PREFIX"])}'
   # - number_shops: Integer
   # - predicate: String
   beforeQuerying$: '@{MESSAGE-BEFORE-QUERYING(prefix=lut["MESSAGE_PREFIX"])}'
@@ -243,6 +264,13 @@ playerMessages:
   # - victim: String
   slowTeleportAttackedSomebody: '@{MESSAGE-SLOW-TELEPORT-ATTACKED-SOMEBODY(prefix=lut["MESSAGE_PREFIX"])}'
   slowTeleportTookDamageByNonPlayer: '@{MESSAGE-SLOW-TELEPORT-TOOK-DAMAGE-BY-NON-PLAYER(prefix=lut["MESSAGE_PREFIX"])}'
+  # - player_warp_owner: String
+  # - player_warp_name: String
+  # - player_warp_world: String
+  # - player_warp_x: String
+  # - player_warp_y: String
+  # - player_warp_z: String
+  nearestPlayerWarpBanned$: '@{MESSAGE-NEAREST-PLAYER-WARP-BANNED(prefix=lut["MESSAGE_PREFIX"])}'
 
 predicates:
   mainLanguage: ENGLISH_US
@@ -341,6 +369,9 @@ slowTeleport:
         soundPitch: 1.2
         messages:
           messageChat$: '@{MESSAGE-SLOW-TELEPORT-TELEPORTED(prefix=lut["MESSAGE_PREFIX"])}'
+
+playerWarpsIntegration:
+  nearestWarpBlockRadius: 15
 
 commands:
   quickShopSearch:
