@@ -34,6 +34,9 @@ permissions:
   quickshopsearch.bypass-non-advertise:
     description: 'View non-advertising shops'
     default: op
+  quickshopsearch.bypass-slow-teleport:
+    description: 'Bypass having to wait for the teleportation-countdown'
+    default: op
   quickshopsearch.bypass-access-lists:
     description: 'Bypass the permission-specific restrictions of access-lists'
     default: op
@@ -49,8 +52,20 @@ permissions:
   quickshopsearch.feature.teleport:
     description: 'Teleport to shops within the same world'
     default: op
+  quickshopsearch.feature.teleport.bypass-cooldown.same-shop:
+    description: 'Bypass the teleport cooldown for the same shop within the player''s world'
+    default: op
+  quickshopsearch.feature.teleport.bypass-cooldown.other-shop:
+    description: 'Bypass the teleport cooldown for any shop within the player''s world'
+    default: op
   quickshopsearch.feature.teleport.other-world:
     description: 'Teleport to shops within another world'
+    default: op
+  quickshopsearch.feature.teleport.other-world.bypass-cooldown.same-shop:
+    description: 'Bypass the teleport cooldown for the same shop within a foreign world'
+    default: op
+  quickshopsearch.feature.teleport.other-world.bypass-cooldown.other-shop:
+    description: 'Bypass the teleport cooldown for any shop within a foreign world'
     default: op
   quickshopsearch.feature.interact:
     description: 'Remotely interact with shops within the same world '
