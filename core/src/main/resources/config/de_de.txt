@@ -163,10 +163,15 @@ MESSAGE-PREDICATE-ERROR                     {prefix} {error_message}
 # - remaining_space: Integer
 # - remaining_stock: Integer
 # - price: Double
+# - max_units: Integer
+# - limiting_factor: String
+# - all_sentinel: String
+# - cancel_sentinel: String
+# - limiting_factor: String
 # - prefix: String
-MESSAGE-SHOP-INTERACT-PROMPT-BUYING          {prefix} &7Gib im Chat ein, wie viele Items an &e{item_type} &7du zum Preis von &e{price} &7je &eVERKAUFEN &7möchtest; tippe "&ccancel&7" um abzubrechen.
+MESSAGE-SHOP-INTERACT-PROMPT-BUYING          {prefix} &7Gib im Chat ein, wie viele Items an &e{item_type} &7du zum Preis von &e{price} &7je &eVERKAUFEN &7möchtest; tippe "&a{all_sentinel}&7" für &e{max_units} Einheit(en) &7(Begrenzungsfaktor: &e{limiting_factor}&7); tippe "&c{cancel_sentinel}&7" um abzubrechen.
 # - prefix: String
-MESSAGE-SHOP-INTERACT-PROMPT-SELLING         {prefix} &7Gib im Chat ein, wie viele Items an &e{item_type} &7du zum Preis von &e{price} &7je &eKAUFEN &7möchtest; tippe "&ccancel&7" um abzubrechen.
+MESSAGE-SHOP-INTERACT-PROMPT-SELLING         {prefix} &7Gib im Chat ein, wie viele Items an &e{item_type} &7du zum Preis von &e{price} &7je &eKAUFEN &7möchtest; tippe "&a{all_sentinel}&7" für &e{max_units} Einheit(en) &7(Begrenzungsfaktor: &e{limiting_factor}&7); tippe "&c{cancel_sentinel}&7" um abzubrechen.
 # - prefix: String
 MESSAGE-SHOP-INTERACT-PROMPT-TIMEOUT         {prefix} &cDeine vorherige Chat-Eingabeaufforderung ist abgelaufen!
 # - amount: Integer
@@ -179,6 +184,24 @@ MESSAGE-SHOP-INTERACT-PROMPT-INVALID-INPUT   {prefix} &cDeine Eingabe &4{input} 
 MESSAGE-SHOP-INTERACT-PROMPT-CANCEL-PREVIOUS {prefix} &cDeine vorherige Chat-Eingabeaufforderung wurde abgebrochen!
 # - prefix: String
 MESSAGE-SHOP-INTERACT-PROMPT-CANCEL-CURRENT  {prefix} &cDu hast die Chat-Eingabeaufforderung abgebrochen!
+MESSAGE-SHOP-INTERACT-PROMPT-LIMITING-FACTOR-PLAYER-SPACE Platz deines Inventars
+MESSAGE-SHOP-INTERACT-PROMPT-LIMITING-FACTOR-PLAYER-STOCK Vorrat deines Inventars
+MESSAGE-SHOP-INTERACT-PROMPT-LIMITING-FACTOR-SHOP-SPACE   Platz des Shops
+MESSAGE-SHOP-INTERACT-PROMPT-LIMITING-FACTOR-SHOP-STOCK   Vorrat des Shops
+MESSAGE-SHOP-INTERACT-PROMPT-LIMITING-FACTOR-SELLER-FUNDS Guthaben des Verkäufers
+MESSAGE-SHOP-INTERACT-PROMPT-LIMITING-FACTOR-BUYER-FUNDS  dein Guthaben
+# - prefix: String
+MESSAGE-SHOP-INTERACT-PLAYER-HAS-NO-SPACE    {prefix} &cDu hast nicht genügend Platz in deinem Inventar.
+# - prefix: String
+MESSAGE-SHOP-INTERACT-PLAYER-HAS-NO-STOCK    {prefix} &cDein Inventar besitzt keinen zu verkaufenden Vorrat.
+# - prefix: String
+MESSAGE-SHOP-INTERACT-SHOP-HAS-NO-SPACE      {prefix} &cDer Shop hat keinen Platz mehr, um deine Items aufzunehmen.
+# - prefix: String
+MESSAGE-SHOP-INTERACT-SHOP-HAS-NO-STOCK      {prefix} &cDer Shop besitzt keinen zu verkaufenden Vorrat mehr.
+# - prefix: String
+MESSAGE-SHOP-INTERACT-SELLER-INSUFFICIENT-FUNDS {prefix} &cDer Shopbesitzer &4{owner} &chat nicht genügend Guthaben, um von dir zu kaufen.
+# - prefix: String
+MESSAGE-SHOP-INTERACT-BUYER-INSUFFICIENT-FUNDS  {prefix} &cDu hast nicht genügend Guthaben, um von diesem Shop zu kaufen.
 
 # - prefix: String
 MESSAGE-MISSING-PERMISSION-MAIN-COMMAND                 {prefix} &cKeine Berechtigung zur Benutzung des Hauptbefehls.

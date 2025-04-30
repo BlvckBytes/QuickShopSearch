@@ -163,11 +163,14 @@ MESSAGE-PREDICATE-ERROR                     {prefix} {error_message}
 # - remaining_space: Integer
 # - remaining_stock: Integer
 # - price: Double
+# - max_units: Integer
+# - limiting_factor: String
+# - cancel_sentinel: String
+# - limiting_factor: String
 # - prefix: String
-MESSAGE-SHOP-INTERACT-PROMPT-BUYING          {prefix} &7在聊天中输入你想要购买的 &e{item_type} 的数量，每个 &e{price} 输入 “&ccancel&7” 以退出.
+MESSAGE-SHOP-INTERACT-PROMPT-BUYING          {prefix} &7Enter in chat, how many items of &e{item_type} &7you wish to &eSELL &7for &e{price} &7each; type "&a{all_sentinel}&7" for &e{max_units} unit(s) &7(limiting-factor: &e{limiting_factor}&7); type "&c{cancel_sentinel}&7" to exit.
 # - prefix: String
-MESSAGE-SHOP-INTERACT-PROMPT-SELLING         {prefix} &7在聊天中输入你想要出售的 &e{item_type} 的数量，每个 &e{price} 输入 “&ccancel&7” 以退出.
-
+MESSAGE-SHOP-INTERACT-PROMPT-SELLING         {prefix} &7Enter in chat, how many items of &e{item_type} &7you wish to &eBUY &7for &e{price} &7each; type "&a{all_sentinel}&7" for &e{max_units} unit(s) &7(limiting-factor: &e{limiting_factor}&7); type "&c{cancel_sentinel}&7" to exit.
 # - prefix: String
 MESSAGE-SHOP-INTERACT-PROMPT-TIMEOUT         {prefix} &c超时，请再试一次!
 # - amount: Integer
@@ -180,6 +183,24 @@ MESSAGE-SHOP-INTERACT-PROMPT-INVALID-INPUT   {prefix} &c您的输入 &4{input} &
 MESSAGE-SHOP-INTERACT-PROMPT-CANCEL-PREVIOUS {prefix} &c上一个聊天提示已被取消!
 # - prefix: String
 MESSAGE-SHOP-INTERACT-PROMPT-CANCEL-CURRENT  {prefix} &c当前的聊天提示已取消
+MESSAGE-SHOP-INTERACT-PROMPT-LIMITING-FACTOR-PLAYER-SPACE space of your inventory
+MESSAGE-SHOP-INTERACT-PROMPT-LIMITING-FACTOR-PLAYER-STOCK stock of your inventory
+MESSAGE-SHOP-INTERACT-PROMPT-LIMITING-FACTOR-SHOP-SPACE   space of the shop
+MESSAGE-SHOP-INTERACT-PROMPT-LIMITING-FACTOR-SHOP-STOCK   stock of the shop
+MESSAGE-SHOP-INTERACT-PROMPT-LIMITING-FACTOR-SELLER-FUNDS the seller's funds
+MESSAGE-SHOP-INTERACT-PROMPT-LIMITING-FACTOR-BUYER-FUNDS  your funds
+# - prefix: String
+MESSAGE-SHOP-INTERACT-PLAYER-HAS-NO-SPACE    {prefix} &cYou do not have enough space in your inventory.
+# - prefix: String
+MESSAGE-SHOP-INTERACT-PLAYER-HAS-NO-STOCK    {prefix} &cYou hold no items to sell in your inventory.
+# - prefix: String
+MESSAGE-SHOP-INTERACT-SHOP-HAS-NO-SPACE      {prefix} &cThe shop has no space left to hold your items.
+# - prefix: String
+MESSAGE-SHOP-INTERACT-SHOP-HAS-NO-STOCK      {prefix} &cThe shop has no items left to buy.
+# - prefix: String
+MESSAGE-SHOP-INTERACT-SELLER-INSUFFICIENT-FUNDS {prefix} &cThe shop-owner &4{owner} &cdoes not have enough money to buy any items from you.
+# - prefix: String
+MESSAGE-SHOP-INTERACT-BUYER-INSUFFICIENT-FUNDS  {prefix} &cYou do not have enough money to buy any items.
 
 # - prefix: String
 MESSAGE-MISSING-PERMISSION-MAIN-COMMAND                 {prefix} &c你没有权限使用主命令.
