@@ -254,9 +254,10 @@ public class ResultDisplayHandler implements Listener {
   private void initiateShopInteraction(Player player, ResultDisplay display, CachedShop cachedShop) {
     var maxUnitsResult = calculateMaxUnits(player, cachedShop);
 
-    var distanceExtendedEnvironment = config.rootSection.getBaseEnvironment().build(
-      display.getDistanceExtendedShopEnvironment(cachedShop)
-    );
+    var distanceExtendedEnvironment = config.rootSection.getBaseEnvironment()
+      .withStaticVariable("all_sentinel", config.rootSection.resultDisplay.chatPromptAllSentinel)
+      .withStaticVariable("cancel_sentinel", config.rootSection.resultDisplay.chatPromptCancelSentinel)
+      .build(display.getDistanceExtendedShopEnvironment(cachedShop));
 
     if (maxUnitsResult.units() == 0) {
       var message = switch (maxUnitsResult.limitingFactor()) {
@@ -299,8 +300,7 @@ public class ResultDisplayHandler implements Listener {
       input -> {
         BukkitEvaluable message;
 
-        // TODO: Add this action-name to the config
-        if (input.equalsIgnoreCase("cancel")) {
+        if (input.equalsIgnoreCase(config.rootSection.resultDisplay.chatPromptCancelSentinel)) {
           if ((message = config.rootSection.playerMessages.shopInteractPromptCancelCurrent) != null)
             message.sendMessage(player, limitingFactorExtendedEnvironment);
 
@@ -309,10 +309,8 @@ public class ResultDisplayHandler implements Listener {
 
         int amount;
 
-        // TODO: Add this action-name to the config
-        if (input.equalsIgnoreCase("all")) {
+        if (input.equalsIgnoreCase(config.rootSection.resultDisplay.chatPromptAllSentinel))
           amount = maxUnitsResult.units();
-        }
 
         else {
           amount = tryParseStrictlyPositiveInteger(input);

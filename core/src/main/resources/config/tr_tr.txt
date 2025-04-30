@@ -1,5 +1,8 @@
 # ==================== BEGIN ResultDisplay ====================
 
+RESULT-DISPLAY-CHAT-PROMPT-ALL-SENTINEL     all
+RESULT-DISPLAY-CHAT-PROMPT-CANCEL-SENTINEL  cancel
+
 # - current_page: Integer
 # - number_pages: Integer
 

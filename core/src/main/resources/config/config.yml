@@ -16,6 +16,8 @@
 # - number_of_rows: Integer
 # - last_slot: Integer
 resultDisplay:
+  chatPromptAllSentinel$: '@{RESULT-DISPLAY-CHAT-PROMPT-ALL-SENTINEL}'
+  chatPromptCancelSentinel$: '@{RESULT-DISPLAY-CHAT-PROMPT-CANCEL-SENTINEL}'
   title: '@{RESULT-DISPLAY-TITLE}'
   rows: 6
   paginationSlots$: 'range(0, 44)'
