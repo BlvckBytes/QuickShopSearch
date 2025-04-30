@@ -252,9 +252,45 @@ public class ResultDisplayHandler implements Listener {
   }
 
   private void initiateShopInteraction(Player player, ResultDisplay display, CachedShop cachedShop) {
-    var extendedEnvironment = config.rootSection.getBaseEnvironment().build(
+    var maxUnitsResult = calculateMaxUnits(player, cachedShop);
+
+    var distanceExtendedEnvironment = config.rootSection.getBaseEnvironment().build(
       display.getDistanceExtendedShopEnvironment(cachedShop)
     );
+
+    if (maxUnitsResult.units() == 0) {
+      var message = switch (maxUnitsResult.limitingFactor()) {
+        case PLAYER_SPACE -> config.rootSection.playerMessages.shopInteractPlayerHasNoSpace;
+        case PLAYER_STOCK -> config.rootSection.playerMessages.shopInteractPlayerHasNoStock;
+        case SHOP_SPACE -> config.rootSection.playerMessages.shopInteractShopHasNoSpace;
+        case SHOP_STOCK -> config.rootSection.playerMessages.shopInteractShopHasNoStock;
+        case SELLER_FUNDS -> config.rootSection.playerMessages.shopInteractSellerInsufficientFunds;
+        case BUYER_FUNDS -> config.rootSection.playerMessages.shopInteractBuyerInsufficientFunds;
+      };
+
+      if (message != null)
+        message.sendMessage(player, distanceExtendedEnvironment);
+
+      return;
+    }
+
+    var limitingFactorPlaceholderMessage = switch (maxUnitsResult.limitingFactor()) {
+      case PLAYER_SPACE -> config.rootSection.playerMessages.shopInteractPromptLimitingFactorPlayerSpace;
+      case PLAYER_STOCK -> config.rootSection.playerMessages.shopInteractPromptLimitingFactorPlayerStock;
+      case SHOP_SPACE -> config.rootSection.playerMessages.shopInteractPromptLimitingFactorShopSpace;
+      case SHOP_STOCK -> config.rootSection.playerMessages.shopInteractPromptLimitingFactorShopStock;
+      case SELLER_FUNDS -> config.rootSection.playerMessages.shopInteractPromptLimitingFactorSellerFunds;
+      case BUYER_FUNDS -> config.rootSection.playerMessages.shopInteractPromptLimitingFactorBuyerFunds;
+    };
+
+    var limitingFactorExtendedEnvironment = config.rootSection.getBaseEnvironment()
+      .withStaticVariable("limiting_factor", (
+        limitingFactorPlaceholderMessage == null
+          ? "?"
+          : limitingFactorPlaceholderMessage.asScalar(ScalarType.STRING, distanceExtendedEnvironment)
+      ))
+      .withStaticVariable("max_units", maxUnitsResult.units())
+      .build(distanceExtendedEnvironment);
 
     scheduler.runAtEntity(player, scheduleTask -> player.closeInventory());
 
@@ -263,25 +299,35 @@ public class ResultDisplayHandler implements Listener {
       input -> {
         BukkitEvaluable message;
 
+        // TODO: Add this action-name to the config
         if (input.equalsIgnoreCase("cancel")) {
           if ((message = config.rootSection.playerMessages.shopInteractPromptCancelCurrent) != null)
-            message.sendMessage(player, config.rootSection.builtBaseEnvironment);
+            message.sendMessage(player, limitingFactorExtendedEnvironment);
 
           return;
         }
 
-        var amount = tryParseStrictlyPositiveInteger(input);
+        int amount;
 
-        if (amount <= 0) {
-          if ((message = config.rootSection.playerMessages.shopInteractPromptInvalidInput) != null) {
-            message.sendMessage(
-              player,
-              config.rootSection.getBaseEnvironment()
-                .withStaticVariable("input", input)
-                .build()
-            );
+        // TODO: Add this action-name to the config
+        if (input.equalsIgnoreCase("all")) {
+          amount = maxUnitsResult.units();
+        }
+
+        else {
+          amount = tryParseStrictlyPositiveInteger(input);
+
+          if (amount <= 0) {
+            if ((message = config.rootSection.playerMessages.shopInteractPromptInvalidInput) != null) {
+              message.sendMessage(
+                player,
+                config.rootSection.getBaseEnvironment()
+                  .withStaticVariable("input", input)
+                  .build()
+              );
+            }
+            return;
           }
-          return;
         }
 
         if ((message = config.rootSection.playerMessages.shopInteractPromptDispatch) != null) {
@@ -289,7 +335,7 @@ public class ResultDisplayHandler implements Listener {
             player,
             new EvaluationEnvironmentBuilder()
               .withStaticVariable("amount", amount)
-              .build(extendedEnvironment)
+              .build(limitingFactorExtendedEnvironment)
           );
         }
 
@@ -301,7 +347,7 @@ public class ResultDisplayHandler implements Listener {
         BukkitEvaluable message;
 
         if ((message = config.rootSection.playerMessages.shopInteractPromptTimeout) != null)
-          message.sendMessage(player, extendedEnvironment);
+          message.sendMessage(player, limitingFactorExtendedEnvironment);
       }
     );
 
@@ -314,13 +360,13 @@ public class ResultDisplayHandler implements Listener {
 
     if (cachedShop.handle.getShopType() == ShopType.BUYING) {
       if ((message = config.rootSection.playerMessages.shopInteractPromptBuying) != null)
-        message.sendMessage(player, extendedEnvironment);
+        message.sendMessage(player, limitingFactorExtendedEnvironment);
 
       return;
     }
 
     if ((message = config.rootSection.playerMessages.shopInteractPromptSelling) != null)
-      message.sendMessage(player, extendedEnvironment);
+      message.sendMessage(player, limitingFactorExtendedEnvironment);
   }
 
   private int tryParseStrictlyPositiveInteger(String input) {
@@ -540,5 +586,85 @@ public class ResultDisplayHandler implements Listener {
 
     if (missingMessage != null)
       missingMessage.sendMessage(player, config.rootSection.builtBaseEnvironment);
+  }
+
+  private MaxUnitsResult calculateMaxUnits(Player player, CachedShop cachedShop) {
+    var isShopBuying = cachedShop.handle.isBuying();
+    var maxUnitsByPlayerInventory = countInventorySpaceOrStockInUnits(player, cachedShop, !isShopBuying);
+
+    if (maxUnitsByPlayerInventory == 0)
+      return new MaxUnitsResult(0, isShopBuying ? LimitingFactor.PLAYER_STOCK : LimitingFactor.PLAYER_SPACE);
+
+    int maxUnitsByShopInventory;
+
+    // Stock/Space-values, as received by QuickShop-Hikari, are already in units,
+    // not items - thus, there's no need to divide by the item's amount.
+    if (cachedShop.handle.isSelling())
+      maxUnitsByShopInventory = cachedShop.cachedStock;
+    else
+      maxUnitsByShopInventory = cachedShop.cachedSpace;
+
+    if (maxUnitsByShopInventory == 0)
+      return new MaxUnitsResult(0, isShopBuying ? LimitingFactor.SHOP_SPACE : LimitingFactor.SHOP_STOCK);
+
+    var shopPrice = cachedShop.handle.getPrice();
+
+    int maxUnitsByBalance;
+
+    if (cachedShop.handle.isSelling()) {
+      var playerBalance = remoteInteractionApi.getPlayerBalance(player, cachedShop.handle);
+      maxUnitsByBalance = (int) (playerBalance / shopPrice);
+    } else {
+      var sellerBalance = remoteInteractionApi.getOwnerBalance(cachedShop.handle);
+      maxUnitsByBalance = (int) (sellerBalance / shopPrice);
+    }
+
+    if (maxUnitsByBalance == 0)
+      return new MaxUnitsResult(0, isShopBuying ? LimitingFactor.SELLER_FUNDS : LimitingFactor.BUYER_FUNDS);
+
+    int maxUnitsTotal = Math.min(maxUnitsByPlayerInventory, Math.min(maxUnitsByShopInventory, maxUnitsByBalance));
+
+    LimitingFactor limitingFactor;
+
+    if (maxUnitsTotal == maxUnitsByPlayerInventory)
+      limitingFactor = isShopBuying ? LimitingFactor.PLAYER_STOCK : LimitingFactor.PLAYER_SPACE;
+    else if (maxUnitsTotal == maxUnitsByShopInventory)
+      limitingFactor = isShopBuying ? LimitingFactor.SHOP_SPACE : LimitingFactor.SHOP_STOCK;
+    else
+      limitingFactor = isShopBuying ? LimitingFactor.SELLER_FUNDS : LimitingFactor.BUYER_FUNDS;
+
+    return new MaxUnitsResult(maxUnitsTotal, limitingFactor);
+  }
+
+  private int countInventorySpaceOrStockInUnits(Player player, CachedShop shop, boolean countSpace) {
+    var inventory = player.getInventory();
+    var shopItem = shop.handle.getItem();
+
+    var shopItemStackSize = shopItem.getAmount();
+    var shopItemMaxStackSize = shopItem.getMaxStackSize();
+
+    var result = 0;
+
+    for (var currentItem : inventory.getStorageContents()) {
+      if (currentItem == null || currentItem.getType().isAir()) {
+
+        if (countSpace)
+          result += shopItemMaxStackSize;
+
+        continue;
+      }
+
+      if (!shop.handle.matches(currentItem))
+        continue;
+
+      if (countSpace) {
+        result += shopItemMaxStackSize - currentItem.getAmount();
+        continue;
+      }
+
+      result += currentItem.getAmount();
+    }
+
+    return result / shopItemStackSize;
   }
 }
