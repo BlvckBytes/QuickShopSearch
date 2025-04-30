@@ -5,6 +5,7 @@ import com.ghostchu.quickshop.api.QuickShopAPI;
 import com.ghostchu.quickshop.api.shop.Shop;
 import com.ghostchu.quickshop.api.shop.ShopAction;
 import com.ghostchu.quickshop.api.shop.ShopManager;
+import com.ghostchu.quickshop.obj.QUserImpl;
 import com.ghostchu.quickshop.shop.SimpleInfo;
 import com.ghostchu.quickshop.shop.inventory.BukkitInventoryWrapper;
 import org.bukkit.entity.Player;
@@ -56,5 +57,17 @@ public class RemoteInteractionApi_LTE_6207 implements RemoteInteractionApi {
         tradeInfo, shop, amount
       );
     }
+  }
+
+  @Override
+  public double getPlayerBalance(Player player, Shop shop) {
+    return QuickShop.getInstance().getEconomy()
+      .getBalance(QUserImpl.createFullFilled(player), shop.getLocation().getWorld(), shop.getCurrency());
+  }
+
+  @Override
+  public double getOwnerBalance(Shop shop) {
+    return QuickShop.getInstance().getEconomy()
+      .getBalance(shop.getOwner(), shop.getLocation().getWorld(), shop.getCurrency());
   }
 }

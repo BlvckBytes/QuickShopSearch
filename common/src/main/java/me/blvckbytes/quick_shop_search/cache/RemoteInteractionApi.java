@@ -12,4 +12,14 @@ public interface RemoteInteractionApi {
    */
   void interact(Player player, Shop shop, int amount);
 
+  /**
+   * Get the balance of a player within the shop's world, using the shop's currency
+   */
+  double getPlayerBalance(Player player, Shop shop);
+
+  /**
+   * Get the balance of the shop-owning player, within the shop's world, using the shop's currency
+   */
+  double getOwnerBalance(Shop shop);
+
 }
