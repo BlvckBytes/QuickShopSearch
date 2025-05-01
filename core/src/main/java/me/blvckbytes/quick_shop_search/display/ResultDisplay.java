@@ -50,6 +50,7 @@ public class ResultDisplay implements DynamicPropertyProvider {
   private IEvaluationEnvironment sortingEnvironment;
   private IEvaluationEnvironment filteringEnvironment;
   private IEvaluationEnvironment activeSearchEnvironment;
+  private boolean hasAnyActiveSearchProperties;
 
   private Inventory inventory;
   private int currentPage = 1;
@@ -139,13 +140,29 @@ public class ResultDisplay implements DynamicPropertyProvider {
       .makeFilteringEnvironment(player, config.rootSection)
       .build(pageEnvironment);
 
-    this.activeSearchEnvironment = config.rootSection.getBaseEnvironment()
-      .withStaticVariable("predicate", (
-        displayData.query() == null
-          ? null
-          : new StringifyState(true).appendPredicate(displayData.query()).toString())
-      )
-      .build();
+    var activeSearchProperties = new HashMap<String, Object>();
+
+    activeSearchProperties.put(
+      "predicate",
+      displayData.query() == null
+        ? null
+        : new StringifyState(true).appendPredicate(displayData.query()).toString()
+    );
+
+    var activeSearchEnvironmentBuilder = new EvaluationEnvironmentBuilder();
+
+    this.hasAnyActiveSearchProperties = false;
+
+    for (var propertyEntry : activeSearchProperties.entrySet()) {
+      var currentValue = propertyEntry.getValue();
+
+      if (currentValue != null)
+        this.hasAnyActiveSearchProperties = true;
+
+      activeSearchEnvironmentBuilder.withStaticVariable(propertyEntry.getKey(), currentValue);
+    }
+
+    this.activeSearchEnvironment = activeSearchEnvironmentBuilder.build(config.rootSection.builtBaseEnvironment);
 
     if (redraw) {
       applyFiltering();
@@ -380,12 +397,16 @@ public class ResultDisplay implements DynamicPropertyProvider {
       slotMap[slot] = cachedShop;
     }
 
+    // Render filler first, such that it may be overridden by conditionally displayed items
+    config.rootSection.resultDisplay.items.filler.renderInto(inventory, pageEnvironment);
+
     config.rootSection.resultDisplay.items.previousPage.renderInto(inventory, pageEnvironment);
     config.rootSection.resultDisplay.items.nextPage.renderInto(inventory, pageEnvironment);
     renderSortingItem();
     renderFilteringItem();
-    config.rootSection.resultDisplay.items.activeSearch.renderInto(inventory, activeSearchEnvironment);
-    config.rootSection.resultDisplay.items.filler.renderInto(inventory, pageEnvironment);
+
+    if (hasAnyActiveSearchProperties)
+      config.rootSection.resultDisplay.items.activeSearch.renderInto(inventory, activeSearchEnvironment);
   }
 
   public IEvaluationEnvironment getDistanceExtendedShopEnvironment(CachedShop cachedShop) {

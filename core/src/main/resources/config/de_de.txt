@@ -88,9 +88,8 @@ FILTERING-LORE-RIGHT-CLICK-DESCRIPTION     &8➥ &eRechtsklick &7Zustand umschal
 FILTERING-LORE-DROP-ALL-DESCRIPTION        &8➥ &eAlle werfen &7Auswahlen zurücksetzen
 
 ACTIVE-SEARCH-NAME                        &8» &6Suche &8«
-# - predicate: String?
-ACTIVE-SEARCH-LORE-PREDICATE-HAS          &8➥ &7Prädikat: &e{predicate}
-ACTIVE-SEARCH-LORE-PREDICATE-HAS-NONE     &8➥ &7Prädikat: &eKeines
+# - predicate: String
+ACTIVE-SEARCH-LORE-PREDICATE              &8➥ &7Prädikat: &e{predicate}
 
 # ==================== END ResultDisplay ====================
 

@@ -138,7 +138,10 @@ resultDisplay:
       # - predicate: String?
       lore$:
         - '" "'
-        - 'if predicate == null then @{ACTIVE-SEARCH-LORE-PREDICATE-HAS-NONE} else @{ACTIVE-SEARCH-LORE-PREDICATE-HAS}'
+        - |
+          filter(list_of(
+            if predicate == null then null else @{ACTIVE-SEARCH-LORE-PREDICATE}
+          ), (it) => it != null)
     # - filtering_selections: Map<ShopFilteringCriteria, PredicateSelection>
     # - selected_criteria: ShopFilteringCriteria
     # - has_permission: Boolean
@@ -171,10 +174,10 @@ resultDisplay:
           )
     # https://github.com/BlvckBytes/BukkitEvaluable#itemstack-section
     filler:
-      # TODO: Add note to release-message that the `last_slot - 4`-entry is to be deleted
       slots$:
         - 'last_slot - 7'
         - 'last_slot - 5'
+        - 'last_slot - 4'
         - 'last_slot - 3'
         - 'last_slot - 1'
       type: BLACK_STAINED_GLASS_PANE

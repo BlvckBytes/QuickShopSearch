@@ -9,7 +9,6 @@ import me.blvckbytes.gpeee.interpreter.EvaluationEnvironmentBuilder;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -35,8 +34,6 @@ public class PaginatedGuiSection<T extends AConfigSection> extends GuiSection<T>
         throw new MappingError("Pagination slot " + paginationSlot + " out of range [0;" + lastSlot + "]");
     }
 
-    var encounteredItemSectionFields = new ArrayList<Field>();
-
     for (var field : itemsSectionClass.getDeclaredFields()) {
       if (!GuiItemStackSection.class.isAssignableFrom(field.getType()))
         continue;
@@ -54,14 +51,7 @@ public class PaginatedGuiSection<T extends AConfigSection> extends GuiSection<T>
 
         if (_paginationSlots.contains(itemSlot))
           throw new MappingError("Slot " + itemSlot + " of item " + field.getName() + " conflicts with pagination-slots " + paginationSlots);
-
-        for (var encounteredItemSection : encounteredItemSectionFields) {
-          if (((GuiItemStackSection) encounteredItemSection.get(items)).getDisplaySlots().contains(itemSlot))
-            throw new MappingError("Slot " + itemSlot + " of item " + field.getName() + " also occurs within item " + encounteredItemSection.getName());
-        }
       }
-
-      encounteredItemSectionFields.add(field);
     }
   }
 
