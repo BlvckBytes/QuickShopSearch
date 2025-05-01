@@ -82,7 +82,7 @@
         <dependency>
             <groupId>me.blvckbytes</groupId>
             <artifactId>ItemPredicateParser</artifactId>
-            <version>0.0.8</version>
+            <version>0.0.18</version>
         </dependency>
         <dependency>
             <groupId>org.jetbrains</groupId>

@@ -4,11 +4,11 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import me.blvckbytes.quick_shop_search.PluginPermission;
-import org.apache.commons.io.FileUtils;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
@@ -67,7 +67,11 @@ public class SelectionStateStore {
       for (var state : this.states.entrySet())
         stateData.add(state.getKey().toString(), state.getValue().toJson());
 
-      FileUtils.writeStringToFile(stateFile, gson.toJson(stateData), StandardCharsets.UTF_8);
+      try (
+        var outputStream = new FileOutputStream(stateFile)
+      ) {
+        outputStream.write(gson.toJson(stateData).getBytes(StandardCharsets.UTF_8));
+      }
     } catch (Exception e) {
       logger.log(Level.SEVERE, "Could not write state-file to " + stateFile, e);
     }
