@@ -136,11 +136,21 @@ resultDisplay:
       type: REDSTONE
       name$: '@{ACTIVE-SEARCH-NAME}'
       # - predicate: String?
+      # - owner: String?
+      # - radius: String?
+      # - price: String?
+      # - max_price: String?
+      # - min_price: String?
       lore$:
         - '" "'
         - |
           filter(list_of(
-            if predicate == null then null else @{ACTIVE-SEARCH-LORE-PREDICATE}
+            if predicate == null then null else @{ACTIVE-SEARCH-LORE-PREDICATE},
+            if owner == null then null else @{ACTIVE-SEARCH-LORE-OWNER},
+            if radius == null then null else @{ACTIVE-SEARCH-LORE-RADIUS},
+            if price == null then null else @{ACTIVE-SEARCH-LORE-PRICE},
+            if max_price == null then null else @{ACTIVE-SEARCH-LORE-MAX-PRICE},
+            if min_price == null then null else @{ACTIVE-SEARCH-LORE-MIN-PRICE}
           ), (it) => it != null)
     # - filtering_selections: Map<ShopFilteringCriteria, PredicateSelection>
     # - selected_criteria: ShopFilteringCriteria
@@ -403,6 +413,21 @@ commands:
     name: quickshopsearch
     aliases:
     - qss
+    searchFlags:
+      OWNER:
+        name$: '@{COMMAND-QSS-SEARCH-FLAG-OWNER}'
+      RADIUS:
+        name$: '@{COMMAND-QSS-SEARCH-FLAG-RADIUS}'
+        suggestions: [5, 10, 15, 20, 25, 30]
+      PRICE:
+        name$: '@{COMMAND-QSS-SEARCH-FLAG-PRICE}'
+        suggestions: [50, 100, 150, 200, 250, 300]
+      MAX_PRICE:
+        name$: '@{COMMAND-QSS-SEARCH-FLAG-MAX-PRICE}'
+        suggestions: [50, 100, 150, 200, 250, 300]
+      MIN_PRICE:
+        name$: '@{COMMAND-QSS-SEARCH-FLAG-MIN-PRICE}'
+        suggestions: [50, 100, 150, 200, 250, 300]
   quickShopSearchLanguage:
     name: quickshopsearchlanguage
     aliases:

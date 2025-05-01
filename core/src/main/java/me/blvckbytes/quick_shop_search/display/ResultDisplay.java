@@ -11,8 +11,10 @@ import me.blvckbytes.item_predicate_parser.predicate.StringifyState;
 import me.blvckbytes.quick_shop_search.PluginPermission;
 import me.blvckbytes.quick_shop_search.cache.CachedShop;
 import me.blvckbytes.quick_shop_search.ShopUpdate;
+import me.blvckbytes.quick_shop_search.command.SearchFlag;
 import me.blvckbytes.quick_shop_search.config.MainSection;
 import org.bukkit.Location;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.Nullable;
@@ -148,6 +150,12 @@ public class ResultDisplay implements DynamicPropertyProvider {
         ? null
         : new StringifyState(true).appendPredicate(displayData.query()).toString()
     );
+
+    activeSearchProperties.put("owner", displayData.searchFlagsContainer().getWithMapper(SearchFlag.OWNER, OfflinePlayer::getName));
+    activeSearchProperties.put("radius", displayData.searchFlagsContainer().get(SearchFlag.RADIUS));
+    activeSearchProperties.put("price", displayData.searchFlagsContainer().get(SearchFlag.PRICE));
+    activeSearchProperties.put("max_price", displayData.searchFlagsContainer().get(SearchFlag.MAX_PRICE));
+    activeSearchProperties.put("min_price", displayData.searchFlagsContainer().get(SearchFlag.MIN_PRICE));
 
     var activeSearchEnvironmentBuilder = new EvaluationEnvironmentBuilder();
 

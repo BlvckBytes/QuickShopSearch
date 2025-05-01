@@ -85,6 +85,11 @@
             <version>0.0.18</version>
         </dependency>
         <dependency>
+            <groupId>me.blvckbytes</groupId>
+            <artifactId>SyllablesMatcher</artifactId>
+            <version>0.1</version>
+        </dependency>
+        <dependency>
             <groupId>org.jetbrains</groupId>
             <artifactId>annotations</artifactId>
             <version>24.1.0</version>
@@ -130,6 +135,7 @@
                             <!-- Include all libs for shading -->
                             <include>me.blvckbytes:BBConfigMapper</include>
                             <include>me.blvckbytes:BukkitEvaluable</include>
+                            <include>me.blvckbytes:SyllablesMatcher</include>
                             <include>me.blvckbytes:GPEEE</include>
                             <include>me.blvckbytes:common</include>
                             <include>me.blvckbytes:qs_lte_6207</include>
@@ -145,7 +151,7 @@
                     <relocations>
                         <!-- Relocate all libs into the root package -->
                         <relocation>
-                            <pattern>me/blvckbytes/(bbconfigmapper|bukkitevaluable|gpeee)/(.*)</pattern>
+                            <pattern>me/blvckbytes/(bbconfigmapper|bukkitevaluable|gpeee|syllables_matcher)/(.*)</pattern>
                             <shadedPattern>me/blvckbytes/quick_shop_search/$1/$2</shadedPattern>
                             <rawString>true</rawString>
                         </relocation>

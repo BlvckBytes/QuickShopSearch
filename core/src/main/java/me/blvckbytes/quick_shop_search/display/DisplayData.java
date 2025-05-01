@@ -3,6 +3,7 @@ package me.blvckbytes.quick_shop_search.display;
 import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
 import me.blvckbytes.item_predicate_parser.predicate.ItemPredicate;
 import me.blvckbytes.quick_shop_search.cache.CachedShop;
+import me.blvckbytes.quick_shop_search.command.SearchFlagsContainer;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
@@ -10,7 +11,8 @@ import java.util.Collection;
 public record DisplayData(
   Collection<CachedShop> shops,
   LongOpenHashSet shopIds,
-  @Nullable ItemPredicate query
+  @Nullable ItemPredicate query,
+  SearchFlagsContainer searchFlagsContainer
 ) {
   public boolean contains(CachedShop shop) {
     return shopIds.contains(shop.handle.getShopId());

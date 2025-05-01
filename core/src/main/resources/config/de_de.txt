@@ -90,6 +90,16 @@ FILTERING-LORE-DROP-ALL-DESCRIPTION        &8➥ &eAlle werfen &7Auswahlen zurü
 ACTIVE-SEARCH-NAME                        &8» &6Suche &8«
 # - predicate: String
 ACTIVE-SEARCH-LORE-PREDICATE              &8➥ &7Prädikat: &e{predicate}
+# - owner: String
+ACTIVE-SEARCH-LORE-OWNER                  &8➥ &7Besitzer: &e{owner}
+# - radius: String
+ACTIVE-SEARCH-LORE-RADIUS                 &8➥ &7Radius: &e{radius}
+# - price: String
+ACTIVE-SEARCH-LORE-PRICE                  &8➥ &7Preis: &e{price}
+# - max_price: String
+ACTIVE-SEARCH-LORE-MAX-PRICE              &8➥ &7Max-Preis: &e{max_price}
+# - min_price: String
+ACTIVE-SEARCH-LORE-MIN-PRICE              &8➥ &7Min-Preis: &e{min_price}
 
 # ==================== END ResultDisplay ====================
 
@@ -295,5 +305,11 @@ MESSAGE-SLOW-TELEPORT-NOT-IN-COMBAT-SUBTITLE    &bBleibe für {remaining_seconds
 # - player_warp_y: String
 # - player_warp_z: String
 MESSAGE-NEAREST-PLAYER-WARP-BANNED {prefix} &cDu bist vom nächsten Spieler-Warp &4{player_warp_name} &cvon &4{player_warp_owner} &cgebannt - teleportiere stattdessen zum Shop!
+
+COMMAND-QSS-SEARCH-FLAG-OWNER     Besituer
+COMMAND-QSS-SEARCH-FLAG-RADIUS    Radius
+COMMAND-QSS-SEARCH-FLAG-PRICE     Preis
+COMMAND-QSS-SEARCH-FLAG-MAX-PRICE Max-Preis
+COMMAND-QSS-SEARCH-FLAG-MIN-PRICE Min-Preis
 
 # ==================== END Messages ====================

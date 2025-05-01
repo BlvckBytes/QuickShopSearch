@@ -90,6 +90,16 @@ FILTERING-LORE-DROP-ALL-DESCRIPTION        &8➥ &eHepsini Bırak &7Seçenekleri
 ACTIVE-SEARCH-NAME                        &8» &6Search &8«
 # - predicate: String
 ACTIVE-SEARCH-LORE-PREDICATE              &8➥ &7Predicate: &e{predicate}
+# - owner: String
+ACTIVE-SEARCH-LORE-OWNER                  &8➥ &7Owner: &e{owner}
+# - radius: String
+ACTIVE-SEARCH-LORE-RADIUS                 &8➥ &7Radius: &e{radius}
+# - price: String
+ACTIVE-SEARCH-LORE-PRICE                  &8➥ &7Price: &e{price}
+# - max_price: String
+ACTIVE-SEARCH-LORE-MAX-PRICE              &8➥ &7Max-Price: &e{max_price}
+# - min_price: String
+ACTIVE-SEARCH-LORE-MIN-PRICE              &8➥ &7Min-Price: &e{min_price}
 
 # ==================== END ResultDisplay ====================
 
@@ -294,5 +304,11 @@ MESSAGE-SLOW-TELEPORT-NOT-IN-COMBAT-SUBTITLE    &bStand still for {remaining_sec
 # - player_warp_y: String
 # - player_warp_z: String
 MESSAGE-NEAREST-PLAYER-WARP-BANNED {prefix} &cYou're banned from the nearest player-warp &4{player_warp_name} &cby &4{player_warp_owner} &c- teleporting to the shop instead!
+
+COMMAND-QSS-SEARCH-FLAG-OWNER     Owner
+COMMAND-QSS-SEARCH-FLAG-RADIUS    Radius
+COMMAND-QSS-SEARCH-FLAG-PRICE     Price
+COMMAND-QSS-SEARCH-FLAG-MAX-PRICE Max-Price
+COMMAND-QSS-SEARCH-FLAG-MIN-PRICE Min-Price
 
 # ==================== END Messages ====================

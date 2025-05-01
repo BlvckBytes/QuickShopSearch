@@ -64,6 +64,7 @@ public class QuickShopSearchCommand implements CommandExecutor, TabCompleter {
 
       var language = config.rootSection.predicates.mainLanguage;
       var argsOffset = 0;
+      var searchFlagsContainer = new SearchFlagsContainer();
 
       if (command.getName().equals(config.rootSection.commands.quickShopSearchLanguage.evaluatedName)) {
         if (!PluginPermission.LANGUAGE_COMMAND.has(player)) {
@@ -120,7 +121,7 @@ public class QuickShopSearchCommand implements CommandExecutor, TabCompleter {
       if (predicate == null) {
         // Empty predicates on a command which requires specifying the desired language explicitly seem odd...
         if (argsOffset == 0 && PluginPermission.EMPTY_PREDICATE.has(player)) {
-          var displayData = createFilteredDisplayData(player, null);
+          var displayData = createFilteredDisplayData(player, null, searchFlagsContainer);
 
           if ((message = config.rootSection.playerMessages.queryingAllShops) != null) {
             message.sendMessage(
@@ -141,7 +142,7 @@ public class QuickShopSearchCommand implements CommandExecutor, TabCompleter {
         return;
       }
 
-      var displayData = createFilteredDisplayData(player, predicate);
+      var displayData = createFilteredDisplayData(player, predicate, searchFlagsContainer);
 
       if ((message = config.rootSection.playerMessages.beforeQuerying) != null) {
         message.sendMessage(
@@ -220,7 +221,7 @@ public class QuickShopSearchCommand implements CommandExecutor, TabCompleter {
     }
   }
 
-  private DisplayData createFilteredDisplayData(Player player, @Nullable ItemPredicate predicate) {
+  private DisplayData createFilteredDisplayData(Player player, @Nullable ItemPredicate predicate, SearchFlagsContainer searchFlagsContainer) {
     var matchingShops = new ArrayList<CachedShop>();
     var matchingShopIds = new LongOpenHashSet();
     var playerWorld = player.getWorld();
@@ -242,11 +243,14 @@ public class QuickShopSearchCommand implements CommandExecutor, TabCompleter {
       if (predicate != null && !predicate.test(new PredicateState(cachedShop.handle.getItem())))
         continue;
 
+      if (!searchFlagsContainer.test(cachedShop, player))
+        continue;
+
       matchingShops.add(cachedShop);
       matchingShopIds.add(cachedShop.handle.getShopId());
     }
 
-    return new DisplayData(matchingShops, matchingShopIds, predicate);
+    return new DisplayData(matchingShops, matchingShopIds, predicate, searchFlagsContainer);
   }
 
   private @Nullable ShopAccessListSection decideAccessListFor(Player player) {
