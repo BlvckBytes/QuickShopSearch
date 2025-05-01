@@ -12,6 +12,7 @@ import me.blvckbytes.item_predicate_parser.predicate.PredicateState;
 import me.blvckbytes.item_predicate_parser.predicate.StringifyState;
 import me.blvckbytes.item_predicate_parser.syllables_matcher.NormalizedConstant;
 import me.blvckbytes.item_predicate_parser.translation.TranslationLanguage;
+import me.blvckbytes.quick_shop_search.OfflinePlayerRegistry;
 import me.blvckbytes.quick_shop_search.PluginPermission;
 import me.blvckbytes.quick_shop_search.cache.CachedShop;
 import me.blvckbytes.quick_shop_search.cache.CachedShopRegistry;
@@ -38,6 +39,7 @@ public class QuickShopSearchCommand implements CommandExecutor, TabCompleter {
   private final PredicateHelper predicateHelper;
   private final CachedShopRegistry shopRegistry;
   private final ResultDisplayHandler resultDisplay;
+  private final OfflinePlayerRegistry offlinePlayerRegistry;
   private final ConfigKeeper<MainSection> config;
 
   public QuickShopSearchCommand(
@@ -45,13 +47,15 @@ public class QuickShopSearchCommand implements CommandExecutor, TabCompleter {
     PredicateHelper predicateHelper,
     CachedShopRegistry shopRegistry,
     ConfigKeeper<MainSection> config,
-    ResultDisplayHandler resultDisplay
+    ResultDisplayHandler resultDisplay,
+    OfflinePlayerRegistry offlinePlayerRegistry
   ) {
     this.scheduler = scheduler;
     this.predicateHelper = predicateHelper;
     this.shopRegistry = shopRegistry;
     this.config = config;
     this.resultDisplay = resultDisplay;
+    this.offlinePlayerRegistry = offlinePlayerRegistry;
   }
 
   @Override
@@ -65,8 +69,9 @@ public class QuickShopSearchCommand implements CommandExecutor, TabCompleter {
       var language = config.rootSection.predicates.mainLanguage;
       var argsOffset = 0;
       var searchFlagsContainer = new SearchFlagsContainer();
+      var isLanguageCommand = command.getName().equals(config.rootSection.commands.quickShopSearchLanguage.evaluatedName);
 
-      if (command.getName().equals(config.rootSection.commands.quickShopSearchLanguage.evaluatedName)) {
+      if (isLanguageCommand) {
         if (!PluginPermission.LANGUAGE_COMMAND.has(player)) {
           if ((message = config.rootSection.playerMessages.missingPermissionLanguageCommand) != null)
             message.applicator.sendMessage(player, message, config.rootSection.builtBaseEnvironment);
@@ -101,6 +106,39 @@ public class QuickShopSearchCommand implements CommandExecutor, TabCompleter {
         return;
       }
 
+      while (argsOffset < args.length) {
+        var currentArg = args[argsOffset];
+
+        if (currentArg.isEmpty() || currentArg.charAt(0) != '-')
+          break;
+
+        var searchFlag = SearchFlag.matcher.matchFirst(currentArg.substring(1));
+
+        if (searchFlag == null)
+          break;
+
+        if (argsOffset + 1 == args.length)
+          break;
+
+        var nextArg = args[argsOffset + 1];
+
+        if (!searchFlagsContainer.parseAndSet(searchFlag.constant, nextArg, offlinePlayerRegistry)) {
+          if ((message = config.rootSection.playerMessages.searchFlagParseError) != null) {
+            message.sendMessage(
+              player,
+              config.rootSection.getBaseEnvironment()
+                .withStaticVariable("flag_name", searchFlag.getNormalizedName())
+                .withStaticVariable("flag_value", nextArg)
+                .build()
+            );
+          }
+
+          return;
+        }
+
+        argsOffset += 2;
+      }
+
       ItemPredicate predicate;
 
       try {
@@ -120,7 +158,7 @@ public class QuickShopSearchCommand implements CommandExecutor, TabCompleter {
 
       if (predicate == null) {
         // Empty predicates on a command which requires specifying the desired language explicitly seem odd...
-        if (argsOffset == 0 && PluginPermission.EMPTY_PREDICATE.has(player)) {
+        if (!isLanguageCommand && PluginPermission.EMPTY_PREDICATE.has(player)) {
           var displayData = createFilteredDisplayData(player, null, searchFlagsContainer);
 
           if ((message = config.rootSection.playerMessages.queryingAllShops) != null) {
@@ -205,6 +243,34 @@ public class QuickShopSearchCommand implements CommandExecutor, TabCompleter {
 
     if (!PluginPermission.MAIN_COMMAND.has(player))
       return List.of();
+
+    while (argsOffset < args.length) {
+      var currentArg = args[argsOffset];
+
+      if (currentArg.isEmpty() || currentArg.charAt(0) != '-')
+        break;
+
+      var searchFlagName = currentArg.substring(1);
+
+      if (argsOffset + 1 == args.length)
+        return SearchFlag.matcher.createCompletions(searchFlagName, "-", null);
+
+      var searchFlag = SearchFlag.matcher.matchFirst(searchFlagName);
+
+      if (searchFlag == null)
+        break;
+
+      var searchFlagValue = args[argsOffset + 1];
+
+      argsOffset += 2;
+
+      if (argsOffset == args.length) {
+        if (searchFlag.constant == SearchFlag.OWNER)
+          return this.offlinePlayerRegistry.createSuggestions(searchFlagValue, 10);
+
+        return searchFlag.constant.getSuggestions(searchFlagValue);
+      }
+    }
 
     try {
       var tokens = predicateHelper.parseTokens(args, argsOffset);

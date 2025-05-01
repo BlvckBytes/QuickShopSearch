@@ -166,6 +166,10 @@ MESSAGE-PLUGIN-RELOAD-ERROR                 {prefix} &cEin Fehler trat während 
 # - error_message: String
 # - prefix: String
 MESSAGE-PREDICATE-ERROR                     {prefix} {error_message}
+# - flag_name: String
+# - flag_value: String
+# - prefix: String
+MESSAGE-SEARCH-FLAG-ERROR                   {prefix} &cUngültiger Wert &4{flag_value} &cfür den Suche-Parameter &4{flag_name}&c!
 # - name: String
 # - owner: String
 # - item_type: String

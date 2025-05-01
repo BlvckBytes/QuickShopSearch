@@ -248,6 +248,9 @@ playerMessages:
   pluginReloadedError$: '@{MESSAGE-PLUGIN-RELOAD-ERROR(prefix=lut["MESSAGE_PREFIX"])}'
   # - error_message: String
   predicateParseError$: '@{MESSAGE-PREDICATE-ERROR(prefix=lut["MESSAGE_PREFIX"])}'
+  # - flag_name: String
+  # - flag_value: String
+  searchFlagParseError$: '@{MESSAGE-SEARCH-FLAG-ERROR(prefix=lut["MESSAGE_PREFIX"])}'
   shopInteractPromptBuying$: '@{MESSAGE-SHOP-INTERACT-PROMPT-BUYING(prefix=lut["MESSAGE_PREFIX"])}'
   shopInteractPromptSelling$: '@{MESSAGE-SHOP-INTERACT-PROMPT-SELLING(prefix=lut["MESSAGE_PREFIX"])}'
   shopInteractPromptTimeout$: '@{MESSAGE-SHOP-INTERACT-PROMPT-TIMEOUT(prefix=lut["MESSAGE_PREFIX"])}'

@@ -96,8 +96,11 @@ public class QuickShopSearchPlugin extends JavaPlugin {
       Bukkit.getPluginManager().registerEvents(shopEventHandler, this);
       Bukkit.getPluginManager().registerEvents(displayHandler, this);
 
+      var offlinePlayerRegistry = new OfflinePlayerRegistry();
+      Bukkit.getPluginManager().registerEvents(offlinePlayerRegistry, this);
+
       var commandUpdater = new CommandUpdater(this);
-      var commandExecutor = new QuickShopSearchCommand(scheduler, parserPlugin.getPredicateHelper(), shopRegistry, config, displayHandler);
+      var commandExecutor = new QuickShopSearchCommand(scheduler, parserPlugin.getPredicateHelper(), shopRegistry, config, displayHandler, offlinePlayerRegistry);
 
       var mainCommand = Objects.requireNonNull(getCommand(QuickShopSearchCommandSection.INITIAL_NAME));
       var languageCommand = Objects.requireNonNull(getCommand(QuickShopSearchLanguageCommandSection.INITIAL_NAME));

@@ -166,6 +166,10 @@ MESSAGE-PLUGIN-RELOAD-ERROR                 {prefix} &c在重新加载配置文�
 # - error_message: String
 # - prefix: String
 MESSAGE-PREDICATE-ERROR                     {prefix} {error_message}
+# - flag_name: String
+# - flag_value: String
+# - prefix: String
+MESSAGE-SEARCH-FLAG-ERROR                   {prefix} &cInvalid value &4{flag_value} &cfor search-flag &4{flag_name}&c!
 # - name: String
 # - owner: String
 # - item_type: String

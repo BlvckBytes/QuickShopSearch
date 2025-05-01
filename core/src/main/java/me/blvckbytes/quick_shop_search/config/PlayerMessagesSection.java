@@ -19,6 +19,7 @@ public class PlayerMessagesSection extends AConfigSection {
   public @Nullable BukkitEvaluable pluginReloadedSuccess;
   public @Nullable BukkitEvaluable pluginReloadedError;
   public @Nullable BukkitEvaluable predicateParseError;
+  public @Nullable BukkitEvaluable searchFlagParseError;
   public @Nullable BukkitEvaluable shopInteractPromptBuying;
   public @Nullable BukkitEvaluable shopInteractPromptSelling;
   public @Nullable BukkitEvaluable shopInteractPromptTimeout;
