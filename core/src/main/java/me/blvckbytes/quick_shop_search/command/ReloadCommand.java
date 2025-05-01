@@ -1,7 +1,8 @@
-package me.blvckbytes.quick_shop_search;
+package me.blvckbytes.quick_shop_search.command;
 
 import me.blvckbytes.bukkitevaluable.BukkitEvaluable;
 import me.blvckbytes.bukkitevaluable.ConfigKeeper;
+import me.blvckbytes.quick_shop_search.PluginPermission;
 import me.blvckbytes.quick_shop_search.config.MainSection;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;

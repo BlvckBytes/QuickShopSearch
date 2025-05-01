@@ -12,6 +12,8 @@ import me.blvckbytes.bukkitevaluable.ConfigManager;
 import me.blvckbytes.item_predicate_parser.ItemPredicateParserPlugin;
 import me.blvckbytes.quick_shop_search.cache.CachedShopRegistry;
 import me.blvckbytes.quick_shop_search.cache.QuickShopVersionDependentFactory;
+import me.blvckbytes.quick_shop_search.command.QuickShopSearchCommand;
+import me.blvckbytes.quick_shop_search.command.ReloadCommand;
 import me.blvckbytes.quick_shop_search.config.*;
 import me.blvckbytes.quick_shop_search.display.ResultDisplayHandler;
 import me.blvckbytes.quick_shop_search.display.SelectionStateStore;
