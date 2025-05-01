@@ -17,6 +17,10 @@ public class SearchFlagsContainer {
     this.valueByFlag = new HashMap<>();
   }
 
+  public int size() {
+    return valueByFlag.size();
+  }
+
   @SuppressWarnings("unchecked")
   public <T> @Nullable T get(SearchFlag<T> flag) {
     var value = valueByFlag.get(flag);

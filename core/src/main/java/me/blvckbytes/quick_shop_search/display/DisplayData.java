@@ -14,6 +14,10 @@ public record DisplayData(
   @Nullable ItemPredicate query,
   SearchFlagsContainer searchFlagsContainer
 ) {
+  public boolean hasAnyConstraints() {
+    return searchFlagsContainer.size() > 0 || query != null;
+  }
+
   public boolean contains(CachedShop shop) {
     return shopIds.contains(shop.handle.getShopId());
   }

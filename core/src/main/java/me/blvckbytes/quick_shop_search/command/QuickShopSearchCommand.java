@@ -31,6 +31,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 public class QuickShopSearchCommand implements CommandExecutor, TabCompleter {
@@ -112,7 +113,7 @@ public class QuickShopSearchCommand implements CommandExecutor, TabCompleter {
         if (currentArg.isEmpty() || currentArg.charAt(0) != '-')
           break;
 
-        var searchFlag = SearchFlag.matcher.matchFirst(currentArg.substring(1));
+        var searchFlag = SearchFlag.matcher.matchFirst(currentArg.substring(1), SearchFlag.permissionPredicate(player));
 
         if (searchFlag == null)
           break;
@@ -161,6 +162,12 @@ public class QuickShopSearchCommand implements CommandExecutor, TabCompleter {
         if (!isLanguageCommand && PluginPermission.EMPTY_PREDICATE.has(player)) {
           var displayData = createFilteredDisplayData(player, null, searchFlagsContainer);
 
+          if (displayData.hasAnyConstraints() && displayData.shops().isEmpty()) {
+            if ((message = config.rootSection.playerMessages.noMatches) != null)
+              message.sendMessage(player, config.rootSection.builtBaseEnvironment);
+            return;
+          }
+
           if ((message = config.rootSection.playerMessages.queryingAllShops) != null) {
             message.sendMessage(
               player,
@@ -192,7 +199,7 @@ public class QuickShopSearchCommand implements CommandExecutor, TabCompleter {
         );
       }
 
-      if (displayData.shops().isEmpty()) {
+      if (displayData.hasAnyConstraints() && displayData.shops().isEmpty()) {
         if ((message = config.rootSection.playerMessages.noMatches) != null)
           message.sendMessage(player, config.rootSection.builtBaseEnvironment);
         return;
@@ -244,6 +251,9 @@ public class QuickShopSearchCommand implements CommandExecutor, TabCompleter {
     if (!PluginPermission.MAIN_COMMAND.has(player))
       return List.of();
 
+    var searchFlagPredicate = SearchFlag.permissionPredicate(player);
+    var encounteredSearchFlags = new HashSet<SearchFlag<?>>();
+
     while (argsOffset < args.length) {
       var currentArg = args[argsOffset];
 
@@ -252,13 +262,25 @@ public class QuickShopSearchCommand implements CommandExecutor, TabCompleter {
 
       var searchFlagName = currentArg.substring(1);
 
-      if (argsOffset + 1 == args.length)
-        return SearchFlag.matcher.createCompletions(searchFlagName, "-", null);
+      if (argsOffset + 1 == args.length) {
+        return SearchFlag.matcher.createCompletions(
+          searchFlagName,
+          searchFlag -> {
+            if (encounteredSearchFlags.contains(searchFlag.constant))
+              return false;
 
-      var searchFlag = SearchFlag.matcher.matchFirst(searchFlagName);
+            return searchFlagPredicate.test(searchFlag);
+          },
+          "-", null
+        );
+      }
+
+      var searchFlag = SearchFlag.matcher.matchFirst(searchFlagName, searchFlagPredicate);
 
       if (searchFlag == null)
         break;
+
+      encounteredSearchFlags.add(searchFlag.constant);
 
       var searchFlagValue = args[argsOffset + 1];
 
