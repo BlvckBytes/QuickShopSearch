@@ -87,6 +87,11 @@ FILTERING-LORE-LEFT-CLICK-DESCRIPTION      &8➥ &eSol Tıklama &7Seçenekler ar
 FILTERING-LORE-RIGHT-CLICK-DESCRIPTION     &8➥ &eSağ Tıklama &7Durum değiştir
 FILTERING-LORE-DROP-ALL-DESCRIPTION        &8➥ &eHepsini Bırak &7Seçenekleri sıfırla
 
+ACTIVE-SEARCH-NAME                        &8» &6Search &8«
+# - predicate: String?
+ACTIVE-SEARCH-LORE-PREDICATE-HAS          &8➥ &7Predicate: &e{predicate}
+ACTIVE-SEARCH-LORE-PREDICATE-HAS-NONE     &8➥ &7Predicate: &eNone
+
 # ==================== END ResultDisplay ====================
 
 # ==================== BEGIN Messages ====================

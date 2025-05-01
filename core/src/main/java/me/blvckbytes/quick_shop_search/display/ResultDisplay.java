@@ -7,6 +7,7 @@ import com.tcoded.folialib.impl.PlatformScheduler;
 import me.blvckbytes.bukkitevaluable.ConfigKeeper;
 import me.blvckbytes.gpeee.interpreter.EvaluationEnvironmentBuilder;
 import me.blvckbytes.gpeee.interpreter.IEvaluationEnvironment;
+import me.blvckbytes.item_predicate_parser.predicate.StringifyState;
 import me.blvckbytes.quick_shop_search.PluginPermission;
 import me.blvckbytes.quick_shop_search.cache.CachedShop;
 import me.blvckbytes.quick_shop_search.ShopUpdate;
@@ -48,6 +49,7 @@ public class ResultDisplay implements DynamicPropertyProvider {
   private IEvaluationEnvironment pageEnvironment;
   private IEvaluationEnvironment sortingEnvironment;
   private IEvaluationEnvironment filteringEnvironment;
+  private IEvaluationEnvironment activeSearchEnvironment;
 
   private Inventory inventory;
   private int currentPage = 1;
@@ -136,6 +138,14 @@ public class ResultDisplay implements DynamicPropertyProvider {
     this.filteringEnvironment = this.selectionState
       .makeFilteringEnvironment(player, config.rootSection)
       .build(pageEnvironment);
+
+    this.activeSearchEnvironment = config.rootSection.getBaseEnvironment()
+      .withStaticVariable("predicate", (
+        displayData.query() == null
+          ? null
+          : new StringifyState(true).appendPredicate(displayData.query()).toString())
+      )
+      .build();
 
     if (redraw) {
       applyFiltering();
@@ -374,6 +384,7 @@ public class ResultDisplay implements DynamicPropertyProvider {
     config.rootSection.resultDisplay.items.nextPage.renderInto(inventory, pageEnvironment);
     renderSortingItem();
     renderFilteringItem();
+    config.rootSection.resultDisplay.items.activeSearch.renderInto(inventory, activeSearchEnvironment);
     config.rootSection.resultDisplay.items.filler.renderInto(inventory, pageEnvironment);
   }
 

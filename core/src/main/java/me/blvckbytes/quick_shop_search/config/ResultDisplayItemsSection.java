@@ -12,6 +12,7 @@ public class ResultDisplayItemsSection extends AConfigSection {
   public GuiItemStackSection nextPage;
   public GuiItemStackSection sorting;
   public GuiItemStackSection filtering;
+  public GuiItemStackSection activeSearch;
   public GuiItemStackSection filler;
   public ItemStackSection representativePatch;
 

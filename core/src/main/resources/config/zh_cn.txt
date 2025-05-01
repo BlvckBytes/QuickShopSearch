@@ -87,6 +87,11 @@ FILTERING-LORE-LEFT-CLICK-DESCRIPTION      &8➥ &e鼠标左键 &7依次切换�
 FILTERING-LORE-RIGHT-CLICK-DESCRIPTION     &8➥ &e鼠标右键 &7切换状态
 FILTERING-LORE-DROP-ALL-DESCRIPTION        &8➥ &e丢弃全部 &7重置选择
 
+ACTIVE-SEARCH-NAME                        &8» &6Search &8«
+# - predicate: String?
+ACTIVE-SEARCH-LORE-PREDICATE-HAS          &8➥ &7Predicate: &e{predicate}
+ACTIVE-SEARCH-LORE-PREDICATE-HAS-NONE     &8➥ &7Predicate: &eNone
+
 # ==================== END ResultDisplay ====================
 
 # ==================== BEGIN Messages ====================
