@@ -63,6 +63,11 @@ resultDisplay:
     # - distance: Integer
     # - can_teleport: Boolean
     # - can_interact: Boolean
+    # - fees_absolute: Zero | String
+    # - fees_relative: Double
+    # - fees_relative_value: Zero | String
+    # - fees_total_value: Zero | String
+    # - fees_final_price: String
     # https://github.com/BlvckBytes/BukkitEvaluable#itemstack-section
     representativePatch:
       lore$:
@@ -71,6 +76,15 @@ resultDisplay:
       - '@{REPRESENTATIVE-LORE-OWNER}'
       - 'if name != null then @{REPRESENTATIVE-LORE-NAME} else null'
       - '@{REPRESENTATIVE-LORE-PRICE}'
+      - |
+        if fees_absolute != 0 and fees_relative != 0 then
+           @{REPRESENTATIVE-LORE-FEES-ABSOLUTE-AND-RELATIVE}
+        else if fees_absolute != 0 then
+           @{REPRESENTATIVE-LORE-FEES-ABSOLUTE}
+        else if fees_relative != 0 then
+           @{REPRESENTATIVE-LORE-FEES-RELATIVE}
+        else
+          null
       - |
         if is_buying then
           @{REPRESENTATIVE-LORE-REMAINING-SPACE(remaining_space=if is_unlimited then "∞" else remaining_space)}
@@ -264,6 +278,12 @@ playerMessages:
   shopInteractPromptLimitingFactorShopStock$: '@{MESSAGE-SHOP-INTERACT-PROMPT-LIMITING-FACTOR-SHOP-STOCK(prefix=lut["MESSAGE_PREFIX"])}'
   shopInteractPromptLimitingFactorSellerFunds$: '@{MESSAGE-SHOP-INTERACT-PROMPT-LIMITING-FACTOR-SELLER-FUNDS(prefix=lut["MESSAGE_PREFIX"])}'
   shopInteractPromptLimitingFactorBuyerFunds$: '@{MESSAGE-SHOP-INTERACT-PROMPT-LIMITING-FACTOR-BUYER-FUNDS(prefix=lut["MESSAGE_PREFIX"])}'
+  # - fees_absolute: Zero | String
+  # - fees_relative: Double
+  # - fees_relative_value: Zero | String
+  # - fees_total_value: Zero | String
+  # - fees_final_price: String
+  shopInteractPromptFeesWarning$: '@{MESSAGE-SHOP-INTERACT-PROMPT-FEES-WARNING(prefix=lut["MESSAGE_PREFIX"])}'
   shopInteractPlayerHasNoSpace$: '@{MESSAGE-SHOP-INTERACT-PLAYER-HAS-NO-SPACE(prefix=lut["MESSAGE_PREFIX"])}'
   shopInteractPlayerHasNoStock$: '@{MESSAGE-SHOP-INTERACT-PLAYER-HAS-NO-STOCK(prefix=lut["MESSAGE_PREFIX"])}'
   shopInteractShopHasNoSpace$: '@{MESSAGE-SHOP-INTERACT-SHOP-HAS-NO-SPACE(prefix=lut["MESSAGE_PREFIX"])}'
@@ -410,6 +430,11 @@ slowTeleport:
 
 playerWarpsIntegration:
   nearestWarpBlockRadius: 15
+
+distanceRanges:
+
+fees:
+  enabled: false
 
 commands:
   quickShopSearch:

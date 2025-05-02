@@ -41,6 +41,12 @@ permissions:
   quickshopsearch.bypass-access-lists:
     description: 'Bypass the permission-specific restrictions of access-lists'
     default: op
+  quickshopsearch.access-list.<name>:
+    description: 'Access the permission-guarded access-list with a name of <name>'
+    default: op
+  quickshopsearch.teleport-cooldown.<group>:
+    description: 'Access the permission-guarded teleport-cooldown with a group-name of <group>'
+    default: op
   quickshopsearch.other-world:
     description: 'Whether to display shops which are not in the same world as the player'
     default: op
@@ -79,4 +85,13 @@ permissions:
     default: op
   quickshopsearch.feature.teleport.closest-player-warp.ban-bypass:
     description: 'Bypass player-warp bans when teleporting'
+    default: op
+  quickshopsearch.feature.fees.bypass:
+    description: 'Bypass fees within the same world'
+    default: op
+  quickshopsearch.feature.fees.bypass.other-world:
+    description: 'Bypass fees within another world'
+    default: op
+  quickshopsearch.feature.fees.permission-name.<name>:
+    description: 'Access permission-guarded fees with a name of <name>'
     default: op

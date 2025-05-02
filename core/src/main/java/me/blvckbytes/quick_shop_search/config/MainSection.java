@@ -3,6 +3,7 @@ package me.blvckbytes.quick_shop_search.config;
 import me.blvckbytes.bbconfigmapper.sections.AConfigSection;
 import me.blvckbytes.bbconfigmapper.sections.CSAlways;
 import me.blvckbytes.gpeee.interpreter.EvaluationEnvironmentBuilder;
+import me.blvckbytes.quick_shop_search.config.fees.FeesSection;
 
 @CSAlways
 public class MainSection extends AConfigSection {
@@ -15,6 +16,7 @@ public class MainSection extends AConfigSection {
   public CooldownsSection cooldowns;
   public SlowTeleportSection slowTeleport;
   public PlayerWarpsIntegrationSection playerWarpsIntegration;
+  public FeesSection fees;
 
   public MainSection(EvaluationEnvironmentBuilder baseEnvironment) {
     super(baseEnvironment);

@@ -1,6 +1,7 @@
 package me.blvckbytes.quick_shop_search.display;
 
 import com.ghostchu.quickshop.QuickShop;
+import com.ghostchu.quickshop.api.QuickShopAPI;
 import com.ghostchu.quickshop.api.obj.QUser;
 import com.ghostchu.quickshop.obj.QUserImpl;
 import com.tcoded.folialib.impl.PlatformScheduler;
@@ -23,14 +24,13 @@ import java.util.*;
 
 public class ResultDisplay implements DynamicPropertyProvider {
 
-  private static final long SENTINEL_DISTANCE_UN_COMPUTABLE = -1;
-
   private final PlatformScheduler scheduler;
   private final AsyncTaskQueue asyncQueue;
   private final ConfigKeeper<MainSection> config;
 
   private final DisplayData displayData;
   private final Map<Long, Long> shopDistanceByShopId;
+  private final Map<Long, CalculatedFees> shopFeesByShopId;
   private List<CachedShop> filteredUnSortedShops;
   private List<CachedShop> filteredSortedShops;
 
@@ -72,6 +72,7 @@ public class ResultDisplay implements DynamicPropertyProvider {
     this.playerLocation = player.getLocation();
     this.displayData = displayData;
     this.shopDistanceByShopId = new HashMap<>();
+    this.shopFeesByShopId = new HashMap<>();
     this.slotMap = new CachedShop[9 * 6];
     this.selectionState = selectionState;
 
@@ -343,6 +344,20 @@ public class ResultDisplay implements DynamicPropertyProvider {
     });
   }
 
+  public CalculatedFees getShopFees(CachedShop cachedShop) {
+    var shopId = cachedShop.handle.getShopId();
+
+    CalculatedFees shopFees = shopFeesByShopId.get(shopId);
+
+    if (shopFees == null) {
+      var feesValues = config.rootSection.fees.decideFees(player, cachedShop);
+      shopFees = CalculatedFees.calculateFor(feesValues, cachedShop);
+      shopFeesByShopId.put(shopId, shopFees);
+    }
+
+    return shopFees;
+  }
+
   @Override
   public long getShopDistance(CachedShop cachedShop) {
     var shopId = cachedShop.handle.getShopId();
@@ -352,12 +367,12 @@ public class ResultDisplay implements DynamicPropertyProvider {
       var shopLocation = cachedShop.handle.getLocation();
 
       if (shopLocation.getWorld() != playerLocation.getWorld())
-        distance = SENTINEL_DISTANCE_UN_COMPUTABLE;
+        distance = -1L;
       else
         distance = Math.round(playerLocation.distance(shopLocation));
     }
 
-    else if (distance == SENTINEL_DISTANCE_UN_COMPUTABLE)
+    else if (distance == -1)
       return -1;
 
     shopDistanceByShopId.put(shopId, distance);
@@ -399,7 +414,7 @@ public class ResultDisplay implements DynamicPropertyProvider {
       var cachedShop = filteredSortedShops.get(currentSlot);
 
       inventory.setItem(slot, cachedShop.getRepresentativeBuildable().build(
-        getDistanceExtendedShopEnvironment(cachedShop)
+        getExtendedShopEnvironment(cachedShop)
       ));
 
       slotMap[slot] = cachedShop;
@@ -417,9 +432,12 @@ public class ResultDisplay implements DynamicPropertyProvider {
       config.rootSection.resultDisplay.items.activeSearch.renderInto(inventory, activeSearchEnvironment);
   }
 
-  public IEvaluationEnvironment getDistanceExtendedShopEnvironment(CachedShop cachedShop) {
+  public IEvaluationEnvironment getExtendedShopEnvironment(CachedShop cachedShop) {
     var distance = getShopDistance(cachedShop);
     var isOtherWorld = distance < 0;
+    var fees = getShopFees(cachedShop);
+
+    var shopManager = QuickShopAPI.getInstance().getShopManager();
 
     return cachedShop
       .getShopEnvironment()
@@ -436,6 +454,29 @@ public class ResultDisplay implements DynamicPropertyProvider {
         isOtherWorld
           ? PluginPermission.FEATURE_INTERACT_OTHER_WORLD.has(player)
           : PluginPermission.FEATURE_INTERACT.has(player)
+      )
+      .withStaticVariable(
+        "fees_absolute",
+        fees.absoluteFees() == 0
+          ? 0
+          : shopManager.format(fees.absoluteFees(), cachedShop.handle)
+      )
+      .withStaticVariable("fees_relative", fees.relativeFees())
+      .withStaticVariable(
+        "fees_relative_value",
+        fees.relativeFeesValue() == 0
+          ? 0
+          : shopManager.format(fees.relativeFeesValue(), cachedShop.handle)
+      )
+      .withStaticVariable(
+        "fees_total_value",
+        fees.relativeFeesValue() + fees.absoluteFees() == 0
+          ? 0
+          : shopManager.format(fees.relativeFeesValue() + fees.absoluteFees(), cachedShop.handle)
+      )
+      .withStaticVariable(
+        "fees_final_price",
+        shopManager.format(fees.finalPrice(), cachedShop.handle)
       )
       .build(pageEnvironment);
   }

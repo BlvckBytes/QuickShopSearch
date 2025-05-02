@@ -33,6 +33,7 @@ public class PlayerMessagesSection extends AConfigSection {
   public @Nullable BukkitEvaluable shopInteractPromptLimitingFactorShopStock;
   public @Nullable BukkitEvaluable shopInteractPromptLimitingFactorSellerFunds;
   public @Nullable BukkitEvaluable shopInteractPromptLimitingFactorBuyerFunds;
+  public @Nullable BukkitEvaluable shopInteractPromptFeesWarning;
   public @Nullable BukkitEvaluable shopInteractPlayerHasNoSpace;
   public @Nullable BukkitEvaluable shopInteractPlayerHasNoStock;
   public @Nullable BukkitEvaluable shopInteractShopHasNoSpace;

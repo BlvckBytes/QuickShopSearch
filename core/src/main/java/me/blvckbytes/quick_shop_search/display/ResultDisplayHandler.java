@@ -257,7 +257,7 @@ public class ResultDisplayHandler implements Listener {
     var distanceExtendedEnvironment = config.rootSection.getBaseEnvironment()
       .withStaticVariable("all_sentinel", config.rootSection.resultDisplay.chatPromptAllSentinel)
       .withStaticVariable("cancel_sentinel", config.rootSection.resultDisplay.chatPromptCancelSentinel)
-      .build(display.getDistanceExtendedShopEnvironment(cachedShop));
+      .build(display.getExtendedShopEnvironment(cachedShop));
 
     if (maxUnitsResult.units() == 0) {
       var message = switch (maxUnitsResult.limitingFactor()) {
@@ -294,6 +294,8 @@ public class ResultDisplayHandler implements Listener {
       .build(distanceExtendedEnvironment);
 
     scheduler.runAtEntity(player, scheduleTask -> player.closeInventory());
+
+    var shopFees = display.getShopFees(cachedShop);
 
     var didOverwritePrevious = chatPromptManager.register(
       player,
@@ -337,9 +339,12 @@ public class ResultDisplayHandler implements Listener {
           );
         }
 
-        scheduler.runAtLocation(cachedShop.handle.getLocation(), scheduleTask ->
-          remoteInteractionApi.interact(player, cachedShop.handle, amount)
-        );
+        scheduler.runAtLocation(cachedShop.handle.getLocation(), scheduleTask -> {
+          if (shopFees.isNotZero()) {
+            player.sendMessage("§cTODO: Implement fees " + shopFees);
+          }
+          remoteInteractionApi.interact(player, cachedShop.handle, amount);
+        });
       },
       () -> {
         BukkitEvaluable message;
@@ -359,12 +364,14 @@ public class ResultDisplayHandler implements Listener {
     if (cachedShop.handle.getShopType() == ShopType.BUYING) {
       if ((message = config.rootSection.playerMessages.shopInteractPromptBuying) != null)
         message.sendMessage(player, limitingFactorExtendedEnvironment);
-
-      return;
     }
-
-    if ((message = config.rootSection.playerMessages.shopInteractPromptSelling) != null)
+    else if ((message = config.rootSection.playerMessages.shopInteractPromptSelling) != null)
       message.sendMessage(player, limitingFactorExtendedEnvironment);
+
+    if (shopFees.isNotZero()) {
+      if ((message = config.rootSection.playerMessages.shopInteractPromptFeesWarning) != null)
+        message.sendMessage(player, limitingFactorExtendedEnvironment);
+    }
   }
 
   private int tryParseStrictlyPositiveInteger(String input) {
@@ -526,7 +533,7 @@ public class ResultDisplayHandler implements Listener {
             .withStaticVariable("player_warp_x", result.location().getBlockX())
             .withStaticVariable("player_warp_y", result.location().getBlockY())
             .withStaticVariable("player_warp_z", result.location().getBlockZ())
-            .build(display.getDistanceExtendedShopEnvironment(cachedShop));
+            .build(display.getExtendedShopEnvironment(cachedShop));
 
         if (result.isBanned() && !PluginPermission.FEATURE_TELEPORT_CLOSEST_PLAYER_WARP_BAN_BYPASS.has(player)) {
           if ((message = config.rootSection.playerMessages.nearestPlayerWarpBanned) != null)
@@ -548,7 +555,7 @@ public class ResultDisplayHandler implements Listener {
     else if ((message = config.rootSection.playerMessages.beforeTeleporting) != null) {
       message.sendMessage(
         player,
-        config.rootSection.getBaseEnvironment().build(display.getDistanceExtendedShopEnvironment(cachedShop))
+        config.rootSection.getBaseEnvironment().build(display.getExtendedShopEnvironment(cachedShop))
       );
     }
 

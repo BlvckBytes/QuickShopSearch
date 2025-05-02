@@ -26,6 +26,19 @@ REPRESENTATIVE-LORE-OWNER                    &8♦ &7Besitzer: &e{owner}
 REPRESENTATIVE-LORE-NAME                     &8♦ &7Name: &e{name}
 # - price: String
 REPRESENTATIVE-LORE-PRICE                    &8♦ &7Preis: &e{price}
+# - fees_absolute: String
+# - fees_relative: Double
+# - fees_relative_value: String
+# - fees_total_value: String
+# - fees_final_price: String
+REPRESENTATIVE-LORE-FEES-ABSOLUTE-AND-RELATIVE &8♦ &7Distanz-Gebühren: &e{fees_total_value} ({fees_relative}% + {fees_absolute} (fester Betrag))
+# - fees_absolute: String
+# - fees_final_price: String
+REPRESENTATIVE-LORE-FEES-ABSOLUTE              &8♦ &7Distanz-Gebühren: &e{fees_absolute} (fester Betrag)
+# - fees_relative: Double
+# - fees_relative_value: String
+# - fees_final_price: String
+REPRESENTATIVE-LORE-FEES-RELATIVE              &8♦ &7Distanz-Gebühren: &e{fees_relative_value} ({fees_relative}%)
 # - remaining_space: Integer
 REPRESENTATIVE-LORE-REMAINING-SPACE          &8♦ &7Kapazität: &e{remaining_space}
 # - remaining_stock: Integer
@@ -208,6 +221,13 @@ MESSAGE-SHOP-INTERACT-PROMPT-LIMITING-FACTOR-SHOP-SPACE   Platz des Shops
 MESSAGE-SHOP-INTERACT-PROMPT-LIMITING-FACTOR-SHOP-STOCK   Vorrat des Shops
 MESSAGE-SHOP-INTERACT-PROMPT-LIMITING-FACTOR-SELLER-FUNDS Guthaben des Verkäufers
 MESSAGE-SHOP-INTERACT-PROMPT-LIMITING-FACTOR-BUYER-FUNDS  dein Guthaben
+# - fees_absolute: Zero | String
+# - fees_relative: Double
+# - fees_relative_value: Zero | String
+# - fees_total_value: Zero | String
+# - fees_final_price: String
+# - prefix: String
+MESSAGE-SHOP-INTERACT-PROMPT-FEES-WARNING    {prefix} &e&lWarnung! &7Diesem Shop sind Distanz-Gebühren von &e{fees_total_value} &7gesamt zugeordnet!
 # - prefix: String
 MESSAGE-SHOP-INTERACT-PLAYER-HAS-NO-SPACE    {prefix} &cDu hast nicht genügend Platz in deinem Inventar.
 # - prefix: String

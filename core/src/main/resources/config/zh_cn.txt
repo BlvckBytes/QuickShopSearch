@@ -26,6 +26,19 @@ REPRESENTATIVE-LORE-OWNER                    &8♦ &7所有者: &e{owner}
 REPRESENTATIVE-LORE-NAME                     &8♦ &7名称: &e{name}
 # - price: String
 REPRESENTATIVE-LORE-PRICE                    &8♦ &7价格: &e{price}
+# - fees_absolute: String
+# - fees_relative: Double
+# - fees_relative_value: String
+# - fees_total_value: String
+# - fees_final_price: String
+REPRESENTATIVE-LORE-FEES-ABSOLUTE-AND-RELATIVE &8♦ &7Distance-Fees: &e{fees_total_value} ({fees_relative}% + {fees_absolute} (fixed amount))
+# - fees_absolute: String
+# - fees_final_price: String
+REPRESENTATIVE-LORE-FEES-ABSOLUTE              &8♦ &7Distance-Fees: &e{fees_absolute} (fixed amount)
+# - fees_relative: Double
+# - fees_relative_value: String
+# - fees_final_price: String
+REPRESENTATIVE-LORE-FEES-RELATIVE              &8♦ &7Distance-Fees: &e{fees_relative_value} ({fees_relative}%)
 # - remaining_space: Integer
 REPRESENTATIVE-LORE-REMAINING-SPACE          &8♦ &7空间: &e{remaining_space}
 # - remaining_stock: Integer
@@ -207,6 +220,13 @@ MESSAGE-SHOP-INTERACT-PROMPT-LIMITING-FACTOR-SHOP-SPACE   space of the shop
 MESSAGE-SHOP-INTERACT-PROMPT-LIMITING-FACTOR-SHOP-STOCK   stock of the shop
 MESSAGE-SHOP-INTERACT-PROMPT-LIMITING-FACTOR-SELLER-FUNDS the seller's funds
 MESSAGE-SHOP-INTERACT-PROMPT-LIMITING-FACTOR-BUYER-FUNDS  your funds
+# - fees_absolute: Zero | String
+# - fees_relative: Double
+# - fees_relative_value: Zero | String
+# - fees_total_value: Zero | String
+# - fees_final_price: String
+# - prefix: String
+MESSAGE-SHOP-INTERACT-PROMPT-FEES-WARNING    {prefix} &e&lWarning! &7This shop is assigned with distance-fees of &e{fees_total_value} &7total!
 # - prefix: String
 MESSAGE-SHOP-INTERACT-PLAYER-HAS-NO-SPACE    {prefix} &cYou do not have enough space in your inventory.
 # - prefix: String
