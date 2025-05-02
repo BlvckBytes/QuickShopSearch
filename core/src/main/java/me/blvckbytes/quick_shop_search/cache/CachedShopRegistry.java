@@ -90,6 +90,11 @@ public class CachedShopRegistry implements QuickShopEventConsumer, Listener {
   }
 
   @Override
+  public void onPurchaseSuccess(Shop shop, int amount, UUID purchaserId) {
+    tryAccessCache(shop, cachedShop -> displayHandler.onPurchaseSuccess(cachedShop, amount, purchaserId));
+  }
+
+  @Override
   public void onShopCreate(Shop shop) {
     scheduler.runAsync(scheduleTask -> {
       synchronized (existingShopByLocation) {

@@ -1,6 +1,7 @@
 package me.blvckbytes.quick_shop_search.cache;
 
 import com.ghostchu.quickshop.api.event.Phase;
+import com.ghostchu.quickshop.api.event.economy.ShopSuccessPurchaseEvent;
 import com.ghostchu.quickshop.api.event.general.ShopSignUpdateEvent;
 import com.ghostchu.quickshop.api.event.inventory.ShopInventoryCalculateEvent;
 import com.ghostchu.quickshop.api.event.management.ShopCreateEvent;
@@ -15,6 +16,11 @@ public class QuickShopListener_GT_6208 implements Listener {
 
   public QuickShopListener_GT_6208(QuickShopEventConsumer consumer) {
     this.consumer = consumer;
+  }
+
+  @EventHandler
+  public void onPurchaseSuccess(ShopSuccessPurchaseEvent event) {
+    consumer.onPurchaseSuccess(event.getShop(), event.getAmount(), event.getPurchaser().getUniqueId());
   }
 
   @EventHandler

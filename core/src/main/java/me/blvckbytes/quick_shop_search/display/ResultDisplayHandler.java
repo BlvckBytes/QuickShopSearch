@@ -73,6 +73,9 @@ public class ResultDisplayHandler implements Listener {
     });
   }
 
+  public void onPurchaseSuccess(CachedShop shop, int amount, UUID purchaserId) {
+  }
+
   public void onShopUpdate(CachedShop shop, ShopUpdate update) {
     for (var display : displayByPlayer.values())
       display.onShopUpdate(shop, update);

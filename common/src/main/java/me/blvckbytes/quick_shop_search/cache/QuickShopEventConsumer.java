@@ -3,7 +3,11 @@ package me.blvckbytes.quick_shop_search.cache;
 import com.ghostchu.quickshop.api.shop.Shop;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.UUID;
+
 public interface QuickShopEventConsumer {
+
+  void onPurchaseSuccess(Shop shop, int amount, UUID purchaserId);
 
   void onShopCreate(Shop shop);
 

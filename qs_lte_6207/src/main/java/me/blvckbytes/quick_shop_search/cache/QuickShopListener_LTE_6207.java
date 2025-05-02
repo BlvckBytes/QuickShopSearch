@@ -13,6 +13,11 @@ public class QuickShopListener_LTE_6207 implements Listener {
   }
 
   @EventHandler
+  public void onPurchaseSuccess(ShopSuccessPurchaseEvent event) {
+    consumer.onPurchaseSuccess(event.getShop(), event.getAmount(), event.getPurchaser().getUniqueId());
+  }
+
+  @EventHandler
   public void onShopCreate(ShopCreateSuccessEvent event) {
     consumer.onShopCreate(event.getShop());
   }

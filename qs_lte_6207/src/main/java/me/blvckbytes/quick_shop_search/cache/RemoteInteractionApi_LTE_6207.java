@@ -61,13 +61,49 @@ public class RemoteInteractionApi_LTE_6207 implements RemoteInteractionApi {
 
   @Override
   public double getPlayerBalance(Player player, Shop shop) {
+    var shopLocation = shop.getLocation();
+    var shopWorld = shopLocation.getWorld();
+
+    if (shopWorld == null)
+      return 0;
+
     return QuickShop.getInstance().getEconomy()
-      .getBalance(QUserImpl.createFullFilled(player), shop.getLocation().getWorld(), shop.getCurrency());
+      .getBalance(QUserImpl.createFullFilled(player), shopWorld, shop.getCurrency());
   }
 
   @Override
   public double getOwnerBalance(Shop shop) {
+    var shopLocation = shop.getLocation();
+    var shopWorld = shopLocation.getWorld();
+
+    if (shopWorld == null)
+      return 0;
+
     return QuickShop.getInstance().getEconomy()
-      .getBalance(shop.getOwner(), shop.getLocation().getWorld(), shop.getCurrency());
+      .getBalance(shop.getOwner(), shopWorld, shop.getCurrency());
+  }
+
+  @Override
+  public boolean withdrawAmount(Player player, Shop shop, double amount) {
+    var shopLocation = shop.getLocation();
+    var shopWorld = shopLocation.getWorld();
+
+    if (shopWorld == null)
+      return false;
+
+    return QuickShop.getInstance().getEconomy()
+      .withdraw(QUserImpl.createFullFilled(player), amount, shopWorld, shop.getCurrency());
+  }
+
+  @Override
+  public boolean depositAmount(Player player, Shop shop, double amount) {
+    var shopLocation = shop.getLocation();
+    var shopWorld = shopLocation.getWorld();
+
+    if (shopWorld == null)
+      return false;
+
+    return QuickShop.getInstance().getEconomy()
+      .deposit(QUserImpl.createFullFilled(player), amount, shopWorld, shop.getCurrency());
   }
 }

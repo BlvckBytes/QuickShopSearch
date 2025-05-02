@@ -22,4 +22,8 @@ public interface RemoteInteractionApi {
    */
   double getOwnerBalance(Shop shop);
 
+  boolean withdrawAmount(Player player, Shop shop, double amount);
+
+  boolean depositAmount(Player player, Shop shop, double amount);
+
 }
