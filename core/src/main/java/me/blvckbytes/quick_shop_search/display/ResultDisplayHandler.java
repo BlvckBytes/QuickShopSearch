@@ -287,6 +287,59 @@ public class ResultDisplayHandler implements Listener {
     }
   }
 
+  private void dispatchShopInteraction(Player player, CachedShop cachedShop, CalculatedFees shopFees, int amount) {
+    scheduler.runAtLocation(cachedShop.handle.getLocation(), scheduleTask -> {
+      if (!shopFees.isNotZero()) {
+        remoteInteractionApi.interact(player, cachedShop.handle, amount);
+        return;
+      }
+
+      synchronized (feesPayBackTaskByPlayerId) {
+        var playerId = player.getUniqueId();
+
+        if (feesPayBackTaskByPlayerId.containsKey(playerId)) {
+          // TODO: Add message to config
+          player.sendMessage("§cThere's still a pending fees-task queued for you - please wait!");
+          return;
+        }
+
+        var feesAmount = shopFees.relativeFeesValue() + shopFees.absoluteFees();
+        var feesAmountFormatted = QuickShopAPI.getInstance().getShopManager().format(feesAmount, cachedShop.handle);
+
+        if (!remoteInteractionApi.withdrawAmount(player, cachedShop.handle, feesAmount)) {
+          // TODO: Add message to config
+          player.sendMessage("§cCould not withdraw fees of " + feesAmountFormatted + "; cancelling!");
+          return;
+        }
+
+        // TODO: Add message to config
+        player.sendMessage("§aWithdrawn fees of " + feesAmountFormatted);
+
+        var payBackTask = new FeesPayBackTask(
+          scheduler.runLater(() -> {
+            feesPayBackTaskByPlayerId.remove(playerId);
+
+            if (!remoteInteractionApi.depositAmount(player, cachedShop.handle, feesAmount)) {
+              logger.warning("Could not deposit fees payback amount of " + feesAmountFormatted + " to playerId " + playerId + " for shopId" + cachedShop.handle.getShopId());
+
+              // TODO: Add message to config
+              player.sendMessage("§cThe transaction did not occur, but could not pay back the fees of " + feesAmountFormatted + " withdrawn prior");
+              return;
+            }
+
+            // TODO: Add message to config
+            player.sendMessage("§aPayed back the fees of " + feesAmountFormatted + " withdrawn prior, as the transaction did not occur");
+          }, config.rootSection.fees.feesPayBackTimeoutTicks),
+          amount,
+          cachedShop.handle.getShopId()
+        );
+
+        feesPayBackTaskByPlayerId.put(playerId, payBackTask);
+        remoteInteractionApi.interact(player, cachedShop.handle, amount);
+      }
+    });
+  }
+
   private void initiateShopInteraction(Player player, ResultDisplay display, CachedShop cachedShop) {
     var shopFees = display.getShopFees(cachedShop);
     var maxUnitsResult = calculateMaxUnits(player, cachedShop, shopFees);
@@ -374,56 +427,7 @@ public class ResultDisplayHandler implements Listener {
           );
         }
 
-        scheduler.runAtLocation(cachedShop.handle.getLocation(), scheduleTask -> {
-          if (!shopFees.isNotZero()) {
-            remoteInteractionApi.interact(player, cachedShop.handle, amount);
-            return;
-          }
-
-          synchronized (feesPayBackTaskByPlayerId) {
-            var playerId = player.getUniqueId();
-
-            if (feesPayBackTaskByPlayerId.containsKey(playerId)) {
-              // TODO: Add message to config
-              player.sendMessage("§cThere's still a pending fees-task queued for you - please wait!");
-              return;
-            }
-
-            var feesAmount = shopFees.relativeFeesValue() + shopFees.absoluteFees();
-            var feesAmountFormatted = QuickShopAPI.getInstance().getShopManager().format(feesAmount, cachedShop.handle);
-
-            if (!remoteInteractionApi.withdrawAmount(player, cachedShop.handle, feesAmount)) {
-              // TODO: Add message to config
-              player.sendMessage("§cCould not withdraw fees of " + feesAmountFormatted + "; cancelling!");
-              return;
-            }
-
-            // TODO: Add message to config
-            player.sendMessage("§aWithdrawn fees of " + feesAmountFormatted);
-
-            var payBackTask = new FeesPayBackTask(
-              scheduler.runLater(() -> {
-                feesPayBackTaskByPlayerId.remove(playerId);
-
-                if (!remoteInteractionApi.depositAmount(player, cachedShop.handle, feesAmount)) {
-                  logger.warning("Could not deposit fees payback amount of " + feesAmountFormatted + " to playerId " + playerId + " for shopId" + cachedShop.handle.getShopId());
-
-                  // TODO: Add message to config
-                  player.sendMessage("§cThe transaction did not occur, but could not pay back the fees of " + feesAmountFormatted + " withdrawn prior");
-                  return;
-                }
-
-                // TODO: Add message to config
-                player.sendMessage("§aPayed back the fees of " + feesAmountFormatted + " withdrawn prior, as the transaction did not occur");
-              }, config.rootSection.fees.feesPayBackTimeoutTicks),
-              amount,
-              cachedShop.handle.getShopId()
-            );
-
-            feesPayBackTaskByPlayerId.put(playerId, payBackTask);
-            remoteInteractionApi.interact(player, cachedShop.handle, amount);
-          }
-        });
+        dispatchShopInteraction(player, cachedShop, shopFees, amount);
       },
       () -> {
         BukkitEvaluable message;
