@@ -733,14 +733,18 @@ public class ResultDisplayHandler implements Listener {
     if (maxUnitsByShopInventory == 0)
       return new MaxUnitsResult(0, isShopBuying ? LimitingFactor.SHOP_SPACE : LimitingFactor.SHOP_STOCK);
 
-    var shopPrice = calculatedFees.finalPrice();
-
+    double shopPrice;
     int maxUnitsByBalance;
 
     if (cachedShop.handle.isSelling()) {
+      // The customer always pays the fees - thus, use the increased price
+      shopPrice = calculatedFees.finalPrice();
       var playerBalance = remoteInteractionApi.getPlayerBalance(player, cachedShop.handle);
       maxUnitsByBalance = (int) (playerBalance / shopPrice);
     } else {
+      // The seller does not pay any fees - the fees will also not exceed the yield
+      // Thus, calculate max-units based on the unaltered price
+      shopPrice = cachedShop.cachedPrice;
       var sellerBalance = remoteInteractionApi.getOwnerBalance(cachedShop.handle);
       maxUnitsByBalance = (int) (sellerBalance / shopPrice);
     }
