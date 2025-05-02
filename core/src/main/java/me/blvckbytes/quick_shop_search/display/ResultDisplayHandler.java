@@ -1,7 +1,9 @@
 package me.blvckbytes.quick_shop_search.display;
 
+import com.ghostchu.quickshop.api.QuickShopAPI;
 import com.ghostchu.quickshop.api.shop.ShopType;
 import com.tcoded.folialib.impl.PlatformScheduler;
+import com.tcoded.folialib.wrapper.task.WrappedTask;
 import me.blvckbytes.bbconfigmapper.ScalarType;
 import me.blvckbytes.bukkitevaluable.BukkitEvaluable;
 import me.blvckbytes.bukkitevaluable.ConfigKeeper;
@@ -25,6 +27,7 @@ import org.bukkit.util.Vector;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.logging.Logger;
 
 public class ResultDisplayHandler implements Listener {
 
@@ -36,6 +39,13 @@ public class ResultDisplayHandler implements Listener {
     BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST
   };
 
+  private record FeesPayBackTask(
+    WrappedTask task,
+    int amount,
+    long shopId
+  ) {}
+
+  private final Logger logger;
   private final PlatformScheduler scheduler;
   private final ConfigKeeper<MainSection> config;
   private final RemoteInteractionApi remoteInteractionApi;
@@ -46,8 +56,10 @@ public class ResultDisplayHandler implements Listener {
   private final SlowTeleportManager slowTeleportManager;
   private final @Nullable IPlayerWarpsIntegration playerWarpsIntegration;
   private final Map<UUID, ResultDisplay> displayByPlayer;
+  private final Map<UUID, FeesPayBackTask> feesPayBackTaskByPlayerId;
 
   public ResultDisplayHandler(
+    Logger logger,
     PlatformScheduler scheduler,
     RemoteInteractionApi remoteInteractionApi,
     ConfigKeeper<MainSection> config,
@@ -57,6 +69,7 @@ public class ResultDisplayHandler implements Listener {
     SlowTeleportManager slowTeleportManager,
     @Nullable IPlayerWarpsIntegration playerWarpsIntegration
   ) {
+    this.logger = logger;
     this.scheduler = scheduler;
     this.remoteInteractionApi = remoteInteractionApi;
     this.stateStore = stateStore;
@@ -66,6 +79,7 @@ public class ResultDisplayHandler implements Listener {
     this.playerWarpsIntegration = playerWarpsIntegration;
     this.config = config;
     this.displayByPlayer = new HashMap<>();
+    this.feesPayBackTaskByPlayerId = new HashMap<>();
 
     config.registerReloadListener(() -> {
       for (var display : displayByPlayer.values())
@@ -74,6 +88,25 @@ public class ResultDisplayHandler implements Listener {
   }
 
   public void onPurchaseSuccess(CachedShop shop, int amount, UUID purchaserId) {
+    var payBackTask = feesPayBackTaskByPlayerId.get(purchaserId);
+
+    if (payBackTask == null)
+      return;
+
+    var shopId = shop.handle.getShopId();
+
+    if (payBackTask.amount != amount) {
+      logger.warning("Fees payback-task amount-mismatch: " + payBackTask.amount + " =/= " + amount + " for shopId " + shop.handle.getShopId() + " and purchaserId " + purchaserId);
+      return;
+    }
+
+    if (payBackTask.shopId != shopId) {
+      logger.warning("Fees payback-task shopId-mismatch: " + payBackTask.shopId + " =/= " + shopId + " for amount " + amount + " and purchaserId " + purchaserId);
+      return;
+    }
+
+    payBackTask.task.cancel();
+    feesPayBackTaskByPlayerId.remove(purchaserId);
   }
 
   public void onShopUpdate(CachedShop shop, ShopUpdate update) {
@@ -342,10 +375,54 @@ public class ResultDisplayHandler implements Listener {
         }
 
         scheduler.runAtLocation(cachedShop.handle.getLocation(), scheduleTask -> {
-          if (shopFees.isNotZero()) {
-            player.sendMessage("§cTODO: Implement fees " + shopFees);
+          if (!shopFees.isNotZero()) {
+            remoteInteractionApi.interact(player, cachedShop.handle, amount);
+            return;
           }
-          remoteInteractionApi.interact(player, cachedShop.handle, amount);
+
+          synchronized (feesPayBackTaskByPlayerId) {
+            var playerId = player.getUniqueId();
+
+            if (feesPayBackTaskByPlayerId.containsKey(playerId)) {
+              // TODO: Add message to config
+              player.sendMessage("§cThere's still a pending fees-task queued for you - please wait!");
+              return;
+            }
+
+            var feesAmount = shopFees.relativeFeesValue() + shopFees.absoluteFees();
+            var feesAmountFormatted = QuickShopAPI.getInstance().getShopManager().format(feesAmount, cachedShop.handle);
+
+            if (!remoteInteractionApi.withdrawAmount(player, cachedShop.handle, feesAmount)) {
+              // TODO: Add message to config
+              player.sendMessage("§cCould not withdraw fees of " + feesAmountFormatted + "; cancelling!");
+              return;
+            }
+
+            // TODO: Add message to config
+            player.sendMessage("§aWithdrawn fees of " + feesAmountFormatted);
+
+            var payBackTask = new FeesPayBackTask(
+              scheduler.runLater(() -> {
+                feesPayBackTaskByPlayerId.remove(playerId);
+
+                if (!remoteInteractionApi.depositAmount(player, cachedShop.handle, feesAmount)) {
+                  logger.warning("Could not deposit fees payback amount of " + feesAmountFormatted + " to playerId " + playerId + " for shopId" + cachedShop.handle.getShopId());
+
+                  // TODO: Add message to config
+                  player.sendMessage("§cThe transaction did not occur, but could not pay back the fees of " + feesAmountFormatted + " withdrawn prior");
+                  return;
+                }
+
+                // TODO: Add message to config
+                player.sendMessage("§aPayed back the fees of " + feesAmountFormatted + " withdrawn prior, as the transaction did not occur");
+              }, config.rootSection.fees.feesPayBackTimeoutTicks),
+              amount,
+              cachedShop.handle.getShopId()
+            );
+
+            feesPayBackTaskByPlayerId.put(playerId, payBackTask);
+            remoteInteractionApi.interact(player, cachedShop.handle, amount);
+          }
         });
       },
       () -> {

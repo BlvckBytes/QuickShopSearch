@@ -79,6 +79,7 @@ public class QuickShopSearchPlugin extends JavaPlugin {
       }
 
       displayHandler = new ResultDisplayHandler(
+        logger,
         scheduler,
         remoteInteractionApi,
         config,

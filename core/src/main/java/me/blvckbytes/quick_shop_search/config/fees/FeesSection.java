@@ -16,6 +16,8 @@ public class FeesSection extends AConfigSection {
 
   public boolean enabled;
 
+  public long feesPayBackTimeoutTicks;
+
   public FeesDistanceRangesSection worldsFallback;
 
   public FeesOtherWorldSection otherWorld;
@@ -27,6 +29,7 @@ public class FeesSection extends AConfigSection {
 
     this.enabled = false;
     this.worlds = new LinkedHashMap<>();
+    this.feesPayBackTimeoutTicks = 40;
   }
 
   public @Nullable FeesValuesSection decideFees(Player player, CachedShop shop) {
