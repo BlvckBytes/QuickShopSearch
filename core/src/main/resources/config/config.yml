@@ -284,6 +284,15 @@ playerMessages:
   # - fees_total_value: Zero | String
   # - fees_final_price: String
   shopInteractPromptFeesWarning$: '@{MESSAGE-SHOP-INTERACT-PROMPT-FEES-WARNING(prefix=lut["MESSAGE_PREFIX"])}'
+  shopInteractPendingFeesTask$: '@{MESSAGE-SHOP-INTERACT-PENDING-FEES-TASK(prefix=lut["MESSAGE_PREFIX"])}'
+  # - fees_amount: String
+  shopInteractCouldNotWithdrawFees$: '@{MESSAGE-SHOP-INTERACT-COULD-NOT-WITHDRAW-FEES(prefix=lut["MESSAGE_PREFIX"])}'
+  # - fees_amount: String
+  shopInteractWithdrawnFees$: '@{MESSAGE-SHOP-INTERACT-WITHDRAWN-FEES(prefix=lut["MESSAGE_PREFIX"])}'
+  # - fees_amount: String
+  shopInteractPayedBackFees$: '@{MESSAGE-SHOP-INTERACT-PAYED-BACK-FEES(prefix=lut["MESSAGE_PREFIX"])}'
+  # - fees_amount: String
+  shopInteractCouldNotPayBackFees$: '@{MESSAGE-SHOP-INTERACT-COULD-NOT-PAY-BACK-FEES(prefix=lut["MESSAGE_PREFIX"])}'
   shopInteractPlayerHasNoSpace$: '@{MESSAGE-SHOP-INTERACT-PLAYER-HAS-NO-SPACE(prefix=lut["MESSAGE_PREFIX"])}'
   shopInteractPlayerHasNoStock$: '@{MESSAGE-SHOP-INTERACT-PLAYER-HAS-NO-STOCK(prefix=lut["MESSAGE_PREFIX"])}'
   shopInteractShopHasNoSpace$: '@{MESSAGE-SHOP-INTERACT-SHOP-HAS-NO-SPACE(prefix=lut["MESSAGE_PREFIX"])}'

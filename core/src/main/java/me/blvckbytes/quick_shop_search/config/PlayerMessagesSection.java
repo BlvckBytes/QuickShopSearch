@@ -40,6 +40,11 @@ public class PlayerMessagesSection extends AConfigSection {
   public @Nullable BukkitEvaluable shopInteractShopHasNoStock;
   public @Nullable BukkitEvaluable shopInteractSellerInsufficientFunds;
   public @Nullable BukkitEvaluable shopInteractBuyerInsufficientFunds;
+  public @Nullable BukkitEvaluable shopInteractPendingFeesTask;
+  public @Nullable BukkitEvaluable shopInteractCouldNotWithdrawFees;
+  public @Nullable BukkitEvaluable shopInteractWithdrawnFees;
+  public @Nullable BukkitEvaluable shopInteractPayedBackFees;
+  public @Nullable BukkitEvaluable shopInteractCouldNotPayBackFees;
 
   public @Nullable BukkitEvaluable missingPermissionMainCommand;
   public @Nullable BukkitEvaluable missingPermissionLanguageCommand;

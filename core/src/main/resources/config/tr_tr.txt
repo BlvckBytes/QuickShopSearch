@@ -31,14 +31,14 @@ REPRESENTATIVE-LORE-PRICE                    &8♦ &7Fiyat: &e{price}
 # - fees_relative_value: String
 # - fees_total_value: String
 # - fees_final_price: String
-REPRESENTATIVE-LORE-FEES-ABSOLUTE-AND-RELATIVE &8♦ &7Distance-Fees: &e{fees_total_value} ({fees_relative}% + {fees_absolute} (fixed amount))
+REPRESENTATIVE-LORE-FEES-ABSOLUTE-AND-RELATIVE &8♦ &7Distance-Fee: &e{fees_total_value} ({fees_relative}% + {fees_absolute} (fixed amount))
 # - fees_absolute: String
 # - fees_final_price: String
-REPRESENTATIVE-LORE-FEES-ABSOLUTE              &8♦ &7Distance-Fees: &e{fees_absolute} (fixed amount)
+REPRESENTATIVE-LORE-FEES-ABSOLUTE              &8♦ &7Distance-Fee: &e{fees_absolute} (fixed amount)
 # - fees_relative: Double
 # - fees_relative_value: String
 # - fees_final_price: String
-REPRESENTATIVE-LORE-FEES-RELATIVE              &8♦ &7Distance-Fees: &e{fees_relative_value} ({fees_relative}%)
+REPRESENTATIVE-LORE-FEES-RELATIVE              &8♦ &7Distance-Fee: &e{fees_relative_value} ({fees_relative}%)
 # - remaining_space: Integer
 REPRESENTATIVE-LORE-REMAINING-SPACE          &8♦ &7Space: &e{remaining_space}
 # - remaining_stock: Integer
@@ -231,7 +231,21 @@ MESSAGE-SHOP-INTERACT-PROMPT-LIMITING-FACTOR-BUYER-FUNDS  your funds
 # - fees_total_value: Zero | String
 # - fees_final_price: String
 # - prefix: String
-MESSAGE-SHOP-INTERACT-PROMPT-FEES-WARNING    {prefix} &e&lWarning! &7This shop is assigned with distance-fees of &e{fees_total_value} &7total!
+MESSAGE-SHOP-INTERACT-PROMPT-FEES-WARNING     {prefix} &e&lWarning! &7This shop is assigned with a distance-fee of &e{fees_total_value} &7total!
+# - prefix: String
+MESSAGE-SHOP-INTERACT-PENDING-FEES-TASK       {prefix} &cThere's still a distance-fee task pending - please wait a few moments before trying again!
+# - fees_amount: String
+# - prefix: String
+MESSAGE-SHOP-INTERACT-COULD-NOT-WITHDRAW-FEES {prefix} &cCould not withdraw the distance-fee of &4{fees_amount}&c; cancelling interaction!
+# - fees_amount: String
+# - prefix: String
+MESSAGE-SHOP-INTERACT-WITHDRAWN-FEES          {prefix} &7You have been withdrawn a distance-fee of &e{fees_amount}&7!
+# - fees_amount: String
+# - prefix: String
+MESSAGE-SHOP-INTERACT-PAYED-BACK-FEES         {prefix} &7Due to the corresponding transaction stalling, the distance-fee of &e{fees_amount} &7has been refunded!
+# - fees_amount: String
+# - prefix: String
+MESSAGE-SHOP-INTERACT-COULD-NOT-PAY-BACK-FEES {prefix} &cThe corresponding transaction stalled, but refunding the distance-fee failed; report this incident to a member of the team and ask for a manual refund (see server-logs)!
 # - prefix: String
 MESSAGE-SHOP-INTERACT-PLAYER-HAS-NO-SPACE    {prefix} &cYou do not have enough space in your inventory.
 # - prefix: String

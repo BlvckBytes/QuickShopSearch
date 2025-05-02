@@ -31,14 +31,14 @@ REPRESENTATIVE-LORE-PRICE                    &8♦ &7Preis: &e{price}
 # - fees_relative_value: String
 # - fees_total_value: String
 # - fees_final_price: String
-REPRESENTATIVE-LORE-FEES-ABSOLUTE-AND-RELATIVE &8♦ &7Distanz-Gebühren: &e{fees_total_value} ({fees_relative}% + {fees_absolute} (fester Betrag))
+REPRESENTATIVE-LORE-FEES-ABSOLUTE-AND-RELATIVE &8♦ &7Distanz-Gebühr: &e{fees_total_value} ({fees_relative}% + {fees_absolute} (fester Betrag))
 # - fees_absolute: String
 # - fees_final_price: String
-REPRESENTATIVE-LORE-FEES-ABSOLUTE              &8♦ &7Distanz-Gebühren: &e{fees_absolute} (fester Betrag)
+REPRESENTATIVE-LORE-FEES-ABSOLUTE              &8♦ &7Distanz-Gebühr: &e{fees_absolute} (fester Betrag)
 # - fees_relative: Double
 # - fees_relative_value: String
 # - fees_final_price: String
-REPRESENTATIVE-LORE-FEES-RELATIVE              &8♦ &7Distanz-Gebühren: &e{fees_relative_value} ({fees_relative}%)
+REPRESENTATIVE-LORE-FEES-RELATIVE              &8♦ &7Distanz-Gebühr: &e{fees_relative_value} ({fees_relative}%)
 # - remaining_space: Integer
 REPRESENTATIVE-LORE-REMAINING-SPACE          &8♦ &7Kapazität: &e{remaining_space}
 # - remaining_stock: Integer
@@ -232,7 +232,21 @@ MESSAGE-SHOP-INTERACT-PROMPT-LIMITING-FACTOR-BUYER-FUNDS  dein Guthaben
 # - fees_total_value: Zero | String
 # - fees_final_price: String
 # - prefix: String
-MESSAGE-SHOP-INTERACT-PROMPT-FEES-WARNING    {prefix} &e&lWarnung! &7Diesem Shop sind Distanz-Gebühren von &e{fees_total_value} &7gesamt zugeordnet!
+MESSAGE-SHOP-INTERACT-PROMPT-FEES-WARNING     {prefix} &e&lWarnung! &7Diesem Shop sind Distanz-Gebühr von &e{fees_total_value} &7gesamt zugeordnet!
+# - prefix: String
+MESSAGE-SHOP-INTERACT-PENDING-FEES-TASK       {prefix} &cEs existiert noch ein ausstehender Distanz-Gebühr Task - bitte warte einige Augenblicke, bevor du es erneut versuchst!
+# - fees_amount: String
+# - prefix: String
+MESSAGE-SHOP-INTERACT-COULD-NOT-WITHDRAW-FEES {prefix} &cKonnte die Distanz-Gebühr von &4{fees_amount} &cnicht abbuchen; breche Interaktion ab!
+# - fees_amount: String
+# - prefix: String
+MESSAGE-SHOP-INTERACT-WITHDRAWN-FEES          {prefix} &7Dir wurde eine Distanz-Gebühr von &e{fees_amount} &7abgebucht!
+# - fees_amount: String
+# - prefix: String
+MESSAGE-SHOP-INTERACT-PAYED-BACK-FEES         {prefix} &7Da die zugehörige Transaktion ins Stocken geriet, wurde dir die Distanz-Gebühr von &e{fees_amount} &7rückerstattet!
+# - fees_amount: String
+# - prefix: String
+MESSAGE-SHOP-INTERACT-COULD-NOT-PAY-BACK-FEES {prefix} &cDie zugehörige Transaktion geriet ins Stocken, jedoch schlug die Rückerstattung der Distanz-Gebühr fehl; melde diesen Vorfall einem Teammitglied und bitte um manuelle Rückerstattung (siehe Server-Logs)!
 # - prefix: String
 MESSAGE-SHOP-INTERACT-PLAYER-HAS-NO-SPACE    {prefix} &cDu hast nicht genügend Platz in deinem Inventar.
 # - prefix: String
