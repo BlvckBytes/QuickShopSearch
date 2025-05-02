@@ -252,7 +252,8 @@ public class ResultDisplayHandler implements Listener {
   }
 
   private void initiateShopInteraction(Player player, ResultDisplay display, CachedShop cachedShop) {
-    var maxUnitsResult = calculateMaxUnits(player, cachedShop);
+    var shopFees = display.getShopFees(cachedShop);
+    var maxUnitsResult = calculateMaxUnits(player, cachedShop, shopFees);
 
     var distanceExtendedEnvironment = config.rootSection.getBaseEnvironment()
       .withStaticVariable("all_sentinel", config.rootSection.resultDisplay.chatPromptAllSentinel)
@@ -294,8 +295,6 @@ public class ResultDisplayHandler implements Listener {
       .build(distanceExtendedEnvironment);
 
     scheduler.runAtEntity(player, scheduleTask -> player.closeInventory());
-
-    var shopFees = display.getShopFees(cachedShop);
 
     var didOverwritePrevious = chatPromptManager.register(
       player,
@@ -593,7 +592,7 @@ public class ResultDisplayHandler implements Listener {
       missingMessage.sendMessage(player, config.rootSection.builtBaseEnvironment);
   }
 
-  private MaxUnitsResult calculateMaxUnits(Player player, CachedShop cachedShop) {
+  private MaxUnitsResult calculateMaxUnits(Player player, CachedShop cachedShop, CalculatedFees calculatedFees) {
     var isShopBuying = cachedShop.handle.isBuying();
     var maxUnitsByPlayerInventory = countInventorySpaceOrStockInUnits(player, cachedShop, !isShopBuying);
 
@@ -612,7 +611,7 @@ public class ResultDisplayHandler implements Listener {
     if (maxUnitsByShopInventory == 0)
       return new MaxUnitsResult(0, isShopBuying ? LimitingFactor.SHOP_SPACE : LimitingFactor.SHOP_STOCK);
 
-    var shopPrice = cachedShop.handle.getPrice();
+    var shopPrice = calculatedFees.finalPrice();
 
     int maxUnitsByBalance;
 

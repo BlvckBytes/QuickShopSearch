@@ -199,10 +199,15 @@ MESSAGE-SEARCH-FLAG-ERROR                   {prefix} &cUngültiger Wert &4{flag_
 # - all_sentinel: String
 # - cancel_sentinel: String
 # - limiting_factor: String
+# - fees_absolute: Zero | String
+# - fees_relative: Double
+# - fees_relative_value: Zero | String
+# - fees_total_value: Zero | String
+# - fees_final_price: String
 # - prefix: String
-MESSAGE-SHOP-INTERACT-PROMPT-BUYING          {prefix} &7Gib im Chat ein, wie viele Items an &e{item_type} &7du zum Preis von &e{price} &7je &eVERKAUFEN &7möchtest; tippe "&a{all_sentinel}&7" für &e{max_units} Einheit(en) &7(Begrenzungsfaktor: &e{limiting_factor}&7); tippe "&c{cancel_sentinel}&7" um abzubrechen.
+MESSAGE-SHOP-INTERACT-PROMPT-BUYING          {prefix} &7Gib im Chat ein, wie viele Items an &e{item_type} &7du zum Preis von &e{fees_final_price} &7je &eVERKAUFEN &7möchtest; tippe "&a{all_sentinel}&7" für &e{max_units} Einheit(en) &7(Begrenzungsfaktor: &e{limiting_factor}&7); tippe "&c{cancel_sentinel}&7" um abzubrechen.
 # - prefix: String
-MESSAGE-SHOP-INTERACT-PROMPT-SELLING         {prefix} &7Gib im Chat ein, wie viele Items an &e{item_type} &7du zum Preis von &e{price} &7je &eKAUFEN &7möchtest; tippe "&a{all_sentinel}&7" für &e{max_units} Einheit(en) &7(Begrenzungsfaktor: &e{limiting_factor}&7); tippe "&c{cancel_sentinel}&7" um abzubrechen.
+MESSAGE-SHOP-INTERACT-PROMPT-SELLING         {prefix} &7Gib im Chat ein, wie viele Items an &e{item_type} &7du zum Preis von &e{fees_final_price} &7je &eKAUFEN &7möchtest; tippe "&a{all_sentinel}&7" für &e{max_units} Einheit(en) &7(Begrenzungsfaktor: &e{limiting_factor}&7); tippe "&c{cancel_sentinel}&7" um abzubrechen.
 # - prefix: String
 MESSAGE-SHOP-INTERACT-PROMPT-TIMEOUT         {prefix} &cDeine vorherige Chat-Eingabeaufforderung ist abgelaufen!
 # - amount: Integer
