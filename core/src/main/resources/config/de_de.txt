@@ -232,7 +232,7 @@ MESSAGE-SHOP-INTERACT-PROMPT-LIMITING-FACTOR-BUYER-FUNDS  dein Guthaben
 # - fees_total_value: Zero | String
 # - fees_final_price: String
 # - prefix: String
-MESSAGE-SHOP-INTERACT-PROMPT-FEES-WARNING     {prefix} &e&lWarnung! &7Diesem Shop sind Distanz-Gebühr von &e{fees_total_value} &7gesamt zugeordnet!
+MESSAGE-SHOP-INTERACT-PROMPT-FEES-WARNING     {prefix} &e&lWarnung! &7Diesem Shop sind Distanz-Gebühr von &e{fees_total_value} &7pro Einheit zugeordnet!
 # - prefix: String
 MESSAGE-SHOP-INTERACT-PENDING-FEES-TASK       {prefix} &cEs existiert noch ein ausstehender Distanz-Gebühr Task - bitte warte einige Augenblicke, bevor du es erneut versuchst!
 # - fees_amount: String

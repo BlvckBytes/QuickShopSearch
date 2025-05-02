@@ -231,7 +231,7 @@ MESSAGE-SHOP-INTERACT-PROMPT-LIMITING-FACTOR-BUYER-FUNDS  your funds
 # - fees_total_value: Zero | String
 # - fees_final_price: String
 # - prefix: String
-MESSAGE-SHOP-INTERACT-PROMPT-FEES-WARNING     {prefix} &e&lWarning! &7This shop is assigned with a distance-fee of &e{fees_total_value} &7total!
+MESSAGE-SHOP-INTERACT-PROMPT-FEES-WARNING     {prefix} &e&lWarning! &7This shop is assigned with a distance-fee of &e{fees_total_value} &7per unit!
 # - prefix: String
 MESSAGE-SHOP-INTERACT-PENDING-FEES-TASK       {prefix} &cThere's still a distance-fee task pending - please wait a few moments before trying again!
 # - fees_amount: String

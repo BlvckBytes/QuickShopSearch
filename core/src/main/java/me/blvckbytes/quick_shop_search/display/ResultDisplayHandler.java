@@ -338,7 +338,7 @@ public class ResultDisplayHandler implements Listener {
           return;
         }
 
-        var feesAmount = shopFees.relativeFeesValue() + shopFees.absoluteFees();
+        var feesAmount = (shopFees.relativeFeesValue() + shopFees.absoluteFees()) * amount;
         var feesAmountFormatted = QuickShopAPI.getInstance().getShopManager().format(feesAmount, cachedShop.handle);
 
         if (!remoteInteractionApi.withdrawAmount(player, cachedShop.handle, feesAmount)) {
@@ -364,9 +364,10 @@ public class ResultDisplayHandler implements Listener {
         }
 
         var payBackTask = new FeesPayBackTask(
-          scheduler.runLater(() -> {
-            feesPaybackHandler(player, cachedShop, feesAmount, feesAmountFormatted);
-          }, config.rootSection.fees.feesPayBackTimeoutTicks),
+          scheduler.runLater(
+            () -> feesPaybackHandler(player, cachedShop, feesAmount, feesAmountFormatted),
+            config.rootSection.fees.feesPayBackTimeoutTicks
+          ),
           amount,
           cachedShop.handle.getShopId()
         );
