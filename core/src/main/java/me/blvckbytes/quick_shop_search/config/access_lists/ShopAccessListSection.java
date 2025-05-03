@@ -1,4 +1,4 @@
-package me.blvckbytes.quick_shop_search.config;
+package me.blvckbytes.quick_shop_search.config.access_lists;
 
 import me.blvckbytes.bbconfigmapper.MappingError;
 import me.blvckbytes.bbconfigmapper.sections.AConfigSection;

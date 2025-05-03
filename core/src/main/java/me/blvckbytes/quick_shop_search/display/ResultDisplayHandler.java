@@ -12,7 +12,7 @@ import me.blvckbytes.gpeee.interpreter.IEvaluationEnvironment;
 import me.blvckbytes.quick_shop_search.*;
 import me.blvckbytes.quick_shop_search.cache.CachedShop;
 import me.blvckbytes.quick_shop_search.cache.RemoteInteractionApi;
-import me.blvckbytes.quick_shop_search.config.CooldownType;
+import me.blvckbytes.quick_shop_search.config.cooldowns.CooldownType;
 import me.blvckbytes.quick_shop_search.config.MainSection;
 import me.blvckbytes.quick_shop_search.integration.player_warps.IPlayerWarpsIntegration;
 import org.bukkit.Location;

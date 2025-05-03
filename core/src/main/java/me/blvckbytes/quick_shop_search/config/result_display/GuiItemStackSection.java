@@ -1,4 +1,4 @@
-package me.blvckbytes.quick_shop_search.config;
+package me.blvckbytes.quick_shop_search.config.result_display;
 
 import me.blvckbytes.bbconfigmapper.ScalarType;
 import me.blvckbytes.bbconfigmapper.sections.CSIgnore;

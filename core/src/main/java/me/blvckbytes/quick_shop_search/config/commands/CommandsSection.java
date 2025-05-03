@@ -1,4 +1,4 @@
-package me.blvckbytes.quick_shop_search.config;
+package me.blvckbytes.quick_shop_search.config.commands;
 
 import me.blvckbytes.bbconfigmapper.sections.AConfigSection;
 import me.blvckbytes.bbconfigmapper.sections.CSAlways;

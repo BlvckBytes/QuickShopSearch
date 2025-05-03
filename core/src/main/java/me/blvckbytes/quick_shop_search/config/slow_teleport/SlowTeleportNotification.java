@@ -1,4 +1,4 @@
-package me.blvckbytes.quick_shop_search.config;
+package me.blvckbytes.quick_shop_search.config.slow_teleport;
 
 import com.cryptomorin.xseries.XSound;
 import me.blvckbytes.bbconfigmapper.MappingError;

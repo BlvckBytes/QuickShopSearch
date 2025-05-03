@@ -17,7 +17,7 @@ import me.blvckbytes.quick_shop_search.PluginPermission;
 import me.blvckbytes.quick_shop_search.cache.CachedShop;
 import me.blvckbytes.quick_shop_search.cache.CachedShopRegistry;
 import me.blvckbytes.quick_shop_search.config.MainSection;
-import me.blvckbytes.quick_shop_search.config.ShopAccessListSection;
+import me.blvckbytes.quick_shop_search.config.access_lists.ShopAccessListSection;
 import me.blvckbytes.quick_shop_search.display.DisplayData;
 import me.blvckbytes.quick_shop_search.display.ResultDisplayHandler;
 import net.md_5.bungee.api.ChatMessageType;

@@ -1,4 +1,4 @@
-package me.blvckbytes.quick_shop_search.config;
+package me.blvckbytes.quick_shop_search.config.result_display;
 
 import me.blvckbytes.gpeee.interpreter.EvaluationEnvironmentBuilder;
 

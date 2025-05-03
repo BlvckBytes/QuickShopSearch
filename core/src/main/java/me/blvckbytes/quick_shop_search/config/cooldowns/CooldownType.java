@@ -1,4 +1,4 @@
-package me.blvckbytes.quick_shop_search.config;
+package me.blvckbytes.quick_shop_search.config.cooldowns;
 
 public enum CooldownType {
   SAME_SHOP,
