@@ -11,7 +11,7 @@ import me.blvckbytes.gpeee.interpreter.IEvaluationEnvironment;
 import me.blvckbytes.item_predicate_parser.predicate.StringifyState;
 import me.blvckbytes.quick_shop_search.PluginPermission;
 import me.blvckbytes.quick_shop_search.cache.CachedShop;
-import me.blvckbytes.quick_shop_search.ShopUpdate;
+import me.blvckbytes.quick_shop_search.cache.ShopUpdate;
 import me.blvckbytes.quick_shop_search.command.SearchFlag;
 import me.blvckbytes.quick_shop_search.config.MainSection;
 import org.bukkit.Location;
