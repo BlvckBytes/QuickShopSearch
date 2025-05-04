@@ -56,7 +56,13 @@ REPRESENTATIVE-LORE-MODE-BUYING              &8♦ &7Modus: &eKauft Items
 REPRESENTATIVE-LORE-MODE-BUYING-UNLIMITED    &8♦ &7Modus: &eKauft unlimitiert Items
 REPRESENTATIVE-LORE-MODE-SELLING             &8♦ &7Modus: &eVerkauft Items
 REPRESENTATIVE-LORE-MODE-SELLING-UNLIMITED   &8♦ &7Modus: &eVerkauft unlimitiert Items
-REPRESENTATIVE-LORE-NEAREST-PLAYER-WARP      &8♦ &7Spieler-Warp: &e{nearest_player_warp_name} ({nearest_player_warp_loc_x}, {nearest_player_warp_loc_y}, {nearest_player_warp_loc_z})
+# - player_warp_name: String
+# - player_warp_owner: String
+# - player_warp_world: String
+# - player_warp_x: Integer
+# - player_warp_y: Integer
+# - player_warp_z: Integer
+REPRESENTATIVE-LORE-NEAREST-PLAYER-WARP      &8♦ &7Spieler-Warp: &e{player_warp_name} ({player_warp_x}, {player_warp_y}, {player_warp_z})
 REPRESENTATIVE-LORE-LEFT-CLICK-DESCRIPTION   &8➥ &eLinksklick &7Zum Shop teleportieren
 REPRESENTATIVE-LORE-RIGHT-CLICK-DESCRIPTION  &8➥ &eRechtsklick &7Vorschau öffnen
 REPRESENTATIVE-LORE-SHIFT-LEFT-CLICK-BUYING-DESCRIPTION  &8➥ &eShift-Left-Click &7An den Shop verkaufen

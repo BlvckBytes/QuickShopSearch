@@ -68,11 +68,13 @@ resultDisplay:
     # - fees_relative_value: Zero | String
     # - fees_total_value: Zero | String
     # - fees_final_price: String
-    # - nearest_player_warp_name
-    # - nearest_player_warp_owner_name
-    # - nearest_player_warp_loc_x
-    # - nearest_player_warp_loc_y
-    # - nearest_player_warp_loc_z
+    # - player_warp_display_details: Boolean
+    # - player_warp_name: String
+    # - player_warp_owner: String
+    # - player_warp_world: String
+    # - player_warp_x: Integer
+    # - player_warp_y: Integer
+    # - player_warp_z: Integer
     # https://github.com/BlvckBytes/BukkitEvaluable#itemstack-section
     representativePatch:
       lore$:
@@ -104,7 +106,7 @@ resultDisplay:
         else
           if is_unlimited then @{REPRESENTATIVE-LORE-MODE-SELLING-UNLIMITED} else @{REPRESENTATIVE-LORE-MODE-SELLING}
       - |
-        if nearest_player_warp_name != null then
+        if player_warp_display_details and player_warp_name != null then
           @{REPRESENTATIVE-LORE-NEAREST-PLAYER-WARP}
         else
           null
@@ -449,6 +451,8 @@ slowTeleport:
 
 playerWarpsIntegration:
   nearestWarpBlockRadius: 15
+  enableTeleportToNearest: false
+  displayNearestInIcon: false
 
 fees:
   enabled: false

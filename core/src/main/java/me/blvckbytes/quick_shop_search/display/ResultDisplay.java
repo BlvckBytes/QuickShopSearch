@@ -446,7 +446,7 @@ public class ResultDisplay implements DynamicPropertyProvider {
       config.rootSection.resultDisplay.items.activeSearch.renderInto(inventory, activeSearchEnvironment);
   }
 
-  private @Nullable PlayerWarpData getNearestPlayerWarp(CachedShop cachedShop) {
+  public @Nullable PlayerWarpData getNearestPlayerWarp(CachedShop cachedShop) {
     if (playerWarpsIntegration == null)
       return null;
 
@@ -480,11 +480,13 @@ public class ResultDisplay implements DynamicPropertyProvider {
       .getShopEnvironment()
       .duplicate()
       .withStaticVariable("distance", distance)
-      .withStaticVariable("nearest_player_warp_name", nearestPlayerWarp == null ? null : nearestPlayerWarp.warpName())
-      .withStaticVariable("nearest_player_warp_owner_name", nearestPlayerWarp == null ? null : nearestPlayerWarp.ownerName())
-      .withStaticVariable("nearest_player_warp_loc_x", nearestPlayerWarp == null ? null : nearestPlayerWarp.location().getBlockX())
-      .withStaticVariable("nearest_player_warp_loc_y", nearestPlayerWarp == null ? null : nearestPlayerWarp.location().getBlockY())
-      .withStaticVariable("nearest_player_warp_loc_z", nearestPlayerWarp == null ? null : nearestPlayerWarp.location().getBlockZ())
+      .withStaticVariable("player_warp_display_details", config.rootSection.playerWarpsIntegration.displayNearestInIcon)
+      .withStaticVariable("player_warp_name", nearestPlayerWarp == null ? null : nearestPlayerWarp.warpName())
+      .withStaticVariable("player_warp_owner", nearestPlayerWarp == null ? null : nearestPlayerWarp.ownerName())
+      .withStaticVariable("player_warp_world", nearestPlayerWarp == null ? null : Objects.requireNonNull(nearestPlayerWarp.location().getWorld()).getName())
+      .withStaticVariable("player_warp_x", nearestPlayerWarp == null ? null : nearestPlayerWarp.location().getBlockX())
+      .withStaticVariable("player_warp_y", nearestPlayerWarp == null ? null : nearestPlayerWarp.location().getBlockY())
+      .withStaticVariable("player_warp_z", nearestPlayerWarp == null ? null : nearestPlayerWarp.location().getBlockZ())
       .withStaticVariable(
         "can_teleport",
         isOtherWorld

@@ -56,7 +56,13 @@ REPRESENTATIVE-LORE-MODE-BUYING              &8♦ &7模式: &e收购
 REPRESENTATIVE-LORE-MODE-BUYING-UNLIMITED    &8♦ &7模式: &e收购无限的物品
 REPRESENTATIVE-LORE-MODE-SELLING             &8♦ &7模式: &e出售
 REPRESENTATIVE-LORE-MODE-SELLING-UNLIMITED   &8♦ &7模式: &e出售无限的商品
-REPRESENTATIVE-LORE-NEAREST-PLAYER-WARP      &8♦ &7Player-Warp: &e{nearest_player_warp_name} ({nearest_player_warp_loc_x}, {nearest_player_warp_loc_y}, {nearest_player_warp_loc_z})
+# - player_warp_name: String
+# - player_warp_owner: String
+# - player_warp_world: String
+# - player_warp_x: Integer
+# - player_warp_y: Integer
+# - player_warp_z: Integer
+REPRESENTATIVE-LORE-NEAREST-PLAYER-WARP      &8♦ &7Player-Warp: &e{player_warp_name} ({player_warp_x}, {player_warp_y}, {player_warp_z})
 REPRESENTATIVE-LORE-LEFT-CLICK-DESCRIPTION   &8➥ &e鼠标左键 &7传送到商店
 REPRESENTATIVE-LORE-RIGHT-CLICK-DESCRIPTION  &8➥ &e鼠标右键 &7查看该商店的物品预览
 REPRESENTATIVE-LORE-SHIFT-LEFT-CLICK-BUYING-DESCRIPTION  &8➥ &e蹲下并鼠标左键 &7向商店收购物品

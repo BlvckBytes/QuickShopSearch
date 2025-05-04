@@ -8,7 +8,6 @@ import me.blvckbytes.bbconfigmapper.ScalarType;
 import me.blvckbytes.bukkitevaluable.BukkitEvaluable;
 import me.blvckbytes.bukkitevaluable.ConfigKeeper;
 import me.blvckbytes.gpeee.interpreter.EvaluationEnvironmentBuilder;
-import me.blvckbytes.gpeee.interpreter.IEvaluationEnvironment;
 import me.blvckbytes.quick_shop_search.*;
 import me.blvckbytes.quick_shop_search.cache.CachedShop;
 import me.blvckbytes.quick_shop_search.cache.RemoteInteractionApi;
@@ -641,43 +640,36 @@ public class ResultDisplayHandler implements Listener {
     if (targetLocation == null)
       targetLocation = shopLocation.add(.5, 0, .5);
 
-    IEvaluationEnvironment playerWarpExtendedEnvironment = null;
+    var extendedEnvironment = display.getExtendedShopEnvironment(cachedShop);
+    var isPlayerWarp = false;
 
-    if (playerWarpsIntegration != null && PluginPermission.FEATURE_TELEPORT_CLOSEST_PLAYER_WARP.has(player)) {
-      var result = playerWarpsIntegration.locateNearestWithinRange(player, targetLocation, config.rootSection.playerWarpsIntegration.nearestWarpBlockRadius);
+    if (playerWarpsIntegration != null && config.rootSection.playerWarpsIntegration.enableTeleportToNearest && PluginPermission.FEATURE_TELEPORT_CLOSEST_PLAYER_WARP.has(player)) {
+      var nearestPlayerWarp = display.getNearestPlayerWarp(cachedShop);
 
-      if (result != null) {
-        playerWarpExtendedEnvironment =
-          config.rootSection.getBaseEnvironment()
-            .withStaticVariable("player_warp_owner", result.ownerName())
-            .withStaticVariable("player_warp_name", result.warpName())
-            .withStaticVariable("player_warp_world", Objects.requireNonNull(result.location().getWorld()).getName())
-            .withStaticVariable("player_warp_x", result.location().getBlockX())
-            .withStaticVariable("player_warp_y", result.location().getBlockY())
-            .withStaticVariable("player_warp_z", result.location().getBlockZ())
-            .build(display.getExtendedShopEnvironment(cachedShop));
+      if (nearestPlayerWarp != null) {
+        isPlayerWarp = true;
 
-        if (result.isBanned() && !PluginPermission.FEATURE_TELEPORT_CLOSEST_PLAYER_WARP_BAN_BYPASS.has(player)) {
+        if (nearestPlayerWarp.isBanned() && !PluginPermission.FEATURE_TELEPORT_CLOSEST_PLAYER_WARP_BAN_BYPASS.has(player)) {
           if ((message = config.rootSection.playerMessages.nearestPlayerWarpBanned) != null)
-            message.sendMessage(player, playerWarpExtendedEnvironment);
+            message.sendMessage(player, extendedEnvironment);
 
-          playerWarpExtendedEnvironment = null;
+          isPlayerWarp = false;
         }
 
         else
-          targetLocation = result.location();
+          targetLocation = nearestPlayerWarp.location();
       }
     }
 
-    if (playerWarpExtendedEnvironment != null) {
+    if (isPlayerWarp) {
       if ((message = config.rootSection.playerMessages.beforeTeleportingNearestPlayerWarp) != null)
-        message.sendMessage(player, playerWarpExtendedEnvironment);
+        message.sendMessage(player, extendedEnvironment);
     }
 
     else if ((message = config.rootSection.playerMessages.beforeTeleporting) != null) {
       message.sendMessage(
         player,
-        config.rootSection.getBaseEnvironment().build(display.getExtendedShopEnvironment(cachedShop))
+        config.rootSection.getBaseEnvironment().build(extendedEnvironment)
       );
     }
 

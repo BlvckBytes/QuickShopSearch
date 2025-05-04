@@ -6,10 +6,14 @@ import me.blvckbytes.gpeee.interpreter.EvaluationEnvironmentBuilder;
 public class PlayerWarpsIntegrationSection extends AConfigSection {
 
   public int nearestWarpBlockRadius;
+  public boolean enableTeleportToNearest;
+  public boolean displayNearestInIcon;
 
   public PlayerWarpsIntegrationSection(EvaluationEnvironmentBuilder baseEnvironment) {
     super(baseEnvironment);
 
     this.nearestWarpBlockRadius = 15;
+    this.enableTeleportToNearest = false;
+    this.displayNearestInIcon = false;
   }
 }
