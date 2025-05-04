@@ -8,7 +8,7 @@ import it.unimi.dsi.fastutil.longs.Long2ObjectAVLTreeMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import me.blvckbytes.bukkitevaluable.ConfigKeeper;
 import me.blvckbytes.quick_shop_search.config.MainSection;
-import me.blvckbytes.quick_shop_search.display.ResultDisplayHandler;
+import me.blvckbytes.quick_shop_search.display.result.ResultDisplayHandler;
 import org.bukkit.Location;
 import org.bukkit.block.Chest;
 import org.bukkit.block.DoubleChest;

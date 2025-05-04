@@ -1,4 +1,4 @@
-package me.blvckbytes.quick_shop_search.display;
+package me.blvckbytes.quick_shop_search.display.result;
 
 import java.util.Arrays;
 import java.util.List;

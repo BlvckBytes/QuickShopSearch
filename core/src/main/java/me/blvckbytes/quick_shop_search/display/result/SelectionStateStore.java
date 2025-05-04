@@ -1,4 +1,4 @@
-package me.blvckbytes.quick_shop_search.display;
+package me.blvckbytes.quick_shop_search.display.result;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;

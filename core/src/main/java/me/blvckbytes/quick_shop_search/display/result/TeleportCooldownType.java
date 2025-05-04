@@ -1,4 +1,4 @@
-package me.blvckbytes.quick_shop_search.display;
+package me.blvckbytes.quick_shop_search.display.result;
 
 import me.blvckbytes.bukkitevaluable.BukkitEvaluable;
 import me.blvckbytes.quick_shop_search.PluginPermission;

@@ -1,4 +1,4 @@
-package me.blvckbytes.quick_shop_search.display;
+package me.blvckbytes.quick_shop_search.display.result;
 
 import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
 import me.blvckbytes.item_predicate_parser.predicate.ItemPredicate;
