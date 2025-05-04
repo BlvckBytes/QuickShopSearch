@@ -14,7 +14,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.function.Consumer;
 
-public abstract class DisplayHandler<DisplayType extends Display, DisplayDataType> implements Listener {
+public abstract class DisplayHandler<DisplayType extends Display<DisplayDataType>, DisplayDataType> implements Listener {
 
   // If players move to their own inventory and close the UI quickly enough, the server will send back a packet
   // undoing that slot which assumed the top-inventory to still be open, and thus the undo won't work. For survival,

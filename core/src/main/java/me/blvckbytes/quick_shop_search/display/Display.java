@@ -1,15 +1,28 @@
 package me.blvckbytes.quick_shop_search.display;
 
+import me.blvckbytes.bukkitevaluable.ConfigKeeper;
+import me.blvckbytes.quick_shop_search.config.MainSection;
 import org.bukkit.inventory.Inventory;
 
-public interface Display {
+public abstract class Display<DisplayDataType> {
 
-  void onConfigReload();
+  protected final ConfigKeeper<MainSection> config;
+  protected final DisplayDataType displayData;
 
-  void onInventoryClose();
+  protected Display(
+    ConfigKeeper<MainSection> config,
+    DisplayDataType displayData
+  ) {
+    this.config = config;
+    this.displayData = displayData;
+  }
 
-  void onShutdown();
+  public abstract void onConfigReload();
 
-  boolean isInventory(Inventory inventory);
+  public abstract void onInventoryClose();
+
+  public abstract void onShutdown();
+
+  public abstract boolean isInventory(Inventory inventory);
 
 }
