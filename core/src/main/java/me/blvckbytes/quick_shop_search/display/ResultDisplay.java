@@ -3,8 +3,11 @@ package me.blvckbytes.quick_shop_search.display;
 import com.ghostchu.quickshop.QuickShop;
 import com.ghostchu.quickshop.api.QuickShopAPI;
 import com.ghostchu.quickshop.api.obj.QUser;
+import com.ghostchu.quickshop.api.shop.ShopType;
 import com.ghostchu.quickshop.obj.QUserImpl;
 import com.tcoded.folialib.impl.PlatformScheduler;
+import it.unimi.dsi.fastutil.longs.Long2LongAVLTreeMap;
+import it.unimi.dsi.fastutil.longs.Long2LongMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectAVLTreeMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import me.blvckbytes.bukkitevaluable.ConfigKeeper;
@@ -36,8 +39,8 @@ public class ResultDisplay implements DynamicPropertyProvider {
   private final ConfigKeeper<MainSection> config;
 
   private final DisplayData displayData;
-  private final Map<Long, Long> shopDistanceByShopId;
-  private final Map<Long, CalculatedFees> shopFeesByShopId;
+  private final Long2LongMap shopDistanceByShopId;
+  private final Long2ObjectMap<CalculatedFees> shopFeesByShopId;
   private final Long2ObjectMap<@Nullable PlayerWarpData> nearestPlayerWarpByShopId;
   private List<CachedShop> filteredUnSortedShops;
   private List<CachedShop> filteredSortedShops;
@@ -81,8 +84,8 @@ public class ResultDisplay implements DynamicPropertyProvider {
     this.playerUser = QUserImpl.createFullFilled(player);
     this.playerLocation = player.getLocation();
     this.displayData = displayData;
-    this.shopDistanceByShopId = new HashMap<>();
-    this.shopFeesByShopId = new HashMap<>();
+    this.shopDistanceByShopId = new Long2LongAVLTreeMap();
+    this.shopFeesByShopId = new Long2ObjectAVLTreeMap<>();
     this.nearestPlayerWarpByShopId = new Long2ObjectAVLTreeMap<>();
     this.slotMap = new CachedShop[9 * 6];
     this.selectionState = selectionState;
@@ -372,9 +375,9 @@ public class ResultDisplay implements DynamicPropertyProvider {
   @Override
   public long getShopDistance(CachedShop cachedShop) {
     var shopId = cachedShop.handle.getShopId();
-    var distance = shopDistanceByShopId.get(shopId);
+    var distance = shopDistanceByShopId.getOrDefault(shopId, -2);
 
-    if (distance == null) {
+    if (distance == -2) {
       var shopLocation = cachedShop.handle.getLocation();
 
       if (shopLocation.getWorld() != playerLocation.getWorld())
@@ -515,7 +518,12 @@ public class ResultDisplay implements DynamicPropertyProvider {
       )
       .withStaticVariable(
         "fees_final_price",
-        shopManager.format(fees.finalPrice(), cachedShop.handle)
+        shopManager.format(
+          cachedShop.cachedType == ShopType.SELLING
+            ? cachedShop.cachedPrice + fees.relativeFeesValue() + fees.absoluteFees()
+            : cachedShop.cachedPrice - (fees.relativeFeesValue() + fees.absoluteFees()),
+          cachedShop.handle
+        )
       )
       .build(pageEnvironment);
   }

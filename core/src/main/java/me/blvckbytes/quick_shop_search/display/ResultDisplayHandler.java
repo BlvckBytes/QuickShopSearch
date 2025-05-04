@@ -739,7 +739,7 @@ public class ResultDisplayHandler implements Listener {
 
     if (cachedShop.handle.isSelling()) {
       // The customer always pays the fees - thus, use the increased price
-      shopPrice = calculatedFees.finalPrice();
+      shopPrice = cachedShop.cachedPrice + calculatedFees.relativeFeesValue() + calculatedFees.absoluteFees();
       var playerBalance = remoteInteractionApi.getPlayerBalance(player, cachedShop.handle);
       maxUnitsByBalance = (int) (playerBalance / shopPrice);
     } else {

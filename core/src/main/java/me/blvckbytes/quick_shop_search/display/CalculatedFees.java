@@ -8,16 +8,17 @@ import org.jetbrains.annotations.Nullable;
 public record CalculatedFees(
   double absoluteFees,
   double relativeFees,
-  double relativeFeesValue,
-  double finalPrice
+  double relativeFeesValue
 ) {
+  public static final CalculatedFees NO_FEES = new CalculatedFees(0, 0, 0);
+
   public boolean isNotZero() {
     return relativeFees() != 0 || absoluteFees() != 0;
   }
 
   public static CalculatedFees calculateFor(@Nullable FeesValuesSection feesValues, CachedShop cachedShop) {
     if (feesValues == null)
-      return new CalculatedFees(0, 0, cachedShop.cachedPrice, cachedShop.cachedPrice);
+      return NO_FEES;
 
     double absoluteFees;
     double relativeFees;
@@ -32,21 +33,14 @@ public record CalculatedFees(
 
     var relativeFeesValue = cachedShop.cachedPrice * (relativeFees / 100);
 
-    double finalPrice;
-
     if (cachedShop.cachedType == ShopType.BUYING) {
-      finalPrice = cachedShop.cachedPrice - relativeFeesValue;
+      var remainingPrice = cachedShop.cachedPrice - relativeFeesValue;
 
-      if (absoluteFees > finalPrice) {
-        absoluteFees = finalPrice;
-        finalPrice = 0;
-      } else {
-        finalPrice -= absoluteFees;
+      if (absoluteFees > remainingPrice) {
+        absoluteFees = remainingPrice;
       }
-    } else {
-      finalPrice = cachedShop.cachedPrice + relativeFeesValue + absoluteFees;
     }
 
-    return new CalculatedFees(absoluteFees, relativeFees, relativeFeesValue, finalPrice);
+    return new CalculatedFees(absoluteFees, relativeFees, relativeFeesValue);
   }
 }
