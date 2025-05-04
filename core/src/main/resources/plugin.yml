@@ -4,7 +4,7 @@ version: ${project.version}
 author: BlvckBytes
 api-version: 1.18
 depend: [QuickShop-Hikari, ItemPredicateParser]
-softdepend: [PlayerWarps]
+softdepend: [PlayerWarps, Essentials]
 folia-supported: true
 commands:
   quickshopsearch:

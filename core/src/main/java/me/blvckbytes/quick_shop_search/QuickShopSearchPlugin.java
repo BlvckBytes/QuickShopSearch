@@ -23,6 +23,8 @@ import me.blvckbytes.quick_shop_search.config.commands.QuickShopSearchReloadComm
 import me.blvckbytes.quick_shop_search.display.result.ResultDisplayHandler;
 import me.blvckbytes.quick_shop_search.display.result.SelectionStateStore;
 import me.blvckbytes.quick_shop_search.display.teleport.TeleportDisplayHandler;
+import me.blvckbytes.quick_shop_search.integration.essentials_warps.EssentialsWarpsIntegration;
+import me.blvckbytes.quick_shop_search.integration.essentials_warps.IEssentialsWarpsIntegration;
 import me.blvckbytes.quick_shop_search.integration.player_warps.IPlayerWarpsIntegration;
 import me.blvckbytes.quick_shop_search.integration.player_warps.PlayerWarpsIntegration;
 import net.kyori.adventure.text.Component;
@@ -84,6 +86,11 @@ public class QuickShopSearchPlugin extends JavaPlugin {
           logger.log(Level.SEVERE, "Could not load PlayerWarps-integration!", e);
         }
       }
+
+      IEssentialsWarpsIntegration essentialsWarpsIntegration = null;
+
+      if (Bukkit.getPluginManager().isPluginEnabled("Essentials"))
+        essentialsWarpsIntegration = new EssentialsWarpsIntegration(logger, scheduler);
 
       teleportDisplayHandler = new TeleportDisplayHandler(config, scheduler, slowTeleportManager);
       Bukkit.getPluginManager().registerEvents(teleportDisplayHandler, this);
