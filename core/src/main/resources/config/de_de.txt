@@ -124,6 +124,31 @@ ACTIVE-SEARCH-LORE-MIN-PRICE              &8➥ &7Min-Preis: &e{min_price}
 
 # ==================== END ResultDisplay ====================
 
+# ==================== BEGIN TeleportDisplay ====================
+
+TELEPORT-DISPLAY-TITLE &8Shop-Teleportation &e{loc_x} {loc_y} {loc_z}
+
+TELEPORT-DISPLAY-BACK-NAME                        &8» &6Zurück &8«
+TELEPORT-DISPLAY-BACK-LORE-LEFT-CLICK-DESCRIPTION &8➥ &eLinksklick &7Return to the shop-browser
+
+TELEPORT-DISPLAY-SHOP-LOCATION-NAME                        &8» &6Shop-Ort &8«
+TELEPORT-DISPLAY-SHOP-LOCATION-LORE-LOCATION-COORDINATES   &8♦ &7Koordinaten: &e{loc_x} {loc_y} {loc_z}
+TELEPORT-DISPLAY-SHOP-LOCATION-LORE-LOCATION-WORLD         &8♦ &7Welt: &e{loc_world}
+TELEPORT-DISPLAY-SHOP-LOCATION-LORE-DISTANCE               &8♦ &7Distanz: &e{distance} Blocks
+TELEPORT-DISPLAY-SHOP-LOCATION-LORE-DISTANCE-OTHER-WORLD   &8♦ &7Distanz: &cAndere Welt
+TELEPORT-DISPLAY-SHOP-LOCATION-LORE-LEFT-CLICK-DESCRIPTION &8➥ &eLinksklick &7Zum Shop-Ort teleportieren
+
+TELEPORT-DISPLAY-NEAREST-PLAYER-WARP-LOCATION-NAME                        &8» &6Nächster Spieler-Warp &8«
+TELEPORT-DISPLAY-NEAREST-PLAYER-WARP-LOCATION-LORE-LOCATION-NAME          &8♦ &7Name: &e{player_warp_name}
+TELEPORT-DISPLAY-NEAREST-PLAYER-WARP-LOCATION-LORE-LOCATION-OWNER         &8♦ &7Besitzer: &e{player_warp_owner}
+TELEPORT-DISPLAY-NEAREST-PLAYER-WARP-LOCATION-LORE-LOCATION-COORDINATES   &8♦ &7Koordinaten: &e{player_warp_x} {player_warp_y} {player_warp_z}
+TELEPORT-DISPLAY-NEAREST-PLAYER-WARP-LOCATION-LORE-LOCATION-WORLD         &8♦ &7Welt: &e{player_warp_world}
+TELEPORT-DISPLAY-NEAREST-PLAYER-WARP-LOCATION-LORE-DISTANCE               &8♦ &7Distanz: &e{player_warp_distance} Blocks
+TELEPORT-DISPLAY-NEAREST-PLAYER-WARP-LOCATION-LORE-LEFT-CLICK-DESCRIPTION &8➥ &eLinksklick &7Zum Spieler-Warp teleportieren
+TELEPORT-DISPLAY-NEAREST-PLAYER-WARP-LOCATION-LORE-HAS-NONE               &8➥ &cKein Spieler-Warp verfügbar
+
+# ==================== END TeleportDisplay ====================
+
 # ==================== BEGIN Messages ====================
 
 MESSAGE-PREFIX                              &7[&6QuickShopSearch&7]
