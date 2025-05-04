@@ -490,6 +490,7 @@ public class ResultDisplay extends Display<ResultDisplayData> implements Dynamic
       .withStaticVariable("player_warp_x", nearestPlayerWarp == null ? null : nearestPlayerWarp.location().getBlockX())
       .withStaticVariable("player_warp_y", nearestPlayerWarp == null ? null : nearestPlayerWarp.location().getBlockY())
       .withStaticVariable("player_warp_z", nearestPlayerWarp == null ? null : nearestPlayerWarp.location().getBlockZ())
+      .withStaticVariable("player_warp_distance", nearestPlayerWarp == null ? null : (int) Math.round(nearestPlayerWarp.location().distance(playerLocation)))
       .withStaticVariable(
         "can_teleport",
         isOtherWorld

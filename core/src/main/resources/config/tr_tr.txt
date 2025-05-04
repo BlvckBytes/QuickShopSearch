@@ -62,6 +62,7 @@ REPRESENTATIVE-LORE-MODE-SELLING-UNLIMITED   &8♦ &7Yöntem: &eSınırsız Öğ
 # - player_warp_x: Integer
 # - player_warp_y: Integer
 # - player_warp_z: Integer
+# - player_warp_distance: Integer
 REPRESENTATIVE-LORE-NEAREST-PLAYER-WARP      &8♦ &7Player-Warp: &e{player_warp_name} ({player_warp_x}, {player_warp_y}, {player_warp_z})
 REPRESENTATIVE-LORE-LEFT-CLICK-DESCRIPTION   &8➥ &eSol Tıklama &7Markete ışınlan
 REPRESENTATIVE-LORE-RIGHT-CLICK-DESCRIPTION  &8➥ &eSağ Tıklama &7Açık önizleme
@@ -158,9 +159,10 @@ MESSAGE-BEFORE-TELEPORTING                  {prefix} &e{owner} &7kişisinin &7&e
 # - player_warp_owner: String
 # - player_warp_name: String
 # - player_warp_world: String
-# - player_warp_x: String
-# - player_warp_y: String
-# - player_warp_z: String
+# - player_warp_x: Integer
+# - player_warp_y: Integer
+# - player_warp_z: Integer
+# - player_warp_distance: Integer
 MESSAGE-BEFORE-TELEPORTING-NEAREST-PLAYER-WARP {prefix} &7Teleporting to the nearest player-warp &e{player_warp_name} &7at &e{player_warp_x}&7, &e{player_warp_y}&7, &e{player_warp_z} &7of the Shop of &e{owner} &7at &e{loc_x}&7, &e{loc_y}&7, &e{loc_z}&7.
 # - number_shops: Integer
 # - predicate: String
@@ -350,9 +352,10 @@ MESSAGE-SLOW-TELEPORT-NOT-IN-COMBAT-SUBTITLE    &bStand still for {remaining_sec
 # - player_warp_owner: String
 # - player_warp_name: String
 # - player_warp_world: String
-# - player_warp_x: String
-# - player_warp_y: String
-# - player_warp_z: String
+# - player_warp_x: Integer
+# - player_warp_y: Integer
+# - player_warp_z: Integer
+# - player_warp_distance: Integer
 MESSAGE-NEAREST-PLAYER-WARP-BANNED {prefix} &cYou're banned from the nearest player-warp &4{player_warp_name} &cby &4{player_warp_owner} &c- teleporting to the shop instead!
 
 COMMAND-QSS-SEARCH-FLAG-OWNER     Owner

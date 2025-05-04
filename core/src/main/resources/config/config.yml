@@ -69,12 +69,13 @@ resultDisplay:
     # - fees_total_value: Zero | String
     # - fees_final_price: String
     # - player_warp_display_details: Boolean
-    # - player_warp_name: String
-    # - player_warp_owner: String
-    # - player_warp_world: String
-    # - player_warp_x: Integer
-    # - player_warp_y: Integer
-    # - player_warp_z: Integer
+    # - player_warp_name: String?
+    # - player_warp_owner: String?
+    # - player_warp_world: String?
+    # - player_warp_x: Integer?
+    # - player_warp_y: Integer?
+    # - player_warp_z: Integer?
+    # - player_warp_distance: Integer?
     # https://github.com/BlvckBytes/BukkitEvaluable#itemstack-section
     representativePatch:
       lore$:
@@ -254,9 +255,10 @@ playerMessages:
   # - player_warp_owner: String
   # - player_warp_name: String
   # - player_warp_world: String
-  # - player_warp_x: String
-  # - player_warp_y: String
-  # - player_warp_z: String
+  # - player_warp_x: Integer
+  # - player_warp_y: Integer
+  # - player_warp_z: Integer
+  # - player_warp_distance: Integer
   beforeTeleportingNearestPlayerWarp$: '@{MESSAGE-BEFORE-TELEPORTING-NEAREST-PLAYER-WARP(prefix=lut["MESSAGE_PREFIX"])}'
   # - number_shops: Integer
   # - predicate: String
@@ -346,9 +348,10 @@ playerMessages:
   # - player_warp_owner: String
   # - player_warp_name: String
   # - player_warp_world: String
-  # - player_warp_x: String
-  # - player_warp_y: String
-  # - player_warp_z: String
+  # - player_warp_x: Integer
+  # - player_warp_y: Integer
+  # - player_warp_z: Integer
+  # - player_warp_distance: Integer
   nearestPlayerWarpBanned$: '@{MESSAGE-NEAREST-PLAYER-WARP-BANNED(prefix=lut["MESSAGE_PREFIX"])}'
 
 predicates:
