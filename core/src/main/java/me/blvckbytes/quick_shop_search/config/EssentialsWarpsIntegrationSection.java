@@ -3,13 +3,13 @@ package me.blvckbytes.quick_shop_search.config;
 import me.blvckbytes.bbconfigmapper.sections.AConfigSection;
 import me.blvckbytes.gpeee.interpreter.EvaluationEnvironmentBuilder;
 
-public class PlayerWarpsIntegrationSection extends AConfigSection {
+public class EssentialsWarpsIntegrationSection extends AConfigSection {
 
   public int nearestWarpBlockRadius;
   public boolean enabled;
   public boolean displayNearestInIcon;
 
-  public PlayerWarpsIntegrationSection(EvaluationEnvironmentBuilder baseEnvironment) {
+  public EssentialsWarpsIntegrationSection(EvaluationEnvironmentBuilder baseEnvironment) {
     super(baseEnvironment);
 
     this.enabled = false;

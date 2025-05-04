@@ -23,6 +23,7 @@ public class MainSection extends AConfigSection {
   public CooldownsSection cooldowns;
   public SlowTeleportSection slowTeleport;
   public PlayerWarpsIntegrationSection playerWarpsIntegration;
+  public EssentialsWarpsIntegrationSection essentialsWarpsIntegration;
   public FeesSection fees;
 
   public MainSection(EvaluationEnvironmentBuilder baseEnvironment) {

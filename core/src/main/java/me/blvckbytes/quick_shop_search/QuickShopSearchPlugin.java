@@ -77,20 +77,37 @@ public class QuickShopSearchPlugin extends JavaPlugin {
 
       IPlayerWarpsIntegration playerWarpsIntegration = null;
 
-      if (Bukkit.getPluginManager().isPluginEnabled("PlayerWarps")) {
-        try {
-          playerWarpsIntegration = new PlayerWarpsIntegration(logger, scheduler);
-          Bukkit.getPluginManager().registerEvents(playerWarpsIntegration, this);
-          logger.info("Successfully loaded the PlayerWarps-integration!");
-        } catch (Exception e) {
-          logger.log(Level.SEVERE, "Could not load PlayerWarps-integration!", e);
+      if (config.rootSection.playerWarpsIntegration.enabled) {
+        if (Bukkit.getPluginManager().isPluginEnabled("PlayerWarps")) {
+          try {
+            playerWarpsIntegration = new PlayerWarpsIntegration(logger, scheduler);
+            Bukkit.getPluginManager().registerEvents(playerWarpsIntegration, this);
+            logger.info("Successfully loaded the PlayerWarps-integration!");
+          } catch (Exception e) {
+            logger.log(Level.SEVERE, "Could not load PlayerWarps-integration!", e);
+          }
         }
+
+        else
+          logger.warning("PlayerWarps-Integration is enabled, but the corresponding plugin could not be located!");
       }
 
       IEssentialsWarpsIntegration essentialsWarpsIntegration = null;
 
-      if (Bukkit.getPluginManager().isPluginEnabled("Essentials"))
-        essentialsWarpsIntegration = new EssentialsWarpsIntegration(logger, scheduler);
+      if (config.rootSection.essentialsWarpsIntegration.enabled) {
+        if (Bukkit.getPluginManager().isPluginEnabled("Essentials")) {
+          try {
+            essentialsWarpsIntegration = new EssentialsWarpsIntegration(logger, scheduler);
+            Bukkit.getPluginManager().registerEvents(essentialsWarpsIntegration, this);
+            logger.info("Successfully loaded the Essentials-Warps-integration!");
+          } catch (Exception e) {
+            logger.log(Level.SEVERE, "Could not load Essentials-Warps-integration!", e);
+          }
+        }
+
+        else
+          logger.warning("Essentials-Warps-Integration is enabled, but the corresponding plugin could not be located!");
+      }
 
       teleportDisplayHandler = new TeleportDisplayHandler(config, scheduler, slowTeleportManager);
       Bukkit.getPluginManager().registerEvents(teleportDisplayHandler, this);

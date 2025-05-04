@@ -543,6 +543,12 @@ slowTeleport:
           messageChat$: '@{MESSAGE-SLOW-TELEPORT-TELEPORTED(prefix=lut["MESSAGE_PREFIX"])}'
 
 playerWarpsIntegration:
+  enabled: false
+  nearestWarpBlockRadius: 15
+  displayNearestInIcon: false
+
+essentialsWarpsIntegration:
+  enabled: false
   nearestWarpBlockRadius: 15
   displayNearestInIcon: false
 
