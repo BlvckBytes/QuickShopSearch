@@ -19,6 +19,7 @@ import me.blvckbytes.quick_shop_search.cache.CachedShop;
 import me.blvckbytes.quick_shop_search.cache.ShopUpdate;
 import me.blvckbytes.quick_shop_search.command.SearchFlag;
 import me.blvckbytes.quick_shop_search.config.MainSection;
+import me.blvckbytes.quick_shop_search.display.Display;
 import me.blvckbytes.quick_shop_search.integration.player_warps.IPlayerWarpsIntegration;
 import me.blvckbytes.quick_shop_search.integration.player_warps.PlayerWarpData;
 import org.bukkit.Location;
@@ -29,7 +30,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-public class ResultDisplay implements DynamicPropertyProvider {
+public class ResultDisplay implements Display, DynamicPropertyProvider {
 
   private static final PlayerWarpData PLAYER_WARP_NULL_SENTINEL = new PlayerWarpData(null, null, null, false);
 
@@ -51,13 +52,6 @@ public class ResultDisplay implements DynamicPropertyProvider {
   private final CachedShop[] slotMap;
   private int numberOfPages;
   public final SelectionState selectionState;
-
-  // If players move to their own inventory and close the UI quickly enough, the server will send back a packet
-  // undoing that slot which assumed the top-inventory to still be open, and thus the undo won't work. For survival,
-  // it's merely cosmetic, but for creative, the client will actually call this item into existence. While not
-  // necessarily critical, it just makes the plugin look bad. On closing the inventory, if the last move happened
-  // within a certain threshold of time, let's just update the player's inventory, as to make that ghost-item vanish.
-  public long lastMoveToOwnInventoryStamp;
 
   private IEvaluationEnvironment pageEnvironment;
   private IEvaluationEnvironment sortingEnvironment;
@@ -90,7 +84,7 @@ public class ResultDisplay implements DynamicPropertyProvider {
     this.slotMap = new CachedShop[9 * 6];
     this.selectionState = selectionState;
 
-    onConfigReload(false);
+    setupEnvironments();
 
     // Within async context already, see corresponding command
     applyFiltering();
@@ -143,7 +137,7 @@ public class ResultDisplay implements DynamicPropertyProvider {
     });
   }
 
-  public void onConfigReload(boolean redraw) {
+  private void setupEnvironments() {
     this.pageEnvironment = new EvaluationEnvironmentBuilder()
       .withLiveVariable("current_page", () -> this.currentPage)
       .withLiveVariable("number_pages", () -> this.numberOfPages)
@@ -186,31 +180,44 @@ public class ResultDisplay implements DynamicPropertyProvider {
     }
 
     this.activeSearchEnvironment = activeSearchEnvironmentBuilder.build(config.rootSection.builtBaseEnvironment);
+  }
 
-    if (redraw) {
-      applyFiltering();
-      applySorting();
-      show();
-    }
+  @Override
+  public void onConfigReload() {
+    setupEnvironments();
+    applyFiltering();
+    applySorting();
+    show();
   }
 
   public @Nullable CachedShop getShopCorrespondingToSlot(int slot) {
     return slotMap[slot];
   }
 
+  @Override
   public boolean isInventory(Inventory inventory) {
     return inventory == this.inventory;
   }
 
-  public void cleanup(boolean close) {
+  @Override
+  public void onInventoryClose() {
+    cleanup();
+  }
+
+  @Override
+  public void onShutdown() {
+    cleanup();
+
+    if (player.getOpenInventory().getTopInventory() == inventory)
+      player.closeInventory();
+  }
+
+  public void cleanup() {
     if (this.inventory != null)
       this.inventory.clear();
 
     for (var i = 0; i < slotMap.length; ++i)
       this.slotMap[i] = null;
-
-    if (close && player.getOpenInventory().getTopInventory() == inventory)
-      player.closeInventory();
   }
 
   public void nextPage() {

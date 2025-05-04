@@ -14,24 +14,21 @@ import me.blvckbytes.quick_shop_search.cache.RemoteInteractionApi;
 import me.blvckbytes.quick_shop_search.cache.ShopUpdate;
 import me.blvckbytes.quick_shop_search.config.cooldowns.CooldownType;
 import me.blvckbytes.quick_shop_search.config.MainSection;
+import me.blvckbytes.quick_shop_search.display.DisplayHandler;
 import me.blvckbytes.quick_shop_search.integration.player_warps.IPlayerWarpsIntegration;
 import org.bukkit.Location;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.*;
-import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.logging.Logger;
 
-public class ResultDisplayHandler implements Listener {
+public class ResultDisplayHandler extends DisplayHandler<ResultDisplay, ResultDisplayData> {
 
-  private static final long MOVE_GHOST_ITEM_THRESHOLD_MS = 500;
   private static final double PLAYER_EYE_HEIGHT = 1.5;
   private static final String TELEPORT_COOLDOWN_KEY = "teleport-to-shop";
 
@@ -46,8 +43,6 @@ public class ResultDisplayHandler implements Listener {
   ) {}
 
   private final Logger logger;
-  private final PlatformScheduler scheduler;
-  private final ConfigKeeper<MainSection> config;
   private final RemoteInteractionApi remoteInteractionApi;
 
   private final SelectionStateStore stateStore;
@@ -55,7 +50,6 @@ public class ResultDisplayHandler implements Listener {
   private final ChatPromptManager chatPromptManager;
   private final SlowTeleportManager slowTeleportManager;
   private final @Nullable IPlayerWarpsIntegration playerWarpsIntegration;
-  private final Map<UUID, ResultDisplay> displayByPlayer;
   private final Map<UUID, FeesPayBackTask> feesPayBackTaskByPlayerId;
 
   public ResultDisplayHandler(
@@ -69,22 +63,16 @@ public class ResultDisplayHandler implements Listener {
     SlowTeleportManager slowTeleportManager,
     @Nullable IPlayerWarpsIntegration playerWarpsIntegration
   ) {
+    super(config, scheduler);
+
     this.logger = logger;
-    this.scheduler = scheduler;
     this.remoteInteractionApi = remoteInteractionApi;
     this.stateStore = stateStore;
     this.stampStore = stampStore;
     this.chatPromptManager = chatPromptManager;
     this.slowTeleportManager = slowTeleportManager;
     this.playerWarpsIntegration = playerWarpsIntegration;
-    this.config = config;
-    this.displayByPlayer = new HashMap<>();
     this.feesPayBackTaskByPlayerId = new HashMap<>();
-
-    config.registerReloadListener(() -> {
-      for (var display : displayByPlayer.values())
-        display.onConfigReload(true);
-    });
   }
 
   public void onPurchaseSuccess(CachedShop shop, int amount, UUID purchaserId) {
@@ -110,73 +98,17 @@ public class ResultDisplayHandler implements Listener {
   }
 
   public void onShopUpdate(CachedShop shop, ShopUpdate update) {
-    for (var display : displayByPlayer.values())
-      display.onShopUpdate(shop, update);
+    forEachDisplay(display -> display.onShopUpdate(shop, update));
   }
 
-  public void show(Player player, ResultDisplayData resultDisplayData) {
-    displayByPlayer.put(player.getUniqueId(), new ResultDisplay(scheduler, playerWarpsIntegration, config, player, resultDisplayData, stateStore.loadState(player)));
+  @Override
+  public ResultDisplay instantiateDisplay(Player player, ResultDisplayData displayData) {
+    return new ResultDisplay(scheduler, playerWarpsIntegration, config, player, displayData, stateStore.loadState(player));
   }
 
-  @EventHandler
-  public void onInventoryClose(InventoryCloseEvent event) {
-    if (!(event.getPlayer() instanceof Player player))
-      return;
-
-    var playerId = player.getUniqueId();
-    var display = displayByPlayer.get(playerId);
-
-    // Only remove on inventory match, as to prevent removal on title update
-    if (display != null && display.isInventory(event.getInventory())) {
-      display.cleanup(false);
-      displayByPlayer.remove(playerId);
-
-      if (
-        display.lastMoveToOwnInventoryStamp != 0 &&
-        System.currentTimeMillis() - display.lastMoveToOwnInventoryStamp < MOVE_GHOST_ITEM_THRESHOLD_MS
-      ) {
-        scheduler.runNextTick(task -> player.updateInventory());
-      }
-    }
-  }
-
-  @EventHandler
-  public void onQuit(PlayerQuitEvent event) {
-    var display = displayByPlayer.remove(event.getPlayer().getUniqueId());
-
-    if (display != null)
-      display.cleanup(false);
-  }
-
-  @EventHandler
-  public void onInventoryClick(InventoryClickEvent event) {
-    if (!(event.getWhoClicked() instanceof Player player))
-      return;
-
-    var display = displayByPlayer.get(player.getUniqueId());
-
-    if (display == null)
-      return;
-
-    event.setCancelled(true);
-
-    if (
-      event.getAction() == InventoryAction.MOVE_TO_OTHER_INVENTORY &&
-      event.getClickedInventory() != player.getInventory()
-    ) {
-      display.lastMoveToOwnInventoryStamp = System.currentTimeMillis();
-    }
-
-    if (!display.isInventory(player.getOpenInventory().getTopInventory()))
-      return;
-
-    var slot = event.getRawSlot();
-
-    if (slot < 0 || slot >= config.rootSection.resultDisplay.getRows() * 9)
-      return;
-
+  @Override
+  protected void handleClick(Player player, ResultDisplay display, ClickType clickType, int slot) {
     var targetShop = display.getShopCorrespondingToSlot(slot);
-    var clickType = event.getClick();
 
     if (clickType == ClickType.LEFT) {
       if (config.rootSection.resultDisplay.items.previousPage.getDisplaySlots().contains(slot)) {
@@ -679,22 +611,6 @@ public class ResultDisplayHandler implements Listener {
       for (var applicableCooldown : applicableCooldowns)
         stampStore.write(player.getUniqueId(), applicableCooldown.stampKey(), System.currentTimeMillis());
     });
-  }
-
-  @EventHandler
-  public void onInventoryDrag(InventoryDragEvent event) {
-    if (!(event.getWhoClicked() instanceof Player player))
-      return;
-
-    if (displayByPlayer.containsKey(player.getUniqueId()))
-      event.setCancelled(true);
-  }
-
-  public void onShutdown() {
-    for (var displayIterator = displayByPlayer.entrySet().iterator(); displayIterator.hasNext();) {
-      displayIterator.next().getValue().cleanup(true);
-      displayIterator.remove();
-    }
   }
 
   private void ensurePermission(Player player, PluginPermission permission, @Nullable BukkitEvaluable missingMessage, Runnable handler) {
