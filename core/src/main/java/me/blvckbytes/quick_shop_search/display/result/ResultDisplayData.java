@@ -8,7 +8,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 
-public record DisplayData(
+public record ResultDisplayData(
   Collection<CachedShop> shops,
   LongOpenHashSet shopIds,
   @Nullable ItemPredicate query,

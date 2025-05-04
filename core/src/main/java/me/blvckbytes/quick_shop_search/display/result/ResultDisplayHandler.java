@@ -114,8 +114,8 @@ public class ResultDisplayHandler implements Listener {
       display.onShopUpdate(shop, update);
   }
 
-  public void show(Player player, DisplayData displayData) {
-    displayByPlayer.put(player.getUniqueId(), new ResultDisplay(scheduler, playerWarpsIntegration, config, player, displayData, stateStore.loadState(player)));
+  public void show(Player player, ResultDisplayData resultDisplayData) {
+    displayByPlayer.put(player.getUniqueId(), new ResultDisplay(scheduler, playerWarpsIntegration, config, player, resultDisplayData, stateStore.loadState(player)));
   }
 
   @EventHandler

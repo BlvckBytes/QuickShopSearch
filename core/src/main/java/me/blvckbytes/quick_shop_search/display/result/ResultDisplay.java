@@ -38,7 +38,7 @@ public class ResultDisplay implements DynamicPropertyProvider {
   private final AsyncTaskQueue asyncQueue;
   private final ConfigKeeper<MainSection> config;
 
-  private final DisplayData displayData;
+  private final ResultDisplayData resultDisplayData;
   private final Long2LongMap shopDistanceByShopId;
   private final Long2ObjectMap<CalculatedFees> shopFeesByShopId;
   private final Long2ObjectMap<@Nullable PlayerWarpData> nearestPlayerWarpByShopId;
@@ -73,7 +73,7 @@ public class ResultDisplay implements DynamicPropertyProvider {
     @Nullable IPlayerWarpsIntegration playerWarpsIntegration,
     ConfigKeeper<MainSection> config,
     Player player,
-    DisplayData displayData,
+    ResultDisplayData resultDisplayData,
     SelectionState selectionState
   ) {
     this.scheduler = scheduler;
@@ -83,7 +83,7 @@ public class ResultDisplay implements DynamicPropertyProvider {
     this.player = player;
     this.playerUser = QUserImpl.createFullFilled(player);
     this.playerLocation = player.getLocation();
-    this.displayData = displayData;
+    this.resultDisplayData = resultDisplayData;
     this.shopDistanceByShopId = new Long2LongAVLTreeMap();
     this.shopFeesByShopId = new Long2ObjectAVLTreeMap<>();
     this.nearestPlayerWarpByShopId = new Long2ObjectAVLTreeMap<>();
@@ -103,11 +103,11 @@ public class ResultDisplay implements DynamicPropertyProvider {
       return;
 
     if (update == ShopUpdate.ITEM_CHANGED) {
-      if (!displayData.contains(shop))
+      if (!resultDisplayData.contains(shop))
         return;
 
-      if (!displayData.doesMatchQuery(shop)) {
-        displayData.remove(shop);
+      if (!resultDisplayData.doesMatchQuery(shop)) {
+        resultDisplayData.remove(shop);
         updateAll();
       }
 
@@ -115,19 +115,19 @@ public class ResultDisplay implements DynamicPropertyProvider {
     }
 
     if (update == ShopUpdate.CREATED) {
-      if (!displayData.doesMatchQuery(shop))
+      if (!resultDisplayData.doesMatchQuery(shop))
         return;
 
-      displayData.add(shop);
+      resultDisplayData.add(shop);
       updateAll();
       return;
     }
 
     if (update == ShopUpdate.REMOVED) {
-      if (!displayData.contains(shop))
+      if (!resultDisplayData.contains(shop))
         return;
 
-      displayData.remove(shop);
+      resultDisplayData.remove(shop);
       updateAll();
       return;
     }
@@ -161,16 +161,16 @@ public class ResultDisplay implements DynamicPropertyProvider {
 
     activeSearchProperties.put(
       "predicate",
-      displayData.query() == null
+      resultDisplayData.query() == null
         ? null
-        : new StringifyState(true).appendPredicate(displayData.query()).toString()
+        : new StringifyState(true).appendPredicate(resultDisplayData.query()).toString()
     );
 
-    activeSearchProperties.put("owner", displayData.searchFlagsContainer().getWithMapper(SearchFlag.OWNER, OfflinePlayer::getName));
-    activeSearchProperties.put("radius", displayData.searchFlagsContainer().get(SearchFlag.RADIUS));
-    activeSearchProperties.put("price", displayData.searchFlagsContainer().get(SearchFlag.PRICE));
-    activeSearchProperties.put("max_price", displayData.searchFlagsContainer().get(SearchFlag.MAX_PRICE));
-    activeSearchProperties.put("min_price", displayData.searchFlagsContainer().get(SearchFlag.MIN_PRICE));
+    activeSearchProperties.put("owner", resultDisplayData.searchFlagsContainer().getWithMapper(SearchFlag.OWNER, OfflinePlayer::getName));
+    activeSearchProperties.put("radius", resultDisplayData.searchFlagsContainer().get(SearchFlag.RADIUS));
+    activeSearchProperties.put("price", resultDisplayData.searchFlagsContainer().get(SearchFlag.PRICE));
+    activeSearchProperties.put("max_price", resultDisplayData.searchFlagsContainer().get(SearchFlag.MAX_PRICE));
+    activeSearchProperties.put("min_price", resultDisplayData.searchFlagsContainer().get(SearchFlag.MIN_PRICE));
 
     var activeSearchEnvironmentBuilder = new EvaluationEnvironmentBuilder();
 
@@ -317,7 +317,7 @@ public class ResultDisplay implements DynamicPropertyProvider {
   }
 
   private int applyFiltering() {
-    this.filteredUnSortedShops = this.selectionState.applyFilter(displayData.shops(), this);
+    this.filteredUnSortedShops = this.selectionState.applyFilter(resultDisplayData.shops(), this);
 
     var oldNumberOfPages = this.numberOfPages;
     var numberOfDisplaySlots = config.rootSection.resultDisplay.getPaginationSlots().size();

@@ -18,7 +18,7 @@ import me.blvckbytes.quick_shop_search.cache.CachedShop;
 import me.blvckbytes.quick_shop_search.cache.CachedShopRegistry;
 import me.blvckbytes.quick_shop_search.config.MainSection;
 import me.blvckbytes.quick_shop_search.config.access_lists.ShopAccessListSection;
-import me.blvckbytes.quick_shop_search.display.result.DisplayData;
+import me.blvckbytes.quick_shop_search.display.result.ResultDisplayData;
 import me.blvckbytes.quick_shop_search.display.result.ResultDisplayHandler;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -309,7 +309,7 @@ public class QuickShopSearchCommand implements CommandExecutor, TabCompleter {
     }
   }
 
-  private DisplayData createFilteredDisplayData(Player player, @Nullable ItemPredicate predicate, SearchFlagsContainer searchFlagsContainer) {
+  private ResultDisplayData createFilteredDisplayData(Player player, @Nullable ItemPredicate predicate, SearchFlagsContainer searchFlagsContainer) {
     var matchingShops = new ArrayList<CachedShop>();
     var matchingShopIds = new LongOpenHashSet();
     var playerWorld = player.getWorld();
@@ -338,7 +338,7 @@ public class QuickShopSearchCommand implements CommandExecutor, TabCompleter {
       matchingShopIds.add(cachedShop.handle.getShopId());
     }
 
-    return new DisplayData(matchingShops, matchingShopIds, predicate, searchFlagsContainer);
+    return new ResultDisplayData(matchingShops, matchingShopIds, predicate, searchFlagsContainer);
   }
 
   private @Nullable ShopAccessListSection decideAccessListFor(Player player) {
