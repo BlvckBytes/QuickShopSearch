@@ -22,6 +22,7 @@ import me.blvckbytes.quick_shop_search.config.commands.QuickShopSearchLanguageCo
 import me.blvckbytes.quick_shop_search.config.commands.QuickShopSearchReloadCommandSection;
 import me.blvckbytes.quick_shop_search.display.result.ResultDisplayHandler;
 import me.blvckbytes.quick_shop_search.display.result.SelectionStateStore;
+import me.blvckbytes.quick_shop_search.display.teleport.TeleportDisplayHandler;
 import me.blvckbytes.quick_shop_search.integration.player_warps.IPlayerWarpsIntegration;
 import me.blvckbytes.quick_shop_search.integration.player_warps.PlayerWarpsIntegration;
 import net.kyori.adventure.text.Component;
@@ -34,7 +35,8 @@ import java.util.logging.Level;
 
 public class QuickShopSearchPlugin extends JavaPlugin {
 
-  private ResultDisplayHandler displayHandler;
+  private ResultDisplayHandler resultDisplayHandler;
+  private TeleportDisplayHandler teleportDisplayHandler;
   private SelectionStateStore stateStore;
   private UidScopedNamedStampStore stampStore;
 
@@ -83,7 +85,10 @@ public class QuickShopSearchPlugin extends JavaPlugin {
         }
       }
 
-      displayHandler = new ResultDisplayHandler(
+      teleportDisplayHandler = new TeleportDisplayHandler(config, scheduler, slowTeleportManager);
+      Bukkit.getPluginManager().registerEvents(teleportDisplayHandler, this);
+
+      resultDisplayHandler = new ResultDisplayHandler(
         logger,
         scheduler,
         remoteInteractionApi,
@@ -91,22 +96,22 @@ public class QuickShopSearchPlugin extends JavaPlugin {
         stateStore,
         stampStore,
         chatPromptManager,
-        slowTeleportManager,
+        teleportDisplayHandler,
         playerWarpsIntegration
       );
 
-      var shopRegistry = new CachedShopRegistry(this, scheduler, displayHandler, config, logger);
+      var shopRegistry = new CachedShopRegistry(this, scheduler, resultDisplayHandler, config, logger);
       var shopEventHandler = versionDependentFactory.createListener(shopRegistry);
 
       Bukkit.getPluginManager().registerEvents(shopRegistry, this);
       Bukkit.getPluginManager().registerEvents(shopEventHandler, this);
-      Bukkit.getPluginManager().registerEvents(displayHandler, this);
+      Bukkit.getPluginManager().registerEvents(resultDisplayHandler, this);
 
       var offlinePlayerRegistry = new OfflinePlayerRegistry();
       Bukkit.getPluginManager().registerEvents(offlinePlayerRegistry, this);
 
       var commandUpdater = new CommandUpdater(this);
-      var commandExecutor = new QuickShopSearchCommand(scheduler, parserPlugin.getPredicateHelper(), shopRegistry, config, displayHandler, offlinePlayerRegistry);
+      var commandExecutor = new QuickShopSearchCommand(scheduler, parserPlugin.getPredicateHelper(), shopRegistry, config, resultDisplayHandler, offlinePlayerRegistry);
 
       var mainCommand = Objects.requireNonNull(getCommand(QuickShopSearchCommandSection.INITIAL_NAME));
       var languageCommand = Objects.requireNonNull(getCommand(QuickShopSearchLanguageCommandSection.INITIAL_NAME));
@@ -155,8 +160,11 @@ public class QuickShopSearchPlugin extends JavaPlugin {
 
   @Override
   public void onDisable() {
-    if (displayHandler != null)
-      displayHandler.onShutdown();
+    if (resultDisplayHandler != null)
+      resultDisplayHandler.onShutdown();
+
+    if (teleportDisplayHandler != null)
+      teleportDisplayHandler.onShutdown();
 
     if (stateStore != null)
       stateStore.onShutdown();

@@ -80,10 +80,7 @@ permissions:
   quickshopsearch.feature.interact.other-world:
     description: 'Remotely interact with shops within another world '
     default: op
-  quickshopsearch.feature.teleport.closest-player-warp:
-    description: 'Be teleported to the closest player-warp instead, if it exists'
-    default: op
-  quickshopsearch.feature.teleport.closest-player-warp.ban-bypass:
+  quickshopsearch.feature.teleport.nearest-player-warp.ban-bypass:
     description: 'Bypass player-warp bans when teleporting'
     default: op
   quickshopsearch.feature.fees.bypass:

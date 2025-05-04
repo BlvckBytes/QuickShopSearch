@@ -15,6 +15,8 @@ import me.blvckbytes.quick_shop_search.cache.ShopUpdate;
 import me.blvckbytes.quick_shop_search.config.cooldowns.CooldownType;
 import me.blvckbytes.quick_shop_search.config.MainSection;
 import me.blvckbytes.quick_shop_search.display.DisplayHandler;
+import me.blvckbytes.quick_shop_search.display.teleport.TeleportDisplayData;
+import me.blvckbytes.quick_shop_search.display.teleport.TeleportDisplayHandler;
 import me.blvckbytes.quick_shop_search.integration.player_warps.IPlayerWarpsIntegration;
 import org.bukkit.Location;
 import org.bukkit.block.BlockFace;
@@ -48,7 +50,7 @@ public class ResultDisplayHandler extends DisplayHandler<ResultDisplay, ResultDi
   private final SelectionStateStore stateStore;
   private final UidScopedNamedStampStore stampStore;
   private final ChatPromptManager chatPromptManager;
-  private final SlowTeleportManager slowTeleportManager;
+  private final TeleportDisplayHandler teleportDisplayHandler;
   private final @Nullable IPlayerWarpsIntegration playerWarpsIntegration;
   private final Map<UUID, FeesPayBackTask> feesPayBackTaskByPlayerId;
 
@@ -60,7 +62,7 @@ public class ResultDisplayHandler extends DisplayHandler<ResultDisplay, ResultDi
     SelectionStateStore stateStore,
     UidScopedNamedStampStore stampStore,
     ChatPromptManager chatPromptManager,
-    SlowTeleportManager slowTeleportManager,
+    TeleportDisplayHandler teleportDisplayHandler,
     @Nullable IPlayerWarpsIntegration playerWarpsIntegration
   ) {
     super(config, scheduler);
@@ -70,7 +72,7 @@ public class ResultDisplayHandler extends DisplayHandler<ResultDisplay, ResultDi
     this.stateStore = stateStore;
     this.stampStore = stampStore;
     this.chatPromptManager = chatPromptManager;
-    this.slowTeleportManager = slowTeleportManager;
+    this.teleportDisplayHandler = teleportDisplayHandler;
     this.playerWarpsIntegration = playerWarpsIntegration;
     this.feesPayBackTaskByPlayerId = new HashMap<>();
   }
@@ -487,8 +489,6 @@ public class ResultDisplayHandler extends DisplayHandler<ResultDisplay, ResultDi
   }
 
   private void teleportPlayerToShop(Player player, ResultDisplay display, CachedShop cachedShop) {
-    BukkitEvaluable message;
-
     var shop = cachedShop.handle;
     var shopId = cachedShop.handle.getShopId();
     var shopLocation = shop.getLocation().clone(); // Not cloning can mess shops up (direct reference)!
@@ -572,45 +572,18 @@ public class ResultDisplayHandler extends DisplayHandler<ResultDisplay, ResultDi
     if (targetLocation == null)
       targetLocation = shopLocation.add(.5, 0, .5);
 
-    var extendedEnvironment = display.getExtendedShopEnvironment(cachedShop);
-    var isPlayerWarp = false;
-
-    if (playerWarpsIntegration != null && config.rootSection.playerWarpsIntegration.enableTeleportToNearest && PluginPermission.FEATURE_TELEPORT_CLOSEST_PLAYER_WARP.has(player)) {
-      var nearestPlayerWarp = display.getNearestPlayerWarp(cachedShop);
-
-      if (nearestPlayerWarp != null) {
-        isPlayerWarp = true;
-
-        if (nearestPlayerWarp.isBanned() && !PluginPermission.FEATURE_TELEPORT_CLOSEST_PLAYER_WARP_BAN_BYPASS.has(player)) {
-          if ((message = config.rootSection.playerMessages.nearestPlayerWarpBanned) != null)
-            message.sendMessage(player, extendedEnvironment);
-
-          isPlayerWarp = false;
-        }
-
-        else
-          targetLocation = nearestPlayerWarp.location();
+    var teleportDisplayData = new TeleportDisplayData(
+      targetLocation,
+      display.getExtendedShopEnvironment(cachedShop),
+      display.getNearestPlayerWarp(cachedShop),
+      () -> reopen(display),
+      () -> {
+        for (var applicableCooldown : applicableCooldowns)
+          stampStore.write(player.getUniqueId(), applicableCooldown.stampKey(), System.currentTimeMillis());
       }
-    }
+    );
 
-    if (isPlayerWarp) {
-      if ((message = config.rootSection.playerMessages.beforeTeleportingNearestPlayerWarp) != null)
-        message.sendMessage(player, extendedEnvironment);
-    }
-
-    else if ((message = config.rootSection.playerMessages.beforeTeleporting) != null) {
-      message.sendMessage(
-        player,
-        config.rootSection.getBaseEnvironment().build(extendedEnvironment)
-      );
-    }
-
-    scheduler.runAtEntity(player, scheduleTask -> player.closeInventory());
-
-    slowTeleportManager.initializeTeleportation(player, targetLocation, () -> {
-      for (var applicableCooldown : applicableCooldowns)
-        stampStore.write(player.getUniqueId(), applicableCooldown.stampKey(), System.currentTimeMillis());
-    });
+    teleportDisplayHandler.show(player, teleportDisplayData);
   }
 
   private void ensurePermission(Player player, PluginPermission permission, @Nullable BukkitEvaluable missingMessage, Runnable handler) {

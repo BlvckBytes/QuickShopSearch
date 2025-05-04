@@ -220,6 +220,86 @@ resultDisplay:
       type: BLACK_STAINED_GLASS_PANE
       name: " "
 
+# - owner: String
+# - name: String?
+# - price: Double
+# - currency: String?
+# - remaining_stock: Integer
+# - remaining_space: Integer
+# - is_selling: Boolean
+# - is_buying: Boolean
+# - is_unlimited: Boolean
+# - loc_world: String
+# - loc_x: Integer
+# - loc_y: Integer
+# - loc_z: Integer
+# - distance: Integer
+# - can_teleport: Boolean
+# - can_interact: Boolean
+# - fees_absolute: Zero | String
+# - fees_relative: Double
+# - fees_relative_value: Zero | String
+# - fees_total_value: Zero | String
+# - fees_final_price: String
+# - player_warp_display_details: Boolean
+# - player_warp_name: String?
+# - player_warp_owner: String?
+# - player_warp_world: String?
+# - player_warp_x: Integer?
+# - player_warp_y: Integer?
+# - player_warp_z: Integer?
+# - player_warp_distance: Integer?
+teleportDisplay:
+  title: '@{TELEPORT-DISPLAY-TITLE}'
+  rows: 1
+  items:
+    # https://github.com/BlvckBytes/BukkitEvaluable#itemstack-section
+    back:
+      slots: [0]
+      type: PLAYER_HEAD
+      textures$: 'lut["textures"]["ARROW_LEFT"]'
+      name$: '@{TELEPORT-DISPLAY-BACK-NAME}'
+      lore$:
+        - '" "'
+        - '@{ANY-CONTROL-LORE-SPACER}'
+        - '@{TELEPORT-DISPLAY-BACK-LORE-LEFT-CLICK-DESCRIPTION}'
+        - '@{ANY-CONTROL-LORE-SPACER}'
+    # https://github.com/BlvckBytes/BukkitEvaluable#itemstack-section
+    shopLocation:
+      slots: [2]
+      type: CHEST
+      name$: '@{TELEPORT-DISPLAY-SHOP-LOCATION-NAME}'
+      lore$:
+        - '" "'
+        - '@{ANY-CONTROL-LORE-SPACER}'
+        - '@{TELEPORT-DISPLAY-SHOP-LOCATION-LORE-LOCATION-COORDINATES}'
+        - '@{TELEPORT-DISPLAY-SHOP-LOCATION-LORE-LOCATION-WORLD}'
+        - 'if distance < 0 then @{TELEPORT-DISPLAY-SHOP-LOCATION-LORE-DISTANCE-OTHER-WORLD} else @{TELEPORT-DISPLAY-SHOP-LOCATION-LORE-DISTANCE}'
+        - '@{ANY-CONTROL-LORE-SPACER}'
+        - '@{TELEPORT-DISPLAY-SHOP-LOCATION-LORE-LEFT-CLICK-DESCRIPTION}'
+        - '@{ANY-CONTROL-LORE-SPACER}'
+    # https://github.com/BlvckBytes/BukkitEvaluable#itemstack-section
+    nearestPlayerWarpLocation:
+      slots: [3]
+      type$: 'if player_warp_name != null then "OAK_SIGN" else "BARRIER"'
+      name$: '@{TELEPORT-DISPLAY-NEAREST-PLAYER-WARP-LOCATION-NAME}'
+      lore$:
+        - '" "'
+        - '@{ANY-CONTROL-LORE-SPACER}'
+        - '@{TELEPORT-DISPLAY-NEAREST-PLAYER-WARP-LOCATION-LORE-LOCATION-NAME}'
+        - '@{TELEPORT-DISPLAY-NEAREST-PLAYER-WARP-LOCATION-LORE-LOCATION-OWNER}'
+        - '@{TELEPORT-DISPLAY-NEAREST-PLAYER-WARP-LOCATION-LORE-LOCATION-COORDINATES}'
+        - '@{TELEPORT-DISPLAY-NEAREST-PLAYER-WARP-LOCATION-LORE-LOCATION-WORLD}'
+        - '@{TELEPORT-DISPLAY-NEAREST-PLAYER-WARP-LOCATION-LORE-DISTANCE}'
+        - '@{ANY-CONTROL-LORE-SPACER}'
+        - '@{TELEPORT-DISPLAY-NEAREST-PLAYER-WARP-LOCATION-LORE-LEFT-CLICK-DESCRIPTION}'
+        - '@{ANY-CONTROL-LORE-SPACER}'
+    # https://github.com/BlvckBytes/BukkitEvaluable#itemstack-section
+    filler:
+      slots$: 'range(0, last_slot + 1)'
+      type: BLACK_STAINED_GLASS_PANE
+      name: " "
+
 playerMessages:
   emptyPredicate$: '@{MESSAGE-EMPTY-PREDICATE(prefix=lut["MESSAGE_PREFIX"])}'
   noMatches$: '@{MESSAGE-NO-MATCHES(prefix=lut["MESSAGE_PREFIX"])}'
@@ -454,7 +534,6 @@ slowTeleport:
 
 playerWarpsIntegration:
   nearestWarpBlockRadius: 15
-  enableTeleportToNearest: false
   displayNearestInIcon: false
 
 fees:

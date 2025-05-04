@@ -9,11 +9,13 @@ import me.blvckbytes.quick_shop_search.config.cooldowns.CooldownsSection;
 import me.blvckbytes.quick_shop_search.config.fees.FeesSection;
 import me.blvckbytes.quick_shop_search.config.result_display.ResultDisplaySection;
 import me.blvckbytes.quick_shop_search.config.slow_teleport.SlowTeleportSection;
+import me.blvckbytes.quick_shop_search.config.teleport_display.TeleportDisplaySection;
 
 @CSAlways
 public class MainSection extends AConfigSection {
 
   public ResultDisplaySection resultDisplay;
+  public TeleportDisplaySection teleportDisplay;
   public PlayerMessagesSection playerMessages;
   public PredicatesSection predicates;
   public CommandsSection commands;
