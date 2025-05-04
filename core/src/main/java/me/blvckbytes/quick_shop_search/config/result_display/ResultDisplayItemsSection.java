@@ -4,6 +4,7 @@ import me.blvckbytes.bbconfigmapper.sections.AConfigSection;
 import me.blvckbytes.bbconfigmapper.sections.CSAlways;
 import me.blvckbytes.bukkitevaluable.section.ItemStackSection;
 import me.blvckbytes.gpeee.interpreter.EvaluationEnvironmentBuilder;
+import me.blvckbytes.quick_shop_search.config.display_common.GuiItemStackSection;
 
 @CSAlways
 public class ResultDisplayItemsSection extends AConfigSection {

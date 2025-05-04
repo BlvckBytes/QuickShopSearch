@@ -1,4 +1,4 @@
-package me.blvckbytes.quick_shop_search.config.result_display;
+package me.blvckbytes.quick_shop_search.config.display_common;
 
 import me.blvckbytes.bbconfigmapper.MappingError;
 import me.blvckbytes.bbconfigmapper.ScalarType;
