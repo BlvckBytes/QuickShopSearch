@@ -31,7 +31,7 @@ public class PlayerWarpsIntegration extends ChunkBucketedCache<Warp> implements 
   }
 
   @Override
-  public @Nullable LocateResult locateNearestWithinRange(Player player, Location origin, int blockRadius) {
+  public @Nullable PlayerWarpData locateNearestWithinRange(Player player, Location origin, int blockRadius) {
     var nearestWarp = findClosestItem(origin, blockRadius);
 
     if (nearestWarp == null)
@@ -47,7 +47,7 @@ public class PlayerWarpsIntegration extends ChunkBucketedCache<Warp> implements 
       }
     }
 
-    return new LocateResult(
+    return new PlayerWarpData(
       nearestWarp.getWarpPlayer().getName(),
       nearestWarp.getWarpName(),
       nearestWarp.getWarpLocation().getLocation(),

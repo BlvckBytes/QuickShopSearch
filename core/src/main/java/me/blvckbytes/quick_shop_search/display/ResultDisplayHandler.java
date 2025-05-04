@@ -116,7 +116,7 @@ public class ResultDisplayHandler implements Listener {
   }
 
   public void show(Player player, DisplayData displayData) {
-    displayByPlayer.put(player.getUniqueId(), new ResultDisplay(scheduler, config, player, displayData, stateStore.loadState(player)));
+    displayByPlayer.put(player.getUniqueId(), new ResultDisplay(scheduler, playerWarpsIntegration, config, player, displayData, stateStore.loadState(player)));
   }
 
   @EventHandler

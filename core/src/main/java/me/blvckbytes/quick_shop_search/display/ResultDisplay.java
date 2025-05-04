@@ -5,6 +5,8 @@ import com.ghostchu.quickshop.api.QuickShopAPI;
 import com.ghostchu.quickshop.api.obj.QUser;
 import com.ghostchu.quickshop.obj.QUserImpl;
 import com.tcoded.folialib.impl.PlatformScheduler;
+import it.unimi.dsi.fastutil.longs.Long2ObjectAVLTreeMap;
+import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import me.blvckbytes.bukkitevaluable.ConfigKeeper;
 import me.blvckbytes.gpeee.interpreter.EvaluationEnvironmentBuilder;
 import me.blvckbytes.gpeee.interpreter.IEvaluationEnvironment;
@@ -14,6 +16,8 @@ import me.blvckbytes.quick_shop_search.cache.CachedShop;
 import me.blvckbytes.quick_shop_search.cache.ShopUpdate;
 import me.blvckbytes.quick_shop_search.command.SearchFlag;
 import me.blvckbytes.quick_shop_search.config.MainSection;
+import me.blvckbytes.quick_shop_search.integration.player_warps.IPlayerWarpsIntegration;
+import me.blvckbytes.quick_shop_search.integration.player_warps.PlayerWarpData;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -24,13 +28,17 @@ import java.util.*;
 
 public class ResultDisplay implements DynamicPropertyProvider {
 
+  private static final PlayerWarpData PLAYER_WARP_NULL_SENTINEL = new PlayerWarpData(null, null, null, false);
+
   private final PlatformScheduler scheduler;
+  private final @Nullable IPlayerWarpsIntegration playerWarpsIntegration;
   private final AsyncTaskQueue asyncQueue;
   private final ConfigKeeper<MainSection> config;
 
   private final DisplayData displayData;
   private final Map<Long, Long> shopDistanceByShopId;
   private final Map<Long, CalculatedFees> shopFeesByShopId;
+  private final Long2ObjectMap<@Nullable PlayerWarpData> nearestPlayerWarpByShopId;
   private List<CachedShop> filteredUnSortedShops;
   private List<CachedShop> filteredSortedShops;
 
@@ -59,12 +67,14 @@ public class ResultDisplay implements DynamicPropertyProvider {
 
   public ResultDisplay(
     PlatformScheduler scheduler,
+    @Nullable IPlayerWarpsIntegration playerWarpsIntegration,
     ConfigKeeper<MainSection> config,
     Player player,
     DisplayData displayData,
     SelectionState selectionState
   ) {
     this.scheduler = scheduler;
+    this.playerWarpsIntegration = playerWarpsIntegration;
     this.config = config;
     this.asyncQueue = new AsyncTaskQueue(scheduler);
     this.player = player;
@@ -73,6 +83,7 @@ public class ResultDisplay implements DynamicPropertyProvider {
     this.displayData = displayData;
     this.shopDistanceByShopId = new HashMap<>();
     this.shopFeesByShopId = new HashMap<>();
+    this.nearestPlayerWarpByShopId = new Long2ObjectAVLTreeMap<>();
     this.slotMap = new CachedShop[9 * 6];
     this.selectionState = selectionState;
 
@@ -432,10 +443,33 @@ public class ResultDisplay implements DynamicPropertyProvider {
       config.rootSection.resultDisplay.items.activeSearch.renderInto(inventory, activeSearchEnvironment);
   }
 
+  private @Nullable PlayerWarpData getNearestPlayerWarp(CachedShop cachedShop) {
+    if (playerWarpsIntegration == null)
+      return null;
+
+    var shopId = cachedShop.handle.getShopId();
+    var result = nearestPlayerWarpByShopId.get(shopId);
+
+    if (result == null) {
+      result = playerWarpsIntegration.locateNearestWithinRange(player, cachedShop.handle.getLocation(), config.rootSection.playerWarpsIntegration.nearestWarpBlockRadius);
+
+      if (result == null)
+        result = PLAYER_WARP_NULL_SENTINEL;
+
+      nearestPlayerWarpByShopId.put(shopId, result);
+    }
+
+    if (result == PLAYER_WARP_NULL_SENTINEL)
+      return null;
+
+    return result;
+  }
+
   public IEvaluationEnvironment getExtendedShopEnvironment(CachedShop cachedShop) {
     var distance = getShopDistance(cachedShop);
     var isOtherWorld = distance < 0;
     var fees = getShopFees(cachedShop);
+    var nearestPlayerWarp = getNearestPlayerWarp(cachedShop);
 
     var shopManager = QuickShopAPI.getInstance().getShopManager();
 
@@ -443,6 +477,11 @@ public class ResultDisplay implements DynamicPropertyProvider {
       .getShopEnvironment()
       .duplicate()
       .withStaticVariable("distance", distance)
+      .withStaticVariable("nearest_player_warp_name", nearestPlayerWarp == null ? null : nearestPlayerWarp.warpName())
+      .withStaticVariable("nearest_player_warp_owner_name", nearestPlayerWarp == null ? null : nearestPlayerWarp.ownerName())
+      .withStaticVariable("nearest_player_warp_loc_x", nearestPlayerWarp == null ? null : nearestPlayerWarp.location().getBlockX())
+      .withStaticVariable("nearest_player_warp_loc_y", nearestPlayerWarp == null ? null : nearestPlayerWarp.location().getBlockY())
+      .withStaticVariable("nearest_player_warp_loc_z", nearestPlayerWarp == null ? null : nearestPlayerWarp.location().getBlockZ())
       .withStaticVariable(
         "can_teleport",
         isOtherWorld
