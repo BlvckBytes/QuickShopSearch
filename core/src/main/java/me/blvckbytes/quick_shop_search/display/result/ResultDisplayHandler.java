@@ -572,16 +572,24 @@ public class ResultDisplayHandler extends DisplayHandler<ResultDisplay, ResultDi
     if (targetLocation == null)
       targetLocation = shopLocation.add(.5, 0, .5);
 
+    var nearestPlayerWarp = display.getNearestPlayerWarp(cachedShop);
+
     var teleportDisplayData = new TeleportDisplayData(
       targetLocation,
       display.getExtendedShopEnvironment(cachedShop),
-      display.getNearestPlayerWarp(cachedShop),
+      nearestPlayerWarp,
       () -> reopen(display),
       () -> {
         for (var applicableCooldown : applicableCooldowns)
           stampStore.write(player.getUniqueId(), applicableCooldown.stampKey(), System.currentTimeMillis());
       }
     );
+
+    // Avoid showing a UI which only contains one functional choice
+    if (nearestPlayerWarp == null) {
+      teleportDisplayHandler.directlyTeleportToShopLocation(player, teleportDisplayData);
+      return;
+    }
 
     teleportDisplayHandler.show(player, teleportDisplayData);
   }

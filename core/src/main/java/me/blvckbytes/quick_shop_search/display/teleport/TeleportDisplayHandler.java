@@ -42,16 +42,7 @@ public class TeleportDisplayHandler extends DisplayHandler<TeleportDisplay, Tele
     BukkitEvaluable message;
 
     if (config.rootSection.teleportDisplay.items.shopLocation.getDisplaySlots().contains(slot)) {
-      scheduler.runAtEntity(player, scheduleTask -> player.closeInventory());
-
-      if ((message = config.rootSection.playerMessages.beforeTeleporting) != null)
-        message.sendMessage(player, config.rootSection.getBaseEnvironment().build(display.displayData.extendedShopEnvironment()));
-
-      slowTeleportManager.initializeTeleportation(player, display.displayData.finalShopLocation(), () -> {
-        if (display.displayData.afterTeleporting() != null)
-          display.displayData.afterTeleporting().run();
-      });
-
+      directlyTeleportToShopLocation(player, display.displayData);
       return;
     }
 
@@ -78,5 +69,19 @@ public class TeleportDisplayHandler extends DisplayHandler<TeleportDisplay, Tele
           display.displayData.afterTeleporting().run();
       });
     }
+  }
+
+  public void directlyTeleportToShopLocation(Player player, TeleportDisplayData displayData) {
+    scheduler.runAtEntity(player, scheduleTask -> player.closeInventory());
+
+    BukkitEvaluable message;
+
+    if ((message = config.rootSection.playerMessages.beforeTeleporting) != null)
+      message.sendMessage(player, config.rootSection.getBaseEnvironment().build(displayData.extendedShopEnvironment()));
+
+    slowTeleportManager.initializeTeleportation(player, displayData.finalShopLocation(), () -> {
+      if (displayData.afterTeleporting() != null)
+        displayData.afterTeleporting().run();
+    });
   }
 }
