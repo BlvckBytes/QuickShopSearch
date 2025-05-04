@@ -7,6 +7,7 @@ import com.tcoded.folialib.impl.PlatformScheduler;
 import it.unimi.dsi.fastutil.longs.Long2ObjectAVLTreeMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import me.blvckbytes.bukkitevaluable.ConfigKeeper;
+import me.blvckbytes.bukkitevaluable.ReloadPriority;
 import me.blvckbytes.quick_shop_search.config.MainSection;
 import me.blvckbytes.quick_shop_search.display.result.ResultDisplayHandler;
 import org.bukkit.Location;
@@ -52,7 +53,7 @@ public class CachedShopRegistry implements QuickShopEventConsumer, Listener {
         for (var cachedShop : existingShopByLocation.values())
           cachedShop.onConfigReload();
       }
-    });
+    }, ReloadPriority.HIGHEST);
 
     logger.info("Getting all globally existing shops... This may take a while!");
 
