@@ -34,7 +34,6 @@ public class ResultDisplay extends Display<ResultDisplayData> implements Dynamic
 
   private static final PlayerWarpData PLAYER_WARP_NULL_SENTINEL = new PlayerWarpData(null, null, null, false);
 
-  private final PlatformScheduler scheduler;
   private final @Nullable IPlayerWarpsIntegration playerWarpsIntegration;
   private final AsyncTaskQueue asyncQueue;
 
@@ -56,7 +55,6 @@ public class ResultDisplay extends Display<ResultDisplayData> implements Dynamic
   private IEvaluationEnvironment activeSearchEnvironment;
   private boolean hasAnyActiveSearchProperties;
 
-  private Inventory inventory;
   private int currentPage = 1;
 
   public ResultDisplay(
@@ -67,9 +65,8 @@ public class ResultDisplay extends Display<ResultDisplayData> implements Dynamic
     ResultDisplayData displayData,
     SelectionState selectionState
   ) {
-    super(player, displayData, config);
+    super(player, displayData, config, scheduler);
 
-    this.scheduler = scheduler;
     this.playerWarpsIntegration = playerWarpsIntegration;
     this.asyncQueue = new AsyncTaskQueue(scheduler);
     this.playerUser = QUserImpl.createFullFilled(player);
@@ -191,27 +188,18 @@ public class ResultDisplay extends Display<ResultDisplayData> implements Dynamic
   }
 
   @Override
-  public boolean isInventory(Inventory inventory) {
-    return inventory == this.inventory;
-  }
-
-  @Override
   public void onInventoryClose() {
-    cleanup();
+    clearSlotMap();
+    super.onInventoryClose();
   }
 
   @Override
   public void onShutdown() {
-    cleanup();
-
-    if (player.getOpenInventory().getTopInventory() == inventory)
-      player.closeInventory();
+    clearSlotMap();
+    super.onShutdown();
   }
 
-  public void cleanup() {
-    if (this.inventory != null)
-      this.inventory.clear();
-
+  public void clearSlotMap() {
     for (var i = 0; i < slotMap.length; ++i)
       this.slotMap[i] = null;
   }
@@ -341,24 +329,10 @@ public class ResultDisplay extends Display<ResultDisplayData> implements Dynamic
     this.selectionState.applySort(this, this.filteredSortedShops);
   }
 
-  private void show() {
-    for (var i = 0; i < slotMap.length; ++i)
-      this.slotMap[i] = null;
-
-    var priorInventory = inventory;
-    inventory = makeInventory();
-
-    renderItems();
-
-    scheduler.runAtEntity(player, scheduleTask -> {
-      // Make sure to open the newly rendered inventory first as to avoid flicker
-      player.openInventory(inventory);
-
-      // Avoid the case of the client not accepting opening the new inventory
-      // and then being able to take items out of there. This way, we're safe.
-      if (priorInventory != null)
-        priorInventory.clear();
-    });
+  @Override
+  public void show() {
+    clearSlotMap();
+    super.show();
   }
 
   public CalculatedFees getShopFees(CachedShop cachedShop) {
@@ -414,7 +388,8 @@ public class ResultDisplay extends Display<ResultDisplayData> implements Dynamic
     config.rootSection.resultDisplay.items.filtering.renderInto(inventory, filteringEnvironment);
   }
 
-  private void renderItems() {
+  @Override
+  protected void renderItems() {
     var displaySlots = config.rootSection.resultDisplay.getPaginationSlots();
     var itemsIndex = (currentPage - 1) * displaySlots.size();
     var numberOfItems = filteredSortedShops.size();
@@ -534,7 +509,8 @@ public class ResultDisplay extends Display<ResultDisplayData> implements Dynamic
       .build(pageEnvironment);
   }
 
-  private Inventory makeInventory() {
+  @Override
+  protected Inventory makeInventory() {
     return config.rootSection.resultDisplay.createInventory(pageEnvironment);
   }
 }

@@ -50,6 +50,11 @@ public abstract class DisplayHandler<DisplayType extends Display<DisplayDataType
     displayByPlayerId.put(player.getUniqueId(), instantiateDisplay(player, displayData));
   }
 
+  public void reopen(DisplayType display) {
+    displayByPlayerId.put(display.player.getUniqueId(), display);
+    display.show();
+  }
+
   protected abstract void handleClick(Player player, DisplayType display, ClickType clickType, int slot);
 
   protected void forEachDisplay(Consumer<DisplayType> consumer) {
