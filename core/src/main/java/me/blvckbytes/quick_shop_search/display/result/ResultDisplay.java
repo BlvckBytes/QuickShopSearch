@@ -44,7 +44,6 @@ public class ResultDisplay extends Display<ResultDisplayData> implements Dynamic
   private List<CachedShop> filteredUnSortedShops;
   private List<CachedShop> filteredSortedShops;
 
-  public final Player player;
   private final QUser playerUser;
   private final Location playerLocation;
   private final CachedShop[] slotMap;
@@ -68,12 +67,11 @@ public class ResultDisplay extends Display<ResultDisplayData> implements Dynamic
     ResultDisplayData displayData,
     SelectionState selectionState
   ) {
-    super(config, displayData);
+    super(player, displayData, config);
 
     this.scheduler = scheduler;
     this.playerWarpsIntegration = playerWarpsIntegration;
     this.asyncQueue = new AsyncTaskQueue(scheduler);
-    this.player = player;
     this.playerUser = QUserImpl.createFullFilled(player);
     this.playerLocation = player.getLocation();
     this.shopDistanceByShopId = new Long2LongAVLTreeMap();

@@ -2,19 +2,23 @@ package me.blvckbytes.quick_shop_search.display;
 
 import me.blvckbytes.bukkitevaluable.ConfigKeeper;
 import me.blvckbytes.quick_shop_search.config.MainSection;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 
 public abstract class Display<DisplayDataType> {
 
+  protected final Player player;
   protected final ConfigKeeper<MainSection> config;
   protected final DisplayDataType displayData;
 
   protected Display(
-    ConfigKeeper<MainSection> config,
-    DisplayDataType displayData
+    Player player,
+    DisplayDataType displayData,
+    ConfigKeeper<MainSection> config
   ) {
-    this.config = config;
+    this.player = player;
     this.displayData = displayData;
+    this.config = config;
   }
 
   public abstract void onConfigReload();
