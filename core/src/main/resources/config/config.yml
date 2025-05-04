@@ -103,10 +103,9 @@ resultDisplay:
           if is_unlimited then @{REPRESENTATIVE-LORE-MODE-BUYING-UNLIMITED} else @{REPRESENTATIVE-LORE-MODE-BUYING}
         else
           if is_unlimited then @{REPRESENTATIVE-LORE-MODE-SELLING-UNLIMITED} else @{REPRESENTATIVE-LORE-MODE-SELLING}
-      # TODO: Move these values into the language-files!
       - |
         if nearest_player_warp_name != null then
-          "&8♦ &7Player-Warp: &e" & nearest_player_warp_name & " (" & nearest_player_warp_loc_x & ", " & nearest_player_warp_loc_y & ", " & nearest_player_warp_loc_z & ") by " & nearest_player_warp_owner_name
+          @{REPRESENTATIVE-LORE-NEAREST-PLAYER-WARP}
         else
           null
       - '@{ANY-CONTROL-LORE-SPACER}'
