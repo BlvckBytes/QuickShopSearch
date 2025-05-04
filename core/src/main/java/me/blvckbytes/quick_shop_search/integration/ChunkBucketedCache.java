@@ -1,4 +1,4 @@
-package me.blvckbytes.quick_shop_search.integration.player_warps;
+package me.blvckbytes.quick_shop_search.integration;
 
 import it.unimi.dsi.fastutil.longs.Long2ObjectAVLTreeMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;

@@ -5,6 +5,7 @@ import com.olziedev.playerwarps.api.events.warp.PlayerWarpCreateEvent;
 import com.olziedev.playerwarps.api.events.warp.PlayerWarpRemoveEvent;
 import com.olziedev.playerwarps.api.warp.Warp;
 import com.tcoded.folialib.impl.PlatformScheduler;
+import me.blvckbytes.quick_shop_search.integration.ChunkBucketedCache;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
