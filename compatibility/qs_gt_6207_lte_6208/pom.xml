@@ -7,6 +7,7 @@
         <groupId>me.blvckbytes</groupId>
         <artifactId>quickshopsearch-root</artifactId>
         <version>${revision}</version>
+        <relativePath>../../pom.xml</relativePath>
     </parent>
 
     <artifactId>qs_gt_6207_lte_6208</artifactId>
