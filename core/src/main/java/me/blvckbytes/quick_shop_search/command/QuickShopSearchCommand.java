@@ -5,6 +5,7 @@ import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
 import me.blvckbytes.bbconfigmapper.ScalarType;
 import me.blvckbytes.bukkitevaluable.BukkitEvaluable;
 import me.blvckbytes.bukkitevaluable.ConfigKeeper;
+import me.blvckbytes.bukkitevaluable.ReloadPriority;
 import me.blvckbytes.item_predicate_parser.PredicateHelper;
 import me.blvckbytes.item_predicate_parser.parse.ItemPredicateParseException;
 import me.blvckbytes.item_predicate_parser.predicate.ItemPredicate;
@@ -57,6 +58,10 @@ public class QuickShopSearchCommand implements CommandExecutor, TabCompleter {
     this.config = config;
     this.resultDisplay = resultDisplay;
     this.offlinePlayerRegistry = offlinePlayerRegistry;
+
+    this.patchSearchFlagsFromConfig();
+
+    config.registerReloadListener(this::patchSearchFlagsFromConfig, ReloadPriority.HIGHEST);
   }
 
   @Override
@@ -325,10 +330,12 @@ public class QuickShopSearchCommand implements CommandExecutor, TabCompleter {
       if (!canViewOtherWorld && cachedShop.handle.getLocation().getWorld() != playerWorld)
         continue;
 
-      if (accessList != null && !accessList.allowsShop(cachedShop))
+      var shopItem = cachedShop.handle.getItem();
+
+      if (accessList != null && !accessList.typeMaterials.contains(shopItem.getType()))
         continue;
 
-      if (predicate != null && !predicate.test(new PredicateState(cachedShop.handle.getItem())))
+      if (predicate != null && !predicate.test(new PredicateState(shopItem)))
         continue;
 
       if (!searchFlagsContainer.test(cachedShop, player))
@@ -355,5 +362,23 @@ public class QuickShopSearchCommand implements CommandExecutor, TabCompleter {
 
   private void showActionBarMessage(Player player, String message) {
     player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(message));
+  }
+
+  private void patchSearchFlagsFromConfig() {
+    for (var searchFlagEntry : config.rootSection.commands.quickShopSearch.searchFlags.entrySet()) {
+      var searchFlagName = searchFlagEntry.getKey();
+
+      var searchFlag = SearchFlag.getByName(searchFlagName);
+
+      if (searchFlag == null)
+        continue;
+
+      var searchFlagValue = searchFlagEntry.getValue();
+
+      if (searchFlagValue.name != null)
+        SearchFlag.matcher.getNormalizedConstant(searchFlag).setName(searchFlagValue.name);
+
+      searchFlag.setSuggestions(searchFlagValue.suggestions);
+    }
   }
 }

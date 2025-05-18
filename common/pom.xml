@@ -18,12 +18,45 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
+    <repositories>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
+    </repositories>
+
     <dependencies>
         <dependency>
             <groupId>com.ghostchu</groupId>
             <artifactId>quickshop-api</artifactId>
             <version>6.2.0.6</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jetbrains</groupId>
+            <artifactId>annotations</artifactId>
+            <version>24.1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.technicallycoded</groupId>
+            <artifactId>FoliaLib</artifactId>
+            <version>0.4.3</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>me.blvckbytes</groupId>
+            <artifactId>BukkitEvaluable</artifactId>
+            <version>0.1</version>
+        </dependency>
+        <dependency>
+            <groupId>me.blvckbytes</groupId>
+            <artifactId>ItemPredicateParser</artifactId>
+            <version>0.0.18</version>
+        </dependency>
+        <dependency>
+            <groupId>me.blvckbytes</groupId>
+            <artifactId>SyllablesMatcher</artifactId>
+            <version>0.1</version>
         </dependency>
     </dependencies>
 </project>

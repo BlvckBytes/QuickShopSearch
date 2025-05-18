@@ -500,7 +500,7 @@ public class ResultDisplayHandler extends DisplayHandler<ResultDisplay, ResultDi
       cooldownType = new TeleportCooldownType(
         PluginPermission.FEATURE_TELEPORT_OTHER_WORLD_BYPASS_COOLDOWN_SAME_SHOP,
         TELEPORT_COOLDOWN_KEY + "-other-world-shopId-" + shopId,
-        config.rootSection.cooldowns.teleportToShop.getCooldownMillis(player, CooldownType.OTHER_WORLD_SAME_SHOP),
+        getCooldownMillis(player, CooldownType.OTHER_WORLD_SAME_SHOP),
         config.rootSection.playerMessages.pendingCooldownFeatureTeleportOtherWorldSameShop
       );
 
@@ -512,7 +512,7 @@ public class ResultDisplayHandler extends DisplayHandler<ResultDisplay, ResultDi
       cooldownType = new TeleportCooldownType(
         PluginPermission.FEATURE_TELEPORT_OTHER_WORLD_BYPASS_COOLDOWN_ANY_SHOP,
         TELEPORT_COOLDOWN_KEY + "-other-world",
-        config.rootSection.cooldowns.teleportToShop.getCooldownMillis(player, CooldownType.OTHER_WORLD_ANY_SHOP),
+        getCooldownMillis(player, CooldownType.OTHER_WORLD_ANY_SHOP),
         config.rootSection.playerMessages.pendingCooldownFeatureTeleportOtherWorldAnyShop
       );
 
@@ -525,7 +525,7 @@ public class ResultDisplayHandler extends DisplayHandler<ResultDisplay, ResultDi
     cooldownType = new TeleportCooldownType(
       PluginPermission.FEATURE_TELEPORT_BYPASS_COOLDOWN_SAME_SHOP,
       TELEPORT_COOLDOWN_KEY + "-shopId-" + shopId,
-      config.rootSection.cooldowns.teleportToShop.getCooldownMillis(player, CooldownType.SAME_SHOP),
+      getCooldownMillis(player, CooldownType.SAME_SHOP),
       config.rootSection.playerMessages.pendingCooldownFeatureTeleportSameShop
     );
 
@@ -537,7 +537,7 @@ public class ResultDisplayHandler extends DisplayHandler<ResultDisplay, ResultDi
     cooldownType = new TeleportCooldownType(
       PluginPermission.FEATURE_TELEPORT_BYPASS_COOLDOWN_ANY_SHOP,
       TELEPORT_COOLDOWN_KEY,
-      config.rootSection.cooldowns.teleportToShop.getCooldownMillis(player, CooldownType.ANY_SHOP),
+      getCooldownMillis(player, CooldownType.ANY_SHOP),
       config.rootSection.playerMessages.pendingCooldownFeatureTeleportAnyShop
     );
 
@@ -594,6 +594,17 @@ public class ResultDisplayHandler extends DisplayHandler<ResultDisplay, ResultDi
     }
 
     teleportDisplayHandler.show(player, teleportDisplayData);
+  }
+
+  private long getCooldownMillis(Player player, CooldownType type) {
+    for (var groupEntry : config.rootSection.cooldowns.teleportToShop.groups.entrySet()) {
+      var groupPermission = PluginPermission.TELEPORT_COOLDOWN_GROUP_BASE.nodeWithSuffix(groupEntry.getKey());
+
+      if (player.hasPermission(groupPermission))
+        return groupEntry.getValue().getCooldownMillis(type);
+    }
+
+    return config.rootSection.cooldowns.teleportToShop._default.getCooldownMillis(type);
   }
 
   private void ensurePermission(Player player, PluginPermission permission, @Nullable BukkitEvaluable missingMessage, Runnable handler) {

@@ -19,6 +19,9 @@ import me.blvckbytes.quick_shop_search.cache.CachedShop;
 import me.blvckbytes.quick_shop_search.cache.ShopUpdate;
 import me.blvckbytes.quick_shop_search.command.SearchFlag;
 import me.blvckbytes.quick_shop_search.config.MainSection;
+import me.blvckbytes.quick_shop_search.config.fees.FeesDistanceRangeSection;
+import me.blvckbytes.quick_shop_search.config.fees.FeesDistanceRangesSection;
+import me.blvckbytes.quick_shop_search.config.fees.FeesValuesSection;
 import me.blvckbytes.quick_shop_search.display.Display;
 import me.blvckbytes.quick_shop_search.integration.IntegrationRegistry;
 import me.blvckbytes.quick_shop_search.integration.essentials_warps.EssentialsWarpData;
@@ -344,12 +347,82 @@ public class ResultDisplay extends Display<ResultDisplayData> implements Dynamic
     CalculatedFees shopFees = shopFeesByShopId.get(shopId);
 
     if (shopFees == null) {
-      var feesValues = config.rootSection.fees.decideFees(player, cachedShop);
+      var feesValues = decideFees(player, cachedShop);
       shopFees = CalculatedFees.calculateFor(feesValues, cachedShop);
       shopFeesByShopId.put(shopId, shopFees);
     }
 
     return shopFees;
+  }
+
+  private @Nullable FeesValuesSection decideFees(Player player, CachedShop shop) {
+    var playerLocation = player.getLocation();
+    var playerWorld = playerLocation.getWorld();
+
+    if (playerWorld == null)
+      return null;
+
+    var shopLocation = shop.handle.getLocation();
+    var shopWorld = shopLocation.getWorld();
+
+    if (shopWorld == null)
+      return null;
+
+    var shopWorldName = shopWorld.getName();
+
+    if (!playerWorld.equals(shopWorld)) {
+      if (PluginPermission.FEATURE_FEES_BYPASS_OTHER_WORLD.has(player))
+        return null;
+
+      var worldSpecificSection = config.rootSection.fees.otherWorld.worlds.get(shopWorldName);
+
+      if (worldSpecificSection == null)
+        return config.rootSection.fees.otherWorld.worldsFallback;
+
+      return worldSpecificSection;
+    }
+
+    if (PluginPermission.FEATURE_FEES_BYPASS.has(player))
+      return null;
+
+    FeesDistanceRangesSection feesSection;
+
+    if ((feesSection = config.rootSection.fees.worlds.get(shopWorldName)) == null)
+      feesSection = config.rootSection.fees.worldsFallback;
+
+    var distance = (int) Math.ceil(shopLocation.distance(playerLocation));
+
+    FeesDistanceRangeSection rangeSection = null;
+
+    for (var distanceRange : feesSection.distanceRanges) {
+      if (distance >= distanceRange.minDistance && distance <= distanceRange.maxDistance) {
+        rangeSection = distanceRange;
+        break;
+      }
+    }
+
+    if (rangeSection == null)
+      rangeSection = feesSection.distanceRangesFallback;
+
+    FeesValuesSection highestPriorityFees = null;
+
+    for (var permissionNameEntry : rangeSection.permissionNames.entrySet()) {
+      var permissionName = permissionNameEntry.getKey();
+      var permissionNode = PluginPermission.FEATURE_FEES_PERMISSION_NAME_BASE.nodeWithSuffix(permissionName);
+
+      if (!player.hasPermission(permissionNode))
+        continue;
+
+      var currentFees = permissionNameEntry.getValue();
+
+      if (highestPriorityFees == null || highestPriorityFees.priority < currentFees.priority)
+        highestPriorityFees = currentFees;
+    }
+
+    if (highestPriorityFees != null)
+      return highestPriorityFees;
+
+    return rangeSection.permissionNamesFallback;
   }
 
   @Override

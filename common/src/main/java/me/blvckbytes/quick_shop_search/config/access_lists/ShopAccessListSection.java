@@ -5,9 +5,7 @@ import me.blvckbytes.bbconfigmapper.sections.AConfigSection;
 import me.blvckbytes.bbconfigmapper.sections.CSIgnore;
 import me.blvckbytes.bukkitevaluable.BukkitEvaluable;
 import me.blvckbytes.gpeee.interpreter.EvaluationEnvironmentBuilder;
-import me.blvckbytes.quick_shop_search.cache.CachedShop;
 import org.bukkit.Material;
-import org.bukkit.inventory.ItemStack;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -21,7 +19,7 @@ public class ShopAccessListSection extends AConfigSection {
   public List<BukkitEvaluable> types;
 
   @CSIgnore
-  private final Set<Material> typeMaterials;
+  public final Set<Material> typeMaterials;
 
   public ShopAccessListSection(EvaluationEnvironmentBuilder baseEnvironment) {
     super(baseEnvironment);
@@ -45,19 +43,5 @@ public class ShopAccessListSection extends AConfigSection {
 
       typeMaterials.add(interpretedMaterial.parseMaterial());
     }
-  }
-
-  public boolean allowsShop(CachedShop shop) {
-    // This section could be extended by more criteria in the future - thus, I'll keep this layer of abstraction
-    return allowsMaterialOfItem(shop.handle.getItem());
-  }
-
-  private boolean allowsMaterialOfItem(ItemStack item) {
-    var isTypeContained = typeMaterials.contains(item.getType());
-
-    if (isAllowTypes)
-      return isTypeContained;
-
-    return !isTypeContained;
   }
 }
