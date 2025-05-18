@@ -2,6 +2,7 @@ package me.blvckbytes.quick_shop_search.integration;
 
 import com.tcoded.folialib.impl.PlatformScheduler;
 import me.blvckbytes.bukkitevaluable.ConfigKeeper;
+import me.blvckbytes.bukkitevaluable.ReloadPriority;
 import me.blvckbytes.quick_shop_search.config.MainSection;
 import me.blvckbytes.quick_shop_search.integration.essentials_warps.EssentialsWarpsIntegration;
 import me.blvckbytes.quick_shop_search.integration.essentials_warps.IEssentialsWarpsIntegration;
@@ -40,24 +41,40 @@ public class IntegrationRegistry {
     this.plugin = plugin;
 
     this.loadIntegrations();
+
+    config.registerReloadListener(this::loadIntegrations, ReloadPriority.HIGHEST);
   }
 
   public @Nullable IWorldGuardIntegration getWorldGuardIntegration() {
+    if (!config.rootSection.worldGuardIntegration.enabled)
+      return null;
+
     return this.worldGuardIntegration;
   }
 
   public @Nullable IEssentialsWarpsIntegration getEssentialsWarpsIntegration() {
+    if (!config.rootSection.essentialsWarpsIntegration.enabled)
+      return null;
+
     return this.essentialsWarpsIntegration;
   }
 
   public @Nullable IPlayerWarpsIntegration getPlayerWarpsIntegration() {
+    if (!config.rootSection.playerWarpsIntegration.enabled)
+      return null;
+
     return this.playerWarpsIntegration;
   }
 
   private void loadIntegrations() {
-    this.worldGuardIntegration = tryLoadWorldGuardIntegration();
-    this.essentialsWarpsIntegration = tryLoadEssentialsWarpsIntegration();
-    this.playerWarpsIntegration = tryLoadPlayerWarpsIntegration();
+    if (this.worldGuardIntegration == null)
+      this.worldGuardIntegration = tryLoadWorldGuardIntegration();
+
+    if (this.essentialsWarpsIntegration == null)
+      this.essentialsWarpsIntegration = tryLoadEssentialsWarpsIntegration();
+
+    if (this.playerWarpsIntegration == null)
+      this.playerWarpsIntegration = tryLoadPlayerWarpsIntegration();
   }
 
   private @Nullable IWorldGuardIntegration tryLoadWorldGuardIntegration() {
@@ -68,6 +85,9 @@ public class IntegrationRegistry {
       logger.warning("WorldGuard-Integration is enabled, but the corresponding plugin could not be located!");
       return null;
     }
+
+    if (this.worldGuardIntegration != null)
+      return this.worldGuardIntegration;
 
     try {
       var worldGuardIntegration = new WorldGuardIntegration(logger, config);
@@ -88,6 +108,9 @@ public class IntegrationRegistry {
       logger.warning("Essentials-Warps-Integration is enabled, but the corresponding plugin could not be located!");
       return null;
     }
+
+    if (this.essentialsWarpsIntegration != null)
+      return this.essentialsWarpsIntegration;
 
     try {
       var essentialsWarpsIntegration = new EssentialsWarpsIntegration(logger, scheduler, worldGuardIntegration, config);
@@ -111,6 +134,9 @@ public class IntegrationRegistry {
       logger.warning("PlayerWarps-Integration is enabled, but the corresponding plugin could not be located!");
       return null;
     }
+
+    if (this.playerWarpsIntegration != null)
+      return this.playerWarpsIntegration;
 
     try {
       integration = new OlzieDevPlayerWarpsIntegration(logger, scheduler, config, worldGuardIntegration);
