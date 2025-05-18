@@ -25,7 +25,11 @@ public class TeleportDisplay extends Display<TeleportDisplayData> {
     config.rootSection.teleportDisplay.items.filler.renderInto(inventory, displayData.extendedShopEnvironment());
     config.rootSection.teleportDisplay.items.back.renderInto(inventory, displayData.extendedShopEnvironment());
     config.rootSection.teleportDisplay.items.shopLocation.renderInto(inventory, displayData.extendedShopEnvironment());
-    config.rootSection.teleportDisplay.items.nearestPlayerWarpLocation.renderInto(inventory, displayData.extendedShopEnvironment());
+
+    // The nearest player-warp icon may need to make a network-call in order to receive the owner's textures
+    // Do not stall bringing up the rest of the UI this way
+    scheduler.runAsync(task -> config.rootSection.teleportDisplay.items.nearestPlayerWarpLocation.renderInto(inventory, displayData.extendedShopEnvironment()));
+
     config.rootSection.teleportDisplay.items.nearestEssentialsWarpLocation.renderInto(inventory, displayData.extendedShopEnvironment());
   }
 

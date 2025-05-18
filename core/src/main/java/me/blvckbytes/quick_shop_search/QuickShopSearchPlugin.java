@@ -57,7 +57,12 @@ public class QuickShopSearchPlugin extends JavaPlugin {
       var foliaLib = new FoliaLib(this);
       var scheduler = foliaLib.getScheduler();
 
-      var configManager = new ConfigManager(this, "config");
+      var offlinePlayerRegistry = new OfflinePlayerRegistry();
+      Bukkit.getPluginManager().registerEvents(offlinePlayerRegistry, this);
+
+      var texturesResolverFunction = new Base64TexturesResolverFunction(logger, offlinePlayerRegistry);
+
+      var configManager = new ConfigManager(this, "config", texturesResolverFunction::registerSelf);
       var config = new ConfigKeeper<>(configManager, "config.yml", MainSection.class);
 
       var parserPlugin = ItemPredicateParserPlugin.getInstance();
@@ -119,9 +124,6 @@ public class QuickShopSearchPlugin extends JavaPlugin {
       Bukkit.getPluginManager().registerEvents(shopRegistry, this);
       Bukkit.getPluginManager().registerEvents(shopEventHandler, this);
       Bukkit.getPluginManager().registerEvents(resultDisplayHandler, this);
-
-      var offlinePlayerRegistry = new OfflinePlayerRegistry();
-      Bukkit.getPluginManager().registerEvents(offlinePlayerRegistry, this);
 
       var commandUpdater = new CommandUpdater(this);
       var commandExecutor = new QuickShopSearchCommand(scheduler, parserPlugin.getPredicateHelper(), shopRegistry, config, resultDisplayHandler, offlinePlayerRegistry);

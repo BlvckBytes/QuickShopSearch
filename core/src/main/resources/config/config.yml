@@ -290,10 +290,13 @@ teleportDisplay:
         - '@{ANY-CONTROL-LORE-SPACER}'
         - '@{TELEPORT-DISPLAY-SHOP-LOCATION-LORE-LEFT-CLICK-DESCRIPTION}'
         - '@{ANY-CONTROL-LORE-SPACER}'
+    # - resolve_b64_textures(owner_name: String?): String? - used to resolve a player's (cached) skull-textures by
+    #                                                       name; returns null if passed null or on resolve-failures
     # https://github.com/BlvckBytes/BukkitEvaluable#itemstack-section
     nearestPlayerWarpLocation:
       slots: [3]
-      type$: 'if player_warp_name != null then "OAK_SIGN" else "BARRIER"'
+      type$: 'if player_warp_name != null then "PLAYER_HEAD" else "BARRIER"'
+      textures$: 'resolve_b64_textures(player_warp_owner) ?? lut["textures"]["PLAYER_WARP_SKIN_FALLBACK"]'
       name$: '@{TELEPORT-DISPLAY-NEAREST-PLAYER-WARP-LOCATION-NAME}'
       lore$: |
         if player_warp_name != null then list_of(
@@ -652,6 +655,7 @@ lut:
     ARROW_LEFT_RED: 'eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZjg0ZjU5NzEzMWJiZTI1ZGMwNThhZjg4OGNiMjk4MzFmNzk1OTliYzY3Yzk1YzgwMjkyNWNlNGFmYmEzMzJmYyJ9fX0='
     ARROW_RIGHT: 'eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOTYzMzlmZjJlNTM0MmJhMThiZGM0OGE5OWNjYTY1ZDEyM2NlNzgxZDg3ODI3MmY5ZDk2NGVhZDNiOGFkMzcwIn19fQ=='
     ARROW_RIGHT_RED: 'eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZmNmZTg4NDVhOGQ1ZTYzNWZiODc3MjhjY2M5Mzg5NWQ0MmI0ZmMyZTZhNTNmMWJhNzhjODQ1MjI1ODIyIn19fQ=='
+    PLAYER_WARP_SKIN_FALLBACK: 'eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZDEwNzA0NWU2NDk0NDg1NmY0YTQ3YzAxNjg4MWM2ZWFhNjI0NTNhODMyMmE5MmEwYzZjYzI0NDNlYjlhYmQzNCJ9fX0='
   sortingCriteria:
     PRICE: '@{SORTING-LORE-CRITERIA-PRICE}'
     OWNER_NAME: '@{SORTING-LORE-CRITERIA-OWNER-NAME}'
