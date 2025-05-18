@@ -1,4 +1,4 @@
-package me.blvckbytes.quick_shop_search.cache;
+package me.blvckbytes.quick_shop_search.compatibility;
 
 import com.ghostchu.quickshop.api.event.Phase;
 import com.ghostchu.quickshop.api.event.economy.ShopSuccessPurchaseEvent;
@@ -7,6 +7,7 @@ import com.ghostchu.quickshop.api.event.inventory.ShopInventoryCalculateEvent;
 import com.ghostchu.quickshop.api.event.management.ShopCreateEvent;
 import com.ghostchu.quickshop.api.event.management.ShopDeleteEvent;
 import com.ghostchu.quickshop.api.event.settings.type.*;
+import me.blvckbytes.quick_shop_search.compatibility.QuickShopEventConsumer;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 

@@ -1,4 +1,4 @@
-package me.blvckbytes.quick_shop_search.cache;
+package me.blvckbytes.quick_shop_search.compatibility;
 
 import com.ghostchu.quickshop.api.shop.Shop;
 import org.bukkit.entity.Player;

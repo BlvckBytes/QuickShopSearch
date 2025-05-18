@@ -10,7 +10,7 @@ import me.blvckbytes.bukkitevaluable.ConfigKeeper;
 import me.blvckbytes.gpeee.interpreter.EvaluationEnvironmentBuilder;
 import me.blvckbytes.quick_shop_search.*;
 import me.blvckbytes.quick_shop_search.cache.CachedShop;
-import me.blvckbytes.quick_shop_search.cache.RemoteInteractionApi;
+import me.blvckbytes.quick_shop_search.compatibility.RemoteInteractionApi;
 import me.blvckbytes.quick_shop_search.cache.ShopUpdate;
 import me.blvckbytes.quick_shop_search.config.cooldowns.CooldownType;
 import me.blvckbytes.quick_shop_search.config.MainSection;

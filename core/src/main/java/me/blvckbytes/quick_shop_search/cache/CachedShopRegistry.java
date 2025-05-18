@@ -8,6 +8,7 @@ import it.unimi.dsi.fastutil.longs.Long2ObjectAVLTreeMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import me.blvckbytes.bukkitevaluable.ConfigKeeper;
 import me.blvckbytes.bukkitevaluable.ReloadPriority;
+import me.blvckbytes.quick_shop_search.compatibility.QuickShopEventConsumer;
 import me.blvckbytes.quick_shop_search.config.MainSection;
 import me.blvckbytes.quick_shop_search.display.result.ResultDisplayHandler;
 import me.blvckbytes.quick_shop_search.integration.IntegrationRegistry;
