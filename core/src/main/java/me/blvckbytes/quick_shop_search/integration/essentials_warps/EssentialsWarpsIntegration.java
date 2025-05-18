@@ -1,7 +1,10 @@
 package me.blvckbytes.quick_shop_search.integration.essentials_warps;
 
 import com.tcoded.folialib.impl.PlatformScheduler;
+import me.blvckbytes.bukkitevaluable.ConfigKeeper;
+import me.blvckbytes.quick_shop_search.config.MainSection;
 import me.blvckbytes.quick_shop_search.integration.ChunkBucketedCache;
+import me.blvckbytes.quick_shop_search.integration.worldguard.IWorldGuardIntegration;
 import net.ess3.api.IEssentials;
 import net.essentialsx.api.v2.events.WarpModifyEvent;
 import org.bukkit.Bukkit;
@@ -15,7 +18,18 @@ import java.util.logging.Logger;
 
 public class EssentialsWarpsIntegration extends ChunkBucketedCache<EssentialsWarpData> implements IEssentialsWarpsIntegration {
 
-  public EssentialsWarpsIntegration(Logger logger, PlatformScheduler scheduler) {
+  private final ConfigKeeper<MainSection> config;
+  private final @Nullable IWorldGuardIntegration worldGuardIntegration;
+
+  public EssentialsWarpsIntegration(
+    Logger logger,
+    PlatformScheduler scheduler,
+    @Nullable IWorldGuardIntegration worldGuardIntegration,
+    ConfigKeeper<MainSection> config
+  ) {
+    this.worldGuardIntegration = worldGuardIntegration;
+    this.config = config;
+
     if (!(Bukkit.getPluginManager().getPlugin("Essentials") instanceof IEssentials essentials))
       throw new IllegalStateException("Expected the essentials-plugin to be an instance of IEssentials");
 
@@ -74,6 +88,7 @@ public class EssentialsWarpsIntegration extends ChunkBucketedCache<EssentialsWar
 
   @Override
   public @Nullable EssentialsWarpData locateNearestWithinRange(Player player, Location origin, int blockRadius) {
-    return findClosestItem(origin, blockRadius);
+    var matchPredicate = IWorldGuardIntegration.makePredicate(origin, worldGuardIntegration, config.rootSection.essentialsWarpsIntegration.withinSameRegion);
+    return findClosestItem(origin, blockRadius, matchPredicate);
   }
 }

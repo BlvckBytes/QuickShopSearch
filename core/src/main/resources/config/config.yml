@@ -608,11 +608,18 @@ playerWarpsIntegration:
   nearestWarpBlockRadius: 15
   displayNearestInIcon: false
   updatePeriodSeconds: 30
+  withinSameRegion: false
 
 essentialsWarpsIntegration:
   enabled: false
   nearestWarpBlockRadius: 15
   displayNearestInIcon: false
+  withinSameRegion: false
+
+worldGuardIntegration:
+  enabled: false
+  ignoredIds: []
+  ignoredPriorities: []
 
 fees:
   enabled: false

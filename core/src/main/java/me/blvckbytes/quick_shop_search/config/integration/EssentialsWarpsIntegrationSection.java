@@ -8,6 +8,7 @@ public class EssentialsWarpsIntegrationSection extends AConfigSection {
   public int nearestWarpBlockRadius;
   public boolean enabled;
   public boolean displayNearestInIcon;
+  public boolean withinSameRegion;
 
   public EssentialsWarpsIntegrationSection(EvaluationEnvironmentBuilder baseEnvironment) {
     super(baseEnvironment);
@@ -15,5 +16,6 @@ public class EssentialsWarpsIntegrationSection extends AConfigSection {
     this.enabled = false;
     this.nearestWarpBlockRadius = 15;
     this.displayNearestInIcon = false;
+    this.withinSameRegion = false;
   }
 }

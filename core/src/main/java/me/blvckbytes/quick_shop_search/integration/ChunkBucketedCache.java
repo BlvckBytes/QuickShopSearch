@@ -7,6 +7,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Predicate;
 
 public abstract class ChunkBucketedCache<T> {
 
@@ -85,14 +86,16 @@ public abstract class ChunkBucketedCache<T> {
     int originChunkY;
     int originChunkZ;
     Long2ObjectMap<List<T>> buckets;
+    @Nullable Predicate<Location> matchPredicate;
 
     T closestItem = null;
     int closestBlockDistanceSquared = 0;
     int closestChunkDistanceSquared = 0;
 
-    ClosestItemSession(Location origin, Long2ObjectMap<List<T>> buckets) {
+    ClosestItemSession(Location origin, Long2ObjectMap<List<T>> buckets, @Nullable Predicate<Location> matchPredicate) {
       this.origin = origin;
       this.buckets = buckets;
+      this.matchPredicate = matchPredicate;
 
       this.originChunkX = origin.getBlockX() >> 4;
       this.originChunkY = origin.getBlockY() >> 4;
@@ -107,9 +110,13 @@ public abstract class ChunkBucketedCache<T> {
         return;
 
       for (var item : bucket) {
-        var distanceSquared = computeDistanceSquared(item, origin);
+        var itemLocation = extractItemLocation(item);
+        var distanceSquared = computeDistanceSquared(itemLocation, origin);
 
         if (closestItem == null || closestBlockDistanceSquared > distanceSquared) {
+          if (matchPredicate != null && !matchPredicate.test(itemLocation))
+            continue;
+
           closestBlockDistanceSquared = distanceSquared;
           closestChunkDistanceSquared = distanceSquared >> 8;
           closestItem = item;
@@ -118,7 +125,7 @@ public abstract class ChunkBucketedCache<T> {
     }
   }
 
-  protected @Nullable T findClosestItem(Location origin, int blockRadius) {
+  protected @Nullable T findClosestItem(Location origin, int blockRadius, @Nullable Predicate<Location> matchPredicate) {
     var world = origin.getWorld();
 
     if (world == null)
@@ -129,7 +136,7 @@ public abstract class ChunkBucketedCache<T> {
     if (itemsByChunkHash == null)
       return null;
 
-    var closestSession = new ClosestItemSession(origin, itemsByChunkHash);
+    var closestSession = new ClosestItemSession(origin, itemsByChunkHash, matchPredicate);
 
     var radiusInChunks = (blockRadius + 15) >> 4;
     var maxDistanceSquared = square(radiusInChunks) * 2;
@@ -196,9 +203,7 @@ public abstract class ChunkBucketedCache<T> {
     return closestSession.closestItem;
   }
 
-  private int computeDistanceSquared(T item, Location origin) {
-    var itemLocation = extractItemLocation(item);
-
+  private int computeDistanceSquared(@Nullable Location itemLocation, Location origin) {
     if (itemLocation == null)
       return Integer.MAX_VALUE;
 

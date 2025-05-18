@@ -7,6 +7,7 @@ import dev.revivalo.playerwarps.warp.WarpManager;
 import me.blvckbytes.bukkitevaluable.ConfigKeeper;
 import me.blvckbytes.quick_shop_search.config.MainSection;
 import me.blvckbytes.quick_shop_search.integration.ChunkBucketedCache;
+import me.blvckbytes.quick_shop_search.integration.worldguard.IWorldGuardIntegration;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -16,6 +17,7 @@ import java.util.logging.Logger;
 
 public class RevivaloPlayerWarpsIntegration extends ChunkBucketedCache<Warp> implements IPlayerWarpsIntegration {
 
+  private final @Nullable IWorldGuardIntegration worldGuardIntegration;
   private final ConfigKeeper<MainSection> config;
   private final PlatformScheduler platformScheduler;
 
@@ -24,10 +26,12 @@ public class RevivaloPlayerWarpsIntegration extends ChunkBucketedCache<Warp> imp
   public RevivaloPlayerWarpsIntegration(
     Logger logger,
     PlatformScheduler platformScheduler,
-    ConfigKeeper<MainSection> config
+    ConfigKeeper<MainSection> config,
+    @Nullable IWorldGuardIntegration worldGuardIntegration
   ) {
     this.config = config;
     this.platformScheduler = platformScheduler;
+    this.worldGuardIntegration = worldGuardIntegration;
 
     this.warpManager = PlayerWarpsPlugin.getWarpHandler();
 
@@ -58,7 +62,8 @@ public class RevivaloPlayerWarpsIntegration extends ChunkBucketedCache<Warp> imp
 
   @Override
   public @Nullable PlayerWarpData locateNearestWithinRange(Player player, Location origin, int blockRadius) {
-    var nearestWarp = findClosestItem(origin, blockRadius);
+    var matchPredicate = IWorldGuardIntegration.makePredicate(origin, worldGuardIntegration, config.rootSection.playerWarpsIntegration.withinSameRegion);
+    var nearestWarp = findClosestItem(origin, blockRadius, matchPredicate);
 
     if (nearestWarp == null)
       return null;

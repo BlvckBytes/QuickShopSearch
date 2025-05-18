@@ -8,6 +8,8 @@ import me.blvckbytes.quick_shop_search.integration.essentials_warps.IEssentialsW
 import me.blvckbytes.quick_shop_search.integration.player_warps.IPlayerWarpsIntegration;
 import me.blvckbytes.quick_shop_search.integration.player_warps.OlzieDevPlayerWarpsIntegration;
 import me.blvckbytes.quick_shop_search.integration.player_warps.RevivaloPlayerWarpsIntegration;
+import me.blvckbytes.quick_shop_search.integration.worldguard.IWorldGuardIntegration;
+import me.blvckbytes.quick_shop_search.integration.worldguard.WorldGuardIntegration;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.Nullable;
@@ -24,6 +26,7 @@ public class IntegrationRegistry {
 
   private @Nullable IEssentialsWarpsIntegration essentialsWarpsIntegration;
   private @Nullable IPlayerWarpsIntegration playerWarpsIntegration;
+  private @Nullable IWorldGuardIntegration worldGuardIntegration;
 
   public IntegrationRegistry(
     ConfigKeeper<MainSection> config,
@@ -39,6 +42,10 @@ public class IntegrationRegistry {
     this.loadIntegrations();
   }
 
+  public @Nullable IWorldGuardIntegration getWorldGuardIntegration() {
+    return this.worldGuardIntegration;
+  }
+
   public @Nullable IEssentialsWarpsIntegration getEssentialsWarpsIntegration() {
     return this.essentialsWarpsIntegration;
   }
@@ -48,8 +55,29 @@ public class IntegrationRegistry {
   }
 
   private void loadIntegrations() {
+    this.worldGuardIntegration = tryLoadWorldGuardIntegration();
     this.essentialsWarpsIntegration = tryLoadEssentialsWarpsIntegration();
     this.playerWarpsIntegration = tryLoadPlayerWarpsIntegration();
+  }
+
+  private @Nullable IWorldGuardIntegration tryLoadWorldGuardIntegration() {
+    if (!config.rootSection.worldGuardIntegration.enabled)
+      return null;
+
+    if (!Bukkit.getPluginManager().isPluginEnabled("WorldGuard")) {
+      logger.warning("WorldGuard-Integration is enabled, but the corresponding plugin could not be located!");
+      return null;
+    }
+
+    try {
+      var worldGuardIntegration = new WorldGuardIntegration(logger, config);
+      logger.info("Successfully loaded the WorldGuard-integration!");
+      return worldGuardIntegration;
+    } catch (Throwable e) {
+      logger.log(Level.SEVERE, "Could not load the WorldGuard-integration!", e);
+    }
+
+    return null;
   }
 
   private @Nullable IEssentialsWarpsIntegration tryLoadEssentialsWarpsIntegration() {
@@ -62,12 +90,12 @@ public class IntegrationRegistry {
     }
 
     try {
-      var essentialsWarpsIntegration = new EssentialsWarpsIntegration(logger, scheduler);
+      var essentialsWarpsIntegration = new EssentialsWarpsIntegration(logger, scheduler, worldGuardIntegration, config);
       Bukkit.getPluginManager().registerEvents(essentialsWarpsIntegration, plugin);
       logger.info("Successfully loaded the Essentials-Warps-integration!");
       return essentialsWarpsIntegration;
     } catch (Throwable e) {
-      logger.log(Level.SEVERE, "Could not load Essentials-Warps-integration!", e);
+      logger.log(Level.SEVERE, "Could not load the Essentials-Warps-integration!", e);
     }
 
     return null;
@@ -85,13 +113,13 @@ public class IntegrationRegistry {
     }
 
     try {
-      integration = new OlzieDevPlayerWarpsIntegration(logger, scheduler);
+      integration = new OlzieDevPlayerWarpsIntegration(logger, scheduler, config, worldGuardIntegration);
       Bukkit.getPluginManager().registerEvents(integration, plugin);
       logger.info("Successfully loaded the com.olziedev PlayerWarps-integration!");
       return integration;
     } catch (Throwable firstError) {
       try {
-        integration = new RevivaloPlayerWarpsIntegration(logger, scheduler, config);
+        integration = new RevivaloPlayerWarpsIntegration(logger, scheduler, config, worldGuardIntegration);
         logger.info("Successfully loaded the dev.revivalo PlayerWarps-integration!");
         return integration;
       } catch (Throwable secondError) {

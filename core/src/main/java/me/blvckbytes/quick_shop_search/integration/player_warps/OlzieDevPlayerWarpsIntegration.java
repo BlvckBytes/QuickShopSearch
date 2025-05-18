@@ -5,7 +5,10 @@ import com.olziedev.playerwarps.api.events.warp.PlayerWarpCreateEvent;
 import com.olziedev.playerwarps.api.events.warp.PlayerWarpRemoveEvent;
 import com.olziedev.playerwarps.api.warp.Warp;
 import com.tcoded.folialib.impl.PlatformScheduler;
+import me.blvckbytes.bukkitevaluable.ConfigKeeper;
+import me.blvckbytes.quick_shop_search.config.MainSection;
 import me.blvckbytes.quick_shop_search.integration.ChunkBucketedCache;
+import me.blvckbytes.quick_shop_search.integration.worldguard.IWorldGuardIntegration;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -16,8 +19,17 @@ import java.util.logging.Logger;
 
 public class OlzieDevPlayerWarpsIntegration extends ChunkBucketedCache<Warp> implements IPlayerWarpsIntegration {
 
-  public OlzieDevPlayerWarpsIntegration(Logger logger, PlatformScheduler scheduler) {
-    super();
+  private final ConfigKeeper<MainSection> config;
+  private final @Nullable IWorldGuardIntegration worldGuardIntegration;
+
+  public OlzieDevPlayerWarpsIntegration(
+    Logger logger,
+    PlatformScheduler scheduler,
+    ConfigKeeper<MainSection> config,
+    @Nullable IWorldGuardIntegration worldGuardIntegration
+  ) {
+    this.config = config;
+    this.worldGuardIntegration = worldGuardIntegration;
 
     PlayerWarpsAPI.getInstance(instance -> {
       scheduler.runAsync(task -> {
@@ -33,7 +45,8 @@ public class OlzieDevPlayerWarpsIntegration extends ChunkBucketedCache<Warp> imp
 
   @Override
   public @Nullable PlayerWarpData locateNearestWithinRange(Player player, Location origin, int blockRadius) {
-    var nearestWarp = findClosestItem(origin, blockRadius);
+    var matchPredicate = IWorldGuardIntegration.makePredicate(origin, worldGuardIntegration, config.rootSection.playerWarpsIntegration.withinSameRegion);
+    var nearestWarp = findClosestItem(origin, blockRadius, matchPredicate);
 
     if (nearestWarp == null)
       return null;

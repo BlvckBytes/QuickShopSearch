@@ -9,6 +9,7 @@ public class PlayerWarpsIntegrationSection extends AConfigSection {
   public boolean enabled;
   public boolean displayNearestInIcon;
   public int updatePeriodSeconds;
+  public boolean withinSameRegion;
 
   public PlayerWarpsIntegrationSection(EvaluationEnvironmentBuilder baseEnvironment) {
     super(baseEnvironment);
@@ -17,5 +18,6 @@ public class PlayerWarpsIntegrationSection extends AConfigSection {
     this.nearestWarpBlockRadius = 15;
     this.displayNearestInIcon = false;
     this.updatePeriodSeconds = 30;
+    this.withinSameRegion = false;
   }
 }
