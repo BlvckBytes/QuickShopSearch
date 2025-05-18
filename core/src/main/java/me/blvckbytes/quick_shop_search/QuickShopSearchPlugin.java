@@ -4,6 +4,7 @@ import com.cryptomorin.xseries.XMaterial;
 import com.ghostchu.quickshop.QuickShop;
 import com.ghostchu.quickshop.api.command.CommandContainer;
 import com.tcoded.folialib.FoliaLib;
+import com.tcoded.folialib.impl.PlatformScheduler;
 import me.blvckbytes.bbconfigmapper.ScalarType;
 import me.blvckbytes.bukkitevaluable.BukkitEvaluable;
 import me.blvckbytes.bukkitevaluable.CommandUpdater;
@@ -26,14 +27,17 @@ import me.blvckbytes.quick_shop_search.display.teleport.TeleportDisplayHandler;
 import me.blvckbytes.quick_shop_search.integration.essentials_warps.EssentialsWarpsIntegration;
 import me.blvckbytes.quick_shop_search.integration.essentials_warps.IEssentialsWarpsIntegration;
 import me.blvckbytes.quick_shop_search.integration.player_warps.IPlayerWarpsIntegration;
-import me.blvckbytes.quick_shop_search.integration.player_warps.PlayerWarpsIntegration;
+import me.blvckbytes.quick_shop_search.integration.player_warps.OlzieDevPlayerWarpsIntegration;
+import me.blvckbytes.quick_shop_search.integration.player_warps.RevivaloPlayerWarpsIntegration;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class QuickShopSearchPlugin extends JavaPlugin {
 
@@ -75,23 +79,7 @@ public class QuickShopSearchPlugin extends JavaPlugin {
       var slowTeleportManager = new SlowTeleportManager(scheduler, config);
       Bukkit.getServer().getPluginManager().registerEvents(slowTeleportManager, this);
 
-      IPlayerWarpsIntegration playerWarpsIntegration = null;
-
-      if (config.rootSection.playerWarpsIntegration.enabled) {
-        if (Bukkit.getPluginManager().isPluginEnabled("PlayerWarps")) {
-          try {
-            playerWarpsIntegration = new PlayerWarpsIntegration(logger, scheduler);
-            Bukkit.getPluginManager().registerEvents(playerWarpsIntegration, this);
-            logger.info("Successfully loaded the PlayerWarps-integration!");
-          } catch (Exception e) {
-            logger.log(Level.SEVERE, "Could not load PlayerWarps-integration!", e);
-          }
-        }
-
-        else
-          logger.warning("PlayerWarps-Integration is enabled, but the corresponding plugin could not be located!");
-      }
-
+      IPlayerWarpsIntegration playerWarpsIntegration = tryLoadPlayerWarpsIntegration(config, logger, scheduler);
       IEssentialsWarpsIntegration essentialsWarpsIntegration = null;
 
       if (config.rootSection.essentialsWarpsIntegration.enabled) {
@@ -100,7 +88,7 @@ public class QuickShopSearchPlugin extends JavaPlugin {
             essentialsWarpsIntegration = new EssentialsWarpsIntegration(logger, scheduler);
             Bukkit.getPluginManager().registerEvents(essentialsWarpsIntegration, this);
             logger.info("Successfully loaded the Essentials-Warps-integration!");
-          } catch (Exception e) {
+          } catch (Throwable e) {
             logger.log(Level.SEVERE, "Could not load Essentials-Warps-integration!", e);
           }
         }
@@ -195,5 +183,40 @@ public class QuickShopSearchPlugin extends JavaPlugin {
 
     if (stampStore != null)
       stampStore.onShutdown();
+  }
+
+  private @Nullable IPlayerWarpsIntegration tryLoadPlayerWarpsIntegration(
+    ConfigKeeper<MainSection> config,
+    Logger logger,
+    PlatformScheduler scheduler
+  ) {
+    IPlayerWarpsIntegration integration;
+
+    if (!config.rootSection.playerWarpsIntegration.enabled)
+      return null;
+
+    if (!Bukkit.getPluginManager().isPluginEnabled("PlayerWarps")) {
+      logger.warning("PlayerWarps-Integration is enabled, but the corresponding plugin could not be located!");
+      return null;
+    }
+
+    try {
+      integration = new OlzieDevPlayerWarpsIntegration(logger, scheduler);
+      Bukkit.getPluginManager().registerEvents(integration, this);
+      logger.info("Successfully loaded the com.olziedev PlayerWarps-integration!");
+      return integration;
+    } catch (Throwable firstError) {
+      try {
+        integration = new RevivaloPlayerWarpsIntegration(logger, scheduler, config);
+        logger.info("Successfully loaded the dev.revivalo PlayerWarps-integration!");
+        return integration;
+      } catch (Throwable secondError) {
+        logger.log(Level.SEVERE, "Could not load the dev.revivalo PlayerWarps-integration!", secondError);
+      }
+
+      logger.log(Level.SEVERE, "Could not load the com.olziedev PlayerWarps-integration!", firstError);
+    }
+
+    return null;
   }
 }

@@ -127,6 +127,13 @@
                 </exclusion>
             </exclusions>
         </dependency>
+        <dependency>
+            <groupId>dev.revivalo</groupId>
+            <artifactId>player-warps</artifactId>
+            <version>3.3.2</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/libs/PlayerWarps-3.3.2.jar</systemPath>
+        </dependency>
     </dependencies>
 
     <build>

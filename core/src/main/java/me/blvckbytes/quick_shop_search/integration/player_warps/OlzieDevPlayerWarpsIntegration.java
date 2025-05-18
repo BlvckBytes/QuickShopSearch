@@ -14,9 +14,9 @@ import org.bukkit.event.EventPriority;
 import javax.annotation.Nullable;
 import java.util.logging.Logger;
 
-public class PlayerWarpsIntegration extends ChunkBucketedCache<Warp> implements IPlayerWarpsIntegration {
+public class OlzieDevPlayerWarpsIntegration extends ChunkBucketedCache<Warp> implements IPlayerWarpsIntegration {
 
-  public PlayerWarpsIntegration(Logger logger, PlatformScheduler scheduler) {
+  public OlzieDevPlayerWarpsIntegration(Logger logger, PlatformScheduler scheduler) {
     super();
 
     PlayerWarpsAPI.getInstance(instance -> {

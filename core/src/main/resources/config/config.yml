@@ -546,6 +546,7 @@ playerWarpsIntegration:
   enabled: false
   nearestWarpBlockRadius: 15
   displayNearestInIcon: false
+  updatePeriodSeconds: 30
 
 essentialsWarpsIntegration:
   enabled: false

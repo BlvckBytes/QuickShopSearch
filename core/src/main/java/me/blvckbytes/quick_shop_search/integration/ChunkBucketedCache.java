@@ -6,18 +6,23 @@ import org.bukkit.Location;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public abstract class ChunkBucketedCache<T> {
 
   private final Map<UUID, Long2ObjectMap<List<T>>> itemsByChunkHashByWorldId;
 
   protected ChunkBucketedCache() {
-    this.itemsByChunkHashByWorldId = new HashMap<>();
+    this.itemsByChunkHashByWorldId = new ConcurrentHashMap<>();
   }
 
   protected abstract @Nullable Location extractItemLocation(T item);
 
   protected abstract boolean doItemsEqual(T a, T b);
+
+  protected void clear() {
+    itemsByChunkHashByWorldId.clear();
+  }
 
   protected void registerItem(T item) {
     var bukkitLocation = extractItemLocation(item);
@@ -30,10 +35,19 @@ public abstract class ChunkBucketedCache<T> {
     if (itemWorld == null)
       return;
 
-    itemsByChunkHashByWorldId
+    var itemBucket = itemsByChunkHashByWorldId
       .computeIfAbsent(itemWorld.getUID(), k -> new Long2ObjectAVLTreeMap<>())
-      .computeIfAbsent(fastChunkHash(bukkitLocation), k -> new ArrayList<>())
-      .add(item);
+      .computeIfAbsent(fastChunkHash(bukkitLocation), k -> new ArrayList<>());
+
+    // Ensure "set-like" behaviour, based on whatever criteria the equality-checker implements
+    for (var iterator = itemBucket.iterator(); iterator.hasNext();) {
+      if (doItemsEqual(item, iterator.next())) {
+        iterator.remove();
+        return;
+      }
+    }
+
+    itemBucket.add(item);
   }
 
   protected void unregisterItem(T item) {
