@@ -20,6 +20,7 @@ import me.blvckbytes.quick_shop_search.cache.ShopUpdate;
 import me.blvckbytes.quick_shop_search.command.SearchFlag;
 import me.blvckbytes.quick_shop_search.config.MainSection;
 import me.blvckbytes.quick_shop_search.display.Display;
+import me.blvckbytes.quick_shop_search.integration.IntegrationRegistry;
 import me.blvckbytes.quick_shop_search.integration.essentials_warps.EssentialsWarpData;
 import me.blvckbytes.quick_shop_search.integration.essentials_warps.IEssentialsWarpsIntegration;
 import me.blvckbytes.quick_shop_search.integration.player_warps.IPlayerWarpsIntegration;
@@ -34,8 +35,7 @@ import java.util.*;
 
 public class ResultDisplay extends Display<ResultDisplayData> implements DynamicPropertyProvider {
 
-  private final @Nullable IPlayerWarpsIntegration playerWarpsIntegration;
-  private final @Nullable IEssentialsWarpsIntegration essentialsWarpsIntegration;
+  private final IntegrationRegistry integrationRegistry;
   private final AsyncTaskQueue asyncQueue;
 
   private final Long2LongMap shopDistanceByShopId;
@@ -61,8 +61,7 @@ public class ResultDisplay extends Display<ResultDisplayData> implements Dynamic
 
   public ResultDisplay(
     PlatformScheduler scheduler,
-    @Nullable IPlayerWarpsIntegration playerWarpsIntegration,
-    @Nullable IEssentialsWarpsIntegration essentialsWarpsIntegration,
+    IntegrationRegistry integrationRegistry,
     ConfigKeeper<MainSection> config,
     Player player,
     ResultDisplayData displayData,
@@ -70,8 +69,7 @@ public class ResultDisplay extends Display<ResultDisplayData> implements Dynamic
   ) {
     super(player, displayData, config, scheduler);
 
-    this.playerWarpsIntegration = playerWarpsIntegration;
-    this.essentialsWarpsIntegration = essentialsWarpsIntegration;
+    this.integrationRegistry = integrationRegistry;
     this.asyncQueue = new AsyncTaskQueue(scheduler);
     this.playerUser = QUserImpl.createFullFilled(player);
     this.playerLocation = player.getLocation();
@@ -430,6 +428,8 @@ public class ResultDisplay extends Display<ResultDisplayData> implements Dynamic
   }
 
   public @Nullable EssentialsWarpData getNearestEssentialsWarp(CachedShop cachedShop) {
+    var essentialsWarpsIntegration = integrationRegistry.getEssentialsWarpsIntegration();
+
     if (essentialsWarpsIntegration == null)
       return null;
 
@@ -452,6 +452,8 @@ public class ResultDisplay extends Display<ResultDisplayData> implements Dynamic
   }
 
   public @Nullable PlayerWarpData getNearestPlayerWarp(CachedShop cachedShop) {
+    var playerWarpsIntegration = integrationRegistry.getPlayerWarpsIntegration();
+
     if (playerWarpsIntegration == null)
       return null;
 

@@ -17,8 +17,7 @@ import me.blvckbytes.quick_shop_search.config.MainSection;
 import me.blvckbytes.quick_shop_search.display.DisplayHandler;
 import me.blvckbytes.quick_shop_search.display.teleport.TeleportDisplayData;
 import me.blvckbytes.quick_shop_search.display.teleport.TeleportDisplayHandler;
-import me.blvckbytes.quick_shop_search.integration.essentials_warps.IEssentialsWarpsIntegration;
-import me.blvckbytes.quick_shop_search.integration.player_warps.IPlayerWarpsIntegration;
+import me.blvckbytes.quick_shop_search.integration.IntegrationRegistry;
 import org.bukkit.Location;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Sign;
@@ -52,8 +51,7 @@ public class ResultDisplayHandler extends DisplayHandler<ResultDisplay, ResultDi
   private final UidScopedNamedStampStore stampStore;
   private final ChatPromptManager chatPromptManager;
   private final TeleportDisplayHandler teleportDisplayHandler;
-  private final @Nullable IPlayerWarpsIntegration playerWarpsIntegration;
-  private final @Nullable IEssentialsWarpsIntegration essentialsWarpsIntegration;
+  private final IntegrationRegistry integrationRegistry;
   private final Map<UUID, FeesPayBackTask> feesPayBackTaskByPlayerId;
 
   public ResultDisplayHandler(
@@ -65,8 +63,7 @@ public class ResultDisplayHandler extends DisplayHandler<ResultDisplay, ResultDi
     UidScopedNamedStampStore stampStore,
     ChatPromptManager chatPromptManager,
     TeleportDisplayHandler teleportDisplayHandler,
-    @Nullable IPlayerWarpsIntegration playerWarpsIntegration,
-    @Nullable IEssentialsWarpsIntegration essentialsWarpsIntegration
+    IntegrationRegistry integrationRegistry
   ) {
     super(config, scheduler);
 
@@ -76,8 +73,7 @@ public class ResultDisplayHandler extends DisplayHandler<ResultDisplay, ResultDi
     this.stampStore = stampStore;
     this.chatPromptManager = chatPromptManager;
     this.teleportDisplayHandler = teleportDisplayHandler;
-    this.playerWarpsIntegration = playerWarpsIntegration;
-    this.essentialsWarpsIntegration = essentialsWarpsIntegration;
+    this.integrationRegistry = integrationRegistry;
     this.feesPayBackTaskByPlayerId = new HashMap<>();
   }
 
@@ -109,7 +105,7 @@ public class ResultDisplayHandler extends DisplayHandler<ResultDisplay, ResultDi
 
   @Override
   public ResultDisplay instantiateDisplay(Player player, ResultDisplayData displayData) {
-    return new ResultDisplay(scheduler, playerWarpsIntegration, essentialsWarpsIntegration, config, player, displayData, stateStore.loadState(player));
+    return new ResultDisplay(scheduler, integrationRegistry, config, player, displayData, stateStore.loadState(player));
   }
 
   @Override
