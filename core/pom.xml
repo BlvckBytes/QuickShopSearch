@@ -18,25 +18,6 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
-    <repositories>
-        <repository>
-            <id>jitpack.io</id>
-            <url>https://jitpack.io</url>
-        </repository>
-        <repository>
-            <id>olzie-repo</id>
-            <url>https://repo.olziedev.com/</url>
-        </repository>
-        <repository>
-            <id>essentialsX</id>
-            <url>https://repo.essentialsx.net/releases/</url>
-        </repository>
-        <repository>
-            <id>sk89q-repo</id>
-            <url>https://maven.enginehub.org/repo/</url>
-        </repository>
-    </repositories>
-
     <dependencies>
         <dependency>
             <groupId>net.kyori</groupId>
@@ -88,37 +69,24 @@
             <version>2.3</version>
         </dependency>
         <dependency>
+            <groupId>me.blvckbytes</groupId>
+            <artifactId>olziedev_player_warps_integration</artifactId>
+            <version>${revision}</version>
         </dependency>
         <dependency>
-            <groupId>com.olziedev</groupId>
-            <artifactId>playerwarps-api</artifactId>
-            <version>7.7.1</version>
-            <scope>provided</scope>
+            <groupId>me.blvckbytes</groupId>
+            <artifactId>revivalo_player_warps_integration</artifactId>
+            <version>${revision}</version>
         </dependency>
         <dependency>
-            <groupId>net.essentialsx</groupId>
-            <artifactId>EssentialsX</artifactId>
-            <version>2.20.1</version>
-            <scope>provided</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>*</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-            </exclusions>
+            <groupId>me.blvckbytes</groupId>
+            <artifactId>essentials_warps_integration</artifactId>
+            <version>${revision}</version>
         </dependency>
         <dependency>
-            <groupId>dev.revivalo</groupId>
-            <artifactId>player-warps</artifactId>
-            <version>3.3.2</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/libs/PlayerWarps-3.3.2.jar</systemPath>
-        </dependency>
-        <dependency>
-            <groupId>com.sk89q.worldguard</groupId>
-            <artifactId>worldguard-bukkit</artifactId>
-            <version>7.0.13</version>
-            <scope>provided</scope>
+            <groupId>me.blvckbytes</groupId>
+            <artifactId>worldguard_integration</artifactId>
+            <version>${revision}</version>
         </dependency>
     </dependencies>
 
@@ -150,6 +118,10 @@
                             <include>me.blvckbytes:qs_lte_6207</include>
                             <include>me.blvckbytes:qs_gt_6207_lte_6208</include>
                             <include>me.blvckbytes:qs_gt_6208</include>
+                            <include>me.blvckbytes:olziedev_player_warps_integration</include>
+                            <include>me.blvckbytes:revivalo_player_warps_integration</include>
+                            <include>me.blvckbytes:essentials_warps_integration</include>
+                            <include>me.blvckbytes:worldguard_integration</include>
                             <include>com.github.technicallycoded:FoliaLib</include>
                             <!-- [1] Shouldn't be necessary anymore on newer versions of bukkit, but I prefer backwards-compatibility over file-size. -->
                             <include>org.yaml:snakeyaml</include>

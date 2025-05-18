@@ -22,6 +22,10 @@
         <module>qs_gt_6207_lte_6208</module>
         <module>common</module>
         <module>qs_gt_6208</module>
+        <module>integration/olziedev_player_warps_integration</module>
+        <module>integration/revivalo_player_warps_integration</module>
+        <module>integration/essentials_warps_integration</module>
+        <module>integration/worldguard_integration</module>
     </modules>
 
     <repositories>
