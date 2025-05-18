@@ -55,7 +55,7 @@ public class SubCommand_Advertise implements CommandHandler<Player> {
       return;
     }
 
-    var toggleResult = targetShop.toggleAdvertising();
+    var toggleResult = targetShop.toggleAdvertising(player);
 
     switch (toggleResult) {
       case NOW_ON: {
@@ -71,6 +71,14 @@ public class SubCommand_Advertise implements CommandHandler<Player> {
           message = config.rootSection.playerMessages.commandAdvertiseDisabledSelf;
         else
           message = config.rootSection.playerMessages.commandAdvertiseDisabledOther;
+        break;
+      }
+
+      case NOT_ALLOWED: {
+        if (isShopOwner)
+          message = config.rootSection.playerMessages.commandAdvertiseDisallowedSelf;
+        else
+          message = config.rootSection.playerMessages.commandAdvertiseDisallowedOther;
         break;
       }
 

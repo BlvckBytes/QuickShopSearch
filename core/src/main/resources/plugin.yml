@@ -92,3 +92,9 @@ permissions:
   quickshopsearch.feature.fees.permission-name.<name>:
     description: 'Access permission-guarded fees with a name of <name>'
     default: op
+  quickshopsearch.command.advertise.allowlist-bypass:
+    description: 'Bypass the allow-list of regions when advertising owned shops'
+    default: op
+  quickshopsearch.command.advertise.allowlist-bypass.others:
+    description: 'Bypass the allow-list of regions when advertising foreign shops'
+    default: op

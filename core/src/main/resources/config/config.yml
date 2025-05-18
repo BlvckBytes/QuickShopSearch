@@ -482,6 +482,8 @@ playerMessages:
   commandAdvertiseEnabledOther$: '@{MESSAGE-ADVERTISE-ENABLED-OTHER(prefix=lut["MESSAGE_PREFIX"])}'
   commandAdvertiseDisabledSelf$: '@{MESSAGE-ADVERTISE-DISABLED-SELF(prefix=lut["MESSAGE_PREFIX"])}'
   commandAdvertiseDisabledOther$: '@{MESSAGE-ADVERTISE-DISABLED-OTHER(prefix=lut["MESSAGE_PREFIX"])}'
+  commandAdvertiseDisallowedSelf$: '@{MESSAGE-ADVERTISE-DISALLOWED-SELF(prefix=lut["MESSAGE_PREFIX"])}'
+  commandAdvertiseDisallowedOther$: '@{MESSAGE-ADVERTISE-DISALLOWED-OTHER(prefix=lut["MESSAGE_PREFIX"])}'
   # - duration: String
   pendingCooldownFeatureTeleportSameShop$: '@{MESSAGE-PENDING-COOLDOWN-FEATURE-TELEPORT-SAME-SHOP(prefix=lut["MESSAGE_PREFIX"])}'
   # - duration: String
@@ -620,6 +622,9 @@ worldGuardIntegration:
   enabled: false
   ignoredIds: []
   ignoredPriorities: []
+  advertiseIdsAllowList: []
+  autoAdvertiseIfInAllowList: false
+  disableAdvertiseIfNotAllowed: false
 
 fees:
   enabled: false

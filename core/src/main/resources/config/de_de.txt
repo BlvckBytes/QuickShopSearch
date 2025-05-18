@@ -375,6 +375,8 @@ MESSAGE-ADVERTISE-ENABLED-SELF        {prefix} &7Du inserierst &anun &7deinen Sh
 MESSAGE-ADVERTISE-ENABLED-OTHER       {prefix} &7Der Shop von &e{owner} &7bei &e{loc_x}&7, &e{loc_y}&7, &e{loc_z} &7ist &anun &7inseriert.
 MESSAGE-ADVERTISE-DISABLED-SELF       {prefix} &7Du inserierst deinen Shop bei &e{loc_x}&7, &e{loc_y}&7, &e{loc_z} &7nun &cnicht mehr&7.
 MESSAGE-ADVERTISE-DISABLED-OTHER      {prefix} &7Der Shop von &e{owner} &7bei &e{loc_x}&7, &e{loc_y}&7, &e{loc_z} &7ist &cnicht mehr &7inseriert.
+MESSAGE-ADVERTISE-DISALLOWED-SELF     {prefix} &7Dein shop bei &e{loc_x}&7, &e{loc_y}&7, &e{loc_z} &7darf nicht inseriert werden.
+MESSAGE-ADVERTISE-DISALLOWED-OTHER    {prefix} &7Der Shop von &e{owner} &7bei &e{loc_x}&7, &e{loc_y}&7, &e{loc_z} &7darf nicht inseriert werden.
 
 # - duration: String
 MESSAGE-PENDING-COOLDOWN-FEATURE-TELEPORT-SAME-SHOP              {prefix} &7Bitte warte noch {duration}&7, bevor du dich erneut zum &cselben Shop &7teleportierst!

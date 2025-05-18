@@ -9,8 +9,12 @@ import me.blvckbytes.bukkitevaluable.IItemBuildable;
 import me.blvckbytes.bukkitevaluable.ItemBuilder;
 import me.blvckbytes.bukkitevaluable.section.ItemStackSection;
 import me.blvckbytes.gpeee.interpreter.EvaluationEnvironmentBuilder;
+import me.blvckbytes.quick_shop_search.PluginPermission;
 import me.blvckbytes.quick_shop_search.config.MainSection;
+import me.blvckbytes.quick_shop_search.integration.IntegrationRegistry;
+import me.blvckbytes.quick_shop_search.integration.worldguard.IWorldGuardIntegration;
 import org.bukkit.NamespacedKey;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
@@ -22,6 +26,12 @@ import java.util.logging.Logger;
 
 public class CachedShop {
 
+  private enum AdvertiseAllow {
+    ALLOWED,
+    DISALLOWED,
+    UNSET
+  }
+
   private final Logger logger;
   public final Shop handle;
   public final String shopWorldName;
@@ -31,6 +41,7 @@ public class CachedShop {
   private final EvaluationEnvironmentBuilder shopEnvironment;
   private final ConfigKeeper<MainSection> config;
   private final NamespacedKey keyIsAdvertising;
+  private final IntegrationRegistry integrationRegistry;
 
   private IItemBuildable representativeBuildable;
   public int cachedStock;
@@ -44,13 +55,15 @@ public class CachedShop {
     Plugin plugin,
     PlatformScheduler scheduler,
     Shop handle,
-    ConfigKeeper<MainSection> config
+    ConfigKeeper<MainSection> config,
+    IntegrationRegistry integrationRegistry
   ) {
     this.logger = plugin.getLogger();
     this.handle = handle;
     this.diff = new ShopScalarDiff(this);
     this.config = config;
     this.keyIsAdvertising = new NamespacedKey(plugin, "is_advertising");
+    this.integrationRegistry = integrationRegistry;
 
     var shopLocation = handle.getLocation();
     var shopWorld = shopLocation.getWorld();
@@ -83,7 +96,6 @@ public class CachedShop {
       this.cachedType = handle.getShopType();
       this.cachedPrice = handle.getPrice();
       this.cachedName = handle.getShopName();
-      this.loadAdvertising();
       this.diff.update();
     });
   }
@@ -112,6 +124,7 @@ public class CachedShop {
   }
 
   public void onConfigReload() {
+    this.loadAdvertising();
     this.representativePatch = config.rootSection.resultDisplay.items.representativePatch;
     this.representativeBuildable = makeBuildable(this.handle.getItem());
   }
@@ -133,7 +146,17 @@ public class CachedShop {
       .patch(representativePatch);
   }
 
-  public ToggleResult toggleAdvertising() {
+  public ToggleResult toggleAdvertising(Player player) {
+    if (getAdvertiseAllowState() != AdvertiseAllow.ALLOWED) {
+      var bypassPermission = PluginPermission.ADVERTISE_COMMAND_ALLOWLIST_BYPASS;
+
+      if (!player.getUniqueId().equals(handle.getOwner().getUniqueId()))
+        bypassPermission = PluginPermission.ADVERTISE_COMMAND_ALLOWLIST_BYPASS_OTHERS;
+
+      if (!bypassPermission.has(player))
+        return ToggleResult.NOT_ALLOWED;
+    }
+
     var previousState = this.advertising;
     this.advertising ^= true;
 
@@ -156,8 +179,29 @@ public class CachedShop {
   }
 
   private void loadAdvertising() {
+    var allowState = getAdvertiseAllowState();
+
+    if (allowState == AdvertiseAllow.DISALLOWED) {
+      if (config.rootSection.worldGuardIntegration.disableAdvertiseIfNotAllowed) {
+        this.advertising = false;
+        return;
+      }
+    }
+
     tryAccessDataContainer(container -> {
       var value = container.get(keyIsAdvertising, PersistentDataType.BYTE);
+
+      // No state has yet been manually chosen - consider auto-advertise.
+      // If a user has chosen to hide their shop, it shall stay hidden.
+      if (value == null) {
+        if (allowState == AdvertiseAllow.ALLOWED) {
+          if (config.rootSection.worldGuardIntegration.autoAdvertiseIfInAllowList) {
+            this.advertising = true;
+            return;
+          }
+        }
+      }
+
       this.advertising = value != null && value == 1;
     });
   }
@@ -181,5 +225,24 @@ public class CachedShop {
 
     handler.accept(signs.get(0).getPersistentDataContainer());
     return true;
+  }
+
+  private AdvertiseAllow getAdvertiseAllowState() {
+    var worldGuardIntegration = integrationRegistry.getWorldGuardIntegration();
+
+    if (worldGuardIntegration == null)
+      return AdvertiseAllow.UNSET;
+
+    var regionsAllowList = config.rootSection.worldGuardIntegration.advertiseIdsAllowList;
+
+    if (regionsAllowList.isEmpty())
+      return AdvertiseAllow.UNSET;
+
+    var shopRegions = worldGuardIntegration.getRegionsContainingLocation(handle.getLocation());
+
+    if (IWorldGuardIntegration.isRegionAllowed(regionsAllowList, shopRegions))
+      return AdvertiseAllow.ALLOWED;
+
+    return AdvertiseAllow.DISALLOWED;
   }
 }

@@ -10,6 +10,7 @@ import me.blvckbytes.bukkitevaluable.ConfigKeeper;
 import me.blvckbytes.bukkitevaluable.ReloadPriority;
 import me.blvckbytes.quick_shop_search.config.MainSection;
 import me.blvckbytes.quick_shop_search.display.result.ResultDisplayHandler;
+import me.blvckbytes.quick_shop_search.integration.IntegrationRegistry;
 import org.bukkit.Location;
 import org.bukkit.block.Chest;
 import org.bukkit.block.DoubleChest;
@@ -31,6 +32,7 @@ public class CachedShopRegistry implements QuickShopEventConsumer, Listener {
   private final PlatformScheduler scheduler;
   private final Map<Location, CachedShop> existingShopByLocation;
   private final ConfigKeeper<MainSection> config;
+  private final IntegrationRegistry integrationRegistry;
   private final ResultDisplayHandler displayHandler;
   private final Long2ObjectMap<Set<CachedShop>> shopsBucketByCoordinateHash;
 
@@ -39,11 +41,13 @@ public class CachedShopRegistry implements QuickShopEventConsumer, Listener {
     PlatformScheduler scheduler,
     ResultDisplayHandler displayHandler,
     ConfigKeeper<MainSection> config,
+    IntegrationRegistry integrationRegistry,
     Logger logger
   ) {
     this.plugin = plugin;
     this.scheduler = scheduler;
     this.config = config;
+    this.integrationRegistry = integrationRegistry;
     this.displayHandler = displayHandler;
     this.existingShopByLocation = new HashMap<>();
     this.shopsBucketByCoordinateHash = new Long2ObjectAVLTreeMap<>();
@@ -58,7 +62,7 @@ public class CachedShopRegistry implements QuickShopEventConsumer, Listener {
     logger.info("Getting all globally existing shops... This may take a while!");
 
     for (var shop : QuickShopAPI.getInstance().getShopManager().getAllShops()) {
-      var cachedShop = new CachedShop(plugin, scheduler, shop, config);
+      var cachedShop = new CachedShop(plugin, scheduler, shop, config, integrationRegistry);
 
       existingShopByLocation.put(shop.getLocation(), cachedShop);
       addToCoordinateLookup(cachedShop);
@@ -98,7 +102,7 @@ public class CachedShopRegistry implements QuickShopEventConsumer, Listener {
   public void onShopCreate(Shop shop) {
     scheduler.runAsync(scheduleTask -> {
       synchronized (existingShopByLocation) {
-        var cachedShop = new CachedShop(plugin, scheduler, shop, config);
+        var cachedShop = new CachedShop(plugin, scheduler, shop, config, integrationRegistry);
 
         existingShopByLocation.put(shop.getLocation(), cachedShop);
         addToCoordinateLookup(cachedShop);

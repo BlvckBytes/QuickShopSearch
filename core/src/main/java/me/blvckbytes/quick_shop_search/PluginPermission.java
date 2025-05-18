@@ -10,6 +10,8 @@ public enum PluginPermission {
   RELOAD_COMMAND("command.qssrl"),
   ADVERTISE_COMMAND("command.advertise"),
   ADVERTISE_COMMAND_OWNER_BYPASS("command.advertise.owner-bypass"),
+  ADVERTISE_COMMAND_ALLOWLIST_BYPASS("command.advertise.allowlist-bypass"),
+  ADVERTISE_COMMAND_ALLOWLIST_BYPASS_OTHERS("command.advertise.allowlist-bypass.others"),
   EMPTY_PREDICATE("empty-predicate"),
   FEATURE_SORT("feature.sort"),
   FEATURE_FILTER("feature.filter"),

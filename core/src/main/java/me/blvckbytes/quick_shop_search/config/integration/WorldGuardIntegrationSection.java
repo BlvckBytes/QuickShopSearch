@@ -11,6 +11,9 @@ public class WorldGuardIntegrationSection extends AConfigSection {
   public boolean enabled;
   public Set<Integer> ignoredPriorities;
   public Set<String> ignoredIds;
+  public Set<String> advertiseIdsAllowList;
+  public boolean autoAdvertiseIfInAllowList;
+  public boolean disableAdvertiseIfNotAllowed;
 
   public WorldGuardIntegrationSection(EvaluationEnvironmentBuilder baseEnvironment) {
     super(baseEnvironment);
@@ -18,5 +21,8 @@ public class WorldGuardIntegrationSection extends AConfigSection {
     this.enabled = false;
     this.ignoredPriorities = new HashSet<>();
     this.ignoredIds = new HashSet<>();
+    this.advertiseIdsAllowList = new HashSet<>();
+    this.autoAdvertiseIfInAllowList = false;
+    this.disableAdvertiseIfNotAllowed = false;
   }
 }

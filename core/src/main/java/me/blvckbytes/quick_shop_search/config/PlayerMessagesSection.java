@@ -66,6 +66,8 @@ public class PlayerMessagesSection extends AConfigSection {
   public @Nullable BukkitEvaluable commandAdvertiseEnabledOther;
   public @Nullable BukkitEvaluable commandAdvertiseDisabledSelf;
   public @Nullable BukkitEvaluable commandAdvertiseDisabledOther;
+  public @Nullable BukkitEvaluable commandAdvertiseDisallowedSelf;
+  public @Nullable BukkitEvaluable commandAdvertiseDisallowedOther;
 
   public @Nullable BukkitEvaluable pendingCooldownFeatureTeleportSameShop;
   public @Nullable BukkitEvaluable pendingCooldownFeatureTeleportAnyShop;

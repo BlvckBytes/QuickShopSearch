@@ -374,6 +374,8 @@ MESSAGE-ADVERTISE-ENABLED-SELF        {prefix} &7You are &anow &7advertising you
 MESSAGE-ADVERTISE-ENABLED-OTHER       {prefix} &7The shop of &e{owner} &7at &e{loc_x}&7, &e{loc_y}&7, &e{loc_z} &7is &anow &7advertised.
 MESSAGE-ADVERTISE-DISABLED-SELF       {prefix} &7You are &cno longer &7advertising your shop at &e{loc_x}&7, &e{loc_y}&7, &e{loc_z}&7.
 MESSAGE-ADVERTISE-DISABLED-OTHER      {prefix} &7The shop of &e{owner} &7at &e{loc_x}&7, &e{loc_y}&7, &e{loc_z} &7is &cno longer &7advertised.
+MESSAGE-ADVERTISE-DISALLOWED-SELF     {prefix} &7Your shop at &e{loc_x}&7, &e{loc_y}&7, &e{loc_z} &7is not allowed to advertise.
+MESSAGE-ADVERTISE-DISALLOWED-OTHER    {prefix} &7The shop of &e{owner} &7at &e{loc_x}&7, &e{loc_y}&7, &e{loc_z} &7is not allowed to advertise.
 
 # - duration: String
 MESSAGE-PENDING-COOLDOWN-FEATURE-TELEPORT-SAME-SHOP         {prefix} &7Please wait another {duration}&7, until you teleport to the &csame shop &7again!
