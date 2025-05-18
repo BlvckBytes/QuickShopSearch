@@ -17,6 +17,7 @@ import me.blvckbytes.quick_shop_search.config.MainSection;
 import me.blvckbytes.quick_shop_search.display.DisplayHandler;
 import me.blvckbytes.quick_shop_search.display.teleport.TeleportDisplayData;
 import me.blvckbytes.quick_shop_search.display.teleport.TeleportDisplayHandler;
+import me.blvckbytes.quick_shop_search.integration.essentials_warps.IEssentialsWarpsIntegration;
 import me.blvckbytes.quick_shop_search.integration.player_warps.IPlayerWarpsIntegration;
 import org.bukkit.Location;
 import org.bukkit.block.BlockFace;
@@ -52,6 +53,7 @@ public class ResultDisplayHandler extends DisplayHandler<ResultDisplay, ResultDi
   private final ChatPromptManager chatPromptManager;
   private final TeleportDisplayHandler teleportDisplayHandler;
   private final @Nullable IPlayerWarpsIntegration playerWarpsIntegration;
+  private final @Nullable IEssentialsWarpsIntegration essentialsWarpsIntegration;
   private final Map<UUID, FeesPayBackTask> feesPayBackTaskByPlayerId;
 
   public ResultDisplayHandler(
@@ -63,7 +65,8 @@ public class ResultDisplayHandler extends DisplayHandler<ResultDisplay, ResultDi
     UidScopedNamedStampStore stampStore,
     ChatPromptManager chatPromptManager,
     TeleportDisplayHandler teleportDisplayHandler,
-    @Nullable IPlayerWarpsIntegration playerWarpsIntegration
+    @Nullable IPlayerWarpsIntegration playerWarpsIntegration,
+    @Nullable IEssentialsWarpsIntegration essentialsWarpsIntegration
   ) {
     super(config, scheduler);
 
@@ -74,6 +77,7 @@ public class ResultDisplayHandler extends DisplayHandler<ResultDisplay, ResultDi
     this.chatPromptManager = chatPromptManager;
     this.teleportDisplayHandler = teleportDisplayHandler;
     this.playerWarpsIntegration = playerWarpsIntegration;
+    this.essentialsWarpsIntegration = essentialsWarpsIntegration;
     this.feesPayBackTaskByPlayerId = new HashMap<>();
   }
 
@@ -105,7 +109,7 @@ public class ResultDisplayHandler extends DisplayHandler<ResultDisplay, ResultDi
 
   @Override
   public ResultDisplay instantiateDisplay(Player player, ResultDisplayData displayData) {
-    return new ResultDisplay(scheduler, playerWarpsIntegration, config, player, displayData, stateStore.loadState(player));
+    return new ResultDisplay(scheduler, playerWarpsIntegration, essentialsWarpsIntegration, config, player, displayData, stateStore.loadState(player));
   }
 
   @Override
@@ -573,11 +577,13 @@ public class ResultDisplayHandler extends DisplayHandler<ResultDisplay, ResultDi
       targetLocation = shopLocation.add(.5, 0, .5);
 
     var nearestPlayerWarp = display.getNearestPlayerWarp(cachedShop);
+    var nearestEssentialsWarp = display.getNearestEssentialsWarp(cachedShop);
 
     var teleportDisplayData = new TeleportDisplayData(
       targetLocation,
       display.getExtendedShopEnvironment(cachedShop),
       nearestPlayerWarp,
+      nearestEssentialsWarp,
       () -> reopen(display),
       () -> {
         for (var applicableCooldown : applicableCooldowns)
@@ -586,7 +592,7 @@ public class ResultDisplayHandler extends DisplayHandler<ResultDisplay, ResultDi
     );
 
     // Avoid showing a UI which only contains one functional choice
-    if (nearestPlayerWarp == null) {
+    if (nearestPlayerWarp == null && nearestEssentialsWarp == null) {
       teleportDisplayHandler.directlyTeleportToShopLocation(player, teleportDisplayData);
       return;
     }

@@ -26,6 +26,7 @@ public class TeleportDisplay extends Display<TeleportDisplayData> {
     config.rootSection.teleportDisplay.items.back.renderInto(inventory, displayData.extendedShopEnvironment());
     config.rootSection.teleportDisplay.items.shopLocation.renderInto(inventory, displayData.extendedShopEnvironment());
     config.rootSection.teleportDisplay.items.nearestPlayerWarpLocation.renderInto(inventory, displayData.extendedShopEnvironment());
+    config.rootSection.teleportDisplay.items.nearestEssentialsWarpLocation.renderInto(inventory, displayData.extendedShopEnvironment());
   }
 
   @Override

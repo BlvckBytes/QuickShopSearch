@@ -8,6 +8,8 @@ import javax.annotation.Nullable;
 
 public interface IPlayerWarpsIntegration extends Listener {
 
+  PlayerWarpData PLAYER_WARP_NULL_SENTINEL = new PlayerWarpData(null, null, null, false);
+
   @Nullable PlayerWarpData locateNearestWithinRange(Player player, Location origin, int blockRadius);
 
 }

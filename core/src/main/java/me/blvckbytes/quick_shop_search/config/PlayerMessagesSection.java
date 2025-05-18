@@ -13,6 +13,7 @@ public class PlayerMessagesSection extends AConfigSection {
   public @Nullable BukkitEvaluable beforeQuerying;
   public @Nullable BukkitEvaluable beforeTeleporting;
   public @Nullable BukkitEvaluable beforeTeleportingNearestPlayerWarp;
+  public @Nullable BukkitEvaluable beforeTeleportingNearestEssentialsWarp;
   public @Nullable BukkitEvaluable queryingAllShops;
   public @Nullable BukkitEvaluable usageQsslCommandLanguage;
   public @Nullable BukkitEvaluable unknownLanguageActionBar;

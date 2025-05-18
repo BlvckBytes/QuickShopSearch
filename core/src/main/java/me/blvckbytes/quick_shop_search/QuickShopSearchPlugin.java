@@ -109,7 +109,8 @@ public class QuickShopSearchPlugin extends JavaPlugin {
         stampStore,
         chatPromptManager,
         teleportDisplayHandler,
-        playerWarpsIntegration
+        playerWarpsIntegration,
+        essentialsWarpsIntegration
       );
 
       var shopRegistry = new CachedShopRegistry(this, scheduler, resultDisplayHandler, config, logger);

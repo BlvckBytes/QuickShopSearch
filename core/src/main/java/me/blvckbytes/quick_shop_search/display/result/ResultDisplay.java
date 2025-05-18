@@ -20,6 +20,8 @@ import me.blvckbytes.quick_shop_search.cache.ShopUpdate;
 import me.blvckbytes.quick_shop_search.command.SearchFlag;
 import me.blvckbytes.quick_shop_search.config.MainSection;
 import me.blvckbytes.quick_shop_search.display.Display;
+import me.blvckbytes.quick_shop_search.integration.essentials_warps.EssentialsWarpData;
+import me.blvckbytes.quick_shop_search.integration.essentials_warps.IEssentialsWarpsIntegration;
 import me.blvckbytes.quick_shop_search.integration.player_warps.IPlayerWarpsIntegration;
 import me.blvckbytes.quick_shop_search.integration.player_warps.PlayerWarpData;
 import org.bukkit.Location;
@@ -32,14 +34,14 @@ import java.util.*;
 
 public class ResultDisplay extends Display<ResultDisplayData> implements DynamicPropertyProvider {
 
-  private static final PlayerWarpData PLAYER_WARP_NULL_SENTINEL = new PlayerWarpData(null, null, null, false);
-
   private final @Nullable IPlayerWarpsIntegration playerWarpsIntegration;
+  private final @Nullable IEssentialsWarpsIntegration essentialsWarpsIntegration;
   private final AsyncTaskQueue asyncQueue;
 
   private final Long2LongMap shopDistanceByShopId;
   private final Long2ObjectMap<CalculatedFees> shopFeesByShopId;
   private final Long2ObjectMap<@Nullable PlayerWarpData> nearestPlayerWarpByShopId;
+  private final Long2ObjectMap<@Nullable EssentialsWarpData> nearestEssentialsWarpByShopId;
   private List<CachedShop> filteredUnSortedShops;
   private List<CachedShop> filteredSortedShops;
 
@@ -60,6 +62,7 @@ public class ResultDisplay extends Display<ResultDisplayData> implements Dynamic
   public ResultDisplay(
     PlatformScheduler scheduler,
     @Nullable IPlayerWarpsIntegration playerWarpsIntegration,
+    @Nullable IEssentialsWarpsIntegration essentialsWarpsIntegration,
     ConfigKeeper<MainSection> config,
     Player player,
     ResultDisplayData displayData,
@@ -68,12 +71,14 @@ public class ResultDisplay extends Display<ResultDisplayData> implements Dynamic
     super(player, displayData, config, scheduler);
 
     this.playerWarpsIntegration = playerWarpsIntegration;
+    this.essentialsWarpsIntegration = essentialsWarpsIntegration;
     this.asyncQueue = new AsyncTaskQueue(scheduler);
     this.playerUser = QUserImpl.createFullFilled(player);
     this.playerLocation = player.getLocation();
     this.shopDistanceByShopId = new Long2LongAVLTreeMap();
     this.shopFeesByShopId = new Long2ObjectAVLTreeMap<>();
     this.nearestPlayerWarpByShopId = new Long2ObjectAVLTreeMap<>();
+    this.nearestEssentialsWarpByShopId = new Long2ObjectAVLTreeMap<>();
     this.slotMap = new CachedShop[9 * 6];
     this.selectionState = selectionState;
 
@@ -424,6 +429,28 @@ public class ResultDisplay extends Display<ResultDisplayData> implements Dynamic
       config.rootSection.resultDisplay.items.activeSearch.renderInto(inventory, activeSearchEnvironment);
   }
 
+  public @Nullable EssentialsWarpData getNearestEssentialsWarp(CachedShop cachedShop) {
+    if (essentialsWarpsIntegration == null)
+      return null;
+
+    var shopId = cachedShop.handle.getShopId();
+    var result = nearestEssentialsWarpByShopId.get(shopId);
+
+    if (result == null) {
+      result = essentialsWarpsIntegration.locateNearestWithinRange(player, cachedShop.handle.getLocation(), config.rootSection.essentialsWarpsIntegration.nearestWarpBlockRadius);
+
+      if (result == null)
+        result = IEssentialsWarpsIntegration.ESSENTIALS_WARP_NULL_SENTINEL;
+
+      nearestEssentialsWarpByShopId.put(shopId, result);
+    }
+
+    if (result == IEssentialsWarpsIntegration.ESSENTIALS_WARP_NULL_SENTINEL)
+      return null;
+
+    return result;
+  }
+
   public @Nullable PlayerWarpData getNearestPlayerWarp(CachedShop cachedShop) {
     if (playerWarpsIntegration == null)
       return null;
@@ -435,12 +462,12 @@ public class ResultDisplay extends Display<ResultDisplayData> implements Dynamic
       result = playerWarpsIntegration.locateNearestWithinRange(player, cachedShop.handle.getLocation(), config.rootSection.playerWarpsIntegration.nearestWarpBlockRadius);
 
       if (result == null)
-        result = PLAYER_WARP_NULL_SENTINEL;
+        result = IPlayerWarpsIntegration.PLAYER_WARP_NULL_SENTINEL;
 
       nearestPlayerWarpByShopId.put(shopId, result);
     }
 
-    if (result == PLAYER_WARP_NULL_SENTINEL)
+    if (result == IPlayerWarpsIntegration.PLAYER_WARP_NULL_SENTINEL)
       return null;
 
     return result;
@@ -451,6 +478,7 @@ public class ResultDisplay extends Display<ResultDisplayData> implements Dynamic
     var isOtherWorld = distance < 0;
     var fees = getShopFees(cachedShop);
     var nearestPlayerWarp = getNearestPlayerWarp(cachedShop);
+    var nearestEssentialsWarp = getNearestEssentialsWarp(cachedShop);
 
     var shopManager = QuickShopAPI.getInstance().getShopManager();
 
@@ -474,6 +502,22 @@ public class ResultDisplay extends Display<ResultDisplayData> implements Dynamic
               ? Math.round(nearestPlayerWarp.location().distance(playerLocation))
               : -1
           )
+      )
+      .withStaticVariable("essentials_warp_display_details", config.rootSection.essentialsWarpsIntegration.displayNearestInIcon)
+      .withStaticVariable("essentials_warp_name", nearestEssentialsWarp == null ? null : nearestEssentialsWarp.name())
+      .withStaticVariable("essentials_warp_world", nearestEssentialsWarp == null ? null : Objects.requireNonNull(nearestEssentialsWarp.location().getWorld()).getName())
+      .withStaticVariable("essentials_warp_x", nearestEssentialsWarp == null ? null : nearestEssentialsWarp.location().getBlockX())
+      .withStaticVariable("essentials_warp_y", nearestEssentialsWarp == null ? null : nearestEssentialsWarp.location().getBlockY())
+      .withStaticVariable("essentials_warp_z", nearestEssentialsWarp == null ? null : nearestEssentialsWarp.location().getBlockZ())
+      .withStaticVariable(
+        "essentials_warp_distance",
+        nearestEssentialsWarp == null
+          ? null
+          : (int) (
+          Objects.requireNonNull(playerLocation.getWorld()).equals(nearestEssentialsWarp.location().getWorld())
+            ? Math.round(nearestEssentialsWarp.location().distance(playerLocation))
+            : -1
+        )
       )
       .withStaticVariable(
         "can_teleport",

@@ -68,6 +68,25 @@ public class TeleportDisplayHandler extends DisplayHandler<TeleportDisplay, Tele
         if (display.displayData.afterTeleporting() != null)
           display.displayData.afterTeleporting().run();
       });
+
+      return;
+    }
+
+    if (config.rootSection.teleportDisplay.items.nearestEssentialsWarpLocation.getDisplaySlots().contains(slot)) {
+      var nearestEssentialsWarp = display.displayData.nearestEssentialsWarp();
+
+      if (nearestEssentialsWarp == null)
+        return;
+
+      scheduler.runAtEntity(player, scheduleTask -> player.closeInventory());
+
+      if ((message = config.rootSection.playerMessages.beforeTeleportingNearestEssentialsWarp) != null)
+        message.sendMessage(player, config.rootSection.getBaseEnvironment().build(display.displayData.extendedShopEnvironment()));
+
+      slowTeleportManager.initializeTeleportation(player, nearestEssentialsWarp.location(), () -> {
+        if (display.displayData.afterTeleporting() != null)
+          display.displayData.afterTeleporting().run();
+      });
     }
   }
 

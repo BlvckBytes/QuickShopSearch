@@ -111,6 +111,11 @@ resultDisplay:
           @{REPRESENTATIVE-LORE-NEAREST-PLAYER-WARP}
         else
           null
+      - |
+        if essentials_warp_display_details and essentials_warp_name != null then
+          @{REPRESENTATIVE-LORE-NEAREST-ESSENTIALS-WARP}
+        else
+          null
       - '@{ANY-CONTROL-LORE-SPACER}'
       - |
         if can_teleport then
@@ -249,6 +254,13 @@ resultDisplay:
 # - player_warp_y: Integer?
 # - player_warp_z: Integer?
 # - player_warp_distance: Integer?
+# - essentials_warp_display_details: Boolean
+# - essentials_warp_name: String?
+# - essentials_warp_world: String?
+# - essentials_warp_x: Integer?
+# - essentials_warp_y: Integer?
+# - essentials_warp_z: Integer?
+# - essentials_warp_distance: Integer?
 teleportDisplay:
   title: '@{TELEPORT-DISPLAY-TITLE}'
   rows: 1
@@ -305,6 +317,31 @@ teleportDisplay:
           @{ANY-CONTROL-LORE-SPACER}
         )
     # https://github.com/BlvckBytes/BukkitEvaluable#itemstack-section
+    nearestEssentialsWarpLocation:
+      slots: [4]
+      type$: 'if essentials_warp_name != null then "OAK_SIGN" else "BARRIER"'
+      name$: '@{TELEPORT-DISPLAY-NEAREST-ESSENTIALS-WARP-LOCATION-NAME}'
+      lore$: |
+        if essentials_warp_name != null then list_of(
+          " ",
+          @{ANY-CONTROL-LORE-SPACER},
+          @{TELEPORT-DISPLAY-NEAREST-ESSENTIALS-WARP-LOCATION-LORE-LOCATION-NAME},
+          @{TELEPORT-DISPLAY-NEAREST-ESSENTIALS-WARP-LOCATION-LORE-LOCATION-COORDINATES},
+          @{TELEPORT-DISPLAY-NEAREST-ESSENTIALS-WARP-LOCATION-LORE-LOCATION-WORLD},
+          if essentials_warp_distance < 0 then
+            @{TELEPORT-DISPLAY-NEAREST-ESSENTIALS-WARP-LOCATION-LORE-DISTANCE-OTHER-WORLD}
+          else
+            @{TELEPORT-DISPLAY-NEAREST-ESSENTIALS-WARP-LOCATION-LORE-DISTANCE},
+          @{ANY-CONTROL-LORE-SPACER},
+          @{TELEPORT-DISPLAY-NEAREST-ESSENTIALS-WARP-LOCATION-LORE-LEFT-CLICK-DESCRIPTION},
+          @{ANY-CONTROL-LORE-SPACER}
+        ) else list_of(
+          " ",
+          @{ANY-CONTROL-LORE-SPACER},
+          @{TELEPORT-DISPLAY-NEAREST-ESSENTIALS-WARP-LOCATION-LORE-HAS-NONE},
+          @{ANY-CONTROL-LORE-SPACER}
+        )
+    # https://github.com/BlvckBytes/BukkitEvaluable#itemstack-section
     filler:
       slots$: 'range(0, last_slot + 1)'
       type: BLACK_STAINED_GLASS_PANE
@@ -350,6 +387,27 @@ playerMessages:
   # - player_warp_z: Integer
   # - player_warp_distance: Integer
   beforeTeleportingNearestPlayerWarp$: '@{MESSAGE-BEFORE-TELEPORTING-NEAREST-PLAYER-WARP(prefix=lut["MESSAGE_PREFIX"])}'
+  # - owner: String
+  # - name: String?
+  # - price: Double
+  # - currency: String?
+  # - remaining_stock: Integer
+  # - remaining_space: Integer
+  # - is_selling: Boolean
+  # - is_buying: Boolean
+  # - is_unlimited: Boolean
+  # - loc_world: String?
+  # - loc_x: Integer
+  # - loc_y: Integer
+  # - loc_z: Integer
+  # - distance: Integer
+  # - essentials_warp_name: String
+  # - essentials_warp_world: String
+  # - essentials_warp_x: Integer
+  # - essentials_warp_y: Integer
+  # - essentials_warp_z: Integer
+  # - essentials_warp_distance: Integer
+  beforeTeleportingNearestEssentialsWarp$: '@{MESSAGE-BEFORE-TELEPORTING-NEAREST-ESSENTIALS-WARP(prefix=lut["MESSAGE_PREFIX"])}'
   # - number_shops: Integer
   # - predicate: String
   beforeQuerying$: '@{MESSAGE-BEFORE-QUERYING(prefix=lut["MESSAGE_PREFIX"])}'

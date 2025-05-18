@@ -8,6 +8,8 @@ import javax.annotation.Nullable;
 
 public interface IEssentialsWarpsIntegration extends Listener {
 
+  EssentialsWarpData ESSENTIALS_WARP_NULL_SENTINEL = new EssentialsWarpData(null, null);
+
   @Nullable EssentialsWarpData locateNearestWithinRange(Player player, Location origin, int blockRadius);
 
 }

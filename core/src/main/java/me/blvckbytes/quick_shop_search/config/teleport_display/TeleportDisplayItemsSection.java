@@ -11,6 +11,7 @@ public class TeleportDisplayItemsSection extends AConfigSection {
   public GuiItemStackSection back;
   public GuiItemStackSection shopLocation;
   public GuiItemStackSection nearestPlayerWarpLocation;
+  public GuiItemStackSection nearestEssentialsWarpLocation;
   public GuiItemStackSection filler;
 
   public TeleportDisplayItemsSection(EvaluationEnvironmentBuilder baseEnvironment) {

@@ -64,6 +64,13 @@ REPRESENTATIVE-LORE-MODE-SELLING-UNLIMITED   &8♦ &7Mode: &eSells Unlimited Ite
 # - player_warp_z: Integer
 # - player_warp_distance: Integer
 REPRESENTATIVE-LORE-NEAREST-PLAYER-WARP      &8♦ &7Player-Warp: &e{player_warp_name} ({player_warp_x}, {player_warp_y}, {player_warp_z})
+# - essentials_warp_name: String
+# - essentials_warp_world: String
+# - essentials_warp_x: Integer
+# - essentials_warp_y: Integer
+# - essentials_warp_z: Integer
+# - essentials_warp_distance: Integer
+REPRESENTATIVE-LORE-NEAREST-ESSENTIALS-WARP  &8♦ &7Warp: &e{essentials_warp_name} ({essentials_warp_x}, {essentials_warp_y}, {essentials_warp_z})
 REPRESENTATIVE-LORE-LEFT-CLICK-DESCRIPTION   &8➥ &eLeft-Click &7Teleport to the shop
 REPRESENTATIVE-LORE-RIGHT-CLICK-DESCRIPTION  &8➥ &eRight-Click &7Open preview
 REPRESENTATIVE-LORE-SHIFT-LEFT-CLICK-BUYING-DESCRIPTION  &8➥ &eShift-Left-Click &7Sell to shop
@@ -148,6 +155,15 @@ TELEPORT-DISPLAY-NEAREST-PLAYER-WARP-LOCATION-LORE-DISTANCE-OTHER-WORLD   &8♦ 
 TELEPORT-DISPLAY-NEAREST-PLAYER-WARP-LOCATION-LORE-LEFT-CLICK-DESCRIPTION &8➥ &eLeft-Click &7Teleport to the player-warp
 TELEPORT-DISPLAY-NEAREST-PLAYER-WARP-LOCATION-LORE-HAS-NONE               &8➥ &cNo player-warp available
 
+TELEPORT-DISPLAY-NEAREST-ESSENTIALS-WARP-LOCATION-NAME                        &8» &6Nearest Warp &8«
+TELEPORT-DISPLAY-NEAREST-ESSENTIALS-WARP-LOCATION-LORE-LOCATION-NAME          &8♦ &7Name: &e{essentials_warp_name}
+TELEPORT-DISPLAY-NEAREST-ESSENTIALS-WARP-LOCATION-LORE-LOCATION-COORDINATES   &8♦ &7Coordinates: &e{essentials_warp_x} {essentials_warp_y} {essentials_warp_z}
+TELEPORT-DISPLAY-NEAREST-ESSENTIALS-WARP-LOCATION-LORE-LOCATION-WORLD         &8♦ &7World: &e{essentials_warp_world}
+TELEPORT-DISPLAY-NEAREST-ESSENTIALS-WARP-LOCATION-LORE-DISTANCE               &8♦ &7Distance: &e{essentials_warp_distance} Blocks
+TELEPORT-DISPLAY-NEAREST-ESSENTIALS-WARP-LOCATION-LORE-DISTANCE-OTHER-WORLD   &8♦ &7Distance: &cDifferent World
+TELEPORT-DISPLAY-NEAREST-ESSENTIALS-WARP-LOCATION-LORE-LEFT-CLICK-DESCRIPTION &8➥ &eLeft-Click &7Teleport to the warp
+TELEPORT-DISPLAY-NEAREST-ESSENTIALS-WARP-LOCATION-LORE-HAS-NONE               &8➥ &cNo warp available
+
 # ==================== END TeleportDisplay ====================
 
 # ==================== BEGIN Messages ====================
@@ -190,6 +206,25 @@ MESSAGE-BEFORE-TELEPORTING                  {prefix} &7Teleporting to the Shop o
 # - player_warp_z: Integer
 # - player_warp_distance: Integer
 MESSAGE-BEFORE-TELEPORTING-NEAREST-PLAYER-WARP {prefix} &7Teleporting to the nearest player-warp &e{player_warp_name} &7at &e{player_warp_x}&7, &e{player_warp_y}&7, &e{player_warp_z} &7of the Shop of &e{owner} &7at &e{loc_x}&7, &e{loc_y}&7, &e{loc_z}&7.
+# - name: String
+# - owner: String
+# - item_type: String
+# - loc_world: String
+# - loc_x: Integer
+# - loc_y: Integer
+# - loc_z: Integer
+# - distance: Integer
+# - remaining_space: Integer
+# - remaining_stock: Integer
+# - price: Double
+# - prefix: String
+# - essentials_warp_name: String
+# - essentials_warp_world: String
+# - essentials_warp_x: Integer
+# - essentials_warp_y: Integer
+# - essentials_warp_z: Integer
+# - essentials_warp_distance: Integer
+MESSAGE-BEFORE-TELEPORTING-NEAREST-ESSENTIALS-WARP {prefix} &7Teleporting to the nearest warp &e{essentials_warp_name} &7at &e{essentials_warp_x}&7, &e{essentials_warp_y}&7, &e{essentials_warp_z} &7of the Shop of &e{owner} &7at &e{loc_x}&7, &e{loc_y}&7, &e{loc_z}&7.
 # - number_shops: Integer
 # - predicate: String
 # - prefix: String
