@@ -1,10 +1,7 @@
 package me.blvckbytes.quick_shop_search.display.result;
 
-import com.ghostchu.quickshop.QuickShop;
 import com.ghostchu.quickshop.api.QuickShopAPI;
-import com.ghostchu.quickshop.api.obj.QUser;
 import com.ghostchu.quickshop.api.shop.ShopType;
-import com.ghostchu.quickshop.obj.QUserImpl;
 import com.tcoded.folialib.impl.PlatformScheduler;
 import it.unimi.dsi.fastutil.longs.Long2LongAVLTreeMap;
 import it.unimi.dsi.fastutil.longs.Long2LongMap;
@@ -18,6 +15,7 @@ import me.blvckbytes.quick_shop_search.PluginPermission;
 import me.blvckbytes.quick_shop_search.cache.CachedShop;
 import me.blvckbytes.quick_shop_search.cache.ShopUpdate;
 import me.blvckbytes.quick_shop_search.command.SearchFlag;
+import me.blvckbytes.quick_shop_search.compatibility.RemoteInteractionApi;
 import me.blvckbytes.quick_shop_search.config.MainSection;
 import me.blvckbytes.quick_shop_search.config.fees.FeesDistanceRangeSection;
 import me.blvckbytes.quick_shop_search.config.fees.FeesDistanceRangesSection;
@@ -39,6 +37,7 @@ import java.util.*;
 public class ResultDisplay extends Display<ResultDisplayData> implements DynamicPropertyProvider {
 
   private final IntegrationRegistry integrationRegistry;
+  private final RemoteInteractionApi remoteInteractionApi;
   private final AsyncTaskQueue asyncQueue;
 
   private final Long2LongMap shopDistanceByShopId;
@@ -48,7 +47,7 @@ public class ResultDisplay extends Display<ResultDisplayData> implements Dynamic
   private List<CachedShop> filteredUnSortedShops;
   private List<CachedShop> filteredSortedShops;
 
-  private final QUser playerUser;
+  private final Player player;
   private final Location playerLocation;
   private final CachedShop[] slotMap;
   private int numberOfPages;
@@ -66,6 +65,7 @@ public class ResultDisplay extends Display<ResultDisplayData> implements Dynamic
     PlatformScheduler scheduler,
     IntegrationRegistry integrationRegistry,
     ConfigKeeper<MainSection> config,
+    RemoteInteractionApi remoteInteractionApi,
     Player player,
     ResultDisplayData displayData,
     SelectionState selectionState
@@ -74,7 +74,8 @@ public class ResultDisplay extends Display<ResultDisplayData> implements Dynamic
 
     this.integrationRegistry = integrationRegistry;
     this.asyncQueue = new AsyncTaskQueue(scheduler);
-    this.playerUser = QUserImpl.createFullFilled(player);
+    this.player = player;
+    this.remoteInteractionApi = remoteInteractionApi;
     this.playerLocation = player.getLocation();
     this.shopDistanceByShopId = new Long2LongAVLTreeMap();
     this.shopFeesByShopId = new Long2ObjectAVLTreeMap<>();
@@ -449,11 +450,12 @@ public class ResultDisplay extends Display<ResultDisplayData> implements Dynamic
 
   @Override
   public double getPlayerBalanceForShopCurrency(CachedShop cachedShop) {
-    return QuickShop.getInstance().getEconomy().getBalance(
-      playerUser,
-      Objects.requireNonNull(cachedShop.handle.getLocation().getWorld()),
-      cachedShop.handle.getCurrency()
-    );
+    return remoteInteractionApi.getPlayerBalance(player, cachedShop.handle);
+  }
+
+  @Override
+  public double getShopOwnerBalanceForShopCurrency(CachedShop cachedShop) {
+    return remoteInteractionApi.getOwnerBalance(cachedShop.handle);
   }
 
   private void renderSortingItem() {

@@ -8,4 +8,6 @@ public interface DynamicPropertyProvider {
 
   double getPlayerBalanceForShopCurrency(CachedShop cachedShop);
 
+  double getShopOwnerBalanceForShopCurrency(CachedShop cachedShop);
+
 }

@@ -105,7 +105,7 @@ public class ResultDisplayHandler extends DisplayHandler<ResultDisplay, ResultDi
 
   @Override
   public ResultDisplay instantiateDisplay(Player player, ResultDisplayData displayData) {
-    return new ResultDisplay(scheduler, integrationRegistry, config, player, displayData, stateStore.loadState(player));
+    return new ResultDisplay(scheduler, integrationRegistry, config, remoteInteractionApi, player, displayData, stateStore.loadState(player));
   }
 
   @Override
