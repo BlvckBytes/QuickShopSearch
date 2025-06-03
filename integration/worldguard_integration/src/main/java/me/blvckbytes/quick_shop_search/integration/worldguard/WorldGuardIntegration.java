@@ -1,7 +1,7 @@
 package me.blvckbytes.quick_shop_search.integration.worldguard;
 
+import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.bukkit.BukkitWorld;
-import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldguard.WorldGuard;
 import com.sk89q.worldguard.protection.regions.RegionContainer;
 import me.blvckbytes.bukkitevaluable.ConfigKeeper;
@@ -38,7 +38,7 @@ public class WorldGuardIntegration implements IWorldGuardIntegration {
       return List.of();
     }
 
-    var position = new BlockVector3(location.getBlockX(), location.getBlockY(), location.getBlockZ());
+    var position = BukkitAdapter.asBlockVector(location);
     var regions = regionManager.getApplicableRegions(position);
     var resultingIds = new ArrayList<String>();
 
