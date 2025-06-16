@@ -134,22 +134,20 @@ public class ResultDisplayHandler extends DisplayHandler<ResultDisplay, ResultDi
       }
 
       if (targetShop != null) {
-        var shopLocation = targetShop.handle.getLocation();
+        var result = callTeleportDisplayIfAnyAvailable(player, display, targetShop);
 
-        if (shopLocation.getWorld() != player.getWorld()) {
-          ensurePermission(
-            player, PluginPermission.FEATURE_TELEPORT_OTHER_WORLD,
-            config.rootSection.playerMessages.missingPermissionFeatureTeleportOtherWorld,
-            () -> teleportPlayerToShop(player, display, targetShop)
-          );
+        if (result != null && !result) {
+          var shopLocation = targetShop.handle.getLocation();
+          var message = config.rootSection.playerMessages.missingPermissionFeatureTeleport;
+
+          if (shopLocation.getWorld() != player.getWorld())
+            message = config.rootSection.playerMessages.missingPermissionFeatureTeleportOtherWorld;
+
+          if (message != null)
+            message.sendMessage(player, config.rootSection.builtBaseEnvironment);
+
           return;
         }
-
-        ensurePermission(
-          player, PluginPermission.FEATURE_TELEPORT,
-          config.rootSection.playerMessages.missingPermissionFeatureTeleport,
-          () -> teleportPlayerToShop(player, display, targetShop)
-        );
         return;
       }
 
@@ -488,15 +486,19 @@ public class ResultDisplayHandler extends DisplayHandler<ResultDisplay, ResultDi
     return false;
   }
 
-  private void teleportPlayerToShop(Player player, ResultDisplay display, CachedShop cachedShop) {
+  private @Nullable Boolean callTeleportDisplayIfAnyAvailable(Player player, ResultDisplay display, CachedShop cachedShop) {
     var shop = cachedShop.handle;
     var shopId = cachedShop.handle.getShopId();
     var shopLocation = shop.getLocation().clone(); // Not cloning can mess shops up (direct reference)!
+    var isOtherWorld = shopLocation.getWorld() != player.getWorld();
+
+    if (isOtherWorld && !PluginPermission.FEATURE_TELEPORT_OTHER_WORLD.has(player))
+      return false;
 
     var applicableCooldowns = new ArrayList<TeleportCooldownType>();
     TeleportCooldownType cooldownType;
 
-    if (shopLocation.getWorld() != player.getWorld()) {
+    if (isOtherWorld) {
       cooldownType = new TeleportCooldownType(
         PluginPermission.FEATURE_TELEPORT_OTHER_WORLD_BYPASS_COOLDOWN_SAME_SHOP,
         TELEPORT_COOLDOWN_KEY + "-other-world-shopId-" + shopId,
@@ -505,7 +507,7 @@ public class ResultDisplayHandler extends DisplayHandler<ResultDisplay, ResultDi
       );
 
       if (checkAndNotifyOfCooldown(player, cooldownType))
-        return;
+        return null;
 
       applicableCooldowns.add(cooldownType);
 
@@ -517,7 +519,7 @@ public class ResultDisplayHandler extends DisplayHandler<ResultDisplay, ResultDi
       );
 
       if (checkAndNotifyOfCooldown(player, cooldownType))
-        return;
+        return null;
 
       applicableCooldowns.add(cooldownType);
     }
@@ -530,7 +532,7 @@ public class ResultDisplayHandler extends DisplayHandler<ResultDisplay, ResultDi
     );
 
     if (checkAndNotifyOfCooldown(player, cooldownType))
-      return;
+      return null;
 
     applicableCooldowns.add(cooldownType);
 
@@ -542,7 +544,7 @@ public class ResultDisplayHandler extends DisplayHandler<ResultDisplay, ResultDi
     );
 
     if (checkAndNotifyOfCooldown(player, cooldownType))
-      return;
+      return null;
 
     applicableCooldowns.add(cooldownType);
 
@@ -575,11 +577,18 @@ public class ResultDisplayHandler extends DisplayHandler<ResultDisplay, ResultDi
     var nearestPlayerWarp = display.getNearestPlayerWarp(cachedShop);
     var nearestEssentialsWarp = display.getNearestEssentialsWarp(cachedShop);
 
+    var canUseShopLocation = PluginPermission.FEATURE_TELEPORT_SHOP.has(player);
+    var canUsePlayerWarp = PluginPermission.FEATURE_TELEPORT_PLAYER_WARP.has(player);
+    var canUseEssentialsWarp = PluginPermission.FEATURE_TELEPORT_ESSENTIALS_WARP.has(player);
+
     var teleportDisplayData = new TeleportDisplayData(
+      canUseShopLocation,
       targetLocation,
-      display.getExtendedShopEnvironment(cachedShop),
+      canUsePlayerWarp,
       nearestPlayerWarp,
+      canUseEssentialsWarp,
       nearestEssentialsWarp,
+      display.getExtendedShopEnvironment(cachedShop),
       () -> reopen(display),
       () -> {
         for (var applicableCooldown : applicableCooldowns)
@@ -587,13 +596,11 @@ public class ResultDisplayHandler extends DisplayHandler<ResultDisplay, ResultDi
       }
     );
 
-    // Avoid showing a UI which only contains one functional choice
-    if (nearestPlayerWarp == null && nearestEssentialsWarp == null) {
-      teleportDisplayHandler.directlyTeleportToShopLocation(player, teleportDisplayData);
-      return;
-    }
+    if (!(teleportDisplayData.canUseShopLocation() || teleportDisplayData.playerWarpAvailable() || teleportDisplayData.essentialsWarpAvailable()))
+      return false;
 
-    teleportDisplayHandler.show(player, teleportDisplayData);
+    teleportDisplayHandler.showOrTeleportDirectly(player, teleportDisplayData);
+    return true;
   }
 
   private long getCooldownMillis(Player player, CooldownType type) {

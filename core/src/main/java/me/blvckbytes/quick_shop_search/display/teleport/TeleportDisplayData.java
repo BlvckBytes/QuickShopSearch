@@ -7,10 +7,24 @@ import org.bukkit.Location;
 import org.jetbrains.annotations.Nullable;
 
 public record TeleportDisplayData(
+  boolean canUseShopLocation,
   Location finalShopLocation,
-  IEvaluationEnvironment extendedShopEnvironment,
+
+  boolean canUsePlayerWarp,
   @Nullable PlayerWarpData nearestPlayerWarp,
+
+  boolean canUseEssentialsWarp,
   @Nullable EssentialsWarpData nearestEssentialsWarp,
+
+  IEvaluationEnvironment extendedShopEnvironment,
   Runnable reopenResultDisplay,
   @Nullable Runnable afterTeleporting
-) {}
+) {
+  public boolean playerWarpAvailable() {
+    return canUsePlayerWarp && nearestPlayerWarp != null;
+  }
+
+  public boolean essentialsWarpAvailable() {
+    return canUseEssentialsWarp && nearestEssentialsWarp != null;
+  }
+}

@@ -550,6 +550,25 @@ public class ResultDisplay extends Display<ResultDisplayData> implements Dynamic
     return result;
   }
 
+  private boolean canPlayerTeleport(
+    CachedShop cachedShop,
+    @Nullable PlayerWarpData nearestPlayerWarp,
+    @Nullable EssentialsWarpData nearestEssentialsWarp
+  ) {
+    var isOtherWorld = cachedShop.handle.getLocation().getWorld() != player.getWorld();
+
+    if (isOtherWorld && !PluginPermission.FEATURE_TELEPORT_OTHER_WORLD.has(player))
+      return false;
+
+    if (PluginPermission.FEATURE_TELEPORT_SHOP.has(player))
+      return true;
+
+    if (PluginPermission.FEATURE_TELEPORT_PLAYER_WARP.has(player) && nearestPlayerWarp != null)
+      return true;
+
+    return PluginPermission.FEATURE_TELEPORT_ESSENTIALS_WARP.has(player) && nearestEssentialsWarp != null;
+  }
+
   public IEvaluationEnvironment getExtendedShopEnvironment(CachedShop cachedShop) {
     var distance = getShopDistance(cachedShop);
     var isOtherWorld = distance < 0;
@@ -598,9 +617,7 @@ public class ResultDisplay extends Display<ResultDisplayData> implements Dynamic
       )
       .withStaticVariable(
         "can_teleport",
-        isOtherWorld
-          ? PluginPermission.FEATURE_TELEPORT_OTHER_WORLD.has(player)
-          : PluginPermission.FEATURE_TELEPORT.has(player)
+        canPlayerTeleport(cachedShop, nearestPlayerWarp, nearestEssentialsWarp)
       )
       .withStaticVariable(
         "can_interact",

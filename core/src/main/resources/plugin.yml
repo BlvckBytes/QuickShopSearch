@@ -56,8 +56,14 @@ permissions:
   quickshopsearch.feature.filter:
     description: 'Use the filtering feature'
     default: op
-  quickshopsearch.feature.teleport:
-    description: 'Teleport to shops within the same world'
+  quickshopsearch.feature.teleport.shop:
+    description: 'Teleport to the location of shops'
+    default: op
+  quickshopsearch.feature.teleport.player-warp:
+    description: 'Teleport to the location of the nearest player-warp'
+    default: op
+  quickshopsearch.feature.teleport.essentials-warp:
+    description: 'Teleport to the location of the nearest essentials-warp'
     default: op
   quickshopsearch.feature.teleport.bypass-cooldown.same-shop:
     description: 'Bypass the teleport cooldown for the same shop within the player''s world'
@@ -66,7 +72,7 @@ permissions:
     description: 'Bypass the teleport cooldown for any shop within the player''s world'
     default: op
   quickshopsearch.feature.teleport.other-world:
-    description: 'Teleport to shops within another world'
+    description: 'Teleport to locations within another world'
     default: op
   quickshopsearch.feature.teleport.other-world.bypass-cooldown.same-shop:
     description: 'Bypass the teleport cooldown for the same shop within a foreign world'
