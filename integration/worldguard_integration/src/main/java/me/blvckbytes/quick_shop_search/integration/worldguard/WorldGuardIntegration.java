@@ -1,7 +1,6 @@
 package me.blvckbytes.quick_shop_search.integration.worldguard;
 
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
-import com.sk89q.worldedit.bukkit.BukkitWorld;
 import com.sk89q.worldguard.WorldGuard;
 import com.sk89q.worldguard.protection.regions.RegionContainer;
 import me.blvckbytes.bukkitevaluable.ConfigKeeper;
@@ -31,7 +30,7 @@ public class WorldGuardIntegration implements IWorldGuardIntegration {
     if (locationWorld == null)
       return List.of();
 
-    var regionManager = regionContainer.get(new BukkitWorld(locationWorld));
+    var regionManager = regionContainer.get(BukkitAdapter.adapt(locationWorld));
 
     if (regionManager == null) {
       logger.warning("Could not access a RegionContainer for world " + locationWorld.getName());
