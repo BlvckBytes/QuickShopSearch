@@ -86,6 +86,7 @@ public class OlzieDevPlayerWarpsIntegration extends ChunkBucketedCache<Warp> imp
 
   @Override
   protected boolean doItemsEqual(Warp a, Warp b) {
+    // NOTE: #getUUID() returns the ID of the player who owns this warp - do not use!
     return a.getID() == b.getID();
   }
 }
