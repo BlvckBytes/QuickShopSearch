@@ -86,6 +86,6 @@ public class OlzieDevPlayerWarpsIntegration extends ChunkBucketedCache<Warp> imp
 
   @Override
   protected boolean doItemsEqual(Warp a, Warp b) {
-    return a.getUUID().equals(b.getUUID());
+    return a.getID() == b.getID();
   }
 }

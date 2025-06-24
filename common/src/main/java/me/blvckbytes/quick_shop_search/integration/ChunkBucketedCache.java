@@ -44,7 +44,7 @@ public abstract class ChunkBucketedCache<T> {
     for (var iterator = itemBucket.iterator(); iterator.hasNext();) {
       if (doItemsEqual(item, iterator.next())) {
         iterator.remove();
-        return;
+        break;
       }
     }
 
