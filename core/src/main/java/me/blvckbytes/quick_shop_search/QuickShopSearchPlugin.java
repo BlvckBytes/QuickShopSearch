@@ -77,7 +77,7 @@ public class QuickShopSearchPlugin extends JavaPlugin {
       var slowTeleportManager = new SlowTeleportManager(scheduler, config);
       Bukkit.getServer().getPluginManager().registerEvents(slowTeleportManager, this);
 
-      teleportDisplayHandler = new TeleportDisplayHandler(config, scheduler, slowTeleportManager);
+      teleportDisplayHandler = new TeleportDisplayHandler(config, scheduler, slowTeleportManager, logger);
       Bukkit.getPluginManager().registerEvents(teleportDisplayHandler, this);
 
       var integrationRegistry = new IntegrationRegistry(config, logger, scheduler, this);

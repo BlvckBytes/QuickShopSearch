@@ -6,7 +6,6 @@ import me.blvckbytes.bukkitevaluable.ConfigKeeper;
 import me.blvckbytes.quick_shop_search.config.MainSection;
 import me.blvckbytes.quick_shop_search.config.slow_teleport.SlowTeleportNotification;
 import me.blvckbytes.quick_shop_search.config.slow_teleport.SlowTeleportParametersSection;
-import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
@@ -15,10 +14,10 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.event.player.PlayerTeleportEvent;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.function.Consumer;
 
 public class SlowTeleportManager implements Listener {
 
@@ -35,12 +34,16 @@ public class SlowTeleportManager implements Listener {
     this.permittedToTeleport = new HashSet<>();
   }
 
-  public void initializeTeleportation(Player player, Location location, @Nullable Runnable afterTeleportation) {
+  public void initializeTeleportation(
+    Player player,
+    Consumer<PlatformScheduler> teleporter,
+    @Nullable Runnable afterTeleportation
+  ) {
     var parameters = decideParameters(player);
     var countdownValue = parameters.durationSeconds;
 
     if (countdownValue == 0 || PluginPermission.SLOW_TELEPORT_BYPASS.has(player)) {
-      scheduler.teleportAsync(player, location, PlayerTeleportEvent.TeleportCause.PLUGIN);
+      teleporter.accept(scheduler);
 
       if (afterTeleportation != null)
         afterTeleportation.run();
@@ -51,7 +54,7 @@ public class SlowTeleportManager implements Listener {
     permittedToTeleport.add(player.getUniqueId());
 
     new CountdownInstance(player, parameters, countdownValue, () -> {
-      scheduler.teleportAsync(player, location, PlayerTeleportEvent.TeleportCause.PLUGIN);
+      teleporter.accept(scheduler);
 
       if (afterTeleportation != null)
         afterTeleportation.run();

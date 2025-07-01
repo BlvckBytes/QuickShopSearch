@@ -611,6 +611,11 @@ playerWarpsIntegration:
   displayNearestInIcon: false
   updatePeriodSeconds: 30
   withinSameRegion: false
+  # Do not prepend slashes to these commands!
+  # - name: name of the warp
+  teleportCommand:
+    revivalo$: '"pwarp " & name'
+    olzieDev$: '"pw " & name'
 
 essentialsWarpsIntegration:
   enabled: false

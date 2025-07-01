@@ -79,6 +79,7 @@ public class RevivaloPlayerWarpsIntegration extends ChunkBucketedCache<Warp> imp
     }
 
     return new PlayerWarpData(
+      PlayerWarpSource.REVIVALO,
       Bukkit.getOfflinePlayer(nearestWarp.getOwner()).getName(),
       nearestWarp.getName(),
       nearestWarp.getLocation(),
