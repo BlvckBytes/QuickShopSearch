@@ -11,6 +11,7 @@ public class PlayerWarpsIntegrationSection extends AConfigSection {
   public boolean displayNearestInIcon;
   public int updatePeriodSeconds;
   public boolean withinSameRegion;
+  public boolean doNotUseSlowTeleport;
 
   @CSAlways
   public PlayerWarpsTeleportCommandsSection teleportCommand;
@@ -23,5 +24,6 @@ public class PlayerWarpsIntegrationSection extends AConfigSection {
     this.displayNearestInIcon = false;
     this.updatePeriodSeconds = 30;
     this.withinSameRegion = false;
+    this.doNotUseSlowTeleport = false;
   }
 }

@@ -80,6 +80,11 @@
         </dependency>
         <dependency>
             <groupId>me.blvckbytes</groupId>
+            <artifactId>ax_player_warps_integration</artifactId>
+            <version>${revision}</version>
+        </dependency>
+        <dependency>
+            <groupId>me.blvckbytes</groupId>
             <artifactId>essentials_warps_integration</artifactId>
             <version>${revision}</version>
         </dependency>
@@ -120,6 +125,7 @@
                             <include>me.blvckbytes:qs_gt_6208</include>
                             <include>me.blvckbytes:olziedev_player_warps_integration</include>
                             <include>me.blvckbytes:revivalo_player_warps_integration</include>
+                            <include>me.blvckbytes:ax_player_warps_integration</include>
                             <include>me.blvckbytes:essentials_warps_integration</include>
                             <include>me.blvckbytes:worldguard_integration</include>
                             <include>com.github.technicallycoded:FoliaLib</include>

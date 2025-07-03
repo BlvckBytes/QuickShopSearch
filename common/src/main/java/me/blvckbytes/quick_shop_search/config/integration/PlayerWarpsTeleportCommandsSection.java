@@ -8,6 +8,7 @@ public class PlayerWarpsTeleportCommandsSection extends AConfigSection {
 
   public BukkitEvaluable revivalo;
   public BukkitEvaluable olzieDev;
+  public BukkitEvaluable ax;
 
   public PlayerWarpsTeleportCommandsSection(EvaluationEnvironmentBuilder baseEnvironment) {
     super(baseEnvironment);

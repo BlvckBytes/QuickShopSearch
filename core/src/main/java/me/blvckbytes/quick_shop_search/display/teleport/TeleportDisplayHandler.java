@@ -141,6 +141,15 @@ public class TeleportDisplayHandler extends DisplayHandler<TeleportDisplay, Tele
     if ((message = config.rootSection.playerMessages.beforeTeleportingNearestPlayerWarp) != null)
       message.sendMessage(player, config.rootSection.getBaseEnvironment().build(displayData.extendedShopEnvironment()));
 
+    if (config.rootSection.playerWarpsIntegration.doNotUseSlowTeleport) {
+      performPlayerWarpTeleportCommand(player, nearestPlayerWarp);
+
+      if (displayData.afterTeleporting() != null)
+        displayData.afterTeleporting().run();
+
+      return true;
+    }
+
     slowTeleportManager.initializeTeleportation(
       player,
       scheduler -> performPlayerWarpTeleportCommand(player, nearestPlayerWarp),
@@ -159,6 +168,7 @@ public class TeleportDisplayHandler extends DisplayHandler<TeleportDisplay, Tele
     switch (data.source()) {
       case REVIVALO -> command = config.rootSection.playerWarpsIntegration.teleportCommand.revivalo;
       case OLZIE_DEV -> command = config.rootSection.playerWarpsIntegration.teleportCommand.olzieDev;
+      case AX -> command = config.rootSection.playerWarpsIntegration.teleportCommand.ax;
       default -> {
         return;
       }

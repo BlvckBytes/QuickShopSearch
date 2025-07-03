@@ -6,6 +6,7 @@ import me.blvckbytes.bukkitevaluable.ReloadPriority;
 import me.blvckbytes.quick_shop_search.config.MainSection;
 import me.blvckbytes.quick_shop_search.integration.essentials_warps.EssentialsWarpsIntegration;
 import me.blvckbytes.quick_shop_search.integration.essentials_warps.IEssentialsWarpsIntegration;
+import me.blvckbytes.quick_shop_search.integration.player_warps.AxPlayerWarpsIntegration;
 import me.blvckbytes.quick_shop_search.integration.player_warps.IPlayerWarpsIntegration;
 import me.blvckbytes.quick_shop_search.integration.player_warps.OlzieDevPlayerWarpsIntegration;
 import me.blvckbytes.quick_shop_search.integration.player_warps.RevivaloPlayerWarpsIntegration;
@@ -130,7 +131,10 @@ public class IntegrationRegistry {
     if (!config.rootSection.playerWarpsIntegration.enabled)
       return null;
 
-    if (!Bukkit.getPluginManager().isPluginEnabled("PlayerWarps")) {
+    if (!(
+      Bukkit.getPluginManager().isPluginEnabled("PlayerWarps") ||
+      Bukkit.getPluginManager().isPluginEnabled("AxPlayerWarps")
+    )) {
       logger.warning("PlayerWarps-Integration is enabled, but the corresponding plugin could not be located!");
       return null;
     }
@@ -149,6 +153,14 @@ public class IntegrationRegistry {
         logger.info("Successfully loaded the dev.revivalo PlayerWarps-integration!");
         return integration;
       } catch (Throwable secondError) {
+        try {
+          integration = new AxPlayerWarpsIntegration(logger, scheduler, config, worldGuardIntegration);
+          logger.info("Successfully loaded the AxPlayerWarps-integration!");
+          return integration;
+        } catch (Throwable thirdError) {
+          logger.log(Level.SEVERE, "Could not load the AxPlayerWarps-integration!", thirdError);
+        }
+
         logger.log(Level.SEVERE, "Could not load the dev.revivalo PlayerWarps-integration!", secondError);
       }
 

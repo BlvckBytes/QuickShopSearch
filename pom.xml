@@ -24,6 +24,7 @@
         <module>compatibility/qs_gt_6208</module>
         <module>integration/olziedev_player_warps_integration</module>
         <module>integration/revivalo_player_warps_integration</module>
+        <module>integration/ax_player_warps_integration</module>
         <module>integration/essentials_warps_integration</module>
         <module>integration/worldguard_integration</module>
     </modules>
