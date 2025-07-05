@@ -90,8 +90,6 @@ public class AxPlayerWarpsIntegration extends ChunkBucketedCache<Warp> implement
   }
 
   private boolean checkIfAccessDenied(Warp warp, Player player) {
-    System.out.println(warp.getAccess());
-
     if (warp.getAccess() == Access.PRIVATE)
       return !warp.getOwner().equals(player.getUniqueId());
 
