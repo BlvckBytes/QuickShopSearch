@@ -32,6 +32,8 @@ public enum PluginPermission {
   FEATURE_SEARCH_FLAG_PRICE("feature.search-flag.price"),
   FEATURE_SEARCH_FLAG_MIN_PRICE("feature.search-flag.min-price"),
   FEATURE_SEARCH_FLAG_MAX_PRICE("feature.search-flag.max-price"),
+  FEATURE_SEARCH_FLAG_SELLING("feature.search-flag.selling"),
+  FEATURE_SEARCH_FLAG_BUYING("feature.search-flag.buying"),
   FEATURE_FEES_BYPASS("feature.fees.bypass"),
   FEATURE_FEES_BYPASS_OTHER_WORLD("feature.fees.bypass.other-world"),
   FEATURE_FEES_PERMISSION_NAME_BASE("feature.fees.permission-name"),

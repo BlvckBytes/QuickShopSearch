@@ -3,6 +3,9 @@ package me.blvckbytes.quick_shop_search.command;
 import me.blvckbytes.quick_shop_search.OfflinePlayerRegistry;
 import me.blvckbytes.quick_shop_search.PluginPermission;
 import me.blvckbytes.quick_shop_search.cache.CachedShop;
+import me.blvckbytes.quick_shop_search.display.result.PredicateSelection;
+import me.blvckbytes.quick_shop_search.display.result.SelectionState;
+import me.blvckbytes.quick_shop_search.display.result.ShopFilteringCriteria;
 import me.blvckbytes.syllables_matcher.EnumMatcher;
 import me.blvckbytes.syllables_matcher.EnumPredicate;
 import me.blvckbytes.syllables_matcher.MatchableEnum;
@@ -91,6 +94,50 @@ public abstract class SearchFlag<T> implements MatchableEnum {
     }
   };
 
+  public static final SearchFlag<Boolean> SELLING = new SearchFlag<>("SELLING", PluginPermission.FEATURE_SEARCH_FLAG_SELLING) {
+
+    @Override
+    public @Nullable Boolean parse(String value, OfflinePlayerRegistry offlinePlayerRegistry) {
+      try {
+        return Boolean.valueOf(value);
+      } catch (Exception e) {
+        return null;
+      }
+    }
+
+    @Override
+    protected boolean _test(CachedShop shop, Player executor, @NotNull Boolean value) {
+      return true;
+    }
+
+    @Override
+    public void _modifySelectionState(SelectionState state, @NotNull Boolean value) {
+      state.setFilteringCriterionState(ShopFilteringCriteria.IS_SELLING, value ? PredicateSelection.POSITIVE : PredicateSelection.NEGATIVE);
+    }
+  };
+
+  public static final SearchFlag<Boolean> BUYING = new SearchFlag<>("BUYING", PluginPermission.FEATURE_SEARCH_FLAG_BUYING) {
+
+    @Override
+    public @Nullable Boolean parse(String value, OfflinePlayerRegistry offlinePlayerRegistry) {
+      try {
+        return Boolean.valueOf(value);
+      } catch (Exception e) {
+        return null;
+      }
+    }
+
+    @Override
+    protected boolean _test(CachedShop shop, Player executor, @NotNull Boolean value) {
+      return true;
+    }
+
+    @Override
+    public void _modifySelectionState(SelectionState state, @NotNull Boolean value) {
+      state.setFilteringCriterionState(ShopFilteringCriteria.IS_BUYING, value ? PredicateSelection.POSITIVE : PredicateSelection.NEGATIVE);
+    }
+  };
+
   public static final EnumMatcher<SearchFlag<?>> matcher = new EnumMatcher<>(searchFlagByName.values());
 
   private final String name;
@@ -106,11 +153,18 @@ public abstract class SearchFlag<T> implements MatchableEnum {
 
   public abstract @Nullable T parse(String value, OfflinePlayerRegistry offlinePlayerRegistry);
 
+  protected void _modifySelectionState(SelectionState state, @NotNull T value) {}
+
   protected abstract boolean _test(CachedShop shop, Player executor, @NotNull T value);
 
   @SuppressWarnings("unchecked")
   public boolean test(CachedShop shop, Player executor, @NotNull Object value) {
     return _test(shop, executor, (T) value);
+  }
+
+  @SuppressWarnings("unchecked")
+  public void modifySelectionState(SelectionState state, @NotNull Object value) {
+    _modifySelectionState(state, (T) value);
   }
 
   public void setSuggestions(@Nullable List<String> suggestions) {

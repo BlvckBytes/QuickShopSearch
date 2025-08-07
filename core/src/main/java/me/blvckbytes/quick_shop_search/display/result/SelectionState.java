@@ -6,6 +6,7 @@ import me.blvckbytes.quick_shop_search.cache.CachedShop;
 import me.blvckbytes.quick_shop_search.PluginPermission;
 import me.blvckbytes.quick_shop_search.config.MainSection;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
@@ -25,6 +26,7 @@ public class SelectionState {
   private int selectedSortingSelectionIndex;
 
   private Map<ShopFilteringCriteria, PredicateSelection> filteringSelections;
+  private @Nullable Map<ShopFilteringCriteria, PredicateSelection> volatileFilteringBackups;
   private ShopFilteringCriteria selectedFilteringCriteria;
 
   public SelectionState() {
@@ -44,9 +46,31 @@ public class SelectionState {
     this.selectedFilteringCriteria = selectedFilteringCriteria;
   }
 
+  public void possiblyRestoreVolatileBackups() {
+    if (volatileFilteringBackups == null)
+      return;
+
+    for (ShopFilteringCriteria filter : volatileFilteringBackups.keySet())
+      filteringSelections.put(filter, volatileFilteringBackups.get(filter));
+
+    volatileFilteringBackups.clear();
+  }
+
+  public void setFilteringCriterionState(ShopFilteringCriteria criterion, PredicateSelection state) {
+    PredicateSelection priorSelection = this.filteringSelections.put(criterion, state);
+
+    if (volatileFilteringBackups == null)
+      volatileFilteringBackups = new HashMap<>();
+
+    volatileFilteringBackups.put(criterion, priorSelection);
+  }
+
   public void resetFiltering() {
     this.filteringSelections = makeDefaultFilteringSelections();
     this.selectedFilteringCriteria = ShopFilteringCriteria.values.get(0);
+
+    if (this.volatileFilteringBackups != null)
+      this.volatileFilteringBackups.clear();
   }
 
   public void resetSorting() {
@@ -82,6 +106,9 @@ public class SelectionState {
       return;
 
     this.filteringSelections.put(this.selectedFilteringCriteria, currentState.next());
+
+    if (this.volatileFilteringBackups != null)
+      this.volatileFilteringBackups.remove(this.selectedFilteringCriteria);
   }
 
   public void applySort(DynamicPropertyProvider distanceProvider, List<CachedShop> items) {

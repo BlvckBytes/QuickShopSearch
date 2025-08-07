@@ -2,6 +2,7 @@ package me.blvckbytes.quick_shop_search.command;
 
 import me.blvckbytes.quick_shop_search.OfflinePlayerRegistry;
 import me.blvckbytes.quick_shop_search.cache.CachedShop;
+import me.blvckbytes.quick_shop_search.display.result.SelectionState;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nullable;
@@ -19,6 +20,11 @@ public class SearchFlagsContainer {
 
   public int size() {
     return valueByFlag.size();
+  }
+
+  public void modifySelectionState(SelectionState state) {
+    for (var flagEntry : valueByFlag.entrySet())
+      flagEntry.getKey().modifySelectionState(state, flagEntry.getValue());
   }
 
   @SuppressWarnings("unchecked")

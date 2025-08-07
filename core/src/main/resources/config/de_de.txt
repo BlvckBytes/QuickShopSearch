@@ -422,10 +422,12 @@ MESSAGE-SLOW-TELEPORT-NOT-IN-COMBAT-SUBTITLE    &bBleibe für {remaining_seconds
 # - player_warp_distance: Integer
 MESSAGE-NEAREST-PLAYER-WARP-BANNED {prefix} &cDu bist vom nächsten Spieler-Warp &4{player_warp_name} &cvon &4{player_warp_owner} &cgebannt - teleportiere stattdessen zum Shop!
 
-COMMAND-QSS-SEARCH-FLAG-OWNER     Besituer
+COMMAND-QSS-SEARCH-FLAG-OWNER     Besitzer
 COMMAND-QSS-SEARCH-FLAG-RADIUS    Radius
 COMMAND-QSS-SEARCH-FLAG-PRICE     Preis
 COMMAND-QSS-SEARCH-FLAG-MAX-PRICE Max-Preis
 COMMAND-QSS-SEARCH-FLAG-MIN-PRICE Min-Preis
+COMMAND-QSS-SEARCH-FLAG-SELLING   Verkauft
+COMMAND-QSS-SEARCH-FLAG-BUYING    Kauft
 
 # ==================== END Messages ====================

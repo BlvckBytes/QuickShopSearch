@@ -64,8 +64,11 @@ public class SelectionStateStore {
     try {
       var stateData = new JsonObject();
 
-      for (var state : this.states.entrySet())
-        stateData.add(state.getKey().toString(), state.getValue().toJson());
+      for (var stateEntry : this.states.entrySet()) {
+        var state = stateEntry.getValue();
+        state.possiblyRestoreVolatileBackups();
+        stateData.add(stateEntry.getKey().toString(), state.toJson());
+      }
 
       try (
         var outputStream = new FileOutputStream(stateFile)
