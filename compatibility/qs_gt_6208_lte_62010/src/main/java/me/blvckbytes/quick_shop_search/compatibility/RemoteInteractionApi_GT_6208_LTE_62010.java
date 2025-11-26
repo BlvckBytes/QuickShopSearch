@@ -7,10 +7,9 @@ import com.ghostchu.quickshop.api.shop.ShopAction;
 import com.ghostchu.quickshop.obj.QUserImpl;
 import com.ghostchu.quickshop.shop.SimpleInfo;
 import com.ghostchu.quickshop.shop.inventory.BukkitInventoryWrapper;
-import me.blvckbytes.quick_shop_search.compatibility.RemoteInteractionApi;
 import org.bukkit.entity.Player;
 
-public class RemoteInteractionApi_GT_6208 implements RemoteInteractionApi {
+public class RemoteInteractionApi_GT_6208_LTE_62010 implements RemoteInteractionApi {
 
   @Override
   public void interact(Player player, Shop shop, int amount) {

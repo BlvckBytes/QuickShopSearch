@@ -7,15 +7,14 @@ import com.ghostchu.quickshop.api.event.inventory.ShopInventoryCalculateEvent;
 import com.ghostchu.quickshop.api.event.management.ShopCreateEvent;
 import com.ghostchu.quickshop.api.event.management.ShopDeleteEvent;
 import com.ghostchu.quickshop.api.event.settings.type.*;
-import me.blvckbytes.quick_shop_search.compatibility.QuickShopEventConsumer;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
-public class QuickShopListener_GT_6208 implements Listener {
+public class QuickShopListener_GTE_62011 implements Listener {
 
   private final QuickShopEventConsumer consumer;
 
-  public QuickShopListener_GT_6208(QuickShopEventConsumer consumer) {
+  public QuickShopListener_GTE_62011(QuickShopEventConsumer consumer) {
     this.consumer = consumer;
   }
 
@@ -83,7 +82,7 @@ public class QuickShopListener_GT_6208 implements Listener {
   }
 
   @EventHandler
-  public void onShopTypeChange(ShopTypeEvent event) {
+  public void onShopTypeChange(ShopTypeEnhancedEvent event) {
     if (event.isCancelled() || event.phase() != Phase.POST)
       return;
 

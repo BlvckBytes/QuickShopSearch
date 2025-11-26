@@ -12,7 +12,8 @@ public class QuickShopVersionDependentFactory {
   private static final String PLUGIN_NAME = "QuickShop-Hikari";
   private static final int[]
     VER_6207 = new int[] { 6, 2, 0, 7 },
-    VER_6208 = new int[] { 6, 2, 0, 8 }
+    VER_6208 = new int[] { 6, 2, 0, 8 },
+    VER_62010 = new int[] { 6, 2, 0, 10 }
     ;
 
   private final Logger logger;
@@ -57,8 +58,13 @@ public class QuickShopVersionDependentFactory {
       return new QuickShopListener_GT_6207_LTE_6208(consumer);
     }
 
-    logger.info("Loaded listener-support for > " + PLUGIN_NAME + " 6.2.0.8");
-    return new QuickShopListener_GT_6208(consumer);
+    if (compareVersions(quickShopVersion, VER_62010) <= 0) {
+      logger.info("Loaded listener-support for <= " + PLUGIN_NAME + " 6.2.0.10 and > 6.2.0.8");
+      return new QuickShopListener_GT_6208_LTE_62010(consumer);
+    }
+
+    logger.info("Loaded listener-support for >= " + PLUGIN_NAME + " 6.2.0.11");
+    return new QuickShopListener_GTE_62011(consumer);
   }
 
   public RemoteInteractionApi createInteractionApi() {
@@ -79,8 +85,13 @@ public class QuickShopVersionDependentFactory {
       return new RemoteInteractionApi_GT_6207_LTE_6208();
     }
 
-    logger.info("Loaded remote-interaction-support for > " + PLUGIN_NAME + " 6.2.0.8");
-    return new RemoteInteractionApi_GT_6208();
+    if (compareVersions(quickShopVersion, VER_62010) <= 0) {
+      logger.info("Loaded remote-interaction-support for <= " + PLUGIN_NAME + " 6.2.0.10 and > 6.2.0.8");
+      return new RemoteInteractionApi_GT_6208_LTE_62010();
+    }
+
+    logger.info("Loaded remote-interaction-support for >= " + PLUGIN_NAME + " 6.2.0.11");
+    return new RemoteInteractionApi_GTE_62011();
   }
 
   private static int compareVersions(int[] a, int[] b) {

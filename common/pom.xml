@@ -51,7 +51,7 @@
         <dependency>
             <groupId>me.blvckbytes</groupId>
             <artifactId>ItemPredicateParser</artifactId>
-            <version>0.0.18</version>
+            <version>0.0.25</version>
         </dependency>
         <dependency>
             <groupId>me.blvckbytes</groupId>
