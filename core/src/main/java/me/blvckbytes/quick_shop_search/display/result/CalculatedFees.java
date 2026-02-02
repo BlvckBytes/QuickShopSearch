@@ -1,6 +1,6 @@
 package me.blvckbytes.quick_shop_search.display.result;
 
-import com.ghostchu.quickshop.api.shop.ShopType;
+import com.ghostchu.quickshop.shop.SimpleShopManager;
 import me.blvckbytes.quick_shop_search.cache.CachedShop;
 import me.blvckbytes.quick_shop_search.config.fees.FeesValuesSection;
 import org.jetbrains.annotations.Nullable;
@@ -23,7 +23,7 @@ public record CalculatedFees(
     double absoluteFees;
     double relativeFees;
 
-    if (cachedShop.cachedType == ShopType.BUYING) {
+    if (cachedShop.cachedType == SimpleShopManager.BUYING_TYPE) {
       absoluteFees = feesValues.absoluteSell;
       relativeFees = feesValues.relativeSell;
     } else {
@@ -33,7 +33,7 @@ public record CalculatedFees(
 
     var relativeFeesValue = cachedShop.cachedPrice * (relativeFees / 100);
 
-    if (cachedShop.cachedType == ShopType.BUYING) {
+    if (cachedShop.cachedType == SimpleShopManager.BUYING_TYPE) {
       var remainingPrice = cachedShop.cachedPrice - relativeFeesValue;
 
       if (absoluteFees > remainingPrice) {

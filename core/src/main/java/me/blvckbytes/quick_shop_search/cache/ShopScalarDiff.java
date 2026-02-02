@@ -1,6 +1,6 @@
 package me.blvckbytes.quick_shop_search.cache;
 
-import com.ghostchu.quickshop.api.shop.ShopType;
+import com.ghostchu.quickshop.api.shop.IShopType;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
@@ -14,7 +14,7 @@ public class ShopScalarDiff {
   private boolean lastIsUnlimited;
   private @Nullable String lastShopName;
   private double lastPrice;
-  private @Nullable ShopType lastShopType;
+  private @Nullable IShopType lastShopType;
 
   public ShopScalarDiff(CachedShop shop) {
     this.shop = shop;

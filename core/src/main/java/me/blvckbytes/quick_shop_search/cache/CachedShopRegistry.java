@@ -4,7 +4,7 @@ import at.blvckbytes.cm_mapper.ConfigKeeper;
 import at.blvckbytes.cm_mapper.ReloadPriority;
 import com.ghostchu.quickshop.api.QuickShopAPI;
 import com.ghostchu.quickshop.api.shop.Shop;
-import com.ghostchu.quickshop.api.shop.ShopType;
+import com.ghostchu.quickshop.shop.SimpleShopManager;
 import com.tcoded.folialib.impl.PlatformScheduler;
 import it.unimi.dsi.fastutil.longs.Long2ObjectAVLTreeMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
@@ -152,10 +152,10 @@ public class CachedShopRegistry implements QuickShopEventConsumer, Listener {
   @Override
   public void onShopInventoryCalculate(Shop shop, int stock, int space) {
     tryAccessCache(shop, cachedShop -> {
-      if (cachedShop.cachedType == ShopType.BUYING && space >= 0)
+      if (cachedShop.cachedType == SimpleShopManager.BUYING_TYPE && space >= 0)
         cachedShop.cachedSpace = space;
 
-      if (cachedShop.cachedType == ShopType.SELLING && stock >= 0)
+      if (cachedShop.cachedType == SimpleShopManager.SELLING_TYPE && stock >= 0)
         cachedShop.cachedStock = stock;
 
       if (cachedShop.diff.update())
@@ -186,7 +186,7 @@ public class CachedShopRegistry implements QuickShopEventConsumer, Listener {
   @Override
   public void onShopTypeChange(Shop shop) {
     tryAccessCache(shop, cachedShop -> {
-      cachedShop.cachedType = shop.getShopType();
+      cachedShop.cachedType = shop.shopType();
 
       if (cachedShop.diff.update())
         displayHandler.onShopUpdate(cachedShop, ShopUpdate.PROPERTIES_CHANGED);
@@ -225,12 +225,12 @@ public class CachedShopRegistry implements QuickShopEventConsumer, Listener {
     scheduler.runNextTick(task -> {
       int result;
 
-      if (cachedShop.cachedType == ShopType.BUYING) {
+      if (cachedShop.cachedType == SimpleShopManager.BUYING_TYPE) {
         if ((result = cachedShop.handle.getRemainingSpace()) >= 0)
           cachedShop.cachedSpace = result;
       }
 
-      if (cachedShop.cachedType == ShopType.SELLING) {
+      if (cachedShop.cachedType == SimpleShopManager.SELLING_TYPE) {
         if ((result = cachedShop.handle.getRemainingStock()) >= 0)
           cachedShop.cachedStock = result;
       }

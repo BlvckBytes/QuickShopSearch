@@ -12,11 +12,12 @@ import com.ghostchu.quickshop.api.command.CommandContainer;
 import com.tcoded.folialib.FoliaLib;
 import me.blvckbytes.item_predicate_parser.ItemPredicateParserPlugin;
 import me.blvckbytes.quick_shop_search.cache.CachedShopRegistry;
-import me.blvckbytes.quick_shop_search.cache.QuickShopVersionDependentFactory;
 import me.blvckbytes.quick_shop_search.command.CommandSendListener;
 import me.blvckbytes.quick_shop_search.command.QuickShopSearchCommand;
 import me.blvckbytes.quick_shop_search.command.ReloadCommand;
 import me.blvckbytes.quick_shop_search.command.SubCommand_Advertise;
+import me.blvckbytes.quick_shop_search.compatibility.QuickShopEventListener;
+import me.blvckbytes.quick_shop_search.compatibility.RemoteInteractionApi;
 import me.blvckbytes.quick_shop_search.config.*;
 import me.blvckbytes.quick_shop_search.config.commands.QuickShopSearchCommandSection;
 import me.blvckbytes.quick_shop_search.config.commands.QuickShopSearchLanguageCommandSection;
@@ -68,8 +69,7 @@ public class QuickShopSearchPlugin extends JavaPlugin {
       var chatPromptManager = new ChatPromptManager(scheduler);
       Bukkit.getServer().getPluginManager().registerEvents(chatPromptManager, this);
 
-      var versionDependentFactory = new QuickShopVersionDependentFactory(logger);
-      var remoteInteractionApi = versionDependentFactory.createInteractionApi();
+      var remoteInteractionApi = new RemoteInteractionApi(logger);
 
       stateStore = new SelectionStateStore(this, logger);
       stampStore = new UidScopedNamedStampStore(this, logger);
@@ -98,10 +98,10 @@ public class QuickShopSearchPlugin extends JavaPlugin {
       );
 
       var shopRegistry = new CachedShopRegistry(this, scheduler, resultDisplayHandler, config, integrationRegistry, logger);
-      var shopEventHandler = versionDependentFactory.createListener(shopRegistry);
+      var shopEventListener = new QuickShopEventListener(shopRegistry);
 
       Bukkit.getPluginManager().registerEvents(shopRegistry, this);
-      Bukkit.getPluginManager().registerEvents(shopEventHandler, this);
+      Bukkit.getPluginManager().registerEvents(shopEventListener, this);
       Bukkit.getPluginManager().registerEvents(resultDisplayHandler, this);
 
       var commandUpdater = new CommandUpdater(this);

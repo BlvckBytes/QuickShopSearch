@@ -22,13 +22,13 @@
         <dependency>
             <groupId>com.ghostchu</groupId>
             <artifactId>quickshop-api</artifactId>
-            <version>6.2.0.6</version>
+            <version>6.2.0.11-RELEASE-CANDIDATE-2</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.ghostchu</groupId>
             <artifactId>quickshop-bukkit</artifactId>
-            <version>6.2.0.6</version>
+            <version>6.2.0.11-RELEASE-CANDIDATE-2</version>
             <scope>provided</scope>
         </dependency>
         <!-- Made use of in AbstractEconomy, which I need to access, and somehow, this dependency doesn't trickle down... -->
@@ -41,26 +41,6 @@
         <dependency>
             <groupId>me.blvckbytes</groupId>
             <artifactId>common</artifactId>
-            <version>${revision}</version>
-        </dependency>
-        <dependency>
-            <groupId>me.blvckbytes</groupId>
-            <artifactId>qs_gt_6207_lte_6208</artifactId>
-            <version>${revision}</version>
-        </dependency>
-        <dependency>
-            <groupId>me.blvckbytes</groupId>
-            <artifactId>qs_lte_6207</artifactId>
-            <version>${revision}</version>
-        </dependency>
-        <dependency>
-            <groupId>me.blvckbytes</groupId>
-            <artifactId>qs_gt_6208_lte_62010</artifactId>
-            <version>${revision}</version>
-        </dependency>
-        <dependency>
-            <groupId>me.blvckbytes</groupId>
-            <artifactId>qs_gte_62011</artifactId>
             <version>${revision}</version>
         </dependency>
         <dependency>
@@ -118,10 +98,6 @@
                             <include>at.blvckbytes:CMMapper</include>
                             <include>me.blvckbytes:SyllablesMatcher</include>
                             <include>me.blvckbytes:common</include>
-                            <include>me.blvckbytes:qs_lte_6207</include>
-                            <include>me.blvckbytes:qs_gt_6207_lte_6208</include>
-                            <include>me.blvckbytes:qs_gt_6208_lte_62010</include>
-                            <include>me.blvckbytes:qs_gte_62011</include>
                             <include>me.blvckbytes:olziedev_player_warps_integration</include>
                             <include>me.blvckbytes:revivalo_player_warps_integration</include>
                             <include>me.blvckbytes:ax_player_warps_integration</include>

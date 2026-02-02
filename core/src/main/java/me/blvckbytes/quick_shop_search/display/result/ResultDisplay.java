@@ -3,7 +3,7 @@ package me.blvckbytes.quick_shop_search.display.result;
 import at.blvckbytes.cm_mapper.ConfigKeeper;
 import at.blvckbytes.component_markup.expression.interpreter.InterpretationEnvironment;
 import com.ghostchu.quickshop.api.QuickShopAPI;
-import com.ghostchu.quickshop.api.shop.ShopType;
+import com.ghostchu.quickshop.shop.SimpleShopManager;
 import com.tcoded.folialib.impl.PlatformScheduler;
 import it.unimi.dsi.fastutil.longs.Long2LongAVLTreeMap;
 import it.unimi.dsi.fastutil.longs.Long2LongMap;
@@ -617,7 +617,7 @@ public class ResultDisplay extends Display<ResultDisplayData> implements Dynamic
       .withVariable(
         "fees_final_price",
         shopManager.format(
-          cachedShop.cachedType == ShopType.SELLING
+          cachedShop.cachedType == SimpleShopManager.SELLING_TYPE
             ? cachedShop.cachedPrice + fees.relativeFeesValue() + fees.absoluteFees()
             : cachedShop.cachedPrice - (fees.relativeFeesValue() + fees.absoluteFees()),
           cachedShop.handle

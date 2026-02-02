@@ -3,8 +3,8 @@ package me.blvckbytes.quick_shop_search.cache;
 import at.blvckbytes.cm_mapper.ConfigKeeper;
 import at.blvckbytes.component_markup.expression.interpreter.InterpretationEnvironment;
 import com.ghostchu.quickshop.api.QuickShopAPI;
+import com.ghostchu.quickshop.api.shop.IShopType;
 import com.ghostchu.quickshop.api.shop.Shop;
-import com.ghostchu.quickshop.api.shop.ShopType;
 import com.tcoded.folialib.impl.PlatformScheduler;
 import me.blvckbytes.quick_shop_search.PluginPermission;
 import me.blvckbytes.quick_shop_search.config.MainSection;
@@ -40,7 +40,7 @@ public class CachedShop {
 
   public int cachedStock;
   public int cachedSpace;
-  public ShopType cachedType;
+  public IShopType cachedType;
   public double cachedPrice;
   public @Nullable String cachedName;
   private boolean advertising;
@@ -69,7 +69,7 @@ public class CachedShop {
 
       this.cachedStock = handle.getRemainingStock();
       this.cachedSpace = handle.getRemainingSpace();
-      this.cachedType = handle.getShopType();
+      this.cachedType = handle.shopType();
       this.cachedPrice = handle.getPrice();
       this.cachedName = handle.getShopName();
       this.diff.update();
