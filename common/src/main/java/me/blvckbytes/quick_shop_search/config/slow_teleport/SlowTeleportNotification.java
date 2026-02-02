@@ -23,8 +23,8 @@ public class SlowTeleportNotification extends ConfigSection {
   @CSIgnore
   public @Nullable XSound _sound;
 
-  public float soundVolume;
-  public float soundPitch;
+  public double soundVolume;
+  public double soundPitch;
 
   public SlowTeleportNotification(InterpretationEnvironment baseEnvironment, InterpreterLogger interpreterLogger) {
     super(baseEnvironment, interpreterLogger);

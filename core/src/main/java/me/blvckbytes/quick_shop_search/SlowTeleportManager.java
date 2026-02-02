@@ -109,7 +109,7 @@ public class SlowTeleportManager implements Listener {
     void playAtSecondsNotification(SlowTeleportNotification notification) {
       if (notification._sound != null) {
         scheduler.runLater(
-          () -> notification._sound.play(player, notification.soundVolume, notification.soundPitch),
+          () -> notification._sound.play(player, (float) notification.soundVolume, (float) notification.soundPitch),
           // Otherwise, the ending-sound may not "travel with them"
           remainingSeconds == 0 ? 2 : 0
         );

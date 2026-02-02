@@ -9,8 +9,8 @@ public class ResultDisplaySection extends PaginatedGuiSection<ResultDisplayItems
   public String chatPromptAllSentinel;
   public String chatPromptCancelSentinel;
 
-  public ResultDisplaySection(Class<ResultDisplayItemsSection> itemsSectionClass, InterpretationEnvironment baseEnvironment, InterpreterLogger interpreterLogger) {
-    super(itemsSectionClass, baseEnvironment, interpreterLogger);
+  public ResultDisplaySection(InterpretationEnvironment baseEnvironment, InterpreterLogger interpreterLogger) {
+    super(ResultDisplayItemsSection.class, baseEnvironment, interpreterLogger);
 
     this.chatPromptAllSentinel = "all";
     this.chatPromptCancelSentinel = "cancel";

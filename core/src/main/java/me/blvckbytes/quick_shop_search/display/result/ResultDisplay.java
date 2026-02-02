@@ -86,8 +86,6 @@ public class ResultDisplay extends Display<ResultDisplayData> implements Dynamic
     this.slotMap = new CachedShop[9 * 6];
     this.selectionState = selectionState;
 
-    setupEnvironments();
-
     // Within async context already, see corresponding command
     applyFiltering();
     applySorting();
@@ -251,6 +249,7 @@ public class ResultDisplay extends Display<ResultDisplayData> implements Dynamic
   public void nextSortingSelection() {
     asyncQueue.enqueue(() -> {
       this.selectionState.nextSortingSelection();
+      setupEnvironments();
       renderSortingItem();
     });
   }
@@ -259,6 +258,7 @@ public class ResultDisplay extends Display<ResultDisplayData> implements Dynamic
     asyncQueue.enqueue(() -> {
       this.selectionState.nextSortingOrder();
       applySorting();
+      setupEnvironments();
       renderItems();
     });
   }
@@ -267,6 +267,7 @@ public class ResultDisplay extends Display<ResultDisplayData> implements Dynamic
     asyncQueue.enqueue(() -> {
       this.selectionState.moveSortingSelectionDown();
       applySorting();
+      setupEnvironments();
       renderItems();
     });
   }
@@ -275,6 +276,7 @@ public class ResultDisplay extends Display<ResultDisplayData> implements Dynamic
     asyncQueue.enqueue(() -> {
       this.selectionState.resetSorting();
       applySorting();
+      setupEnvironments();
       renderItems();
     });
   }
@@ -282,6 +284,7 @@ public class ResultDisplay extends Display<ResultDisplayData> implements Dynamic
   public void nextFilteringCriterion() {
     asyncQueue.enqueue(() -> {
       this.selectionState.nextFilteringCriterion();
+      setupEnvironments();
       renderFilteringItem();
     });
   }
@@ -307,8 +310,10 @@ public class ResultDisplay extends Display<ResultDisplayData> implements Dynamic
     // Need to update the UI-title
     if (pageCountDelta != 0)
       show();
-    else
+    else {
+      setupEnvironments();
       renderItems();
+    }
   }
 
   private int applyFiltering() {
@@ -335,6 +340,7 @@ public class ResultDisplay extends Display<ResultDisplayData> implements Dynamic
 
   @Override
   public void show() {
+    setupEnvironments();
     clearSlotMap();
     super.show();
   }
@@ -481,7 +487,7 @@ public class ResultDisplay extends Display<ResultDisplayData> implements Dynamic
       var cachedShop = filteredSortedShops.get(currentSlot);
       var representative = cachedShop.handle.getItem().clone();
 
-      config.rootSection.resultDisplay.items.representativePatch.patch(representative, cachedShop.makeShopEnvironment());
+      config.rootSection.resultDisplay.items.representativePatch.patch(representative, getExtendedShopEnvironment(cachedShop));
 
       inventory.setItem(slot, representative);
 
@@ -618,6 +624,8 @@ public class ResultDisplay extends Display<ResultDisplayData> implements Dynamic
         )
       );
 
+    environment.withVariable("player_warp_display_details", config.rootSection.playerWarpsIntegration.displayNearestInIcon);
+
     if (nearestPlayerWarp != null) {
       var warpDistance = -1;
 
@@ -627,7 +635,6 @@ public class ResultDisplay extends Display<ResultDisplayData> implements Dynamic
       var ownerName = nearestPlayerWarp.ownerName();
 
       environment
-        .withVariable("player_warp_display_details", config.rootSection.playerWarpsIntegration.displayNearestInIcon)
         .withVariable("player_warp_name", nearestPlayerWarp.warpName())
         .withVariable("player_warp_owner", ownerName)
         .withVariable("player_warp_world", Objects.requireNonNull(nearestPlayerWarp.location().getWorld()).getName())
@@ -638,6 +645,8 @@ public class ResultDisplay extends Display<ResultDisplayData> implements Dynamic
         .withVariable("player_warp_owner_textures", texturesResolver.tryResolveTextures(ownerName));
     }
 
+    environment.withVariable("essentials_warp_display_details", config.rootSection.essentialsWarpsIntegration.displayNearestInIcon);
+
     if (nearestEssentialsWarp != null) {
       var warpDistance = -1;
 
@@ -645,7 +654,6 @@ public class ResultDisplay extends Display<ResultDisplayData> implements Dynamic
         warpDistance = (int) Math.round(nearestEssentialsWarp.location().distance(playerLocation));
 
       environment
-        .withVariable("essentials_warp_display_details", config.rootSection.essentialsWarpsIntegration.displayNearestInIcon)
         .withVariable("essentials_warp_name", nearestEssentialsWarp.name())
         .withVariable("essentials_warp_world", Objects.requireNonNull(nearestEssentialsWarp.location().getWorld()).getName())
         .withVariable("essentials_warp_x", nearestEssentialsWarp.location().getBlockX())

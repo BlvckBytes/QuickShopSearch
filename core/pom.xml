@@ -120,7 +120,7 @@
                             <include>me.blvckbytes:common</include>
                             <include>me.blvckbytes:qs_lte_6207</include>
                             <include>me.blvckbytes:qs_gt_6207_lte_6208</include>
-                            <include>me.blvckbytes:qs_gt_6208</include>
+                            <include>me.blvckbytes:qs_gt_6208_lte_62010</include>
                             <include>me.blvckbytes:qs_gte_62011</include>
                             <include>me.blvckbytes:olziedev_player_warps_integration</include>
                             <include>me.blvckbytes:revivalo_player_warps_integration</include>

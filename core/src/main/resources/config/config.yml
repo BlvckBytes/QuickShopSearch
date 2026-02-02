@@ -12,14 +12,14 @@
 resultDisplay:
   chatPromptAllSentinel: 'all'
   chatPromptCancelSentinel: 'cancel'
-  title: '<&8>Shop Search <&e>{current_page}<&8>/<&e>{number_pages}'
+  title: '<&8>Shop Search <&e>{current_page}<&8>/<&e>{number_of_pages}'
   rows: 6
   paginationSlots: '0..44'
   items:
     previousPage:
       slots: 'last_slot - 8'
       type: PLAYER_HEAD
-      textures: '{lut.textures[if current_page > 1 then "arrow_left" else "arrow_left_red"]}'
+      textures: '{lut.textures[current_page > 1 then "arrow_left" else "arrow_left_red"]}'
       name: |
         <reset>
           <container *if="current_page > 1">
@@ -38,7 +38,7 @@ resultDisplay:
     nextPage:
       slots: 'last_slot'
       type: PLAYER_HEAD
-      textures: '{lut.textures[if current_page < number_pages then "arrow_right" else "arrow_right_red"]}'
+      textures: '{lut.textures[current_page < number_of_pages then "arrow_right" else "arrow_right_red"]}'
       name: |
         <reset>
           <container *if="current_page < number_of_pages">
@@ -77,7 +77,7 @@ resultDisplay:
             <&8>♦ <&7>Space: <&e>{is_unlimited then "∞" else remaining_space}<br/>
           </container>
           <container *else>
-            <&8>♦ <&7>Stock: <&e>{if is_unlimited then "∞" else remaining_stock}<br/>
+            <&8>♦ <&7>Stock: <&e>{is_unlimited then "∞" else remaining_stock}<br/>
           </container>
           <&8>♦ <&7>Coordinates: <&e>{loc_x} {loc_y} {loc_z}<br/>
           <&8>♦ <&7>World: <&e>{loc_world}<br/>
@@ -103,10 +103,10 @@ resultDisplay:
               <&8>♦ <&7>Mode: <&e>Sells Items<br/>
             </container>
           </container>
-          <container *if="player_warp_display_details and player_warp_name neq null">
+          <container *if="player_warp_display_details and env(player_warp_name) neq null">
             <&8>♦ <&7>Player-Warp: <&e>{player_warp_name} ({player_warp_x}, {player_warp_y}, {player_warp_z})<br/>
           </container>
-          <container *if="essentials_warp_display_details and essentials_warp_name neq null">
+          <container *if="essentials_warp_display_details and env(essentials_warp_name) neq null">
             <&8>♦ <&7>Warp: <&e>{essentials_warp_name} ({essentials_warp_x}, {essentials_warp_y}, {essentials_warp_z})
           </container>
           {lut.spacer}<br/>
@@ -145,6 +145,7 @@ resultDisplay:
             >
               <&8><&e *use="sorting.active">➥ <container &renderer />
             </container>
+            <br/>
             {lut.spacer}<br/>
             <&8>➥ <&e>Left-Click <&7>Cycle through criteria<br/>
             <&8>➥ <&e>Right-Click <&7>Toggle sorting-order<br/>
@@ -206,6 +207,7 @@ resultDisplay:
             >
               <&8><&e *use="filtering.active">➥ <container &renderer />
             </container>
+            <br/>
             {lut.spacer}<br/>
             <&8>➥ <&e>Left-Click <&7>Cycle through criteria<br/>
             <&8>➥ <&e>Right-Click <&7>Toggle state<br/>
@@ -243,7 +245,7 @@ teleportDisplay:
       lore: |
         <reset>
           <br/>
-          {lut.spacer><br/>
+          {lut.spacer}<br/>
           <&8>♦ <&7>Coordinates: <&e>{loc_x} {loc_y} {loc_z}<br/>
           <&8>♦ <&7>World: &e{loc_world}<br/>
           <container *if="distance < 0">
@@ -252,9 +254,9 @@ teleportDisplay:
           <container *else>
             <&8>♦ <&7>Distance: <&e>{distance} Blocks<br/>
           </container>
-          {lut.spacer><br/>
+          {lut.spacer}<br/>
           <&8>➥ <&e>Left-Click <&7>Teleport to the shop-location<br/>
-          {lut.spacer>
+          {lut.spacer}
     nearestPlayerWarpLocation:
       slots: '3'
       type: '{has(player_warp_name) then "PLAYER_HEAD" else "BARRIER"}'
@@ -381,7 +383,7 @@ playerMessages:
   commandAdvertiseEnabledSelf: '{lut.prefix} <&7>You are <&a>now <&7>advertising your shop at <&e>{loc_x}<&7>, <&e>{loc_y}<&7>, <&e>{loc_z}<&7>.'
   commandAdvertiseEnabledOther: '{lut.prefix} <&7>The shop of <&e>{owner} <&7>at <&e>{loc_x}<&7>, <&e>{loc_y}<&7>, <&e>{loc_z} <&7>is <&a>now <&7>advertised.'
   commandAdvertiseDisabledSelf: '{lut.prefix} <&7>You are <&c>no longer <&7>advertising your shop at <&e>{loc_x}<&7>, <&e>{loc_y}<&7>, <&e>{loc_z}<&7>.'
-  commandAdvertiseDisabledOther: '{lut.prefix} <&7>The shop of <&e>{owner} <&7>at <&e>{loc_x}<&7>, <&e>{loc_y}<&7>, <&e>{loc_z} <&>7is <&c>no longer <&7>advertised.'
+  commandAdvertiseDisabledOther: '{lut.prefix} <&7>The shop of <&e>{owner} <&7>at <&e>{loc_x}<&7>, <&e>{loc_y}<&7>, <&e>{loc_z} <&7>is <&c>no longer <&7>advertised.'
   commandAdvertiseDisallowedSelf: '{lut.prefix} <&7>Your shop at <&e>{loc_x}<&7>, <&e>{loc_y}<&7>, <&e>{loc_z} <&7>is not allowed to advertise.'
   commandAdvertiseDisallowedOther: '{lut.prefix} <&7>The shop of <&e>{owner} <&7>at <&e>{loc_x}<&7>, <&e>{loc_y}<&7>, <&e>{loc_z} <&7>is not allowed to advertise.'
   pendingCooldownFeatureTeleportSameShop: '{lut.prefix} <&7>Please wait another <duration [value]="cooldown_millis" units="hms" /><&7>, until you teleport to the <&c>same shop <&7>again!'
@@ -529,7 +531,7 @@ sLut:
     player_warp_skin_fallback: 'eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZDEwNzA0NWU2NDk0NDg1NmY0YTQ3YzAxNjg4MWM2ZWFhNjI0NTNhODMyMmE5MmEwYzZjYzI0NDNlYjlhYmQzNCJ9fX0='
 
 cLut:
-  prefix: '&7[&6QuickShopSearch&7]'
+  prefix: '<&7>[<&6>QuickShopSearch<&7>]'
   spacer: '<&8><&m>{" " ** 50}'
   sorting_criteria:
     PRICE: 'Price'
