@@ -2,7 +2,7 @@ name: QuickShopSearch
 main: me.blvckbytes.quick_shop_search.QuickShopSearchPlugin
 version: ${project.version}
 author: BlvckBytes
-api-version: 1.18
+api-version: 1.21
 depend: [QuickShop-Hikari, ItemPredicateParser]
 softdepend: [PlayerWarps, Essentials, WorldGuard, AxPlayerWarps]
 folia-supported: true

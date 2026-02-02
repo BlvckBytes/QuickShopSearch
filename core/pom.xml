@@ -20,11 +20,6 @@
 
     <dependencies>
         <dependency>
-            <groupId>net.kyori</groupId>
-            <artifactId>adventure-api</artifactId>
-            <version>4.17.0</version>
-        </dependency>
-        <dependency>
             <groupId>com.ghostchu</groupId>
             <artifactId>quickshop-api</artifactId>
             <version>6.2.0.6</version>
@@ -135,8 +130,6 @@
                             <include>me.blvckbytes:essentials_warps_integration</include>
                             <include>me.blvckbytes:worldguard_integration</include>
                             <include>com.github.technicallycoded:FoliaLib</include>
-                            <!-- [1] Shouldn't be necessary anymore on newer versions of bukkit, but I prefer backwards-compatibility over file-size. -->
-                            <include>org.yaml:snakeyaml</include>
                             <include>com.github.cryptomorin:XSeries</include>
                         </includes>
                     </artifactSet>
@@ -158,13 +151,6 @@
                         <relocation>
                             <pattern>(com/tcoded/folialib)</pattern>
                             <shadedPattern>me/blvckbytes/quick_shop_search/$1</shadedPattern>
-                            <rawString>true</rawString>
-                        </relocation>
-
-                        <!-- See [1] -->
-                        <relocation>
-                            <pattern>org/yaml/snakeyaml/(.*)</pattern>
-                            <shadedPattern>me/blvckbytes/quick_shop_search/org/yaml/snakeyaml/$1</shadedPattern>
                             <rawString>true</rawString>
                         </relocation>
                     </relocations>
