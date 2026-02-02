@@ -335,21 +335,8 @@ public class ResultDisplayHandler extends DisplayHandler<ResultDisplay, ResultDi
       return;
     }
 
-    var limitingFactorPlaceholderMessage = switch (maxUnitsResult.limitingFactor()) {
-      case PLAYER_SPACE -> config.rootSection.playerMessages.shopInteractPromptLimitingFactorPlayerSpace;
-      case PLAYER_STOCK -> config.rootSection.playerMessages.shopInteractPromptLimitingFactorPlayerStock;
-      case SHOP_SPACE -> config.rootSection.playerMessages.shopInteractPromptLimitingFactorShopSpace;
-      case SHOP_STOCK -> config.rootSection.playerMessages.shopInteractPromptLimitingFactorShopStock;
-      case SELLER_FUNDS -> config.rootSection.playerMessages.shopInteractPromptLimitingFactorSellerFunds;
-      case BUYER_FUNDS -> config.rootSection.playerMessages.shopInteractPromptLimitingFactorBuyerFunds;
-    };
-
     var limitingFactorExtendedEnvironment = distanceExtendedEnvironment
-      .withVariable("limiting_factor", (
-        limitingFactorPlaceholderMessage == null
-          ? "?"
-          : limitingFactorPlaceholderMessage.asPlainString(distanceExtendedEnvironment)
-      ))
+      .withVariable("limiting_factor", maxUnitsResult.limitingFactor())
       .withVariable("max_units", maxUnitsResult.units());
 
     scheduler.runAtEntity(player, scheduleTask -> player.closeInventory());

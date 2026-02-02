@@ -320,8 +320,12 @@ playerMessages:
   emptyPredicate: '{lut.prefix} <&c>Please provide a non-empty predicate.'
   noMatches: '{lut.prefix} <&c>Your query resulted in zero matches.'
   beforeTeleporting: '{lut.prefix} <&7>Teleporting to the Shop of <&e>{owner} <&7>at <&e>{loc_x}<&7>, <&e>{loc_y}&7, <&e>{loc_z}<&7>.'
-  beforeTeleportingNearestPlayerWarp: '{lut.prefix} <&7>Teleporting to the nearest player-warp <&e>{player_warp_name} <&7>at <&e>{player_warp_x}<&7>, <&e>{player_warp_y}<&7>, <&e>{player_warp_z} <&7>of the Shop of <&e>{owner} <&7>at <&e>{loc_x}<&7>, <&e>{loc_y}<&7>, <&e>{loc_z}<&7>.'
-  beforeTeleportingNearestEssentialsWarp: '{lut.prefix} & <&7>Teleporting to the nearest warp <&e>{essentials_warp_name} <&7>at <&e>{essentials_warp_x}<&7>, <&e>{essentials_warp_y}<&7>, <&e>{essentials_warp_z} <&7>of the Shop of <&e>{owner} <&7>at <&e>{loc_x}<&7>, <&e>{loc_y}<&7>, <&e>{loc_z}<&7>.'
+  beforeTeleportingNearestPlayerWarp: |
+    {lut.prefix} <&7>Teleporting to the nearest player-warp <&e>{player_warp_name} <&7>at <&e>{player_warp_x}<&7>, <&e>{player_warp_y}<&7>, <&e>{player_warp_z}<space/>
+    <&7>of the Shop of <&e>{owner} <&7>at <&e>{loc_x}<&7>, <&e>{loc_y}<&7>, <&e>{loc_z}<&7>.
+  beforeTeleportingNearestEssentialsWarp: |
+    {lut.prefix} <&7>Teleporting to the nearest warp <&e>{essentials_warp_name} <&7>at <&e>{essentials_warp_x}<&7>, <&e>{essentials_warp_y}<&7>, <&e>{essentials_warp_z}<space/>
+    <&7>of the Shop of <&e>{owner} <&7>at <&e>{loc_x}<&7>, <&e>{loc_y}<&7>, <&e>{loc_z}<&7>.
   beforeQuerying: '{lut.prefix} <&7>Querying <&e>{number_shops} Shops <&7>for <&e>{predicate}<&7>...'
   queryingAllShops: '{lut.prefix} <&7>Querying <&e>all <&7>(<&e>{number_shops}<&7>) Shops...'
   usageQsslCommandLanguage: |
@@ -335,20 +339,19 @@ playerMessages:
   pluginReloadedError: '{lut.prefix} <&c>An error occurred while trying to reload the plugin. Check the console!'
   predicateParseError: '{lut.prefix} {error_message}'
   searchFlagParseError: '{lut.prefix} <&c>Invalid value <&4>{flag_value} <&c>for search-flag <&4>{flag_name}<&c>!'
-  shopInteractPromptBuying: '{lut.prefix} <&7>Enter in chat, how many items of <&e>{item_type} <&7>you wish to <&e>SELL <&7>for <&e>{fees_final_price} <&7>each; type "<&a>{all_sentinel}<&7>" for <&e>{max_units} unit(s) <&7>(limiting-factor: <&e>{limiting_factor}<&7>); type "<&c>{cancel_sentinel}<&7>" to exit.'
-  shopInteractPromptSelling: '{lut.prefix} <&7>Enter in chat, how many items of <&e>{item_type} <&7>you wish to <&e>BUY <&7>for <&e>{fees_final_price} <&7>each; type "<&a>{all_sentinel}<&7>" for <&e>{max_units} unit(s) <&7>(limiting-factor: <&e>{limiting_factor}<&7>); type "<&c>{cancel_sentinel}<&7>" to exit.'
+  shopInteractPromptBuying: |
+    {lut.prefix} <&7>Enter in chat, how many items of <&e>{item_type} <&7>you wish to <&e>SELL <&7>for <&e>{fees_final_price} <&7>each;<space/>
+    type "<&a>{all_sentinel}<&7>" for <&e>{max_units} unit(s) <&7>(limiting-factor: <&e>{lut.limiting_factor[limiting_factor] ?? limiting_factor}<&7>);<space/>
+    type "<&c>{cancel_sentinel}<&7>" to exit.
+  shopInteractPromptSelling: |
+    {lut.prefix} <&7>Enter in chat, how many items of <&e>{item_type} <&7>you wish to <&e>BUY <&7>for <&e>{fees_final_price} <&7>each;<space/>
+    type "<&a>{all_sentinel}<&7>" for <&e>{max_units} unit(s) <&7>(limiting-factor: <&e>{lut.limiting_factor[limiting_factor] ?? limiting_factor}<&7>);<space/>
+    type "<&c>{cancel_sentinel}<&7>" to exit.
   shopInteractPromptTimeout: '{lut.prefix} <&c>Your previous chat-prompt timed out!'
   shopInteractPromptDispatch: '{lut.prefix} <&7>Relaying your request of <&e>{amount}x {item_type} <&7>to the <&e>Shop<&7>...'
   shopInteractPromptInvalidInput: '{lut.prefix} <&c>Your input <&4>{input} <&c>does not resemble an integer greater than zero!'
   shopInteractPromptCancelPrevious: '{lut.prefix} <&c>Your previous chat-prompt has been cancelled!'
   shopInteractPromptCancelCurrent: '{lut.prefix} <&c>Your current chat-prompt has been cancelled!'
-  # TODO: Move these to LUT and resolve them by an enum-constant
-  shopInteractPromptLimitingFactorPlayerSpace: 'space of your inventory'
-  shopInteractPromptLimitingFactorPlayerStock: 'stock of your inventory'
-  shopInteractPromptLimitingFactorShopSpace: 'space of the shop'
-  shopInteractPromptLimitingFactorShopStock: 'stock of the shop'
-  shopInteractPromptLimitingFactorSellerFunds: 'the seller''s funds'
-  shopInteractPromptLimitingFactorBuyerFunds: 'your funds'
   shopInteractPromptFeesWarning: '{lut.prefix} <&e><&l>Warning!</> <&7>This shop is assigned with a distance-fee of <&e>{fees_total_value} <&7>per unit!'
   shopInteractPendingFeesTask: '{lut.prefix} <&c>There''s still a distance-fee task pending - please wait a few moments before trying again!'
   shopInteractCouldNotWithdrawFees: '{lut.prefix} <&c>Could not withdraw the distance-fee of <&4>{fees_amount}<&c>; cancelling interaction!'
@@ -586,3 +589,10 @@ cLut:
     POSITIVE: '<&a>{criterion}'
     NEGATIVE: '<&c>{criterion}'
     INVARIANT: '<&7><&m>{criterion}'
+  limiting_factor:
+    PLAYER_SPACE: 'space of your inventory'
+    PLAYER_STOCK: 'stock of your inventory'
+    SHOP_SPACE: 'space of the shop'
+    SHOP_STOCK: 'stock of the shop'
+    SELLER_FUNDS: 'the seller''s funds'
+    BUYER_FUNDS: 'your funds'

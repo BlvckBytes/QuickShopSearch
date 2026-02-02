@@ -29,12 +29,6 @@ public class PlayerMessagesSection extends ConfigSection {
   public @Nullable ComponentMarkup shopInteractPromptInvalidInput;
   public @Nullable ComponentMarkup shopInteractPromptCancelPrevious;
   public @Nullable ComponentMarkup shopInteractPromptCancelCurrent;
-  public @Nullable ComponentMarkup shopInteractPromptLimitingFactorPlayerSpace;
-  public @Nullable ComponentMarkup shopInteractPromptLimitingFactorPlayerStock;
-  public @Nullable ComponentMarkup shopInteractPromptLimitingFactorShopSpace;
-  public @Nullable ComponentMarkup shopInteractPromptLimitingFactorShopStock;
-  public @Nullable ComponentMarkup shopInteractPromptLimitingFactorSellerFunds;
-  public @Nullable ComponentMarkup shopInteractPromptLimitingFactorBuyerFunds;
   public @Nullable ComponentMarkup shopInteractPromptFeesWarning;
   public @Nullable ComponentMarkup shopInteractPlayerHasNoSpace;
   public @Nullable ComponentMarkup shopInteractPlayerHasNoStock;
