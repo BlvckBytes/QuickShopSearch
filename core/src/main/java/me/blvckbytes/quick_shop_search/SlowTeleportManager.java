@@ -1,11 +1,15 @@
 package me.blvckbytes.quick_shop_search;
 
+import at.blvckbytes.cm_mapper.ConfigKeeper;
+import at.blvckbytes.cm_mapper.cm.ComponentMarkup;
+import at.blvckbytes.component_markup.constructor.SlotType;
+import at.blvckbytes.component_markup.expression.interpreter.InterpretationEnvironment;
 import com.tcoded.folialib.impl.PlatformScheduler;
-import me.blvckbytes.bukkitevaluable.BukkitEvaluable;
-import me.blvckbytes.bukkitevaluable.ConfigKeeper;
 import me.blvckbytes.quick_shop_search.config.MainSection;
 import me.blvckbytes.quick_shop_search.config.slow_teleport.SlowTeleportNotification;
 import me.blvckbytes.quick_shop_search.config.slow_teleport.SlowTeleportParametersSection;
+import net.kyori.adventure.title.Title;
+import net.kyori.adventure.title.TitlePart;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
@@ -16,6 +20,7 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.jetbrains.annotations.Nullable;
 
+import java.time.Duration;
 import java.util.*;
 import java.util.function.Consumer;
 
@@ -110,35 +115,47 @@ public class SlowTeleportManager implements Listener {
         );
       }
 
-      var messageEnvironment = config.rootSection.getBaseEnvironment()
-        .withStaticVariable("remaining_seconds", remainingSeconds)
-        .build();
+      var messageEnvironment = new InterpretationEnvironment()
+        .withVariable("remaining_seconds", remainingSeconds);
 
-      BukkitEvaluable message;
+      ComponentMarkup message;
 
       if ((message = notification.messages.messageChat) != null)
         message.sendMessage(player, messageEnvironment);
 
       if ((message = notification.messages.messageActionBar) != null)
-        message.sendActionBarMessage(player, messageEnvironment);
+        message.sendActionBar(player, messageEnvironment);
 
-      if ((message = notification.messages.messageTitle) != null || notification.messages.messageSubTitle != null) {
-        var applicator = message != null ? message.applicator : notification.messages.messageSubTitle.applicator;
+      if (notification.messages.messageTitle != null || notification.messages.messageSubTitle != null) {
+        if (notification.messages.messageTitle != null) {
+          player.sendTitlePart(
+            TitlePart.TITLE,
+            notification.messages.messageTitle
+              .interpret(SlotType.SINGLE_LINE_CHAT, messageEnvironment).get(0)
+          );
+        }
+
+        if (notification.messages.messageSubTitle != null) {
+          player.sendTitlePart(
+            TitlePart.SUBTITLE,
+            notification.messages.messageSubTitle
+              .interpret(SlotType.SINGLE_LINE_CHAT, messageEnvironment).get(0)
+          );
+        }
 
         var stampNow = System.currentTimeMillis();
         var elapsedMillisSinceLastTitle = stampNow - lastTitleDisplayStamp;
-        lastTitleDisplayStamp = stampNow;
 
-        applicator.sendTitles(
-          player,
-          message, messageEnvironment,
-          notification.messages.messageSubTitle, messageEnvironment,
-          // Do not fade in unless the last title is completely gone already, as to avoid a flickering display
-          elapsedMillisSinceLastTitle > 1750 ? 10 : 0,
-          // Stay for a tad bit over a second, as to allow for latency
-          23,
-          // Fade out of the previous message will be cancelled by a new one - thus, no flicker
-          10
+        player.sendTitlePart(
+          TitlePart.TIMES,
+          Title.Times.times(
+            // Do not fade in unless the last title is completely gone already, as to avoid a flickering display
+            Duration.ofMillis((elapsedMillisSinceLastTitle > 1750 ? 10 : 0) * 50),
+            // Stay for a tad bit over a second, as to allow for latency
+            Duration.ofMillis(23 * 50),
+            // Fade out of the previous message will be cancelled by a new one - thus, no flicker
+            Duration.ofMillis(10 * 50)
+          )
         );
       }
     }
@@ -166,10 +183,10 @@ public class SlowTeleportManager implements Listener {
     if (!permittedToTeleport.remove(victim.getUniqueId()))
       return;
 
-    BukkitEvaluable message;
+    ComponentMarkup message;
 
     if ((message = config.rootSection.playerMessages.slowTeleportTookDamageByNonPlayer) != null)
-      message.sendMessage(victim, config.rootSection.builtBaseEnvironment);
+      message.sendMessage(victim);
   }
 
   private void tookDamageByPlayer(Player victim, Player attacker) {
@@ -180,28 +197,24 @@ public class SlowTeleportManager implements Listener {
     if (!config.rootSection.slowTeleport.cancelIfDamagedByPlayer)
       return;
 
-    if (permittedToTeleport.remove(victim.getUniqueId())) {
-      BukkitEvaluable message;
+    ComponentMarkup message;
 
+    if (permittedToTeleport.remove(victim.getUniqueId())) {
       if ((message = config.rootSection.playerMessages.slowTeleportHasBeenAttacked) != null) {
         message.sendMessage(
           victim,
-          config.rootSection.getBaseEnvironment()
-            .withStaticVariable("attacker", attacker.getName())
-            .build()
+          new InterpretationEnvironment()
+            .withVariable("attacker", attacker.getName())
         );
       }
     }
 
     if (permittedToTeleport.remove(attacker.getUniqueId())) {
-      BukkitEvaluable message;
-
       if ((message = config.rootSection.playerMessages.slowTeleportAttackedSomebody) != null) {
         message.sendMessage(
           attacker,
-          config.rootSection.getBaseEnvironment()
-            .withStaticVariable("victim", victim.getName())
-            .build()
+          new InterpretationEnvironment()
+            .withVariable("victim", victim.getName())
         );
       }
     }
@@ -211,9 +224,6 @@ public class SlowTeleportManager implements Listener {
   public void onMove(PlayerMoveEvent event) {
     var destinationLocation = event.getTo();
 
-    if (destinationLocation == null)
-      return;
-
     var player = event.getPlayer();
 
     if (event.getFrom().distanceSquared(destinationLocation) < .005)
@@ -222,10 +232,10 @@ public class SlowTeleportManager implements Listener {
     if (!permittedToTeleport.remove(player.getUniqueId()))
       return;
 
-    BukkitEvaluable message;
+    ComponentMarkup message;
 
     if ((message = config.rootSection.playerMessages.slowTeleportHasMoved) != null)
-      message.sendMessage(player, config.rootSection.builtBaseEnvironment);
+      message.sendMessage(player);
   }
 
   @EventHandler

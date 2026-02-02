@@ -1,10 +1,12 @@
 package me.blvckbytes.quick_shop_search.config.access_lists;
 
-import me.blvckbytes.bbconfigmapper.MappingError;
-import me.blvckbytes.bbconfigmapper.sections.AConfigSection;
-import me.blvckbytes.bbconfigmapper.sections.CSIgnore;
-import me.blvckbytes.bukkitevaluable.BukkitEvaluable;
-import me.blvckbytes.gpeee.interpreter.EvaluationEnvironmentBuilder;
+import at.blvckbytes.cm_mapper.cm.ComponentMarkup;
+import at.blvckbytes.cm_mapper.mapper.MappingError;
+import at.blvckbytes.cm_mapper.mapper.section.CSIgnore;
+import at.blvckbytes.cm_mapper.mapper.section.ConfigSection;
+import at.blvckbytes.component_markup.expression.interpreter.InterpretationEnvironment;
+import at.blvckbytes.component_markup.util.logging.InterpreterLogger;
+import com.cryptomorin.xseries.XMaterial;
 import org.bukkit.Material;
 
 import java.lang.reflect.Field;
@@ -13,17 +15,16 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class ShopAccessListSection extends AConfigSection {
+public class ShopAccessListSection extends ConfigSection {
 
   public boolean isAllowTypes;
-  public List<BukkitEvaluable> types;
+  public List<ComponentMarkup> types;
 
   @CSIgnore
   public final Set<Material> typeMaterials;
 
-  public ShopAccessListSection(EvaluationEnvironmentBuilder baseEnvironment) {
-    super(baseEnvironment);
-
+  public ShopAccessListSection(InterpretationEnvironment baseEnvironment, InterpreterLogger interpreterLogger) {
+    super(baseEnvironment, interpreterLogger);
     // It's very important that this property defaults to false, as an empty types-list
     // thereby results in all shops passing, which is desired behavior.
     this.isAllowTypes = false;
@@ -36,12 +37,13 @@ public class ShopAccessListSection extends AConfigSection {
     super.afterParsing(fields);
 
     for (var type : types) {
-      var interpretedMaterial = type.asXMaterial(builtBaseEnvironment);
+      var materialString = type.asPlainString(null);
+      var xMaterial = XMaterial.matchXMaterial(materialString);
 
-      if (interpretedMaterial == null)
-        throw new MappingError("Could not interpret access-list type \"" + type.value + "\" as a material");
+      if (xMaterial.isEmpty())
+        throw new MappingError("Could not interpret access-list type \"" + materialString + "\" as a XMaterial");
 
-      typeMaterials.add(interpretedMaterial.parseMaterial());
+      typeMaterials.add(xMaterial.get().get());
     }
   }
 }

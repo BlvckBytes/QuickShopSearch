@@ -1,9 +1,9 @@
 package me.blvckbytes.quick_shop_search.command;
 
+import at.blvckbytes.cm_mapper.ConfigKeeper;
+import at.blvckbytes.cm_mapper.cm.ComponentMarkup;
 import com.ghostchu.quickshop.api.command.CommandHandler;
 import com.ghostchu.quickshop.api.command.CommandParser;
-import me.blvckbytes.bukkitevaluable.BukkitEvaluable;
-import me.blvckbytes.bukkitevaluable.ConfigKeeper;
 import me.blvckbytes.quick_shop_search.PluginPermission;
 import me.blvckbytes.quick_shop_search.cache.CachedShop;
 import me.blvckbytes.quick_shop_search.cache.CachedShopRegistry;
@@ -27,11 +27,11 @@ public class SubCommand_Advertise implements CommandHandler<Player> {
 
   @Override
   public void onCommand(Player player, @NotNull String commandLabel, @NotNull CommandParser parser) {
-    BukkitEvaluable message;
+    ComponentMarkup message;
 
     if (!PluginPermission.ADVERTISE_COMMAND.has(player)) {
       if ((message = config.rootSection.playerMessages.missingPermissionAdvertiseCommand) != null)
-        message.sendMessage(player, config.rootSection.builtBaseEnvironment);
+        message.sendMessage(player);
 
       return;
     }
@@ -40,7 +40,7 @@ public class SubCommand_Advertise implements CommandHandler<Player> {
 
     if (targetShop == null) {
       if ((message = config.rootSection.playerMessages.commandAdvertiseNotLookingAtShop) != null)
-        message.sendMessage(player, config.rootSection.builtBaseEnvironment);
+        message.sendMessage(player);
 
       return;
     }
@@ -50,7 +50,7 @@ public class SubCommand_Advertise implements CommandHandler<Player> {
 
     if (!PluginPermission.ADVERTISE_COMMAND_OWNER_BYPASS.has(player) && !isShopOwner) {
       if ((message = config.rootSection.playerMessages.commandAdvertiseNotTheOwner) != null)
-        message.sendMessage(player, config.rootSection.builtBaseEnvironment);
+        message.sendMessage(player);
 
       return;
     }
@@ -89,7 +89,7 @@ public class SubCommand_Advertise implements CommandHandler<Player> {
     }
 
     if (message != null)
-      message.sendMessage(player, targetShop.getShopEnvironment().build());
+      message.sendMessage(player, targetShop.makeShopEnvironment());
   }
 
   @Override

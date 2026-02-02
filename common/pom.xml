@@ -44,14 +44,14 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>me.blvckbytes</groupId>
-            <artifactId>BukkitEvaluable</artifactId>
-            <version>0.1</version>
+            <groupId>at.blvckbytes</groupId>
+            <artifactId>CMMapper</artifactId>
+            <version>0.0.1</version>
         </dependency>
         <dependency>
             <groupId>me.blvckbytes</groupId>
             <artifactId>ItemPredicateParser</artifactId>
-            <version>0.0.25</version>
+            <version>0.0.26</version>
         </dependency>
         <dependency>
             <groupId>me.blvckbytes</groupId>

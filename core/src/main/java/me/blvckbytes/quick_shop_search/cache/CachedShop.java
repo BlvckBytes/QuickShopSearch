@@ -1,14 +1,11 @@
 package me.blvckbytes.quick_shop_search.cache;
 
+import at.blvckbytes.cm_mapper.ConfigKeeper;
+import at.blvckbytes.component_markup.expression.interpreter.InterpretationEnvironment;
 import com.ghostchu.quickshop.api.QuickShopAPI;
 import com.ghostchu.quickshop.api.shop.Shop;
 import com.ghostchu.quickshop.api.shop.ShopType;
 import com.tcoded.folialib.impl.PlatformScheduler;
-import me.blvckbytes.bukkitevaluable.ConfigKeeper;
-import me.blvckbytes.bukkitevaluable.IItemBuildable;
-import me.blvckbytes.bukkitevaluable.ItemBuilder;
-import me.blvckbytes.bukkitevaluable.section.ItemStackSection;
-import me.blvckbytes.gpeee.interpreter.EvaluationEnvironmentBuilder;
 import me.blvckbytes.quick_shop_search.PluginPermission;
 import me.blvckbytes.quick_shop_search.config.MainSection;
 import me.blvckbytes.quick_shop_search.integration.IntegrationRegistry;
@@ -37,13 +34,10 @@ public class CachedShop {
   public final String shopWorldName;
   public final ShopScalarDiff diff;
 
-  private ItemStackSection representativePatch;
-  private final EvaluationEnvironmentBuilder shopEnvironment;
   private final ConfigKeeper<MainSection> config;
   private final NamespacedKey keyIsAdvertising;
   private final IntegrationRegistry integrationRegistry;
 
-  private IItemBuildable representativeBuildable;
   public int cachedStock;
   public int cachedSpace;
   public ShopType cachedType;
@@ -70,27 +64,9 @@ public class CachedShop {
 
     this.shopWorldName = shopWorld == null ? "?" : shopWorld.getName();
 
-    var shopManager = QuickShopAPI.getInstance().getShopManager();
-
-    this.shopEnvironment = new EvaluationEnvironmentBuilder()
-      .withLiveVariable("owner", handle.getOwner()::getDisplay)
-      .withLiveVariable("name", handle::getShopName)
-      .withLiveVariable("price", () -> shopManager.format(handle.getPrice(), handle))
-      .withLiveVariable("item_type", () -> formatItemType(handle.getItem()))
-      .withLiveVariable("remaining_stock", () -> this.cachedStock)
-      .withLiveVariable("remaining_space", () -> this.cachedSpace)
-      .withLiveVariable("is_buying", handle::isBuying)
-      .withLiveVariable("is_selling", handle::isSelling)
-      .withLiveVariable("is_unlimited", handle::isUnlimited)
-      .withLiveVariable("loc_world", () -> shopWorldName)
-      .withLiveVariable("loc_x", shopLocation::getBlockX)
-      .withLiveVariable("loc_y", shopLocation::getBlockY)
-      .withLiveVariable("loc_z", shopLocation::getBlockZ);
-
     scheduler.runAtLocation(shopLocation, scheduleTask -> {
       onConfigReload();
 
-      this.representativeBuildable = makeBuildable(handle.getItem());
       this.cachedStock = handle.getRemainingStock();
       this.cachedSpace = handle.getRemainingSpace();
       this.cachedType = handle.getShopType();
@@ -125,25 +101,27 @@ public class CachedShop {
 
   public void onConfigReload() {
     this.loadAdvertising();
-    this.representativePatch = config.rootSection.resultDisplay.items.representativePatch;
-    this.representativeBuildable = makeBuildable(this.handle.getItem());
   }
 
-  public IItemBuildable getRepresentativeBuildable() {
-    return representativeBuildable;
-  }
+  public InterpretationEnvironment makeShopEnvironment() {
+    var shopManager = QuickShopAPI.getInstance().getShopManager();
+    var shopLocation = handle.getLocation();
 
-  public EvaluationEnvironmentBuilder getShopEnvironment() {
-    return shopEnvironment;
-  }
+    return new InterpretationEnvironment()
+      .withVariable("owner", handle.getOwner().getDisplay())
+      .withVariable("name", handle.getShopName())
+      .withVariable("price", shopManager.format(handle.getPrice(), handle))
+      .withVariable("item_type", formatItemType(handle.getItem()))
+      .withVariable("remaining_stock", this.cachedStock)
+      .withVariable("remaining_space", this.cachedSpace)
+      .withVariable("is_buying", handle.isBuying())
+      .withVariable("is_selling", handle.isSelling())
+      .withVariable("is_unlimited", handle.isUnlimited())
+      .withVariable("loc_world", shopWorldName)
+      .withVariable("loc_x", shopLocation.getBlockX())
+      .withVariable("loc_y", shopLocation.getBlockY())
+      .withVariable("loc_z", shopLocation.getBlockZ());
 
-  public void onItemChange(ItemStack newItem) {
-    this.representativeBuildable = makeBuildable(newItem);
-  }
-
-  private IItemBuildable makeBuildable(ItemStack item) {
-    return new ItemBuilder(item, item.getAmount())
-      .patch(representativePatch);
   }
 
   public ToggleResult toggleAdvertising(Player player) {

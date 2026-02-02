@@ -1,13 +1,13 @@
 package me.blvckbytes.quick_shop_search.cache;
 
+import at.blvckbytes.cm_mapper.ConfigKeeper;
+import at.blvckbytes.cm_mapper.ReloadPriority;
 import com.ghostchu.quickshop.api.QuickShopAPI;
 import com.ghostchu.quickshop.api.shop.Shop;
 import com.ghostchu.quickshop.api.shop.ShopType;
 import com.tcoded.folialib.impl.PlatformScheduler;
 import it.unimi.dsi.fastutil.longs.Long2ObjectAVLTreeMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
-import me.blvckbytes.bukkitevaluable.ConfigKeeper;
-import me.blvckbytes.bukkitevaluable.ReloadPriority;
 import me.blvckbytes.quick_shop_search.compatibility.QuickShopEventConsumer;
 import me.blvckbytes.quick_shop_search.config.MainSection;
 import me.blvckbytes.quick_shop_search.display.result.ResultDisplayHandler;
@@ -129,7 +129,6 @@ public class CachedShopRegistry implements QuickShopEventConsumer, Listener {
   @Override
   public void onShopItemChange(Shop shop, ItemStack newItem) {
     tryAccessCache(shop, cachedShop -> {
-      cachedShop.onItemChange(newItem);
       displayHandler.onShopUpdate(cachedShop, ShopUpdate.ITEM_CHANGED);
     });
   }

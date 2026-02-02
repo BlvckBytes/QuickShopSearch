@@ -1,13 +1,12 @@
 package me.blvckbytes.quick_shop_search.display.result;
 
+import at.blvckbytes.cm_mapper.ConfigKeeper;
+import at.blvckbytes.cm_mapper.cm.ComponentMarkup;
+import at.blvckbytes.component_markup.expression.interpreter.InterpretationEnvironment;
 import com.ghostchu.quickshop.api.QuickShopAPI;
 import com.ghostchu.quickshop.api.shop.ShopType;
 import com.tcoded.folialib.impl.PlatformScheduler;
 import com.tcoded.folialib.wrapper.task.WrappedTask;
-import me.blvckbytes.bbconfigmapper.ScalarType;
-import me.blvckbytes.bukkitevaluable.BukkitEvaluable;
-import me.blvckbytes.bukkitevaluable.ConfigKeeper;
-import me.blvckbytes.gpeee.interpreter.EvaluationEnvironmentBuilder;
 import me.blvckbytes.quick_shop_search.*;
 import me.blvckbytes.quick_shop_search.cache.CachedShop;
 import me.blvckbytes.quick_shop_search.compatibility.RemoteInteractionApi;
@@ -147,7 +146,7 @@ public class ResultDisplayHandler extends DisplayHandler<ResultDisplay, ResultDi
             message = config.rootSection.playerMessages.missingPermissionFeatureTeleportOtherWorld;
 
           if (message != null)
-            message.sendMessage(player, config.rootSection.builtBaseEnvironment);
+            message.sendMessage(player);
 
           return;
         }
@@ -227,7 +226,7 @@ public class ResultDisplayHandler extends DisplayHandler<ResultDisplay, ResultDi
 
     feesPayBackTaskByPlayerId.remove(playerId);
 
-    BukkitEvaluable message;
+    ComponentMarkup message;
 
     if (!remoteInteractionApi.depositAmount(player, cachedShop.handle, feesAmount)) {
       logger.warning("Could not deposit fees payback amount of " + feesAmountFormatted + " to playerId " + playerId + " for shopId" + cachedShop.handle.getShopId());
@@ -235,9 +234,8 @@ public class ResultDisplayHandler extends DisplayHandler<ResultDisplay, ResultDi
       if ((message = config.rootSection.playerMessages.shopInteractCouldNotPayBackFees) != null) {
         message.sendMessage(
           player,
-          config.rootSection.getBaseEnvironment()
-            .withStaticVariable("fees_amount", feesAmountFormatted)
-            .build()
+          new InterpretationEnvironment()
+            .withVariable("fees_amount", feesAmountFormatted)
         );
       }
 
@@ -247,9 +245,8 @@ public class ResultDisplayHandler extends DisplayHandler<ResultDisplay, ResultDi
     if ((message = config.rootSection.playerMessages.shopInteractPayedBackFees) != null) {
       message.sendMessage(
         player,
-        config.rootSection.getBaseEnvironment()
-          .withStaticVariable("fees_amount", feesAmountFormatted)
-          .build()
+        new InterpretationEnvironment()
+          .withVariable("fees_amount", feesAmountFormatted)
       );
     }
   }
@@ -261,14 +258,14 @@ public class ResultDisplayHandler extends DisplayHandler<ResultDisplay, ResultDi
         return;
       }
 
-      BukkitEvaluable message;
+      ComponentMarkup message;
 
       synchronized (feesPayBackTaskByPlayerId) {
         var playerId = player.getUniqueId();
 
         if (feesPayBackTaskByPlayerId.containsKey(playerId)) {
           if ((message = config.rootSection.playerMessages.shopInteractPendingFeesTask) != null)
-            message.sendMessage(player, config.rootSection.builtBaseEnvironment);
+            message.sendMessage(player);
 
           return;
         }
@@ -280,9 +277,8 @@ public class ResultDisplayHandler extends DisplayHandler<ResultDisplay, ResultDi
           if ((message = config.rootSection.playerMessages.shopInteractCouldNotWithdrawFees) != null) {
             message.sendMessage(
               player,
-              config.rootSection.getBaseEnvironment()
-                .withStaticVariable("fees_amount", feesAmountFormatted)
-                .build()
+              new InterpretationEnvironment()
+                .withVariable("fees_amount", feesAmountFormatted)
             );
           }
 
@@ -292,9 +288,8 @@ public class ResultDisplayHandler extends DisplayHandler<ResultDisplay, ResultDi
         if ((message = config.rootSection.playerMessages.shopInteractWithdrawnFees) != null) {
           message.sendMessage(
             player,
-            config.rootSection.getBaseEnvironment()
-              .withStaticVariable("fees_amount", feesAmountFormatted)
-              .build()
+            new InterpretationEnvironment()
+              .withVariable("fees_amount", feesAmountFormatted)
           );
         }
 
@@ -317,10 +312,9 @@ public class ResultDisplayHandler extends DisplayHandler<ResultDisplay, ResultDi
     var shopFees = display.getShopFees(cachedShop);
     var maxUnitsResult = calculateMaxUnits(player, cachedShop, shopFees);
 
-    var distanceExtendedEnvironment = config.rootSection.getBaseEnvironment()
-      .withStaticVariable("all_sentinel", config.rootSection.resultDisplay.chatPromptAllSentinel)
-      .withStaticVariable("cancel_sentinel", config.rootSection.resultDisplay.chatPromptCancelSentinel)
-      .build(display.getExtendedShopEnvironment(cachedShop));
+    var distanceExtendedEnvironment = display.getExtendedShopEnvironment(cachedShop)
+      .withVariable("all_sentinel", config.rootSection.resultDisplay.chatPromptAllSentinel)
+      .withVariable("cancel_sentinel", config.rootSection.resultDisplay.chatPromptCancelSentinel);
 
     if (maxUnitsResult.units() == 0) {
       var message = switch (maxUnitsResult.limitingFactor()) {
@@ -347,21 +341,20 @@ public class ResultDisplayHandler extends DisplayHandler<ResultDisplay, ResultDi
       case BUYER_FUNDS -> config.rootSection.playerMessages.shopInteractPromptLimitingFactorBuyerFunds;
     };
 
-    var limitingFactorExtendedEnvironment = config.rootSection.getBaseEnvironment()
-      .withStaticVariable("limiting_factor", (
+    var limitingFactorExtendedEnvironment = distanceExtendedEnvironment
+      .withVariable("limiting_factor", (
         limitingFactorPlaceholderMessage == null
           ? "?"
-          : limitingFactorPlaceholderMessage.asScalar(ScalarType.STRING, distanceExtendedEnvironment)
+          : limitingFactorPlaceholderMessage.asPlainString(distanceExtendedEnvironment)
       ))
-      .withStaticVariable("max_units", maxUnitsResult.units())
-      .build(distanceExtendedEnvironment);
+      .withVariable("max_units", maxUnitsResult.units());
 
     scheduler.runAtEntity(player, scheduleTask -> player.closeInventory());
 
     var didOverwritePrevious = chatPromptManager.register(
       player,
       input -> {
-        BukkitEvaluable message;
+        ComponentMarkup message;
 
         if (input.equalsIgnoreCase(config.rootSection.resultDisplay.chatPromptCancelSentinel)) {
           if ((message = config.rootSection.playerMessages.shopInteractPromptCancelCurrent) != null)
@@ -382,9 +375,8 @@ public class ResultDisplayHandler extends DisplayHandler<ResultDisplay, ResultDi
             if ((message = config.rootSection.playerMessages.shopInteractPromptInvalidInput) != null) {
               message.sendMessage(
                 player,
-                config.rootSection.getBaseEnvironment()
-                  .withStaticVariable("input", input)
-                  .build()
+                new InterpretationEnvironment()
+                  .withVariable("input", input)
               );
             }
             return;
@@ -394,27 +386,26 @@ public class ResultDisplayHandler extends DisplayHandler<ResultDisplay, ResultDi
         if ((message = config.rootSection.playerMessages.shopInteractPromptDispatch) != null) {
           message.sendMessage(
             player,
-            new EvaluationEnvironmentBuilder()
-              .withStaticVariable("amount", amount)
-              .build(limitingFactorExtendedEnvironment)
+            limitingFactorExtendedEnvironment
+              .withVariable("amount", amount)
           );
         }
 
         dispatchShopInteraction(player, cachedShop, shopFees, amount);
       },
       () -> {
-        BukkitEvaluable message;
+        ComponentMarkup message;
 
         if ((message = config.rootSection.playerMessages.shopInteractPromptTimeout) != null)
           message.sendMessage(player, limitingFactorExtendedEnvironment);
       }
     );
 
-    BukkitEvaluable message;
+    ComponentMarkup message;
 
     if (didOverwritePrevious) {
       if ((message = config.rootSection.playerMessages.shopInteractPromptCancelPrevious) != null)
-        message.sendMessage(player, config.rootSection.builtBaseEnvironment);
+        message.sendMessage(player);
     }
 
     if (cachedShop.handle.getShopType() == ShopType.BUYING) {
@@ -448,14 +439,12 @@ public class ResultDisplayHandler extends DisplayHandler<ResultDisplay, ResultDi
     long durationHours = seconds % 86400 / 3600;
     long durationDays = seconds / 86400;
 
-    return config.rootSection.cooldowns.cooldownFormat.asScalar(
-      ScalarType.STRING,
-      config.rootSection.getBaseEnvironment()
-        .withStaticVariable("days", durationDays)
-        .withStaticVariable("hours", durationHours)
-        .withStaticVariable("minutes", durationMinutes)
-        .withStaticVariable("seconds", durationSeconds)
-        .build()
+    return config.rootSection.cooldowns.cooldownFormat.asPlainString(
+      new InterpretationEnvironment()
+        .withVariable("days", durationDays)
+        .withVariable("hours", durationHours)
+        .withVariable("minutes", durationMinutes)
+        .withVariable("seconds", durationSeconds)
     );
   }
 
@@ -476,9 +465,8 @@ public class ResultDisplayHandler extends DisplayHandler<ResultDisplay, ResultDi
         if (cooldownType.cooldownMessage() != null) {
           cooldownType.cooldownMessage().sendMessage(
             player,
-            config.rootSection.getBaseEnvironment()
-              .withStaticVariable("duration", formatDuration(cooldownType.durationMillis() - elapsedDuration))
-              .build()
+            new InterpretationEnvironment()
+              .withVariable("duration", formatDuration(cooldownType.durationMillis() - elapsedDuration))
           );
         }
 
@@ -617,14 +605,14 @@ public class ResultDisplayHandler extends DisplayHandler<ResultDisplay, ResultDi
     return config.rootSection.cooldowns.teleportToShop._default.getCooldownMillis(type);
   }
 
-  private void ensurePermission(Player player, PluginPermission permission, @Nullable BukkitEvaluable missingMessage, Runnable handler) {
+  private void ensurePermission(Player player, PluginPermission permission, @Nullable ComponentMarkup missingMessage, Runnable handler) {
     if (permission.has(player)) {
       handler.run();
       return;
     }
 
     if (missingMessage != null)
-      missingMessage.sendMessage(player, config.rootSection.builtBaseEnvironment);
+      missingMessage.sendMessage(player);
   }
 
   private MaxUnitsResult calculateMaxUnits(Player player, CachedShop cachedShop, CalculatedFees calculatedFees) {

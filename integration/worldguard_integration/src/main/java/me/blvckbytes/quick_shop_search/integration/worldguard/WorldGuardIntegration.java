@@ -1,9 +1,9 @@
 package me.blvckbytes.quick_shop_search.integration.worldguard;
 
+import at.blvckbytes.cm_mapper.ConfigKeeper;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldguard.WorldGuard;
 import com.sk89q.worldguard.protection.regions.RegionContainer;
-import me.blvckbytes.bukkitevaluable.ConfigKeeper;
 import me.blvckbytes.quick_shop_search.config.MainSection;
 import org.bukkit.Location;
 

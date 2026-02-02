@@ -1,10 +1,9 @@
 package me.blvckbytes.quick_shop_search.display.teleport;
 
+import at.blvckbytes.cm_mapper.ConfigKeeper;
+import at.blvckbytes.cm_mapper.cm.ComponentMarkup;
+import at.blvckbytes.component_markup.expression.interpreter.InterpretationEnvironment;
 import com.tcoded.folialib.impl.PlatformScheduler;
-import me.blvckbytes.bbconfigmapper.ScalarType;
-import me.blvckbytes.bukkitevaluable.BukkitEvaluable;
-import me.blvckbytes.bukkitevaluable.ConfigKeeper;
-import me.blvckbytes.gpeee.interpreter.EvaluationEnvironmentBuilder;
 import me.blvckbytes.quick_shop_search.PluginPermission;
 import me.blvckbytes.quick_shop_search.SlowTeleportManager;
 import me.blvckbytes.quick_shop_search.config.MainSection;
@@ -88,11 +87,11 @@ public class TeleportDisplayHandler extends DisplayHandler<TeleportDisplay, Tele
     if (nearestEssentialsWarp == null)
       return false;
 
-    BukkitEvaluable message;
+    ComponentMarkup message;
 
     if (!displayData.canUseEssentialsWarp()) {
       if (sendFailureMessage && (message = config.rootSection.playerMessages.missingPermissionFeatureTeleport) != null)
-        message.sendMessage(player, config.rootSection.builtBaseEnvironment);
+        message.sendMessage(player);
 
       return false;
     }
@@ -100,7 +99,7 @@ public class TeleportDisplayHandler extends DisplayHandler<TeleportDisplay, Tele
     scheduler.runAtEntity(player, scheduleTask -> player.closeInventory());
 
     if ((message = config.rootSection.playerMessages.beforeTeleportingNearestEssentialsWarp) != null)
-      message.sendMessage(player, config.rootSection.getBaseEnvironment().build(displayData.extendedShopEnvironment()));
+      message.sendMessage(player, displayData.extendedShopEnvironment());
 
     slowTeleportManager.initializeTeleportation(
       player,
@@ -120,11 +119,11 @@ public class TeleportDisplayHandler extends DisplayHandler<TeleportDisplay, Tele
     if (nearestPlayerWarp == null)
       return false;
 
-    BukkitEvaluable message;
+    ComponentMarkup message;
 
     if (!displayData.canUsePlayerWarp()) {
       if (sendFailureMessage && (message = config.rootSection.playerMessages.missingPermissionFeatureTeleport) != null)
-        message.sendMessage(player, config.rootSection.builtBaseEnvironment);
+        message.sendMessage(player);
 
       return false;
     }
@@ -139,7 +138,7 @@ public class TeleportDisplayHandler extends DisplayHandler<TeleportDisplay, Tele
     }
 
     if ((message = config.rootSection.playerMessages.beforeTeleportingNearestPlayerWarp) != null)
-      message.sendMessage(player, config.rootSection.getBaseEnvironment().build(displayData.extendedShopEnvironment()));
+      message.sendMessage(player, displayData.extendedShopEnvironment());
 
     if (config.rootSection.playerWarpsIntegration.doNotUseSlowTeleport) {
       performPlayerWarpTeleportCommand(player, nearestPlayerWarp);
@@ -163,7 +162,7 @@ public class TeleportDisplayHandler extends DisplayHandler<TeleportDisplay, Tele
   }
 
   private void performPlayerWarpTeleportCommand(Player player, PlayerWarpData data) {
-    BukkitEvaluable command;
+    ComponentMarkup command;
 
     switch (data.source()) {
       case REVIVALO -> command = config.rootSection.playerWarpsIntegration.teleportCommand.revivalo;
@@ -175,11 +174,9 @@ public class TeleportDisplayHandler extends DisplayHandler<TeleportDisplay, Tele
     }
 
     try {
-      String commandString = command.asScalar(
-        ScalarType.STRING,
-        new EvaluationEnvironmentBuilder()
-          .withStaticVariable("name", data.warpName())
-          .build()
+      var commandString = command.asPlainString(
+        new InterpretationEnvironment()
+          .withVariable("name", data.warpName())
       );
 
       player.performCommand(commandString);
@@ -189,11 +186,11 @@ public class TeleportDisplayHandler extends DisplayHandler<TeleportDisplay, Tele
   }
 
   private boolean teleportToShopLocation(Player player, TeleportDisplayData displayData, boolean sendFailureMessage) {
-    BukkitEvaluable message;
+    ComponentMarkup message;
 
     if (!displayData.canUseShopLocation()) {
       if (sendFailureMessage && (message = config.rootSection.playerMessages.missingPermissionFeatureTeleport) != null)
-        message.sendMessage(player, config.rootSection.builtBaseEnvironment);
+        message.sendMessage(player);
 
       return false;
     }
@@ -201,7 +198,7 @@ public class TeleportDisplayHandler extends DisplayHandler<TeleportDisplay, Tele
     scheduler.runAtEntity(player, scheduleTask -> player.closeInventory());
 
     if ((message = config.rootSection.playerMessages.beforeTeleporting) != null)
-      message.sendMessage(player, config.rootSection.getBaseEnvironment().build(displayData.extendedShopEnvironment()));
+      message.sendMessage(player, displayData.extendedShopEnvironment());
 
     slowTeleportManager.initializeTeleportation(
       player,

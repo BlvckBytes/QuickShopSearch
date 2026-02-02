@@ -1,10 +1,10 @@
 package me.blvckbytes.quick_shop_search.integration.player_warps;
 
+import at.blvckbytes.cm_mapper.ConfigKeeper;
 import com.tcoded.folialib.impl.PlatformScheduler;
 import dev.revivalo.playerwarps.PlayerWarpsPlugin;
 import dev.revivalo.playerwarps.warp.Warp;
 import dev.revivalo.playerwarps.warp.WarpManager;
-import me.blvckbytes.bukkitevaluable.ConfigKeeper;
 import me.blvckbytes.quick_shop_search.config.MainSection;
 import me.blvckbytes.quick_shop_search.integration.ChunkBucketedCache;
 import me.blvckbytes.quick_shop_search.integration.worldguard.IWorldGuardIntegration;

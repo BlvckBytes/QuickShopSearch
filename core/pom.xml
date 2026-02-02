@@ -114,11 +114,9 @@
 
                     <artifactSet>
                         <includes>
-                            <!-- Include all libs for shading -->
-                            <include>me.blvckbytes:BBConfigMapper</include>
-                            <include>me.blvckbytes:BukkitEvaluable</include>
+                            <include>at.blvckbytes:ComponentMarkup</include>
+                            <include>at.blvckbytes:CMMapper</include>
                             <include>me.blvckbytes:SyllablesMatcher</include>
-                            <include>me.blvckbytes:GPEEE</include>
                             <include>me.blvckbytes:common</include>
                             <include>me.blvckbytes:qs_lte_6207</include>
                             <include>me.blvckbytes:qs_gt_6207_lte_6208</include>
@@ -131,27 +129,44 @@
                             <include>me.blvckbytes:worldguard_integration</include>
                             <include>com.github.technicallycoded:FoliaLib</include>
                             <include>com.github.cryptomorin:XSeries</include>
+                            <include>org.jetbrains:annotations</include>
                         </includes>
                     </artifactSet>
 
                     <relocations>
-                        <!-- Relocate all libs into the root package -->
                         <relocation>
-                            <pattern>me/blvckbytes/(bbconfigmapper|bukkitevaluable|gpeee|syllables_matcher)/(.*)</pattern>
-                            <shadedPattern>me/blvckbytes/quick_shop_search/$1/$2</shadedPattern>
-                            <rawString>true</rawString>
+                            <pattern>me.blvckbytes.syllables_matcher</pattern>
+                            <shadedPattern>me.blvckbytes.quick_shop_search.syllables_matcher</shadedPattern>
                         </relocation>
 
                         <relocation>
-                            <pattern>(com/cryptomorin/xseries)</pattern>
-                            <shadedPattern>me/blvckbytes/quick_shop_search/$1</shadedPattern>
-                            <rawString>true</rawString>
+                            <pattern>at.blvckbytes.component_markup</pattern>
+                            <shadedPattern>me.blvckbytes.quick_shop_search.component_markup</shadedPattern>
                         </relocation>
 
                         <relocation>
-                            <pattern>(com/tcoded/folialib)</pattern>
-                            <shadedPattern>me/blvckbytes/quick_shop_search/$1</shadedPattern>
-                            <rawString>true</rawString>
+                            <pattern>at.blvckbytes.cm_mapper</pattern>
+                            <shadedPattern>me.blvckbytes.quick_shop_search.cm_mapper</shadedPattern>
+                        </relocation>
+
+                        <relocation>
+                            <pattern>com.cryptomorin.xseries</pattern>
+                            <shadedPattern>me.blvckbytes.quick_shop_search.com.cryptomorin.xseries</shadedPattern>
+                        </relocation>
+
+                        <relocation>
+                            <pattern>com.tcoded.folialib</pattern>
+                            <shadedPattern>me.blvckbytes.quick_shop_search.com.tcoded.folialib</shadedPattern>
+                        </relocation>
+
+                        <relocation>
+                            <pattern>org.jetbrains.annotations</pattern>
+                            <shadedPattern>me.blvckbytes.quick_shop_search.jetbrains_annotations</shadedPattern>
+                        </relocation>
+
+                        <relocation>
+                            <pattern>org.intellij.lang.annotations</pattern>
+                            <shadedPattern>me.blvckbytes.quick_shop_search.intellij_annotations</shadedPattern>
                         </relocation>
                     </relocations>
 

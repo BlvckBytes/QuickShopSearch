@@ -1,16 +1,16 @@
 package me.blvckbytes.quick_shop_search.command;
 
+import at.blvckbytes.cm_mapper.ConfigKeeper;
+import at.blvckbytes.cm_mapper.ReloadPriority;
+import at.blvckbytes.cm_mapper.cm.ComponentMarkup;
+import at.blvckbytes.component_markup.expression.interpreter.InterpretationEnvironment;
 import com.tcoded.folialib.impl.PlatformScheduler;
 import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
-import me.blvckbytes.bbconfigmapper.ScalarType;
-import me.blvckbytes.bukkitevaluable.BukkitEvaluable;
-import me.blvckbytes.bukkitevaluable.ConfigKeeper;
-import me.blvckbytes.bukkitevaluable.ReloadPriority;
 import me.blvckbytes.item_predicate_parser.PredicateHelper;
 import me.blvckbytes.item_predicate_parser.parse.ItemPredicateParseException;
 import me.blvckbytes.item_predicate_parser.predicate.ItemPredicate;
 import me.blvckbytes.item_predicate_parser.predicate.PredicateState;
-import me.blvckbytes.item_predicate_parser.predicate.StringifyState;
+import me.blvckbytes.item_predicate_parser.predicate.stringify.PlainStringifier;
 import me.blvckbytes.item_predicate_parser.syllables_matcher.NormalizedConstant;
 import me.blvckbytes.item_predicate_parser.translation.TranslationLanguage;
 import me.blvckbytes.quick_shop_search.OfflinePlayerRegistry;
@@ -21,8 +21,6 @@ import me.blvckbytes.quick_shop_search.config.MainSection;
 import me.blvckbytes.quick_shop_search.config.access_lists.ShopAccessListSection;
 import me.blvckbytes.quick_shop_search.display.result.ResultDisplayData;
 import me.blvckbytes.quick_shop_search.display.result.ResultDisplayHandler;
-import net.md_5.bungee.api.ChatMessageType;
-import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -65,12 +63,12 @@ public class QuickShopSearchCommand implements CommandExecutor, TabCompleter {
   }
 
   @Override
-  public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
+  public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String @NotNull [] args) {
     if (!(sender instanceof Player player))
       return false;
 
     scheduler.runAsync(scheduleTask -> {
-      BukkitEvaluable message;
+      ComponentMarkup message;
 
       var language = config.rootSection.predicates.mainLanguage;
       var argsOffset = 0;
@@ -80,7 +78,7 @@ public class QuickShopSearchCommand implements CommandExecutor, TabCompleter {
       if (isLanguageCommand) {
         if (!PluginPermission.LANGUAGE_COMMAND.has(player)) {
           if ((message = config.rootSection.playerMessages.missingPermissionLanguageCommand) != null)
-            message.applicator.sendMessage(player, message, config.rootSection.builtBaseEnvironment);
+            message.sendMessage(player);
 
           return;
         }
@@ -91,10 +89,9 @@ public class QuickShopSearchCommand implements CommandExecutor, TabCompleter {
           if ((message = config.rootSection.playerMessages.usageQsslCommandLanguage) != null) {
             message.sendMessage(
               player,
-              config.rootSection.getBaseEnvironment()
-                .withStaticVariable("label", label)
-                .withStaticVariable("languages", TranslationLanguage.matcher.createCompletions(null))
-                .build()
+              new InterpretationEnvironment()
+                .withVariable("label", label)
+                .withVariable("languages", TranslationLanguage.matcher.createCompletions(null))
             );
           }
 
@@ -107,7 +104,7 @@ public class QuickShopSearchCommand implements CommandExecutor, TabCompleter {
 
       if (!PluginPermission.MAIN_COMMAND.has(player)) {
         if ((message = config.rootSection.playerMessages.missingPermissionMainCommand) != null)
-          message.sendMessage(player, config.rootSection.builtBaseEnvironment);
+          message.sendMessage(player);
 
         return;
       }
@@ -132,10 +129,9 @@ public class QuickShopSearchCommand implements CommandExecutor, TabCompleter {
           if ((message = config.rootSection.playerMessages.searchFlagParseError) != null) {
             message.sendMessage(
               player,
-              config.rootSection.getBaseEnvironment()
-                .withStaticVariable("flag_name", searchFlag.getNormalizedName())
-                .withStaticVariable("flag_value", nextArg)
-                .build()
+              new InterpretationEnvironment()
+                .withVariable("flag_name", searchFlag.getNormalizedName())
+                .withVariable("flag_value", nextArg)
             );
           }
 
@@ -154,9 +150,8 @@ public class QuickShopSearchCommand implements CommandExecutor, TabCompleter {
         if ((message = config.rootSection.playerMessages.predicateParseError) != null) {
           message.sendMessage(
             player,
-            config.rootSection.getBaseEnvironment()
-              .withStaticVariable("error_message", predicateHelper.createExceptionMessage(e))
-              .build()
+            new InterpretationEnvironment()
+              .withVariable("error_message", predicateHelper.createExceptionMessage(e))
           );
         }
         return;
@@ -169,16 +164,15 @@ public class QuickShopSearchCommand implements CommandExecutor, TabCompleter {
 
           if (displayData.hasAnyConstraints() && displayData.shops().isEmpty()) {
             if ((message = config.rootSection.playerMessages.noMatches) != null)
-              message.sendMessage(player, config.rootSection.builtBaseEnvironment);
+              message.sendMessage(player);
             return;
           }
 
           if ((message = config.rootSection.playerMessages.queryingAllShops) != null) {
             message.sendMessage(
               player,
-              config.rootSection.getBaseEnvironment()
-                .withStaticVariable("number_shops", displayData.shops().size())
-                .build()
+              new InterpretationEnvironment()
+                .withVariable("number_shops", displayData.shops().size())
             );
           }
 
@@ -187,7 +181,7 @@ public class QuickShopSearchCommand implements CommandExecutor, TabCompleter {
         }
 
         if ((message = config.rootSection.playerMessages.emptyPredicate) != null)
-          message.sendMessage(player, config.rootSection.builtBaseEnvironment);
+          message.sendMessage(player);
 
         return;
       }
@@ -197,16 +191,15 @@ public class QuickShopSearchCommand implements CommandExecutor, TabCompleter {
       if ((message = config.rootSection.playerMessages.beforeQuerying) != null) {
         message.sendMessage(
           player,
-          config.rootSection.getBaseEnvironment()
-            .withStaticVariable("number_shops", displayData.shops().size())
-            .withStaticVariable("predicate", new StringifyState(true).appendPredicate(predicate).toString())
-            .build()
+          new InterpretationEnvironment()
+            .withVariable("number_shops", displayData.shops().size())
+            .withVariable("predicate", PlainStringifier.stringify(predicate, true))
         );
       }
 
       if (displayData.hasAnyConstraints() && displayData.shops().isEmpty()) {
         if ((message = config.rootSection.playerMessages.noMatches) != null)
-          message.sendMessage(player, config.rootSection.builtBaseEnvironment);
+          message.sendMessage(player);
         return;
       }
 
@@ -217,11 +210,11 @@ public class QuickShopSearchCommand implements CommandExecutor, TabCompleter {
   }
 
   @Override
-  public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
+  public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String @NotNull [] args) {
     if (!(sender instanceof Player player))
       return List.of();
 
-    BukkitEvaluable message;
+    ComponentMarkup message;
 
     var language = config.rootSection.predicates.mainLanguage;
     var argsOffset = 0;
@@ -239,12 +232,11 @@ public class QuickShopSearchCommand implements CommandExecutor, TabCompleter {
 
       if (matchedLanguage == null) {
         if ((message = config.rootSection.playerMessages.unknownLanguageActionBar) != null) {
-          showActionBarMessage(player, message.asScalar(
-            ScalarType.STRING,
-            config.rootSection.getBaseEnvironment()
-              .withStaticVariable("user_input", args[0])
-              .build()
-          ));
+          message.sendActionBar(
+            player,
+            new InterpretationEnvironment()
+              .withVariable("user_input", args[0])
+          );
         }
 
         return List.of();
@@ -304,12 +296,12 @@ public class QuickShopSearchCommand implements CommandExecutor, TabCompleter {
       var completion = predicateHelper.createCompletion(language, tokens);
 
       if (completion.expandedPreviewOrError() != null)
-        showActionBarMessage(player, completion.expandedPreviewOrError());
+        player.sendActionBar(completion.expandedPreviewOrError());
 
       return completion.suggestions();
 
     } catch (ItemPredicateParseException e) {
-      showActionBarMessage(player, predicateHelper.createExceptionMessage(e));
+      player.sendActionBar(predicateHelper.createExceptionMessage(e));
       return List.of();
     }
   }
@@ -358,10 +350,6 @@ public class QuickShopSearchCommand implements CommandExecutor, TabCompleter {
     }
 
     return config.rootSection.shopAccessLists._default;
-  }
-
-  private void showActionBarMessage(Player player, String message) {
-    player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(message));
   }
 
   private void patchSearchFlagsFromConfig() {

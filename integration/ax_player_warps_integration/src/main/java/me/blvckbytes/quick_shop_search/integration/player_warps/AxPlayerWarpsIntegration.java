@@ -1,11 +1,11 @@
 package me.blvckbytes.quick_shop_search.integration.player_warps;
 
+import at.blvckbytes.cm_mapper.ConfigKeeper;
 import com.artillexstudios.axplayerwarps.database.impl.Base;
 import com.artillexstudios.axplayerwarps.enums.Access;
 import com.artillexstudios.axplayerwarps.warps.Warp;
 import com.artillexstudios.axplayerwarps.warps.WarpManager;
 import com.tcoded.folialib.impl.PlatformScheduler;
-import me.blvckbytes.bukkitevaluable.ConfigKeeper;
 import me.blvckbytes.quick_shop_search.config.MainSection;
 import me.blvckbytes.quick_shop_search.integration.ChunkBucketedCache;
 import me.blvckbytes.quick_shop_search.integration.worldguard.IWorldGuardIntegration;

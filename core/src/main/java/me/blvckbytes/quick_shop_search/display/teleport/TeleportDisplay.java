@@ -1,7 +1,7 @@
 package me.blvckbytes.quick_shop_search.display.teleport;
 
+import at.blvckbytes.cm_mapper.ConfigKeeper;
 import com.tcoded.folialib.impl.PlatformScheduler;
-import me.blvckbytes.bukkitevaluable.ConfigKeeper;
 import me.blvckbytes.quick_shop_search.config.MainSection;
 import me.blvckbytes.quick_shop_search.display.Display;
 import org.bukkit.entity.Player;

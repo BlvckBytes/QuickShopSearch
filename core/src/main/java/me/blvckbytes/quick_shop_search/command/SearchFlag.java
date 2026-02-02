@@ -9,7 +9,7 @@ import me.blvckbytes.quick_shop_search.display.result.ShopFilteringCriteria;
 import me.blvckbytes.syllables_matcher.EnumMatcher;
 import me.blvckbytes.syllables_matcher.EnumPredicate;
 import me.blvckbytes.syllables_matcher.MatchableEnum;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;

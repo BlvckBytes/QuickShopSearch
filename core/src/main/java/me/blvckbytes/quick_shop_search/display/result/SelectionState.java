@@ -1,10 +1,9 @@
 package me.blvckbytes.quick_shop_search.display.result;
 
+import at.blvckbytes.component_markup.expression.interpreter.InterpretationEnvironment;
 import com.google.gson.JsonObject;
-import me.blvckbytes.gpeee.interpreter.EvaluationEnvironmentBuilder;
 import me.blvckbytes.quick_shop_search.cache.CachedShop;
 import me.blvckbytes.quick_shop_search.PluginPermission;
-import me.blvckbytes.quick_shop_search.config.MainSection;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
@@ -156,18 +155,18 @@ public class SelectionState {
     return result;
   }
 
-  public EvaluationEnvironmentBuilder makeSortingEnvironment(Player player, MainSection mainSection) {
-    return mainSection.getBaseEnvironment()
-      .withLiveVariable("sorting_selections", () -> this.sortingSelections)
-      .withLiveVariable("selected_index", () -> selectedSortingSelectionIndex)
-      .withLiveVariable("has_permission", () -> PluginPermission.FEATURE_SORT.has(player));
+  public void extendSortingEnvironment(InterpretationEnvironment environment, Player player) {
+    environment
+      .withVariable("sorting_selections", this.sortingSelections)
+      .withVariable("selected_index", selectedSortingSelectionIndex)
+      .withVariable("has_permission", PluginPermission.FEATURE_SORT.has(player));
   }
 
-  public EvaluationEnvironmentBuilder makeFilteringEnvironment(Player player, MainSection mainSection) {
-    return mainSection.getBaseEnvironment()
-      .withLiveVariable("filtering_selections", () -> this.filteringSelections)
-      .withLiveVariable("selected_criteria", () -> this.selectedFilteringCriteria)
-      .withLiveVariable("has_permission", () -> PluginPermission.FEATURE_FILTER.has(player));
+  public void extendFilteringEnvironment(InterpretationEnvironment environment, Player player) {
+    environment
+      .withVariable("filtering_selections", this.filteringSelections)
+      .withVariable("selected_criteria", this.selectedFilteringCriteria)
+      .withVariable("has_permission", PluginPermission.FEATURE_FILTER.has(player));
   }
 
   public JsonObject toJson() {
@@ -192,7 +191,7 @@ public class SelectionState {
     return result;
   }
 
-  public static SelectionState fromJson(JsonObject json) throws Exception {
+  public static SelectionState fromJson(JsonObject json) {
     var sortingSelections = makeDefaultSortingSelections();
     var sortingSelectionsObject = json.getAsJsonObject("sortingSelections");
 

@@ -1,9 +1,10 @@
 package me.blvckbytes.quick_shop_search.config.slow_teleport;
 
-import me.blvckbytes.bbconfigmapper.MappingError;
-import me.blvckbytes.bbconfigmapper.sections.AConfigSection;
-import me.blvckbytes.bbconfigmapper.sections.CSIgnore;
-import me.blvckbytes.gpeee.interpreter.EvaluationEnvironmentBuilder;
+import at.blvckbytes.cm_mapper.mapper.MappingError;
+import at.blvckbytes.cm_mapper.mapper.section.CSIgnore;
+import at.blvckbytes.cm_mapper.mapper.section.ConfigSection;
+import at.blvckbytes.component_markup.expression.interpreter.InterpretationEnvironment;
+import at.blvckbytes.component_markup.util.logging.InterpreterLogger;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Field;
@@ -11,7 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class SlowTeleportParametersSection extends AConfigSection {
+public class SlowTeleportParametersSection extends ConfigSection {
 
   public int durationSeconds;
 
@@ -22,8 +23,8 @@ public class SlowTeleportParametersSection extends AConfigSection {
   @CSIgnore
   public Map<Integer, @Nullable SlowTeleportNotification> _notificationAtSeconds;
 
-  public SlowTeleportParametersSection(EvaluationEnvironmentBuilder baseEnvironment) {
-    super(baseEnvironment);
+  public SlowTeleportParametersSection(InterpretationEnvironment baseEnvironment, InterpreterLogger interpreterLogger) {
+    super(baseEnvironment, interpreterLogger);
 
     this.notificationAtSeconds = new HashMap<>();
     this._notificationAtSeconds = new HashMap<>();

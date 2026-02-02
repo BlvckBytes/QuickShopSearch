@@ -1,13 +1,14 @@
 package me.blvckbytes.quick_shop_search.config.commands;
 
-import me.blvckbytes.bukkitevaluable.section.ACommandSection;
-import me.blvckbytes.gpeee.interpreter.EvaluationEnvironmentBuilder;
+import at.blvckbytes.cm_mapper.section.command.CommandSection;
+import at.blvckbytes.component_markup.expression.interpreter.InterpretationEnvironment;
+import at.blvckbytes.component_markup.util.logging.InterpreterLogger;
 
-public class QuickShopSearchReloadCommandSection extends ACommandSection {
+public class QuickShopSearchReloadCommandSection extends CommandSection {
 
   public static final String INITIAL_NAME = "quickshopsearchreload";
 
-  public QuickShopSearchReloadCommandSection(EvaluationEnvironmentBuilder baseEnvironment) {
-    super(INITIAL_NAME, baseEnvironment);
+  public QuickShopSearchReloadCommandSection(InterpretationEnvironment baseEnvironment, InterpreterLogger interpreterLogger) {
+    super(INITIAL_NAME, baseEnvironment, interpreterLogger);
   }
 }

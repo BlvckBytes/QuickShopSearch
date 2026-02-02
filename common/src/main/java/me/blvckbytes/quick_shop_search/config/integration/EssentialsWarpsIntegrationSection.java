@@ -1,17 +1,18 @@
 package me.blvckbytes.quick_shop_search.config.integration;
 
-import me.blvckbytes.bbconfigmapper.sections.AConfigSection;
-import me.blvckbytes.gpeee.interpreter.EvaluationEnvironmentBuilder;
+import at.blvckbytes.cm_mapper.mapper.section.ConfigSection;
+import at.blvckbytes.component_markup.expression.interpreter.InterpretationEnvironment;
+import at.blvckbytes.component_markup.util.logging.InterpreterLogger;
 
-public class EssentialsWarpsIntegrationSection extends AConfigSection {
+public class EssentialsWarpsIntegrationSection extends ConfigSection {
 
   public int nearestWarpBlockRadius;
   public boolean enabled;
   public boolean displayNearestInIcon;
   public boolean withinSameRegion;
 
-  public EssentialsWarpsIntegrationSection(EvaluationEnvironmentBuilder baseEnvironment) {
-    super(baseEnvironment);
+  public EssentialsWarpsIntegrationSection(InterpretationEnvironment baseEnvironment, InterpreterLogger interpreterLogger) {
+    super(baseEnvironment, interpreterLogger);
 
     this.enabled = false;
     this.nearestWarpBlockRadius = 15;

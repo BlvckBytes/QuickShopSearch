@@ -1,8 +1,8 @@
 package me.blvckbytes.quick_shop_search.integration;
 
+import at.blvckbytes.cm_mapper.ConfigKeeper;
+import at.blvckbytes.cm_mapper.ReloadPriority;
 import com.tcoded.folialib.impl.PlatformScheduler;
-import me.blvckbytes.bukkitevaluable.ConfigKeeper;
-import me.blvckbytes.bukkitevaluable.ReloadPriority;
 import me.blvckbytes.quick_shop_search.config.MainSection;
 import me.blvckbytes.quick_shop_search.integration.essentials_warps.EssentialsWarpsIntegration;
 import me.blvckbytes.quick_shop_search.integration.essentials_warps.IEssentialsWarpsIntegration;

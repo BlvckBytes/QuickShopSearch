@@ -1,15 +1,16 @@
 package me.blvckbytes.quick_shop_search.config.result_display;
 
-import me.blvckbytes.gpeee.interpreter.EvaluationEnvironmentBuilder;
-import me.blvckbytes.quick_shop_search.config.display_common.PaginatedGuiSection;
+import at.blvckbytes.cm_mapper.section.gui.PaginatedGuiSection;
+import at.blvckbytes.component_markup.expression.interpreter.InterpretationEnvironment;
+import at.blvckbytes.component_markup.util.logging.InterpreterLogger;
 
 public class ResultDisplaySection extends PaginatedGuiSection<ResultDisplayItemsSection> {
 
   public String chatPromptAllSentinel;
   public String chatPromptCancelSentinel;
 
-  public ResultDisplaySection(EvaluationEnvironmentBuilder baseEnvironment) {
-    super(ResultDisplayItemsSection.class, baseEnvironment);
+  public ResultDisplaySection(Class<ResultDisplayItemsSection> itemsSectionClass, InterpretationEnvironment baseEnvironment, InterpreterLogger interpreterLogger) {
+    super(itemsSectionClass, baseEnvironment, interpreterLogger);
 
     this.chatPromptAllSentinel = "all";
     this.chatPromptCancelSentinel = "cancel";

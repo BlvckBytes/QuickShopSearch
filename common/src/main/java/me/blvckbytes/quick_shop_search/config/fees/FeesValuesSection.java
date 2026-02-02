@@ -1,13 +1,14 @@
 package me.blvckbytes.quick_shop_search.config.fees;
 
-import me.blvckbytes.bbconfigmapper.MappingError;
-import me.blvckbytes.bbconfigmapper.sections.AConfigSection;
-import me.blvckbytes.gpeee.interpreter.EvaluationEnvironmentBuilder;
+import at.blvckbytes.cm_mapper.mapper.MappingError;
+import at.blvckbytes.cm_mapper.mapper.section.ConfigSection;
+import at.blvckbytes.component_markup.expression.interpreter.InterpretationEnvironment;
+import at.blvckbytes.component_markup.util.logging.InterpreterLogger;
 
 import java.lang.reflect.Field;
 import java.util.List;
 
-public class FeesValuesSection extends AConfigSection {
+public class FeesValuesSection extends ConfigSection {
 
   public double absoluteBuy;
   public double relativeBuy;
@@ -16,8 +17,8 @@ public class FeesValuesSection extends AConfigSection {
 
   public int priority;
 
-  public FeesValuesSection(EvaluationEnvironmentBuilder baseEnvironment) {
-    super(baseEnvironment);
+  public FeesValuesSection(InterpretationEnvironment baseEnvironment, InterpreterLogger interpreterLogger) {
+    super(baseEnvironment, interpreterLogger);
   }
 
   @Override

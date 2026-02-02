@@ -1,17 +1,18 @@
 package me.blvckbytes.quick_shop_search.config.cooldowns;
 
-import me.blvckbytes.bbconfigmapper.sections.AConfigSection;
-import me.blvckbytes.bbconfigmapper.sections.CSAlways;
-import me.blvckbytes.bukkitevaluable.BukkitEvaluable;
-import me.blvckbytes.gpeee.interpreter.EvaluationEnvironmentBuilder;
+import at.blvckbytes.cm_mapper.cm.ComponentMarkup;
+import at.blvckbytes.cm_mapper.mapper.section.CSAlways;
+import at.blvckbytes.cm_mapper.mapper.section.ConfigSection;
+import at.blvckbytes.component_markup.expression.interpreter.InterpretationEnvironment;
+import at.blvckbytes.component_markup.util.logging.InterpreterLogger;
 
 @CSAlways
-public class CooldownsSection extends AConfigSection {
+public class CooldownsSection extends ConfigSection {
 
-  public BukkitEvaluable cooldownFormat;
+  public ComponentMarkup cooldownFormat;
   public TeleportToShopSection teleportToShop;
 
-  public CooldownsSection(EvaluationEnvironmentBuilder baseEnvironment) {
-    super(baseEnvironment);
+  public CooldownsSection(InterpretationEnvironment baseEnvironment, InterpreterLogger interpreterLogger) {
+    super(baseEnvironment, interpreterLogger);
   }
 }

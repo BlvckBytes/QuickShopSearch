@@ -1,5 +1,7 @@
 package me.blvckbytes.quick_shop_search.display.result;
 
+import at.blvckbytes.cm_mapper.ConfigKeeper;
+import at.blvckbytes.component_markup.expression.interpreter.InterpretationEnvironment;
 import com.ghostchu.quickshop.api.QuickShopAPI;
 import com.ghostchu.quickshop.api.shop.ShopType;
 import com.tcoded.folialib.impl.PlatformScheduler;
@@ -7,10 +9,7 @@ import it.unimi.dsi.fastutil.longs.Long2LongAVLTreeMap;
 import it.unimi.dsi.fastutil.longs.Long2LongMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectAVLTreeMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
-import me.blvckbytes.bukkitevaluable.ConfigKeeper;
-import me.blvckbytes.gpeee.interpreter.EvaluationEnvironmentBuilder;
-import me.blvckbytes.gpeee.interpreter.IEvaluationEnvironment;
-import me.blvckbytes.item_predicate_parser.predicate.StringifyState;
+import me.blvckbytes.item_predicate_parser.predicate.stringify.PlainStringifier;
 import me.blvckbytes.quick_shop_search.PluginPermission;
 import me.blvckbytes.quick_shop_search.cache.CachedShop;
 import me.blvckbytes.quick_shop_search.cache.ShopUpdate;
@@ -53,10 +52,10 @@ public class ResultDisplay extends Display<ResultDisplayData> implements Dynamic
   private int numberOfPages;
   public final SelectionState selectionState;
 
-  private IEvaluationEnvironment pageEnvironment;
-  private IEvaluationEnvironment sortingEnvironment;
-  private IEvaluationEnvironment filteringEnvironment;
-  private IEvaluationEnvironment activeSearchEnvironment;
+  private InterpretationEnvironment pageEnvironment;
+  private InterpretationEnvironment sortingEnvironment;
+  private InterpretationEnvironment filteringEnvironment;
+  private InterpretationEnvironment activeSearchEnvironment;
   private boolean hasAnyActiveSearchProperties;
 
   private int currentPage = 1;
@@ -138,18 +137,15 @@ public class ResultDisplay extends Display<ResultDisplayData> implements Dynamic
   }
 
   private void setupEnvironments() {
-    this.pageEnvironment = new EvaluationEnvironmentBuilder()
-      .withLiveVariable("current_page", () -> this.currentPage)
-      .withLiveVariable("number_pages", () -> this.numberOfPages)
-      .build(config.rootSection.resultDisplay.inventoryEnvironment);
+   pageEnvironment = config.rootSection.resultDisplay.inventoryEnvironment.copy()
+      .withVariable("current_page", this.currentPage)
+      .withVariable("number_pages", this.numberOfPages);
 
-    this.sortingEnvironment = this.selectionState
-      .makeSortingEnvironment(player, config.rootSection)
-      .build(pageEnvironment);
+    sortingEnvironment = pageEnvironment.copy();
+    selectionState.extendSortingEnvironment(sortingEnvironment, player);
 
-    this.filteringEnvironment = this.selectionState
-      .makeFilteringEnvironment(player, config.rootSection)
-      .build(pageEnvironment);
+    filteringEnvironment = pageEnvironment.copy();
+    selectionState.extendFilteringEnvironment(filteringEnvironment, player);
 
     var activeSearchProperties = new HashMap<String, Object>();
 
@@ -157,7 +153,7 @@ public class ResultDisplay extends Display<ResultDisplayData> implements Dynamic
       "predicate",
       displayData.query() == null
         ? null
-        : new StringifyState(true).appendPredicate(displayData.query()).toString()
+        : PlainStringifier.stringify(displayData.query(), true)
     );
 
     activeSearchProperties.put("owner", displayData.searchFlagsContainer().getWithMapper(SearchFlag.OWNER, OfflinePlayer::getName));
@@ -166,7 +162,7 @@ public class ResultDisplay extends Display<ResultDisplayData> implements Dynamic
     activeSearchProperties.put("max_price", displayData.searchFlagsContainer().get(SearchFlag.MAX_PRICE));
     activeSearchProperties.put("min_price", displayData.searchFlagsContainer().get(SearchFlag.MIN_PRICE));
 
-    var activeSearchEnvironmentBuilder = new EvaluationEnvironmentBuilder();
+    activeSearchEnvironment = new InterpretationEnvironment();
 
     this.hasAnyActiveSearchProperties = false;
 
@@ -176,10 +172,8 @@ public class ResultDisplay extends Display<ResultDisplayData> implements Dynamic
       if (currentValue != null)
         this.hasAnyActiveSearchProperties = true;
 
-      activeSearchEnvironmentBuilder.withStaticVariable(propertyEntry.getKey(), currentValue);
+      activeSearchEnvironment.withVariable(propertyEntry.getKey(), currentValue);
     }
-
-    this.activeSearchEnvironment = activeSearchEnvironmentBuilder.build(config.rootSection.builtBaseEnvironment);
   }
 
   @Override
@@ -482,10 +476,11 @@ public class ResultDisplay extends Display<ResultDisplayData> implements Dynamic
       }
 
       var cachedShop = filteredSortedShops.get(currentSlot);
+      var representative = cachedShop.handle.getItem().clone();
 
-      inventory.setItem(slot, cachedShop.getRepresentativeBuildable().build(
-        getExtendedShopEnvironment(cachedShop)
-      ));
+      config.rootSection.resultDisplay.items.representativePatch.patch(representative, cachedShop.makeShopEnvironment());
+
+      inventory.setItem(slot, representative);
 
       slotMap[slot] = cachedShop;
     }
@@ -569,7 +564,7 @@ public class ResultDisplay extends Display<ResultDisplayData> implements Dynamic
     return PluginPermission.FEATURE_TELEPORT_ESSENTIALS_WARP.has(player) && nearestEssentialsWarp != null;
   }
 
-  public IEvaluationEnvironment getExtendedShopEnvironment(CachedShop cachedShop) {
+  public InterpretationEnvironment getExtendedShopEnvironment(CachedShop cachedShop) {
     var distance = getShopDistance(cachedShop);
     var isOtherWorld = distance < 0;
     var fees = getShopFees(cachedShop);
@@ -579,17 +574,17 @@ public class ResultDisplay extends Display<ResultDisplayData> implements Dynamic
     var shopManager = QuickShopAPI.getInstance().getShopManager();
 
     return cachedShop
-      .getShopEnvironment()
-      .duplicate()
-      .withStaticVariable("distance", distance)
-      .withStaticVariable("player_warp_display_details", config.rootSection.playerWarpsIntegration.displayNearestInIcon)
-      .withStaticVariable("player_warp_name", nearestPlayerWarp == null ? null : nearestPlayerWarp.warpName())
-      .withStaticVariable("player_warp_owner", nearestPlayerWarp == null ? null : nearestPlayerWarp.ownerName())
-      .withStaticVariable("player_warp_world", nearestPlayerWarp == null ? null : Objects.requireNonNull(nearestPlayerWarp.location().getWorld()).getName())
-      .withStaticVariable("player_warp_x", nearestPlayerWarp == null ? null : nearestPlayerWarp.location().getBlockX())
-      .withStaticVariable("player_warp_y", nearestPlayerWarp == null ? null : nearestPlayerWarp.location().getBlockY())
-      .withStaticVariable("player_warp_z", nearestPlayerWarp == null ? null : nearestPlayerWarp.location().getBlockZ())
-      .withStaticVariable(
+      .makeShopEnvironment()
+      .inheritFrom(pageEnvironment, false)
+      .withVariable("distance", distance)
+      .withVariable("player_warp_display_details", config.rootSection.playerWarpsIntegration.displayNearestInIcon)
+      .withVariable("player_warp_name", nearestPlayerWarp == null ? null : nearestPlayerWarp.warpName())
+      .withVariable("player_warp_owner", nearestPlayerWarp == null ? null : nearestPlayerWarp.ownerName())
+      .withVariable("player_warp_world", nearestPlayerWarp == null ? null : Objects.requireNonNull(nearestPlayerWarp.location().getWorld()).getName())
+      .withVariable("player_warp_x", nearestPlayerWarp == null ? null : nearestPlayerWarp.location().getBlockX())
+      .withVariable("player_warp_y", nearestPlayerWarp == null ? null : nearestPlayerWarp.location().getBlockY())
+      .withVariable("player_warp_z", nearestPlayerWarp == null ? null : nearestPlayerWarp.location().getBlockZ())
+      .withVariable(
         "player_warp_distance",
         nearestPlayerWarp == null
           ? null
@@ -599,13 +594,13 @@ public class ResultDisplay extends Display<ResultDisplayData> implements Dynamic
               : -1
           )
       )
-      .withStaticVariable("essentials_warp_display_details", config.rootSection.essentialsWarpsIntegration.displayNearestInIcon)
-      .withStaticVariable("essentials_warp_name", nearestEssentialsWarp == null ? null : nearestEssentialsWarp.name())
-      .withStaticVariable("essentials_warp_world", nearestEssentialsWarp == null ? null : Objects.requireNonNull(nearestEssentialsWarp.location().getWorld()).getName())
-      .withStaticVariable("essentials_warp_x", nearestEssentialsWarp == null ? null : nearestEssentialsWarp.location().getBlockX())
-      .withStaticVariable("essentials_warp_y", nearestEssentialsWarp == null ? null : nearestEssentialsWarp.location().getBlockY())
-      .withStaticVariable("essentials_warp_z", nearestEssentialsWarp == null ? null : nearestEssentialsWarp.location().getBlockZ())
-      .withStaticVariable(
+      .withVariable("essentials_warp_display_details", config.rootSection.essentialsWarpsIntegration.displayNearestInIcon)
+      .withVariable("essentials_warp_name", nearestEssentialsWarp == null ? null : nearestEssentialsWarp.name())
+      .withVariable("essentials_warp_world", nearestEssentialsWarp == null ? null : Objects.requireNonNull(nearestEssentialsWarp.location().getWorld()).getName())
+      .withVariable("essentials_warp_x", nearestEssentialsWarp == null ? null : nearestEssentialsWarp.location().getBlockX())
+      .withVariable("essentials_warp_y", nearestEssentialsWarp == null ? null : nearestEssentialsWarp.location().getBlockY())
+      .withVariable("essentials_warp_z", nearestEssentialsWarp == null ? null : nearestEssentialsWarp.location().getBlockZ())
+      .withVariable(
         "essentials_warp_distance",
         nearestEssentialsWarp == null
           ? null
@@ -615,36 +610,36 @@ public class ResultDisplay extends Display<ResultDisplayData> implements Dynamic
             : -1
         )
       )
-      .withStaticVariable(
+      .withVariable(
         "can_teleport",
         canPlayerTeleport(cachedShop, nearestPlayerWarp, nearestEssentialsWarp)
       )
-      .withStaticVariable(
+      .withVariable(
         "can_interact",
         isOtherWorld
           ? PluginPermission.FEATURE_INTERACT_OTHER_WORLD.has(player)
           : PluginPermission.FEATURE_INTERACT.has(player)
       )
-      .withStaticVariable(
+      .withVariable(
         "fees_absolute",
         fees.absoluteFees() == 0
           ? 0
           : shopManager.format(fees.absoluteFees(), cachedShop.handle)
       )
-      .withStaticVariable("fees_relative", fees.relativeFees())
-      .withStaticVariable(
+      .withVariable("fees_relative", fees.relativeFees())
+      .withVariable(
         "fees_relative_value",
         fees.relativeFeesValue() == 0
           ? 0
           : shopManager.format(fees.relativeFeesValue(), cachedShop.handle)
       )
-      .withStaticVariable(
+      .withVariable(
         "fees_total_value",
         fees.relativeFeesValue() + fees.absoluteFees() == 0
           ? 0
           : shopManager.format(fees.relativeFeesValue() + fees.absoluteFees(), cachedShop.handle)
       )
-      .withStaticVariable(
+      .withVariable(
         "fees_final_price",
         shopManager.format(
           cachedShop.cachedType == ShopType.SELLING
@@ -652,8 +647,7 @@ public class ResultDisplay extends Display<ResultDisplayData> implements Dynamic
             : cachedShop.cachedPrice - (fees.relativeFeesValue() + fees.absoluteFees()),
           cachedShop.handle
         )
-      )
-      .build(pageEnvironment);
+      );
   }
 
   @Override

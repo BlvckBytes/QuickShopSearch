@@ -1,12 +1,13 @@
 package me.blvckbytes.quick_shop_search.config.integration;
 
-import me.blvckbytes.bbconfigmapper.sections.AConfigSection;
-import me.blvckbytes.gpeee.interpreter.EvaluationEnvironmentBuilder;
+import at.blvckbytes.cm_mapper.mapper.section.ConfigSection;
+import at.blvckbytes.component_markup.expression.interpreter.InterpretationEnvironment;
+import at.blvckbytes.component_markup.util.logging.InterpreterLogger;
 
 import java.util.HashSet;
 import java.util.Set;
 
-public class WorldGuardIntegrationSection extends AConfigSection {
+public class WorldGuardIntegrationSection extends ConfigSection {
 
   public boolean enabled;
   public Set<Integer> ignoredPriorities;
@@ -15,8 +16,8 @@ public class WorldGuardIntegrationSection extends AConfigSection {
   public boolean autoAdvertiseIfInAllowList;
   public boolean disableAdvertiseIfNotAllowed;
 
-  public WorldGuardIntegrationSection(EvaluationEnvironmentBuilder baseEnvironment) {
-    super(baseEnvironment);
+  public WorldGuardIntegrationSection(InterpretationEnvironment baseEnvironment, InterpreterLogger interpreterLogger) {
+    super(baseEnvironment, interpreterLogger);
 
     this.enabled = false;
     this.ignoredPriorities = new HashSet<>();

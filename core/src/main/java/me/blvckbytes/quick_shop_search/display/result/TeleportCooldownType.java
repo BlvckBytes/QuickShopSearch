@@ -1,6 +1,6 @@
 package me.blvckbytes.quick_shop_search.display.result;
 
-import me.blvckbytes.bukkitevaluable.BukkitEvaluable;
+import at.blvckbytes.cm_mapper.cm.ComponentMarkup;
 import me.blvckbytes.quick_shop_search.PluginPermission;
 import org.jetbrains.annotations.Nullable;
 
@@ -8,5 +8,5 @@ public record TeleportCooldownType(
   PluginPermission bypassPermission,
   String stampKey,
   long durationMillis,
-  @Nullable BukkitEvaluable cooldownMessage
+  @Nullable ComponentMarkup cooldownMessage
 ) {}

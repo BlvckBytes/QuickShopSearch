@@ -1,14 +1,15 @@
 package me.blvckbytes.quick_shop_search;
 
+import at.blvckbytes.cm_mapper.ConfigHandler;
+import at.blvckbytes.cm_mapper.ConfigKeeper;
+import at.blvckbytes.cm_mapper.cm.ComponentMarkup;
+import at.blvckbytes.cm_mapper.section.command.CommandUpdater;
+import at.blvckbytes.component_markup.constructor.SlotType;
+import at.blvckbytes.component_markup.expression.interpreter.InterpretationEnvironment;
 import com.cryptomorin.xseries.XMaterial;
 import com.ghostchu.quickshop.QuickShop;
 import com.ghostchu.quickshop.api.command.CommandContainer;
 import com.tcoded.folialib.FoliaLib;
-import me.blvckbytes.bbconfigmapper.ScalarType;
-import me.blvckbytes.bukkitevaluable.BukkitEvaluable;
-import me.blvckbytes.bukkitevaluable.CommandUpdater;
-import me.blvckbytes.bukkitevaluable.ConfigKeeper;
-import me.blvckbytes.bukkitevaluable.ConfigManager;
 import me.blvckbytes.item_predicate_parser.ItemPredicateParserPlugin;
 import me.blvckbytes.quick_shop_search.cache.CachedShopRegistry;
 import me.blvckbytes.quick_shop_search.cache.QuickShopVersionDependentFactory;
@@ -53,9 +54,7 @@ public class QuickShopSearchPlugin extends JavaPlugin {
       var offlinePlayerRegistry = new OfflinePlayerRegistry();
       Bukkit.getPluginManager().registerEvents(offlinePlayerRegistry, this);
 
-      var texturesResolverFunction = new Base64TexturesResolverFunction(logger, offlinePlayerRegistry);
-
-      var configManager = new ConfigManager(this, "config", texturesResolverFunction::registerSelf);
+      var configManager = new ConfigHandler(this, "config");
       var config = new ConfigKeeper<>(configManager, "config.yml", MainSection.class);
 
       var parserPlugin = ItemPredicateParserPlugin.getInstance();
@@ -136,10 +135,10 @@ public class QuickShopSearchPlugin extends JavaPlugin {
       // Set description afterward, because at the time of writing this, the current version of
       // QuickShop-Hikari annihilates the description when registering the container.
       advertiseCommandContainer.setDescription(locale -> {
-        BukkitEvaluable description;
+        ComponentMarkup description;
 
         if ((description = config.rootSection.playerMessages.commandAdvertiseDescription) != null)
-          return Component.text(description.asScalar(ScalarType.STRING, config.rootSection.builtBaseEnvironment));
+          return description.interpret(SlotType.SINGLE_LINE_CHAT, new InterpretationEnvironment()).get(0);
 
         return Component.text("Missing corresponding config-key");
       });
