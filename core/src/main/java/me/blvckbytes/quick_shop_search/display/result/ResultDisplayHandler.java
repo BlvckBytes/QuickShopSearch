@@ -45,6 +45,7 @@ public class ResultDisplayHandler extends DisplayHandler<ResultDisplay, ResultDi
 
   private final Logger logger;
   private final RemoteInteractionApi remoteInteractionApi;
+  private final TexturesResolver texturesResolver;
 
   private final SelectionStateStore stateStore;
   private final UidScopedNamedStampStore stampStore;
@@ -57,6 +58,7 @@ public class ResultDisplayHandler extends DisplayHandler<ResultDisplay, ResultDi
     Logger logger,
     PlatformScheduler scheduler,
     RemoteInteractionApi remoteInteractionApi,
+    TexturesResolver texturesResolver,
     ConfigKeeper<MainSection> config,
     SelectionStateStore stateStore,
     UidScopedNamedStampStore stampStore,
@@ -68,6 +70,7 @@ public class ResultDisplayHandler extends DisplayHandler<ResultDisplay, ResultDi
 
     this.logger = logger;
     this.remoteInteractionApi = remoteInteractionApi;
+    this.texturesResolver = texturesResolver;
     this.stateStore = stateStore;
     this.stampStore = stampStore;
     this.chatPromptManager = chatPromptManager;
@@ -107,7 +110,7 @@ public class ResultDisplayHandler extends DisplayHandler<ResultDisplay, ResultDi
     var selectionState = stateStore.loadState(player);
     selectionState.possiblyRestoreVolatileBackups();
     displayData.searchFlagsContainer().modifySelectionState(selectionState);
-    return new ResultDisplay(scheduler, integrationRegistry, config, remoteInteractionApi, player, displayData, selectionState);
+    return new ResultDisplay(scheduler, integrationRegistry, config, remoteInteractionApi, texturesResolver, player, displayData, selectionState);
   }
 
   @Override

@@ -37,6 +37,7 @@ public class ResultDisplay extends Display<ResultDisplayData> implements Dynamic
 
   private final IntegrationRegistry integrationRegistry;
   private final RemoteInteractionApi remoteInteractionApi;
+  private final TexturesResolver texturesResolver;
   private final AsyncTaskQueue asyncQueue;
 
   private final Long2LongMap shopDistanceByShopId;
@@ -65,6 +66,7 @@ public class ResultDisplay extends Display<ResultDisplayData> implements Dynamic
     IntegrationRegistry integrationRegistry,
     ConfigKeeper<MainSection> config,
     RemoteInteractionApi remoteInteractionApi,
+    TexturesResolver texturesResolver,
     Player player,
     ResultDisplayData displayData,
     SelectionState selectionState
@@ -75,6 +77,7 @@ public class ResultDisplay extends Display<ResultDisplayData> implements Dynamic
     this.asyncQueue = new AsyncTaskQueue(scheduler);
     this.player = player;
     this.remoteInteractionApi = remoteInteractionApi;
+    this.texturesResolver = texturesResolver;
     this.playerLocation = player.getLocation();
     this.shopDistanceByShopId = new Long2LongAVLTreeMap();
     this.shopFeesByShopId = new Long2ObjectAVLTreeMap<>();
@@ -139,7 +142,7 @@ public class ResultDisplay extends Display<ResultDisplayData> implements Dynamic
   private void setupEnvironments() {
    pageEnvironment = config.rootSection.resultDisplay.inventoryEnvironment.copy()
       .withVariable("current_page", this.currentPage)
-      .withVariable("number_pages", this.numberOfPages);
+      .withVariable("number_of_pages", this.numberOfPages);
 
     sortingEnvironment = pageEnvironment.copy();
     selectionState.extendSortingEnvironment(sortingEnvironment, player);
@@ -573,43 +576,9 @@ public class ResultDisplay extends Display<ResultDisplayData> implements Dynamic
 
     var shopManager = QuickShopAPI.getInstance().getShopManager();
 
-    return cachedShop
-      .makeShopEnvironment()
+    var environment = cachedShop.makeShopEnvironment()
       .inheritFrom(pageEnvironment, false)
       .withVariable("distance", distance)
-      .withVariable("player_warp_display_details", config.rootSection.playerWarpsIntegration.displayNearestInIcon)
-      .withVariable("player_warp_name", nearestPlayerWarp == null ? null : nearestPlayerWarp.warpName())
-      .withVariable("player_warp_owner", nearestPlayerWarp == null ? null : nearestPlayerWarp.ownerName())
-      .withVariable("player_warp_world", nearestPlayerWarp == null ? null : Objects.requireNonNull(nearestPlayerWarp.location().getWorld()).getName())
-      .withVariable("player_warp_x", nearestPlayerWarp == null ? null : nearestPlayerWarp.location().getBlockX())
-      .withVariable("player_warp_y", nearestPlayerWarp == null ? null : nearestPlayerWarp.location().getBlockY())
-      .withVariable("player_warp_z", nearestPlayerWarp == null ? null : nearestPlayerWarp.location().getBlockZ())
-      .withVariable(
-        "player_warp_distance",
-        nearestPlayerWarp == null
-          ? null
-          : (int) (
-            Objects.requireNonNull(playerLocation.getWorld()).equals(nearestPlayerWarp.location().getWorld())
-              ? Math.round(nearestPlayerWarp.location().distance(playerLocation))
-              : -1
-          )
-      )
-      .withVariable("essentials_warp_display_details", config.rootSection.essentialsWarpsIntegration.displayNearestInIcon)
-      .withVariable("essentials_warp_name", nearestEssentialsWarp == null ? null : nearestEssentialsWarp.name())
-      .withVariable("essentials_warp_world", nearestEssentialsWarp == null ? null : Objects.requireNonNull(nearestEssentialsWarp.location().getWorld()).getName())
-      .withVariable("essentials_warp_x", nearestEssentialsWarp == null ? null : nearestEssentialsWarp.location().getBlockX())
-      .withVariable("essentials_warp_y", nearestEssentialsWarp == null ? null : nearestEssentialsWarp.location().getBlockY())
-      .withVariable("essentials_warp_z", nearestEssentialsWarp == null ? null : nearestEssentialsWarp.location().getBlockZ())
-      .withVariable(
-        "essentials_warp_distance",
-        nearestEssentialsWarp == null
-          ? null
-          : (int) (
-          Objects.requireNonNull(playerLocation.getWorld()).equals(nearestEssentialsWarp.location().getWorld())
-            ? Math.round(nearestEssentialsWarp.location().distance(playerLocation))
-            : -1
-        )
-      )
       .withVariable(
         "can_teleport",
         canPlayerTeleport(cachedShop, nearestPlayerWarp, nearestEssentialsWarp)
@@ -648,6 +617,44 @@ public class ResultDisplay extends Display<ResultDisplayData> implements Dynamic
           cachedShop.handle
         )
       );
+
+    if (nearestPlayerWarp != null) {
+      var warpDistance = -1;
+
+      if (player.getWorld().equals(nearestPlayerWarp.location().getWorld()))
+        warpDistance = (int) Math.round(nearestPlayerWarp.location().distance(playerLocation));
+
+      var ownerName = nearestPlayerWarp.ownerName();
+
+      environment
+        .withVariable("player_warp_display_details", config.rootSection.playerWarpsIntegration.displayNearestInIcon)
+        .withVariable("player_warp_name", nearestPlayerWarp.warpName())
+        .withVariable("player_warp_owner", ownerName)
+        .withVariable("player_warp_world", Objects.requireNonNull(nearestPlayerWarp.location().getWorld()).getName())
+        .withVariable("player_warp_x", nearestPlayerWarp.location().getBlockX())
+        .withVariable("player_warp_y", nearestPlayerWarp.location().getBlockY())
+        .withVariable("player_warp_z", nearestPlayerWarp.location().getBlockZ())
+        .withVariable("player_warp_distance", warpDistance)
+        .withVariable("player_warp_owner_textures", texturesResolver.tryResolveTextures(ownerName));
+    }
+
+    if (nearestEssentialsWarp != null) {
+      var warpDistance = -1;
+
+      if (player.getWorld().equals(nearestEssentialsWarp.location().getWorld()))
+        warpDistance = (int) Math.round(nearestEssentialsWarp.location().distance(playerLocation));
+
+      environment
+        .withVariable("essentials_warp_display_details", config.rootSection.essentialsWarpsIntegration.displayNearestInIcon)
+        .withVariable("essentials_warp_name", nearestEssentialsWarp.name())
+        .withVariable("essentials_warp_world", Objects.requireNonNull(nearestEssentialsWarp.location().getWorld()).getName())
+        .withVariable("essentials_warp_x", nearestEssentialsWarp.location().getBlockX())
+        .withVariable("essentials_warp_y", nearestEssentialsWarp.location().getBlockY())
+        .withVariable("essentials_warp_z", nearestEssentialsWarp.location().getBlockZ())
+        .withVariable("essentials_warp_distance", warpDistance);
+    }
+
+    return environment;
   }
 
   @Override

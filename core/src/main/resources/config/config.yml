@@ -8,546 +8,429 @@
 # QuickShopSearch - Developed by BlvckBytes <blvckbytes@gmail.com>
 # Repository - https://github.com/BlvckBytes/QuickShopSearch
 # ASCII-Art - https://patorjk.com/software/taag/#p=display&f=Speed
-#
-# PRE-PROCESSOR-INPUT en_us.txt
 
-# - current_page: Integer
-# - number_pages: Integer
-# - number_of_rows: Integer
-# - last_slot: Integer
 resultDisplay:
-  chatPromptAllSentinel$: '@{RESULT-DISPLAY-CHAT-PROMPT-ALL-SENTINEL}'
-  chatPromptCancelSentinel$: '@{RESULT-DISPLAY-CHAT-PROMPT-CANCEL-SENTINEL}'
-  title: '@{RESULT-DISPLAY-TITLE}'
+  chatPromptAllSentinel: 'all'
+  chatPromptCancelSentinel: 'cancel'
+  title: '<&8>Shop Search <&e>{current_page}<&8>/<&e>{number_pages}'
   rows: 6
-  paginationSlots$: 'range(0, 44)'
+  paginationSlots: '0..44'
   items:
-    # https://github.com/BlvckBytes/BukkitEvaluable#itemstack-section
     previousPage:
-      slots$: 'last_slot - 8'
+      slots: 'last_slot - 8'
       type: PLAYER_HEAD
-      textures$: 'lut["textures"][if current_page > 1 then "ARROW_LEFT" else "ARROW_LEFT_RED"]'
-      name$: 'if current_page > 1 then @{PREVIOUS-PAGE-NAME-HAS} else @{PREVIOUS-PAGE-NAME-HAS-NOT}'
-      lore$:
-      - '" "'
-      - '@{ANY-CONTROL-LORE-SPACER}'
-      - '@{PREVIOUS-PAGE-LORE-LEFT-CLICK-DESCRIPTION}'
-      - '@{PREVIOUS-PAGE-LORE-RIGHT-CLICK-DESCRIPTION}'
-      - '@{ANY-CONTROL-LORE-SPACER}'
-    # https://github.com/BlvckBytes/BukkitEvaluable#itemstack-section
+      textures: '{lut.textures[if current_page > 1 then "arrow_left" else "arrow_left_red"]}'
+      name: |
+        <reset>
+          <container *if="current_page > 1">
+            <&8>» <&6>Previous Page <&8>«
+          </container>
+          <container *else>
+            <&8>» <&c>No Previous Page <&8>«
+          </container>
+      lore: |
+        <reset>
+          <br/>
+          {lut.spacer}<br/>
+          <&8>➥ <&e>Left-Click <&7>Navigate to previous page<br/>
+          <&8>➥ <&e>Right-Click <&7>Jump to very first page<br/>
+          {lut.spacer}
     nextPage:
-      slots$: 'last_slot'
+      slots: 'last_slot'
       type: PLAYER_HEAD
-      textures$: 'lut["textures"][if current_page < number_pages then "ARROW_RIGHT"
-        else "ARROW_RIGHT_RED"]'
-      name$: 'if current_page < number_pages then @{NEXT-PAGE-NAME-HAS} else @{NEXT-PAGE-NAME-HAS-NOT}'
-      lore$:
-      - '" "'
-      - '@{ANY-CONTROL-LORE-SPACER}'
-      - '@{NEXT-PAGE-LORE-LEFT-CLICK-DESCRIPTION}'
-      - '@{NEXT-PAGE-LORE-RIGHT-CLICK-DESCRIPTION}'
-      - '@{ANY-CONTROL-LORE-SPACER}'
-    # - owner: String
-    # - name: String?
-    # - price: Double
-    # - currency: String?
-    # - remaining_stock: Integer
-    # - remaining_space: Integer
-    # - is_selling: Boolean
-    # - is_buying: Boolean
-    # - is_unlimited: Boolean
-    # - loc_world: String
-    # - loc_x: Integer
-    # - loc_y: Integer
-    # - loc_z: Integer
-    # - distance: Integer
-    # - can_teleport: Boolean
-    # - can_interact: Boolean
-    # - fees_absolute: Zero | String
-    # - fees_relative: Double
-    # - fees_relative_value: Zero | String
-    # - fees_total_value: Zero | String
-    # - fees_final_price: String
-    # - player_warp_display_details: Boolean
-    # - player_warp_name: String?
-    # - player_warp_owner: String?
-    # - player_warp_world: String?
-    # - player_warp_x: Integer?
-    # - player_warp_y: Integer?
-    # - player_warp_z: Integer?
-    # - player_warp_distance: Integer?
-    # https://github.com/BlvckBytes/BukkitEvaluable#itemstack-section
+      textures: '{lut.textures[if current_page < number_pages then "arrow_right" else "arrow_right_red"]}'
+      name: |
+        <reset>
+          <container *if="current_page < number_of_pages">
+            <&8>» <&6>Next Page <&8>«
+          </container>
+          <container *else>
+            <&8>» <&c>No Next Page <&8>«
+          </container>
+      lore: |
+        <reset>
+          <br/>
+          {lut.spacer}<br/>
+          <&8>➥ <&e>Left-Click <&7>Navigate to next page<br/>
+          <&8>➥ <&e>Right-Click <&7>Jump to very last page<br/>
+          {lut.spacer}
     representativePatch:
-      lore$:
-      - '" "'
-      - '@{ANY-CONTROL-LORE-SPACER}'
-      - '@{REPRESENTATIVE-LORE-OWNER}'
-      - 'if name != null then @{REPRESENTATIVE-LORE-NAME} else null'
-      - '@{REPRESENTATIVE-LORE-PRICE}'
-      - |
-        if fees_absolute != 0 and fees_relative != 0 then
-           @{REPRESENTATIVE-LORE-FEES-ABSOLUTE-AND-RELATIVE}
-        else if fees_absolute != 0 then
-           @{REPRESENTATIVE-LORE-FEES-ABSOLUTE}
-        else if fees_relative != 0 then
-           @{REPRESENTATIVE-LORE-FEES-RELATIVE}
-        else
-          null
-      - |
-        if is_buying then
-          @{REPRESENTATIVE-LORE-REMAINING-SPACE(remaining_space=if is_unlimited then "∞" else remaining_space)}
-        else
-          @{REPRESENTATIVE-LORE-REMAINING-STOCK(remaining_stock=if is_unlimited then "∞" else remaining_stock)}
-      - '@{REPRESENTATIVE-LORE-LOCATION-COORDINATES}'
-      - '@{REPRESENTATIVE-LORE-LOCATION-WORLD}'
-      - 'if distance < 0 then @{REPRESENTATIVE-LORE-DISTANCE-OTHER-WORLD} else @{REPRESENTATIVE-LORE-DISTANCE}'
-      - |
-        if is_buying then
-          if is_unlimited then @{REPRESENTATIVE-LORE-MODE-BUYING-UNLIMITED} else @{REPRESENTATIVE-LORE-MODE-BUYING}
-        else
-          if is_unlimited then @{REPRESENTATIVE-LORE-MODE-SELLING-UNLIMITED} else @{REPRESENTATIVE-LORE-MODE-SELLING}
-      - |
-        if player_warp_display_details and player_warp_name != null then
-          @{REPRESENTATIVE-LORE-NEAREST-PLAYER-WARP}
-        else
-          null
-      - |
-        if essentials_warp_display_details and essentials_warp_name != null then
-          @{REPRESENTATIVE-LORE-NEAREST-ESSENTIALS-WARP}
-        else
-          null
-      - '@{ANY-CONTROL-LORE-SPACER}'
-      - |
-        if can_teleport then
-          @{REPRESENTATIVE-LORE-LEFT-CLICK-DESCRIPTION}
-        else
-          null
-      - '@{REPRESENTATIVE-LORE-RIGHT-CLICK-DESCRIPTION}'
-      - |
-        if can_interact then
-          if is_buying then
-             @{REPRESENTATIVE-LORE-SHIFT-LEFT-CLICK-BUYING-DESCRIPTION}
-          else
-             @{REPRESENTATIVE-LORE-SHIFT-LEFT-CLICK-SELLING-DESCRIPTION}
-        else
-          null
-      - '@{ANY-CONTROL-LORE-SPACER}'
-    # - sorting_selections: Iterable<SortingCriterionSelection>
-    # - selected_index: Integer
-    # - has_permission: Boolean
-    # https://github.com/BlvckBytes/BukkitEvaluable#itemstack-section
+      lore: |
+        <reset>
+          <br/>
+          {lut.spacer}<br/>
+          <&8>♦ <&7>Owner: <&e>{owner}<br/>
+          <container *if="name">
+            <&8>♦ <&7>Name: <&e>{name}<br/>
+          </container>
+          <&8>♦ <&7>Price: <&e>{price}<br/>
+          <container *if="fees_absolute neq 0 and fees_relative neq 0">
+             <&8>♦ <&7>Distance-Fee: <&e>{fees_total_value} ({fees_relative}% + {fees_absolute} (fixed amount))<br/>
+          </container>
+          <container *else-if="fees_absolute neq 0">
+             <&8>♦ <&7>Distance-Fee: <&e>{fees_absolute} (fixed amount)<br/>
+          </container>
+          <container *else-if="fees_relative neq 0">
+             <&8>♦ <&7>Distance-Fee: <&e>{fees_relative_value} ({fees_relative}%)<br/>
+          </container>
+          <container *if="is_buying">
+            <&8>♦ <&7>Space: <&e>{is_unlimited then "∞" else remaining_space}<br/>
+          </container>
+          <container *else>
+            <&8>♦ <&7>Stock: <&e>{if is_unlimited then "∞" else remaining_stock}<br/>
+          </container>
+          <&8>♦ <&7>Coordinates: <&e>{loc_x} {loc_y} {loc_z}<br/>
+          <&8>♦ <&7>World: <&e>{loc_world}<br/>
+          <container *if="distance < 0">
+            <&8>♦ <&7>Distance: <&c>Different World<br/>
+          </container>
+          <container *else>
+            <&8>♦ <&7>Distance: <&e>{distance} Blocks<br/>
+          </container>
+          <container *if="is_buying">
+            <container *if="is_unlimited">
+              <&8>♦ <&7>Mode: <&e>Buys Unlimited Items<br/>
+            </container>
+            <container *else>
+              <&8>♦ <&7>Mode: <&e>Buys Items<br/>
+            </container>
+          </container>
+          <container *else>
+            <container *if="is_unlimited">
+              <&8>♦ <&7>Mode: <&e>Sells Unlimited Items<br/>
+            </container>
+            <container *else>
+              <&8>♦ <&7>Mode: <&e>Sells Items<br/>
+            </container>
+          </container>
+          <container *if="player_warp_display_details and player_warp_name neq null">
+            <&8>♦ <&7>Player-Warp: <&e>{player_warp_name} ({player_warp_x}, {player_warp_y}, {player_warp_z})<br/>
+          </container>
+          <container *if="essentials_warp_display_details and essentials_warp_name neq null">
+            <&8>♦ <&7>Warp: <&e>{essentials_warp_name} ({essentials_warp_x}, {essentials_warp_y}, {essentials_warp_z})
+          </container>
+          {lut.spacer}<br/>
+          <container *if="can_teleport">
+            <&8>➥ <&e>Left-Click <&7>Teleport to the shop<br/>
+          </container>
+          <&8>➥ <&e>Right-Click <&7>Open preview<br/>
+          <container *if="can_interact">
+            <container *if="is_buying">
+               <&8>➥ <&e>Shift-Left-Click <&7>Sell to shop<br/>
+            </container>
+            <container *else>
+               <&8>➥ <&e>Shift-Left-Click <&7>Buy from shop<br/>
+            </container>
+          </container>
+          {lut.spacer}
     sorting:
-      slots$: 'last_slot - 6'
+      slots: 'last_slot - 6'
       type: COMPARATOR
-      name$: '@{SORTING-NAME}'
-      lore$:
-      - '" "'
-      - |
-        if not has_permission then
-          @{SORTING-LORE-NO-PERMISSION}
-        else
-          flatten(
-            @{ANY-CONTROL-LORE-SPACER},
+      name: |
+        <reset>
+          <&8>» <&6>Sorting <&8>«
+      lore: |
+        <reset>
+          <br/>
+          <container *if="not has_permission">
+            <&8>➥ <&c>No permission to sort results
+          </container>
+          <container *else>
+            {lut.spacer}<br/>
+            TODO: Fix me
             map(sorting_selections, (entry, entry_index) => (
               (if entry_index == selected_index then
-                @{SORTING-LORE-ENTRY-PREFIX-ACTIVE}
+                "&e➥ "
               else
-                @{SORTING-LORE-ENTRY-PREFIX-INACTIVE})
+                "&8➥ ")
               & (lut["sortingSelectionStyle"][str(entry.selection)] ?? "&4?")
               & (lut["sortingCriteria"][str(entry.criterion)] ?? "&4?")
             )),
-            @{ANY-CONTROL-LORE-SPACER},
-            @{SORTING-LORE-LEFT-CLICK-DESCRIPTION},
-            @{SORTING-LORE-RIGHT-CLICK-DESCRIPTION},
-            @{SORTING-LORE-DROP-DESCRIPTION},
-            @{SORTING-LORE-DROP-ALL-DESCRIPTION},
-            @{ANY-CONTROL-LORE-SPACER}
-          )
+            {lut.spacer}<br/>
+            <&8>➥ <&e>Left-Click <&7>Cycle through criteria<br/>
+            <&8>➥ <&e>Right-Click <&7>Toggle sorting-order<br/>
+            <&8>➥ <&e>Drop <&7>Move criterion down<br/>
+            <&8>➥ <&e>Drop All <&7>Reset choices<br/>
+            {lut.spacer}
+          </container>
     activeSearch:
-      slots$: 'last_slot - 4'
+      slots: 'last_slot - 4'
       type: REDSTONE
-      name$: '@{ACTIVE-SEARCH-NAME}'
-      # - predicate: String?
-      # - owner: String?
-      # - radius: String?
-      # - price: String?
-      # - max_price: String?
-      # - min_price: String?
-      lore$:
-        - '" "'
-        - |
-          filter(list_of(
-            if predicate == null then null else @{ACTIVE-SEARCH-LORE-PREDICATE},
-            if owner == null then null else @{ACTIVE-SEARCH-LORE-OWNER},
-            if radius == null then null else @{ACTIVE-SEARCH-LORE-RADIUS},
-            if price == null then null else @{ACTIVE-SEARCH-LORE-PRICE},
-            if max_price == null then null else @{ACTIVE-SEARCH-LORE-MAX-PRICE},
-            if min_price == null then null else @{ACTIVE-SEARCH-LORE-MIN-PRICE}
-          ), (it) => it != null)
-    # - filtering_selections: Map<ShopFilteringCriteria, PredicateSelection>
-    # - selected_criteria: ShopFilteringCriteria
-    # - has_permission: Boolean
-    # https://github.com/BlvckBytes/BukkitEvaluable#itemstack-section
+      name: |
+        <reset>
+          <&8>» <&6>Search <&8>«
+      lore: |
+        <reset>
+          <container *if="predicate neq null">
+            <br/>
+            <&8>➥ <&7>Predicate: <&e>{predicate}
+          </container>
+          <container *if="owner neq null">
+            <br/>
+            <&8>➥ <&7>Owner: <&e>{owner}
+          </container>
+          <container *if="radius neq null">
+            <br/>
+            <&8>➥ <&7>Radius: <&e>{radius}
+          </container>
+          <container *if="price neq null">
+            <br/>
+            <&8>➥ <&7>Price: <&e>{price}
+          </container>
+          <container *if="max_price neq null">
+            <br/>
+            <&8>➥ <&7>Max-Price: <&e>{max_price}
+          </container>
+          <container *if="min_price neq null">
+            <br/>
+            <&8>➥ <&7>Min-Price: <&e>{min_price}
+          </container>
     filtering:
-      slots$: 'last_slot - 2'
+      slots: 'last_slot - 2'
       type: HOPPER
-      name$: '@{FILTERING-NAME}'
-      lore$:
-      - '" "'
-      - |
-        if not has_permission then
-          @{FILTERING-LORE-NO-PERMISSION}
-        else
-          flatten(
-            @{ANY-CONTROL-LORE-SPACER},
+      name: |
+        <reset>
+          <&8>» <&6>Filtering <&8>«
+      lore: |
+        <reset>
+          <br/>
+          <container *if="not has_permission">
+            <&8>➥ <&c>No permission to filter results
+          </container>
+          <container *else>
+            {lut.spacer}<br/>
+            // TODO: Fix me
             map(filtering_selections, (entry) => (
               (if key(entry) == selected_criteria then
-                @{FILTERING-LORE-ENTRY-PREFIX-ACTIVE}
+                "&e➥ "
               else
-                @{FILTERING-LORE-ENTRY-PREFIX-INACTIVE})
+                "&8➥ ")
               & (lut["filteringSelectionStyle"][str(value(entry))] ?? "&4?")
               & (lut["filteringCriteria"][str(key(entry))] ?? "&4?")
             )),
-            @{ANY-CONTROL-LORE-SPACER},
-            @{FILTERING-LORE-LEFT-CLICK-DESCRIPTION},
-            @{FILTERING-LORE-RIGHT-CLICK-DESCRIPTION},
-            @{FILTERING-LORE-DROP-ALL-DESCRIPTION},
-            @{ANY-CONTROL-LORE-SPACER}
-          )
-    # https://github.com/BlvckBytes/BukkitEvaluable#itemstack-section
+            {lut.spacer}<br/>
+            <&8>➥ <&e>Left-Click <&7>Cycle through criteria<br/>
+            <&8>➥ <&e>Right-Click <&7>Toggle state<br/>
+            <&8>➥ <&e>Drop All <&7>Reset choices<br/>
+            {lut.spacer}
+          </container>
     filler:
-      slots$:
-        - 'last_slot - 7'
-        - 'last_slot - 5'
-        - 'last_slot - 4'
-        - 'last_slot - 3'
-        - 'last_slot - 1'
+      slots: '(last_slot - 8)..last_slot'
       type: BLACK_STAINED_GLASS_PANE
       name: " "
 
-# - owner: String
-# - name: String?
-# - price: Double
-# - currency: String?
-# - remaining_stock: Integer
-# - remaining_space: Integer
-# - is_selling: Boolean
-# - is_buying: Boolean
-# - is_unlimited: Boolean
-# - loc_world: String
-# - loc_x: Integer
-# - loc_y: Integer
-# - loc_z: Integer
-# - distance: Integer
-# - can_teleport: Boolean
-# - can_interact: Boolean
-# - fees_absolute: Zero | String
-# - fees_relative: Double
-# - fees_relative_value: Zero | String
-# - fees_total_value: Zero | String
-# - fees_final_price: String
-# - player_warp_display_details: Boolean
-# - player_warp_name: String?
-# - player_warp_owner: String?
-# - player_warp_world: String?
-# - player_warp_x: Integer?
-# - player_warp_y: Integer?
-# - player_warp_z: Integer?
-# - player_warp_distance: Integer?
-# - essentials_warp_display_details: Boolean
-# - essentials_warp_name: String?
-# - essentials_warp_world: String?
-# - essentials_warp_x: Integer?
-# - essentials_warp_y: Integer?
-# - essentials_warp_z: Integer?
-# - essentials_warp_distance: Integer?
 teleportDisplay:
-  title: '@{TELEPORT-DISPLAY-TITLE}'
+  title: '<&8>Shop-Teleport <&e>{loc_x} {loc_y} {loc_z}'
   rows: 1
   items:
-    # https://github.com/BlvckBytes/BukkitEvaluable#itemstack-section
     back:
-      slots: [0]
+      slots: '0'
       type: PLAYER_HEAD
-      textures$: 'lut["textures"]["ARROW_LEFT"]'
-      name$: '@{TELEPORT-DISPLAY-BACK-NAME}'
-      lore$:
-        - '" "'
-        - '@{ANY-CONTROL-LORE-SPACER}'
-        - '@{TELEPORT-DISPLAY-BACK-LORE-LEFT-CLICK-DESCRIPTION}'
-        - '@{ANY-CONTROL-LORE-SPACER}'
-    # https://github.com/BlvckBytes/BukkitEvaluable#itemstack-section
+      textures: '{lut.textures["arrow_left"]}'
+      name: |
+        <reset>
+          <&8>» <&6>Back <&8>«
+      lore: |
+        <reset>
+          <br/>
+          {lut.spacer}<br/>
+          <&8>➥ <&e>Left-Click <&7>Return to the shop-browser<br/>
+          {lut.spacer}
     shopLocation:
-      slots: [2]
+      slots: '2'
       type: CHEST
-      name$: '@{TELEPORT-DISPLAY-SHOP-LOCATION-NAME}'
-      lore$:
-        - '" "'
-        - '@{ANY-CONTROL-LORE-SPACER}'
-        - '@{TELEPORT-DISPLAY-SHOP-LOCATION-LORE-LOCATION-COORDINATES}'
-        - '@{TELEPORT-DISPLAY-SHOP-LOCATION-LORE-LOCATION-WORLD}'
-        - 'if distance < 0 then @{TELEPORT-DISPLAY-SHOP-LOCATION-LORE-DISTANCE-OTHER-WORLD} else @{TELEPORT-DISPLAY-SHOP-LOCATION-LORE-DISTANCE}'
-        - '@{ANY-CONTROL-LORE-SPACER}'
-        - '@{TELEPORT-DISPLAY-SHOP-LOCATION-LORE-LEFT-CLICK-DESCRIPTION}'
-        - '@{ANY-CONTROL-LORE-SPACER}'
-    # - resolve_b64_textures(owner_name: String?): String? - used to resolve a player's (cached) skull-textures by
-    #                                                       name; returns null if passed null or on resolve-failures
-    # https://github.com/BlvckBytes/BukkitEvaluable#itemstack-section
+      name: |
+        <reset>
+          <&8>» <&6>Shop-Location <&8>«
+      lore: |
+        <reset>
+          <br/>
+          {lut.spacer><br/>
+          <&8>♦ <&7>Coordinates: <&e>{loc_x} {loc_y} {loc_z}<br/>
+          <&8>♦ <&7>World: &e{loc_world}<br/>
+          <container *if="distance < 0">
+            <&8>♦ <&7>Distance: <&c>Different World<br/>
+          </container>
+          <container *else>
+            <&8>♦ <&7>Distance: <&e>{distance} Blocks<br/>
+          </container>
+          {lut.spacer><br/>
+          <&8>➥ <&e>Left-Click <&7>Teleport to the shop-location<br/>
+          {lut.spacer>
     nearestPlayerWarpLocation:
-      slots: [3]
-      type$: 'if player_warp_name != null then "PLAYER_HEAD" else "BARRIER"'
-      textures$: 'resolve_b64_textures(player_warp_owner) ?? lut["textures"]["PLAYER_WARP_SKIN_FALLBACK"]'
-      name$: '@{TELEPORT-DISPLAY-NEAREST-PLAYER-WARP-LOCATION-NAME}'
-      lore$: |
-        if player_warp_name != null then list_of(
-          " ",
-          @{ANY-CONTROL-LORE-SPACER},
-          @{TELEPORT-DISPLAY-NEAREST-PLAYER-WARP-LOCATION-LORE-LOCATION-NAME},
-          @{TELEPORT-DISPLAY-NEAREST-PLAYER-WARP-LOCATION-LORE-LOCATION-OWNER},
-          @{TELEPORT-DISPLAY-NEAREST-PLAYER-WARP-LOCATION-LORE-LOCATION-COORDINATES},
-          @{TELEPORT-DISPLAY-NEAREST-PLAYER-WARP-LOCATION-LORE-LOCATION-WORLD},
-          if player_warp_distance < 0 then
-            @{TELEPORT-DISPLAY-NEAREST-PLAYER-WARP-LOCATION-LORE-DISTANCE-OTHER-WORLD}
-          else
-            @{TELEPORT-DISPLAY-NEAREST-PLAYER-WARP-LOCATION-LORE-DISTANCE},
-          @{ANY-CONTROL-LORE-SPACER},
-          @{TELEPORT-DISPLAY-NEAREST-PLAYER-WARP-LOCATION-LORE-LEFT-CLICK-DESCRIPTION},
-          @{ANY-CONTROL-LORE-SPACER}
-        ) else list_of(
-          " ",
-          @{ANY-CONTROL-LORE-SPACER},
-          @{TELEPORT-DISPLAY-NEAREST-PLAYER-WARP-LOCATION-LORE-HAS-NONE},
-          @{ANY-CONTROL-LORE-SPACER}
-        )
-    # https://github.com/BlvckBytes/BukkitEvaluable#itemstack-section
+      slots: '3'
+      type: '{has(player_warp_name) then "PLAYER_HEAD" else "BARRIER"}'
+      textures: 'env(player_warp_owner_textures) ?? lut.textures["player_warp_skin_fallback"]'
+      name: |
+        <reset>
+          <&8>» <&6>Nearest Player-Warp <&8>«
+      lore: |
+        <reset>
+          <br/>
+          {lut.spacer}<br/>
+          <container *if="has(player_warp_name)">
+            <&8>♦ <&7>Name: <&e>{player_warp_name}<br/>
+            <&8>♦ <&7>Owner: <&e>{player_warp_owner}<br/>
+            <&8>♦ <&7>Coordinates: <&e>{player_warp_x} {player_warp_y} {player_warp_z}<br/>
+            <&8>♦ <&7>World: <&e>{player_warp_world}<br/>
+            <container *if="player_warp_distance < 0">
+              <&8>♦ <&7>Distance: <&c>Different World<br/>
+            </container>
+            <container *else>
+              <&8>♦ <&7>Distance: <&e>{player_warp_distance} Blocks<br/>
+            </container>
+            {lut.spacer}<br/>
+            <&8>➥ <&e>Left-Click <&7>Teleport to the player-warp<br/>
+          </container>
+          <container *else>
+            <&8>➥ <&c>No player-warp available<br/>
+          </container>
+          {lut.spacer}
     nearestEssentialsWarpLocation:
-      slots: [4]
-      type$: 'if essentials_warp_name != null then "OAK_SIGN" else "BARRIER"'
-      name$: '@{TELEPORT-DISPLAY-NEAREST-ESSENTIALS-WARP-LOCATION-NAME}'
-      lore$: |
-        if essentials_warp_name != null then list_of(
-          " ",
-          @{ANY-CONTROL-LORE-SPACER},
-          @{TELEPORT-DISPLAY-NEAREST-ESSENTIALS-WARP-LOCATION-LORE-LOCATION-NAME},
-          @{TELEPORT-DISPLAY-NEAREST-ESSENTIALS-WARP-LOCATION-LORE-LOCATION-COORDINATES},
-          @{TELEPORT-DISPLAY-NEAREST-ESSENTIALS-WARP-LOCATION-LORE-LOCATION-WORLD},
-          if essentials_warp_distance < 0 then
-            @{TELEPORT-DISPLAY-NEAREST-ESSENTIALS-WARP-LOCATION-LORE-DISTANCE-OTHER-WORLD}
-          else
-            @{TELEPORT-DISPLAY-NEAREST-ESSENTIALS-WARP-LOCATION-LORE-DISTANCE},
-          @{ANY-CONTROL-LORE-SPACER},
-          @{TELEPORT-DISPLAY-NEAREST-ESSENTIALS-WARP-LOCATION-LORE-LEFT-CLICK-DESCRIPTION},
-          @{ANY-CONTROL-LORE-SPACER}
-        ) else list_of(
-          " ",
-          @{ANY-CONTROL-LORE-SPACER},
-          @{TELEPORT-DISPLAY-NEAREST-ESSENTIALS-WARP-LOCATION-LORE-HAS-NONE},
-          @{ANY-CONTROL-LORE-SPACER}
-        )
-    # https://github.com/BlvckBytes/BukkitEvaluable#itemstack-section
+      slots: '4'
+      type: '{has(essentials_warp_name) then "OAK_SIGN" else "BARRIER"}'
+      name: |
+        <reset>
+          <&8>» <&6>Nearest Warp <&8>«
+      lore: |
+        <reset>
+          <br/>
+          {lut.spacer}<br/>
+          <container *if="has(essentials_warp_name)">
+            <&8>♦ <&7>Name: <&e>{essentials_warp_name}<br/>
+            <&8>♦ <&7>Coordinates: <&e>{essentials_warp_x} {essentials_warp_y} {essentials_warp_z}<br/>
+            <&8>♦ <&7>World: <&e>{essentials_warp_world}<br/>
+            <container *if="essentials_warp_distance < 0">
+              <&8>♦ <&7>Distance: <&c>Different World<br/>
+            </container>
+            <container *else>
+              <&8>♦ <&7>Distance: <&e>{essentials_warp_distance} Blocks<br/>
+            </container>
+            {lut.spacer}<br/>
+            <&8>➥ <&e>Left-Click <&7>Teleport to the warp<br/>
+          </container>
+          <container *else>
+            <&8>➥ <&c>No warp available<br/>
+          </container>
+          {lut.spacer}
     filler:
-      slots$: 'range(0, last_slot + 1)'
+      slots: '0..last_slot'
       type: BLACK_STAINED_GLASS_PANE
-      name: " "
+      name: ''
 
 playerMessages:
-  emptyPredicate$: '@{MESSAGE-EMPTY-PREDICATE(prefix=lut["MESSAGE_PREFIX"])}'
-  noMatches$: '@{MESSAGE-NO-MATCHES(prefix=lut["MESSAGE_PREFIX"])}'
-  # - owner: String
-  # - name: String?
-  # - price: Double
-  # - currency: String?
-  # - remaining_stock: Integer
-  # - remaining_space: Integer
-  # - is_selling: Boolean
-  # - is_buying: Boolean
-  # - is_unlimited: Boolean
-  # - loc_world: String?
-  # - loc_x: Integer
-  # - loc_y: Integer
-  # - loc_z: Integer
-  # - distance: Integer
-  beforeTeleporting$: '@{MESSAGE-BEFORE-TELEPORTING(prefix=lut["MESSAGE_PREFIX"])}'
-  # - owner: String
-  # - name: String?
-  # - price: Double
-  # - currency: String?
-  # - remaining_stock: Integer
-  # - remaining_space: Integer
-  # - is_selling: Boolean
-  # - is_buying: Boolean
-  # - is_unlimited: Boolean
-  # - loc_world: String?
-  # - loc_x: Integer
-  # - loc_y: Integer
-  # - loc_z: Integer
-  # - distance: Integer
-  # - player_warp_owner: String
-  # - player_warp_name: String
-  # - player_warp_world: String
-  # - player_warp_x: Integer
-  # - player_warp_y: Integer
-  # - player_warp_z: Integer
-  # - player_warp_distance: Integer
-  beforeTeleportingNearestPlayerWarp$: '@{MESSAGE-BEFORE-TELEPORTING-NEAREST-PLAYER-WARP(prefix=lut["MESSAGE_PREFIX"])}'
-  # - owner: String
-  # - name: String?
-  # - price: Double
-  # - currency: String?
-  # - remaining_stock: Integer
-  # - remaining_space: Integer
-  # - is_selling: Boolean
-  # - is_buying: Boolean
-  # - is_unlimited: Boolean
-  # - loc_world: String?
-  # - loc_x: Integer
-  # - loc_y: Integer
-  # - loc_z: Integer
-  # - distance: Integer
-  # - essentials_warp_name: String
-  # - essentials_warp_world: String
-  # - essentials_warp_x: Integer
-  # - essentials_warp_y: Integer
-  # - essentials_warp_z: Integer
-  # - essentials_warp_distance: Integer
-  beforeTeleportingNearestEssentialsWarp$: '@{MESSAGE-BEFORE-TELEPORTING-NEAREST-ESSENTIALS-WARP(prefix=lut["MESSAGE_PREFIX"])}'
-  # - number_shops: Integer
-  # - predicate: String
-  beforeQuerying$: '@{MESSAGE-BEFORE-QUERYING(prefix=lut["MESSAGE_PREFIX"])}'
-  # - number_shops: Integer
-  queryingAllShops$: '@{MESSAGE-QUERYING-ALL-SHOPS(prefix=lut["MESSAGE_PREFIX"])}'
-  # - label: String
-  # - languages: Collection<String>
-  usageQsslCommandLanguage$: |
-    language_list = iter_cat(languages, (language) => @{MESSAGE-USAGE-QSSL-LANGUAGE-ITEM-COLOR} & language, @{MESSAGE-USAGE-QSSL-LANGUAGE-SEPARATOR-COLOR} & ", ")
-    @{MESSAGE-USAGE-QSSL-LANGUAGE(prefix=lut["MESSAGE_PREFIX"])}
-  # - user_input: String
-  unknownLanguageActionBar$: '@{MESSAGE-UNKNOWN-LANGUAGE(prefix=lut["MESSAGE_PREFIX"])}'
-  pluginReloadedSuccess$: '@{MESSAGE-PLUGIN-RELOAD(prefix=lut["MESSAGE_PREFIX"])}'
-  pluginReloadedError$: '@{MESSAGE-PLUGIN-RELOAD-ERROR(prefix=lut["MESSAGE_PREFIX"])}'
-  # - error_message: String
-  predicateParseError$: '@{MESSAGE-PREDICATE-ERROR(prefix=lut["MESSAGE_PREFIX"])}'
-  # - flag_name: String
-  # - flag_value: String
-  searchFlagParseError$: '@{MESSAGE-SEARCH-FLAG-ERROR(prefix=lut["MESSAGE_PREFIX"])}'
-  shopInteractPromptBuying$: '@{MESSAGE-SHOP-INTERACT-PROMPT-BUYING(prefix=lut["MESSAGE_PREFIX"])}'
-  shopInteractPromptSelling$: '@{MESSAGE-SHOP-INTERACT-PROMPT-SELLING(prefix=lut["MESSAGE_PREFIX"])}'
-  shopInteractPromptTimeout$: '@{MESSAGE-SHOP-INTERACT-PROMPT-TIMEOUT(prefix=lut["MESSAGE_PREFIX"])}'
-  shopInteractPromptDispatch$: '@{MESSAGE-SHOP-INTERACT-PROMPT-DISPATCH(prefix=lut["MESSAGE_PREFIX"])}'
-  shopInteractPromptInvalidInput$: '@{MESSAGE-SHOP-INTERACT-PROMPT-INVALID-INPUT(prefix=lut["MESSAGE_PREFIX"])}'
-  shopInteractPromptCancelPrevious$: '@{MESSAGE-SHOP-INTERACT-PROMPT-CANCEL-PREVIOUS(prefix=lut["MESSAGE_PREFIX"])}'
-  shopInteractPromptCancelCurrent$: '@{MESSAGE-SHOP-INTERACT-PROMPT-CANCEL-CURRENT(prefix=lut["MESSAGE_PREFIX"])}'
-  shopInteractPromptLimitingFactorPlayerSpace$: '@{MESSAGE-SHOP-INTERACT-PROMPT-LIMITING-FACTOR-PLAYER-SPACE(prefix=lut["MESSAGE_PREFIX"])}'
-  shopInteractPromptLimitingFactorPlayerStock$: '@{MESSAGE-SHOP-INTERACT-PROMPT-LIMITING-FACTOR-PLAYER-STOCK(prefix=lut["MESSAGE_PREFIX"])}'
-  shopInteractPromptLimitingFactorShopSpace$: '@{MESSAGE-SHOP-INTERACT-PROMPT-LIMITING-FACTOR-SHOP-SPACE(prefix=lut["MESSAGE_PREFIX"])}'
-  shopInteractPromptLimitingFactorShopStock$: '@{MESSAGE-SHOP-INTERACT-PROMPT-LIMITING-FACTOR-SHOP-STOCK(prefix=lut["MESSAGE_PREFIX"])}'
-  shopInteractPromptLimitingFactorSellerFunds$: '@{MESSAGE-SHOP-INTERACT-PROMPT-LIMITING-FACTOR-SELLER-FUNDS(prefix=lut["MESSAGE_PREFIX"])}'
-  shopInteractPromptLimitingFactorBuyerFunds$: '@{MESSAGE-SHOP-INTERACT-PROMPT-LIMITING-FACTOR-BUYER-FUNDS(prefix=lut["MESSAGE_PREFIX"])}'
-  # - fees_absolute: Zero | String
-  # - fees_relative: Double
-  # - fees_relative_value: Zero | String
-  # - fees_total_value: Zero | String
-  # - fees_final_price: String
-  shopInteractPromptFeesWarning$: '@{MESSAGE-SHOP-INTERACT-PROMPT-FEES-WARNING(prefix=lut["MESSAGE_PREFIX"])}'
-  shopInteractPendingFeesTask$: '@{MESSAGE-SHOP-INTERACT-PENDING-FEES-TASK(prefix=lut["MESSAGE_PREFIX"])}'
-  # - fees_amount: String
-  shopInteractCouldNotWithdrawFees$: '@{MESSAGE-SHOP-INTERACT-COULD-NOT-WITHDRAW-FEES(prefix=lut["MESSAGE_PREFIX"])}'
-  # - fees_amount: String
-  shopInteractWithdrawnFees$: '@{MESSAGE-SHOP-INTERACT-WITHDRAWN-FEES(prefix=lut["MESSAGE_PREFIX"])}'
-  # - fees_amount: String
-  shopInteractPayedBackFees$: '@{MESSAGE-SHOP-INTERACT-PAYED-BACK-FEES(prefix=lut["MESSAGE_PREFIX"])}'
-  # - fees_amount: String
-  shopInteractCouldNotPayBackFees$: '@{MESSAGE-SHOP-INTERACT-COULD-NOT-PAY-BACK-FEES(prefix=lut["MESSAGE_PREFIX"])}'
-  shopInteractPlayerHasNoSpace$: '@{MESSAGE-SHOP-INTERACT-PLAYER-HAS-NO-SPACE(prefix=lut["MESSAGE_PREFIX"])}'
-  shopInteractPlayerHasNoStock$: '@{MESSAGE-SHOP-INTERACT-PLAYER-HAS-NO-STOCK(prefix=lut["MESSAGE_PREFIX"])}'
-  shopInteractShopHasNoSpace$: '@{MESSAGE-SHOP-INTERACT-SHOP-HAS-NO-SPACE(prefix=lut["MESSAGE_PREFIX"])}'
-  shopInteractShopHasNoStock$: '@{MESSAGE-SHOP-INTERACT-SHOP-HAS-NO-STOCK(prefix=lut["MESSAGE_PREFIX"])}'
-  shopInteractSellerInsufficientFunds$: '@{MESSAGE-SHOP-INTERACT-SELLER-INSUFFICIENT-FUNDS(prefix=lut["MESSAGE_PREFIX"])}'
-  shopInteractBuyerInsufficientFunds$: '@{MESSAGE-SHOP-INTERACT-BUYER-INSUFFICIENT-FUNDS(prefix=lut["MESSAGE_PREFIX"])}'
-  missingPermissionMainCommand$: '@{MESSAGE-MISSING-PERMISSION-MAIN-COMMAND(prefix=lut["MESSAGE_PREFIX"])}'
-  missingPermissionLanguageCommand$: '@{MESSAGE-MISSING-PERMISSION-LANGUAGE-COMMAND(prefix=lut["MESSAGE_PREFIX"])}'
-  missingPermissionReloadCommand$: '@{MESSAGE-MISSING-PERMISSION-RELOAD-COMMAND(prefix=lut["MESSAGE_PREFIX"])}'
-  missingPermissionAdvertiseCommand$: '@{MESSAGE-MISSING-PERMISSION-ADVERTISE-COMMAND(prefix=lut["MESSAGE_PREFIX"])}'
-  missingPermissionFeatureSort$: '@{MESSAGE-MISSING-PERMISSION-FEATURE-SORT(prefix=lut["MESSAGE_PREFIX"])}'
-  missingPermissionFeatureFilter$: '@{MESSAGE-MISSING-PERMISSION-FEATURE-FILTER(prefix=lut["MESSAGE_PREFIX"])}'
-  missingPermissionFeatureTeleport$: '@{MESSAGE-MISSING-PERMISSION-FEATURE-TELEPORT(prefix=lut["MESSAGE_PREFIX"])}'
-  missingPermissionFeatureTeleportOtherWorld$: '@{MESSAGE-MISSING-PERMISSION-FEATURE-TELEPORT-OTHER-WORLD(prefix=lut["MESSAGE_PREFIX"])}'
-  missingPermissionFeatureInteract$: '@{MESSAGE-MISSING-PERMISSION-FEATURE-INTERACT(prefix=lut["MESSAGE_PREFIX"])}'
-  missingPermissionFeatureInteractOtherWorld$: '@{MESSAGE-MISSING-PERMISSION-FEATURE-INTERACT-OTHER-WORLD(prefix=lut["MESSAGE_PREFIX"])}'
-  commandAdvertiseDescription$: '@{MESSAGE-ADVERTISE-DESCRIPTION(prefix=lut["MESSAGE_PREFIX"])}'
-  commandAdvertiseNotLookingAtShop$: '@{MESSAGE-ADVERTISE-NOT-LOOKING-AT-SHOP(prefix=lut["MESSAGE_PREFIX"])}'
-  commandAdvertiseNotTheOwner$: '@{MESSAGE-ADVERTISE-NOT-THE-OWNER(prefix=lut["MESSAGE_PREFIX"])}'
-  commandAdvertiseToggleError$: '@{MESSAGE-ADVERTISE-TOGGLE-ERROR(prefix=lut["MESSAGE_PREFIX"])}'
-  commandAdvertiseEnabledSelf$: '@{MESSAGE-ADVERTISE-ENABLED-SELF(prefix=lut["MESSAGE_PREFIX"])}'
-  commandAdvertiseEnabledOther$: '@{MESSAGE-ADVERTISE-ENABLED-OTHER(prefix=lut["MESSAGE_PREFIX"])}'
-  commandAdvertiseDisabledSelf$: '@{MESSAGE-ADVERTISE-DISABLED-SELF(prefix=lut["MESSAGE_PREFIX"])}'
-  commandAdvertiseDisabledOther$: '@{MESSAGE-ADVERTISE-DISABLED-OTHER(prefix=lut["MESSAGE_PREFIX"])}'
-  commandAdvertiseDisallowedSelf$: '@{MESSAGE-ADVERTISE-DISALLOWED-SELF(prefix=lut["MESSAGE_PREFIX"])}'
-  commandAdvertiseDisallowedOther$: '@{MESSAGE-ADVERTISE-DISALLOWED-OTHER(prefix=lut["MESSAGE_PREFIX"])}'
-  # - duration: String
-  pendingCooldownFeatureTeleportSameShop$: '@{MESSAGE-PENDING-COOLDOWN-FEATURE-TELEPORT-SAME-SHOP(prefix=lut["MESSAGE_PREFIX"])}'
-  # - duration: String
-  pendingCooldownFeatureTeleportAnyShop$: '@{MESSAGE-PENDING-COOLDOWN-FEATURE-TELEPORT-ANY-SHOP(prefix=lut["MESSAGE_PREFIX"])}'
-  # - duration: String
-  pendingCooldownFeatureTeleportOtherWorldSameShop$: '@{MESSAGE-PENDING-COOLDOWN-FEATURE-TELEPORT-OTHER-WORLD-SAME-SHOP(prefix=lut["MESSAGE_PREFIX"])}'
-  # - duration: String
-  pendingCooldownFeatureTeleportOtherWorldAnyShop$: '@{MESSAGE-PENDING-COOLDOWN-FEATURE-TELEPORT-OTHER-WORLD-ANY-SHOP(prefix=lut["MESSAGE_PREFIX"])}'
-  slowTeleportHasMoved: '@{MESSAGE-SLOW-TELEPORT-HAS-MOVED(prefix=lut["MESSAGE_PREFIX"])}'
-  # - attacker: String
-  slowTeleportHasBeenAttacked: '@{MESSAGE-SLOW-TELEPORT-HAS-BEEN-ATTACKED(prefix=lut["MESSAGE_PREFIX"])}'
-  # - victim: String
-  slowTeleportAttackedSomebody: '@{MESSAGE-SLOW-TELEPORT-ATTACKED-SOMEBODY(prefix=lut["MESSAGE_PREFIX"])}'
-  slowTeleportTookDamageByNonPlayer: '@{MESSAGE-SLOW-TELEPORT-TOOK-DAMAGE-BY-NON-PLAYER(prefix=lut["MESSAGE_PREFIX"])}'
-  # - player_warp_owner: String
-  # - player_warp_name: String
-  # - player_warp_world: String
-  # - player_warp_x: Integer
-  # - player_warp_y: Integer
-  # - player_warp_z: Integer
-  # - player_warp_distance: Integer
-  nearestPlayerWarpBanned$: '@{MESSAGE-NEAREST-PLAYER-WARP-BANNED(prefix=lut["MESSAGE_PREFIX"])}'
+  emptyPredicate: '{lut.prefix} <&c>Please provide a non-empty predicate.'
+  noMatches: '{lut.prefix} <&c>Your query resulted in zero matches.'
+  beforeTeleporting: '{lut.prefix} <&7>Teleporting to the Shop of <&e>{owner} <&7>at <&e>{loc_x}<&7>, <&e>{loc_y}&7, <&e>{loc_z}<&7>.'
+  beforeTeleportingNearestPlayerWarp: '{lut.prefix} <&7>Teleporting to the nearest player-warp <&e>{player_warp_name} <&7>at <&e>{player_warp_x}<&7>, <&e>{player_warp_y}<&7>, <&e>{player_warp_z} <&7>of the Shop of <&e>{owner} <&7>at <&e>{loc_x}<&7>, <&e>{loc_y}<&7>, <&e>{loc_z}<&7>.'
+  beforeTeleportingNearestEssentialsWarp: '{lut.prefix} & <&7>Teleporting to the nearest warp <&e>{essentials_warp_name} <&7>at <&e>{essentials_warp_x}<&7>, <&e>{essentials_warp_y}<&7>, <&e>{essentials_warp_z} <&7>of the Shop of <&e>{owner} <&7>at <&e>{loc_x}<&7>, <&e>{loc_y}<&7>, <&e>{loc_z}<&7>.'
+  beforeQuerying: '{lut.prefix} <&7>Querying <&e>{number_shops} Shops <&7>for <&e>{predicate}<&7>...'
+  queryingAllShops: '{lut.prefix} <&7>Querying <&e>all <&7>(<&e>{number_shops}<&7>) Shops...'
+  usageQsslCommandLanguage: |
+    {lut.prefix} <&7>Usage: /{label} \<
+    <container *for-language="languages" *for-separator={<&7>,<space/>}>
+      <&e>{language}
+    </container>
+    <&7>> [Predicate]
+  unknownLanguageActionBar: '<&c>Unknown language: <&4>{user_input}<&c>.'
+  pluginReloadedSuccess: '{lut.prefix} <&7>The plugin has been <&e>reloaded <&7>successfully.'
+  pluginReloadedError: '{lut.prefix} <&c>An error occurred while trying to reload the plugin. Check the console!'
+  predicateParseError: '{lut.prefix} {error_message}'
+  searchFlagParseError: '{lut.prefix} <&c>Invalid value <&4>{flag_value} <&c>for search-flag <&4>{flag_name}<&c>!'
+  shopInteractPromptBuying: '{lut.prefix} <&7>Enter in chat, how many items of <&e>{item_type} <&7>you wish to <&e>SELL <&7>for <&e>{fees_final_price} <&7>each; type "<&a>{all_sentinel}<&7>" for <&e>{max_units} unit(s) <&7>(limiting-factor: <&e>{limiting_factor}<&7>); type "<&c>{cancel_sentinel}<&7>" to exit.'
+  shopInteractPromptSelling: '{lut.prefix} <&7>Enter in chat, how many items of <&e>{item_type} <&7>you wish to <&e>BUY <&7>for <&e>{fees_final_price} <&7>each; type "<&a>{all_sentinel}<&7>" for <&e>{max_units} unit(s) <&7>(limiting-factor: <&e>{limiting_factor}<&7>); type "<&c>{cancel_sentinel}<&7>" to exit.'
+  shopInteractPromptTimeout: '{lut.prefix} <&c>Your previous chat-prompt timed out!'
+  shopInteractPromptDispatch: '{lut.prefix} <&7>Relaying your request of <&e>{amount}x {item_type} <&7>to the <&e>Shop<&7>...'
+  shopInteractPromptInvalidInput: '{lut.prefix} <&c>Your input <&4>{input} <&c>does not resemble an integer greater than zero!'
+  shopInteractPromptCancelPrevious: '{lut.prefix} <&c>Your previous chat-prompt has been cancelled!'
+  shopInteractPromptCancelCurrent: '{lut.prefix} <&c>Your current chat-prompt has been cancelled!'
+  # TODO: Move these to LUT and resolve them by an enum-constant
+  shopInteractPromptLimitingFactorPlayerSpace: 'space of your inventory'
+  shopInteractPromptLimitingFactorPlayerStock: 'stock of your inventory'
+  shopInteractPromptLimitingFactorShopSpace: 'space of the shop'
+  shopInteractPromptLimitingFactorShopStock: 'stock of the shop'
+  shopInteractPromptLimitingFactorSellerFunds: 'the seller''s funds'
+  shopInteractPromptLimitingFactorBuyerFunds: 'your funds'
+  shopInteractPromptFeesWarning: '{lut.prefix} <&e><&l>Warning!</> <&7>This shop is assigned with a distance-fee of <&e>{fees_total_value} <&7>per unit!'
+  shopInteractPendingFeesTask: '{lut.prefix} <&c>There''s still a distance-fee task pending - please wait a few moments before trying again!'
+  shopInteractCouldNotWithdrawFees: '{lut.prefix} <&c>Could not withdraw the distance-fee of <&4>{fees_amount}<&c>; cancelling interaction!'
+  shopInteractWithdrawnFees: '{lut.prefix} <&7>You have been withdrawn a distance-fee of <&e>{fees_amount}<&7>!'
+  shopInteractPayedBackFees: '{lut.prefix} <&7>Due to the corresponding transaction stalling, the distance-fee of <&e>{fees_amount} <&7>has been refunded!'
+  shopInteractCouldNotPayBackFees: '{lut.prefix} <&c>The corresponding transaction stalled, but refunding the distance-fee failed; report this incident to a member of the team and ask for a manual refund (see server-logs)!'
+  shopInteractPlayerHasNoSpace: '{lut.prefix} <&c>You do not have enough space in your inventory.'
+  shopInteractPlayerHasNoStock: '{lut.prefix} <&c>You hold no items to sell in your inventory.'
+  shopInteractShopHasNoSpace: '{lut.prefix} <&c>The shop has no space left to hold your items.'
+  shopInteractShopHasNoStock: '{lut.prefix} <&c>The shop has no items left to buy.'
+  shopInteractSellerInsufficientFunds: '{lut.prefix} <&c>The shop-owner <&4>{owner} <&c>does not have enough money to buy any items from you.'
+  shopInteractBuyerInsufficientFunds: '{lut.prefix} <&c>You do not have enough money to buy any items.'
+  missingPermissionMainCommand: '{lut.prefix} <&c>You don''t have permission to use the main-command.'
+  missingPermissionLanguageCommand: '{lut.prefix} <&c>You don''t have permission to use the language-command.'
+  missingPermissionReloadCommand: '{lut.prefix} <&c>You don''t have permission to use the reload-command.'
+  missingPermissionAdvertiseCommand: '{lut.prefix} <&c>You don''t have permission to use the advertise-command.'
+  missingPermissionFeatureSort: '{lut.prefix} <&c>You don''t have the permission to use sorting.'
+  missingPermissionFeatureFilter: '{lut.prefix} <&c>You don''t have the permission to use filtering.'
+  missingPermissionFeatureTeleport: '{lut.prefix} <&c>You don''t have the permission to use teleportation.'
+  missingPermissionFeatureTeleportOtherWorld: '{lut.prefix} <&c>You don''t have the permission to teleport to other worlds.'
+  missingPermissionFeatureInteract: '{lut.prefix} <&c>You don''t have the permission to use interaction.'
+  missingPermissionFeatureInteractOtherWorld: '{lut.prefix} <&c>You don''t have the permission to interact with other worlds.'
+  commandAdvertiseDescription: '<&e>Toggle whether your shop is being advertised on /qss'
+  commandAdvertiseNotLookingAtShop: '{lut.prefix} <&c>You''re not currently looking at a shop.'
+  commandAdvertiseNotTheOwner: '{lut.prefix} <&c>You''re not the owner of that shop.'
+  commandAdvertiseToggleError: '{lut.prefix} <&c>An internal error occurred while trying to toggle the advertising-state; please report this issue to a team-member.'
+  commandAdvertiseEnabledSelf: '{lut.prefix} <&7>You are <&a>now <&7>advertising your shop at <&e>{loc_x}<&7>, <&e>{loc_y}<&7>, <&e>{loc_z}<&7>.'
+  commandAdvertiseEnabledOther: '{lut.prefix} <&7>The shop of <&e>{owner} <&7>at <&e>{loc_x}<&7>, <&e>{loc_y}<&7>, <&e>{loc_z} <&7>is <&a>now <&7>advertised.'
+  commandAdvertiseDisabledSelf: '{lut.prefix} <&7>You are <&c>no longer <&7>advertising your shop at <&e>{loc_x}<&7>, <&e>{loc_y}<&7>, <&e>{loc_z}<&7>.'
+  commandAdvertiseDisabledOther: '{lut.prefix} <&7>The shop of <&e>{owner} <&7>at <&e>{loc_x}<&7>, <&e>{loc_y}<&7>, <&e>{loc_z} <&>7is <&c>no longer <&7>advertised.'
+  commandAdvertiseDisallowedSelf: '{lut.prefix} <&7>Your shop at <&e>{loc_x}<&7>, <&e>{loc_y}<&7>, <&e>{loc_z} <&7>is not allowed to advertise.'
+  commandAdvertiseDisallowedOther: '{lut.prefix} <&7>The shop of <&e>{owner} <&7>at <&e>{loc_x}<&7>, <&e>{loc_y}<&7>, <&e>{loc_z} <&7>is not allowed to advertise.'
+  pendingCooldownFeatureTeleportSameShop: '{lut.prefix} <&7>Please wait another {duration}<&7>, until you teleport to the <&c>same shop <&7>again!'
+  pendingCooldownFeatureTeleportAnyShop: '{lut.prefix} <&7>Please wait another {duration}<&7>, until you teleport to a <&c>shop <&7>again!'
+  pendingCooldownFeatureTeleportOtherWorldSameShop: '{lut.prefix} <&7>Please wait another {duration}<&7>, until you teleport to the <&c>same shop in another world <&7>again!'
+  pendingCooldownFeatureTeleportOtherWorldAnyShop: '{lut.prefix} <&7>Please wait another {duration}<&7>, until you teleport to a <&c>shop in another world <&7>again!'
+  slowTeleportHasMoved: '{lut.prefix} <&c>You have moved - cancelling teleport!'
+  slowTeleportHasBeenAttacked: '{lut.prefix} <&c>You were attacked by <&4>{attacker} <&c>- cancelling teleport!'
+  slowTeleportAttackedSomebody: '{lut.prefix} <&c>You attacked <&4>{victim} <&c>- cancelling teleport!'
+  slowTeleportTookDamageByNonPlayer: '{lut.prefix} <&c>You took damage - cancelling teleport!'
+  nearestPlayerWarpBanned: '{lut.prefix} <&c>You''re banned from the nearest player-warp <&4>{player_warp_name} <&c>by <&4>{player_warp_owner} <&c>- teleporting to the shop instead!'
 
 predicates:
   mainLanguage: ENGLISH_US
 
 shopAccessLists:
 
+# TODO: This should use the duration-tag
 # Specify the cooldown-duration in seconds
 cooldowns:
-  # - days: Integer
-  # - hours: Integer
-  # - minutes: Integer
-  # - seconds: Integer
-  cooldownFormat$: |
+  cooldownFormat: |
     iter_cat(
       filter(list_of(
         if days == 0 then null else days & (
           if days == 1 then
-            @{MESSAGE-COOLDOWN-FORMAT-DAYS-SINGULAR-SUFFIX}
+            " &cday"
           else
-            @{MESSAGE-COOLDOWN-FORMAT-DAYS-PLURAL-SUFFIX}
+            " &cdays"
         ),
         if hours == 0 then null else hours & (
           if hours == 1 then
-            @{MESSAGE-COOLDOWN-FORMAT-HOURS-SINGULAR-SUFFIX}
+            " &chour"
           else
-            @{MESSAGE-COOLDOWN-FORMAT-HOURS-PLURAL-SUFFIX}
+            " &chours"
         ),
         if minutes == 0 then null else minutes & (
           if minutes == 1 then
-            @{MESSAGE-COOLDOWN-FORMAT-MINUTES-SINGULAR-SUFFIX}
+            " &cminute"
           else
-            @{MESSAGE-COOLDOWN-FORMAT-MINUTES-PLURAL-SUFFIX}
+            " &cminutes"
         ),
         if seconds == 0 then null else seconds & (
           if seconds == 1 then
-            @{MESSAGE-COOLDOWN-FORMAT-SECONDS-SINGULAR-SUFFIX}
+            " &csecond"
           else
-            @{MESSAGE-COOLDOWN-FORMAT-SECONDS-PLURAL-SUFFIX}
+            " &cseconds"
         )
       ), (it) => it != null),
-      (it) => @{MESSAGE-COOLDOWN-FORMAT-PART-PREFIX} & it,
-      @{MESSAGE-COOLDOWN-FORMAT-PART-SEPARATOR}
+      (it) => "&c" & it,
+      "&7, "
     )
   teleportToShop:
     default:
@@ -566,10 +449,9 @@ slowTeleport:
     durationSeconds: 5
     fallbackNotification:
       sound: 'BLOCK_NOTE_BLOCK_PLING'
-      # - remaining_seconds: Integer
       messages:
-        messageTitle$: '@{MESSAGE-SLOW-TELEPORT-IN-COMBAT-TITLE(prefix=lut["MESSAGE_PREFIX"])}'
-        messageSubTitle$: '@{MESSAGE-SLOW-TELEPORT-IN-COMBAT-SUBTITLE(prefix=lut["MESSAGE_PREFIX"])}'
+        messageTitle: '<&c><&l>In Combat'
+        messageSubTitle: '<&c>Stand still for {remaining_seconds}s"'
         messageActionBar: null
         messageChat: null
     notificationAtSeconds:
@@ -583,15 +465,14 @@ slowTeleport:
         soundVolume: 1.1
         soundPitch: 1.2
         messages:
-          messageChat$: '@{MESSAGE-SLOW-TELEPORT-TELEPORTED(prefix=lut["MESSAGE_PREFIX"])}'
+          messageChat: '{lut.prefix} <&a>You have been teleported!'
   whenNotInCombat:
     durationSeconds: 3
     fallbackNotification:
       sound: 'BLOCK_NOTE_BLOCK_PLING'
-      # - remaining_seconds: Integer
       messages:
-        messageTitle$: '@{MESSAGE-SLOW-TELEPORT-NOT-IN-COMBAT-TITLE(prefix=lut["MESSAGE_PREFIX"])}'
-        messageSubTitle$: '@{MESSAGE-SLOW-TELEPORT-NOT-IN-COMBAT-SUBTITLE(prefix=lut["MESSAGE_PREFIX"])}'
+        messageTitle: '<&3><&l>Teleporting'
+        messageSubTitle: '<&b>Stand still for {remaining_seconds}s'
         messageActionBar: null
         messageChat: null
     notificationAtSeconds:
@@ -603,7 +484,7 @@ slowTeleport:
         soundVolume: 1.1
         soundPitch: 1.2
         messages:
-          messageChat$: '@{MESSAGE-SLOW-TELEPORT-TELEPORTED(prefix=lut["MESSAGE_PREFIX"])}'
+          messageChat: '{lut.prefix} <&a>You have been teleported!'
 
 playerWarpsIntegration:
   enabled: false
@@ -612,12 +493,10 @@ playerWarpsIntegration:
   updatePeriodSeconds: 30
   withinSameRegion: false
   doNotUseSlowTeleport: false
-  # Do not prepend slashes to these commands!
-  # - name: name of the warp
   teleportCommand:
-    revivalo$: '"pwarp " & name'
-    olzieDev$: '"pw " & name'
-    ax$: '"pw warp " & name'
+    revivalo: 'pwarp {name}'
+    olzieDev: 'pw {name}'
+    ax: 'pw warp {name}'
 
 essentialsWarpsIntegration:
   enabled: false
@@ -641,69 +520,71 @@ commands:
   quickShopSearch:
     name: quickshopsearch
     aliases:
-    - qss
+      - qss
     searchFlags:
       OWNER:
-        name$: '@{COMMAND-QSS-SEARCH-FLAG-OWNER}'
+        name: '"Owner"'
       RADIUS:
-        name$: '@{COMMAND-QSS-SEARCH-FLAG-RADIUS}'
+        name: '"Radius"'
         suggestions: [5, 10, 15, 20, 25, 30]
       PRICE:
-        name$: '@{COMMAND-QSS-SEARCH-FLAG-PRICE}'
+        name: '"Price"'
         suggestions: [50, 100, 150, 200, 250, 300]
       MAX_PRICE:
-        name$: '@{COMMAND-QSS-SEARCH-FLAG-MAX-PRICE}'
+        name: '"Max-Price"'
         suggestions: [50, 100, 150, 200, 250, 300]
       MIN_PRICE:
-        name$: '@{COMMAND-QSS-SEARCH-FLAG-MIN-PRICE}'
+        name: '"Min-Price"'
         suggestions: [50, 100, 150, 200, 250, 300]
       SELLING:
-        name$: '@{COMMAND-QSS-SEARCH-FLAG-SELLING}'
+        name: '"Selling"'
         suggestions: ['true', 'false']
       BUYING:
-        name$: '@{COMMAND-QSS-SEARCH-FLAG-BUYING}'
+        name: '"Buying"'
         suggestions: ['true', 'false']
   quickShopSearchLanguage:
     name: quickshopsearchlanguage
     aliases:
-    - qssl
+      - qssl
   quickShopSearchReload:
     name: quickshopsearchreload
     aliases:
-    - qssrl
+      - qssrl
 
-# File-global lookup table
-lut:
-  MESSAGE_PREFIX: '@{MESSAGE-PREFIX}'
+sLut:
   textures:
-    ARROW_LEFT: 'eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvODU1MGI3Zjc0ZTllZDc2MzNhYTI3NGVhMzBjYzNkMmU4N2FiYjM2ZDRkMWY0Y2E2MDhjZDQ0NTkwY2NlMGIifX19'
-    ARROW_LEFT_RED: 'eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZjg0ZjU5NzEzMWJiZTI1ZGMwNThhZjg4OGNiMjk4MzFmNzk1OTliYzY3Yzk1YzgwMjkyNWNlNGFmYmEzMzJmYyJ9fX0='
-    ARROW_RIGHT: 'eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOTYzMzlmZjJlNTM0MmJhMThiZGM0OGE5OWNjYTY1ZDEyM2NlNzgxZDg3ODI3MmY5ZDk2NGVhZDNiOGFkMzcwIn19fQ=='
-    ARROW_RIGHT_RED: 'eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZmNmZTg4NDVhOGQ1ZTYzNWZiODc3MjhjY2M5Mzg5NWQ0MmI0ZmMyZTZhNTNmMWJhNzhjODQ1MjI1ODIyIn19fQ=='
-    PLAYER_WARP_SKIN_FALLBACK: 'eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZDEwNzA0NWU2NDk0NDg1NmY0YTQ3YzAxNjg4MWM2ZWFhNjI0NTNhODMyMmE5MmEwYzZjYzI0NDNlYjlhYmQzNCJ9fX0='
-  sortingCriteria:
-    PRICE: '@{SORTING-LORE-CRITERIA-PRICE}'
-    OWNER_NAME: '@{SORTING-LORE-CRITERIA-OWNER-NAME}'
-    STOCK_LEFT: '@{SORTING-LORE-CRITERIA-STOCK-LEFT}'
-    SPACE_LEFT: '@{SORTING-LORE-CRITERIA-SPACE-LEFT}'
-    ITEM_TYPE: '@{SORTING-LORE-CRITERIA-ITEM-TYPE}'
-    SHOP_TYPE: '@{SORTING-LORE-CRITERIA-SHOP-TYPE}'
-    SHOP_NAME: '@{SORTING-LORE-CRITERIA-SHOP-NAME}'
-    DISTANCE: '@{SORTING-LORE-CRITERIA-DISTANCE}'
-    WORLD_NAME: '@{SORTING-LORE-CRITERIA-WORLD-NAME}'
-  sortingSelectionStyle:
-    ASCENDING: '@{SORTING-LORE-SELECTION-STYLE-ASCENDING}'
-    DESCENDING: '@{SORTING-LORE-SELECTION-STYLE-DESCENDING}'
-    INACTIVE: '@{SORTING-LORE-SELECTION-STYLE-INACTIVE}'
-  filteringCriteria:
-    IS_BUYING: '@{FILTERING-LORE-CRITERIA-IS-BUYING}'
-    IS_SELLING: '@{FILTERING-LORE-CRITERIA-IS-SELLING}'
-    IS_UNLIMITED: '@{FILTERING-LORE-CRITERIA-IS-UNLIMITED}'
-    HAS_STOCK_LEFT: '@{FILTERING-LORE-CRITERIA-HAS-STOCK-LEFT}'
-    HAS_SPACE_LEFT: '@{FILTERING-LORE-CRITERIA-HAS-SPACE-LEFT}'
-    SAME_WORLD: '@{FILTERING-LORE-CRITERIA-SAME-WORLD}'
-    CAN_BUY: '@{FILTERING-LORE-CRITERIA-CAN-BUY}'
-  filteringSelectionStyle:
-    POSITIVE: '@{FILTERING-LORE-SELECTION-STYLE-POSITIVE}'
-    NEGATIVE: '@{FILTERING-LORE-SELECTION-STYLE-NEGATIVE}'
-    INVARIANT: '@{FILTERING-LORE-SELECTION-STYLE-INVARIANT}'
+    arrow_left: 'eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvODU1MGI3Zjc0ZTllZDc2MzNhYTI3NGVhMzBjYzNkMmU4N2FiYjM2ZDRkMWY0Y2E2MDhjZDQ0NTkwY2NlMGIifX19'
+    arrow_left_red: 'eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZjg0ZjU5NzEzMWJiZTI1ZGMwNThhZjg4OGNiMjk4MzFmNzk1OTliYzY3Yzk1YzgwMjkyNWNlNGFmYmEzMzJmYyJ9fX0='
+    arrow_right: 'eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOTYzMzlmZjJlNTM0MmJhMThiZGM0OGE5OWNjYTY1ZDEyM2NlNzgxZDg3ODI3MmY5ZDk2NGVhZDNiOGFkMzcwIn19fQ=='
+    arrow_right_red: 'eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZmNmZTg4NDVhOGQ1ZTYzNWZiODc3MjhjY2M5Mzg5NWQ0MmI0ZmMyZTZhNTNmMWJhNzhjODQ1MjI1ODIyIn19fQ=='
+    player_warp_skin_fallback: 'eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZDEwNzA0NWU2NDk0NDg1NmY0YTQ3YzAxNjg4MWM2ZWFhNjI0NTNhODMyMmE5MmEwYzZjYzI0NDNlYjlhYmQzNCJ9fX0='
+
+cLut:
+  prefix: '"&7[&6QuickShopSearch&7]"'
+  spacer: '<&8><&m>{" " ** 50}'
+  sorting_criteria:
+    PRICE: '"Price"'
+    OWNER_NAME: '"Owner-Name"'
+    STOCK_LEFT: '"Stock Left"'
+    SPACE_LEFT: '"Space Left"'
+    ITEM_TYPE: '"Item-Type"'
+    SHOP_TYPE: '"Shop-Type"'
+    SHOP_NAME: '"Shop-Name"'
+    DISTANCE: '"Distance"'
+    WORLD_NAME: '"World-Name"'
+  sorting_selection:
+    ASCENDING: '"&a+ "'
+    DESCENDING: '"&c- "'
+    INACTIVE: '"&7/ &m"'
+  filtering_criteria:
+    IS_BUYING: '"Buying"'
+    IS_SELLING: '"Selling"'
+    IS_UNLIMITED: '"Unlimited"'
+    HAS_STOCK_LEFT: '"Stock Left"'
+    HAS_SPACE_LEFT: '"Space Left"'
+    SAME_WORLD: '"Within This World"'
+    CAN_BUY: '"Sufficient Funds"'
+  filtering_selection:
+    POSITIVE: '"&a"'
+    NEGATIVE: '"&c"'
+    INVARIANT: '"&7&m"'

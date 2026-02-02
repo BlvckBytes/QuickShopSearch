@@ -23,6 +23,7 @@ import me.blvckbytes.quick_shop_search.config.commands.QuickShopSearchLanguageCo
 import me.blvckbytes.quick_shop_search.config.commands.QuickShopSearchReloadCommandSection;
 import me.blvckbytes.quick_shop_search.display.result.ResultDisplayHandler;
 import me.blvckbytes.quick_shop_search.display.result.SelectionStateStore;
+import me.blvckbytes.quick_shop_search.display.result.TexturesResolver;
 import me.blvckbytes.quick_shop_search.display.teleport.TeleportDisplayHandler;
 import me.blvckbytes.quick_shop_search.integration.IntegrationRegistry;
 import net.kyori.adventure.text.Component;
@@ -81,10 +82,13 @@ public class QuickShopSearchPlugin extends JavaPlugin {
 
       var integrationRegistry = new IntegrationRegistry(config, logger, scheduler, this);
 
+      var texturesResolver = new TexturesResolver(logger, offlinePlayerRegistry);
+
       resultDisplayHandler = new ResultDisplayHandler(
         logger,
         scheduler,
         remoteInteractionApi,
+        texturesResolver,
         config,
         stateStore,
         stampStore,
