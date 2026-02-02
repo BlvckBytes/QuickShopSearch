@@ -422,22 +422,6 @@ public class ResultDisplayHandler extends DisplayHandler<ResultDisplay, ResultDi
     return -1;
   }
 
-  private String formatDuration(long milliseconds) {
-    long seconds = (milliseconds + 999) / 1000;
-    long durationSeconds = seconds % 60;
-    long durationMinutes = seconds % 3600 / 60;
-    long durationHours = seconds % 86400 / 3600;
-    long durationDays = seconds / 86400;
-
-    return config.rootSection.cooldowns.cooldownFormat.asPlainString(
-      new InterpretationEnvironment()
-        .withVariable("days", durationDays)
-        .withVariable("hours", durationHours)
-        .withVariable("minutes", durationMinutes)
-        .withVariable("seconds", durationSeconds)
-    );
-  }
-
   private boolean checkAndNotifyOfCooldown(
     Player player,
     TeleportCooldownType cooldownType
@@ -456,7 +440,7 @@ public class ResultDisplayHandler extends DisplayHandler<ResultDisplay, ResultDi
           cooldownType.cooldownMessage().sendMessage(
             player,
             new InterpretationEnvironment()
-              .withVariable("duration", formatDuration(cooldownType.durationMillis() - elapsedDuration))
+              .withVariable("cooldown_millis", cooldownType.durationMillis() - elapsedDuration)
           );
         }
 

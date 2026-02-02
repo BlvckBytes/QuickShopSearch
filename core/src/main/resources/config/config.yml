@@ -384,10 +384,10 @@ playerMessages:
   commandAdvertiseDisabledOther: '{lut.prefix} <&7>The shop of <&e>{owner} <&7>at <&e>{loc_x}<&7>, <&e>{loc_y}<&7>, <&e>{loc_z} <&>7is <&c>no longer <&7>advertised.'
   commandAdvertiseDisallowedSelf: '{lut.prefix} <&7>Your shop at <&e>{loc_x}<&7>, <&e>{loc_y}<&7>, <&e>{loc_z} <&7>is not allowed to advertise.'
   commandAdvertiseDisallowedOther: '{lut.prefix} <&7>The shop of <&e>{owner} <&7>at <&e>{loc_x}<&7>, <&e>{loc_y}<&7>, <&e>{loc_z} <&7>is not allowed to advertise.'
-  pendingCooldownFeatureTeleportSameShop: '{lut.prefix} <&7>Please wait another {duration}<&7>, until you teleport to the <&c>same shop <&7>again!'
-  pendingCooldownFeatureTeleportAnyShop: '{lut.prefix} <&7>Please wait another {duration}<&7>, until you teleport to a <&c>shop <&7>again!'
-  pendingCooldownFeatureTeleportOtherWorldSameShop: '{lut.prefix} <&7>Please wait another {duration}<&7>, until you teleport to the <&c>same shop in another world <&7>again!'
-  pendingCooldownFeatureTeleportOtherWorldAnyShop: '{lut.prefix} <&7>Please wait another {duration}<&7>, until you teleport to a <&c>shop in another world <&7>again!'
+  pendingCooldownFeatureTeleportSameShop: '{lut.prefix} <&7>Please wait another <duration [value]="cooldown_millis" units="hms" /><&7>, until you teleport to the <&c>same shop <&7>again!'
+  pendingCooldownFeatureTeleportAnyShop: '{lut.prefix} <&7>Please wait another <duration [value]="cooldown_millis" units="hms" /><&7>, until you teleport to a <&c>shop <&7>again!'
+  pendingCooldownFeatureTeleportOtherWorldSameShop: '{lut.prefix} <&7>Please wait another <duration [value]="cooldown_millis" units="hms" /><&7>, until you teleport to the <&c>same shop in another world <&7>again!'
+  pendingCooldownFeatureTeleportOtherWorldAnyShop: '{lut.prefix} <&7>Please wait another <duration [value]="cooldown_millis" units="hms" /><&7>, until you teleport to a <&c>shop in another world <&7>again!'
   slowTeleportHasMoved: '{lut.prefix} <&c>You have moved - cancelling teleport!'
   slowTeleportHasBeenAttacked: '{lut.prefix} <&c>You were attacked by <&4>{attacker} <&c>- cancelling teleport!'
   slowTeleportAttackedSomebody: '{lut.prefix} <&c>You attacked <&4>{victim} <&c>- cancelling teleport!'
@@ -399,40 +399,8 @@ predicates:
 
 shopAccessLists:
 
-# TODO: This should use the duration-tag
 # Specify the cooldown-duration in seconds
 cooldowns:
-  cooldownFormat: |
-    iter_cat(
-      filter(list_of(
-        if days == 0 then null else days & (
-          if days == 1 then
-            " &cday"
-          else
-            " &cdays"
-        ),
-        if hours == 0 then null else hours & (
-          if hours == 1 then
-            " &chour"
-          else
-            " &chours"
-        ),
-        if minutes == 0 then null else minutes & (
-          if minutes == 1 then
-            " &cminute"
-          else
-            " &cminutes"
-        ),
-        if seconds == 0 then null else seconds & (
-          if seconds == 1 then
-            " &csecond"
-          else
-            " &cseconds"
-        )
-      ), (it) => it != null),
-      (it) => "&c" & it,
-      "&7, "
-    )
   teleportToShop:
     default:
       sameShop: 30
