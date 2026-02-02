@@ -137,15 +137,14 @@ resultDisplay:
           </container>
           <container *else>
             {lut.spacer}<br/>
-            TODO: Fix me
-            map(sorting_selections, (entry, entry_index) => (
-              (if entry_index == selected_index then
-                "&e➥ "
-              else
-                "&8➥ ")
-              & (lut["sortingSelectionStyle"][str(entry.selection)] ?? "&4?")
-              & (lut["sortingCriteria"][str(entry.criterion)] ?? "&4?")
-            )),
+            <container
+              *for-sorting="sorting_selections"
+              *for-separator={<br/>}
+              *let-criterion="lut.sorting_criteria[sorting.criterion] ?? sorting.criterion"
+              *let-renderer="lut.sorting_selection[sorting.selection] ?? sorting.selection"
+            >
+              <&8><&e *use="sorting.active">➥ <container &renderer />
+            </container>
             {lut.spacer}<br/>
             <&8>➥ <&e>Left-Click <&7>Cycle through criteria<br/>
             <&8>➥ <&e>Right-Click <&7>Toggle sorting-order<br/>
@@ -199,15 +198,14 @@ resultDisplay:
           </container>
           <container *else>
             {lut.spacer}<br/>
-            // TODO: Fix me
-            map(filtering_selections, (entry) => (
-              (if key(entry) == selected_criteria then
-                "&e➥ "
-              else
-                "&8➥ ")
-              & (lut["filteringSelectionStyle"][str(value(entry))] ?? "&4?")
-              & (lut["filteringCriteria"][str(key(entry))] ?? "&4?")
-            )),
+            <container
+              *for-filtering="filtering_selections"
+              *for-separator={<br/>}
+              *let-criterion="lut.filtering_criteria[filtering.criterion] ?? filtering.criterion"
+              *let-renderer="lut.filtering_selection[filtering.selection] ?? filtering.selection"
+            >
+              <&8><&e *use="filtering.active">➥ <container &renderer />
+            </container>
             {lut.spacer}<br/>
             <&8>➥ <&e>Left-Click <&7>Cycle through criteria<br/>
             <&8>➥ <&e>Right-Click <&7>Toggle state<br/>
@@ -451,7 +449,7 @@ slowTeleport:
       sound: 'BLOCK_NOTE_BLOCK_PLING'
       messages:
         messageTitle: '<&c><&l>In Combat'
-        messageSubTitle: '<&c>Stand still for {remaining_seconds}s"'
+        messageSubTitle: '<&c>Stand still for {remaining_seconds}s'
         messageActionBar: null
         messageChat: null
     notificationAtSeconds:
@@ -523,24 +521,24 @@ commands:
       - qss
     searchFlags:
       OWNER:
-        name: '"Owner"'
+        name: 'Owner'
       RADIUS:
-        name: '"Radius"'
+        name: 'Radius'
         suggestions: [5, 10, 15, 20, 25, 30]
       PRICE:
-        name: '"Price"'
+        name: 'Price'
         suggestions: [50, 100, 150, 200, 250, 300]
       MAX_PRICE:
-        name: '"Max-Price"'
+        name: 'Max-Price'
         suggestions: [50, 100, 150, 200, 250, 300]
       MIN_PRICE:
-        name: '"Min-Price"'
+        name: 'Min-Price'
         suggestions: [50, 100, 150, 200, 250, 300]
       SELLING:
-        name: '"Selling"'
+        name: 'Selling'
         suggestions: ['true', 'false']
       BUYING:
-        name: '"Buying"'
+        name: 'Buying'
         suggestions: ['true', 'false']
   quickShopSearchLanguage:
     name: quickshopsearchlanguage
@@ -560,31 +558,31 @@ sLut:
     player_warp_skin_fallback: 'eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZDEwNzA0NWU2NDk0NDg1NmY0YTQ3YzAxNjg4MWM2ZWFhNjI0NTNhODMyMmE5MmEwYzZjYzI0NDNlYjlhYmQzNCJ9fX0='
 
 cLut:
-  prefix: '"&7[&6QuickShopSearch&7]"'
+  prefix: '&7[&6QuickShopSearch&7]'
   spacer: '<&8><&m>{" " ** 50}'
   sorting_criteria:
-    PRICE: '"Price"'
-    OWNER_NAME: '"Owner-Name"'
-    STOCK_LEFT: '"Stock Left"'
-    SPACE_LEFT: '"Space Left"'
-    ITEM_TYPE: '"Item-Type"'
-    SHOP_TYPE: '"Shop-Type"'
-    SHOP_NAME: '"Shop-Name"'
-    DISTANCE: '"Distance"'
-    WORLD_NAME: '"World-Name"'
+    PRICE: 'Price'
+    OWNER_NAME: 'Owner-Name'
+    STOCK_LEFT: 'Stock Left'
+    SPACE_LEFT: 'Space Left'
+    ITEM_TYPE: 'Item-Type'
+    SHOP_TYPE: 'Shop-Type'
+    SHOP_NAME: 'Shop-Name'
+    DISTANCE: 'Distance'
+    WORLD_NAME: 'World-Name'
   sorting_selection:
-    ASCENDING: '"&a+ "'
-    DESCENDING: '"&c- "'
-    INACTIVE: '"&7/ &m"'
+    ASCENDING: '<&a>+ {criterion}'
+    DESCENDING: '<&c>- {criterion}'
+    INACTIVE: '<&7>/ <&m>{criterion}'
   filtering_criteria:
-    IS_BUYING: '"Buying"'
-    IS_SELLING: '"Selling"'
-    IS_UNLIMITED: '"Unlimited"'
-    HAS_STOCK_LEFT: '"Stock Left"'
-    HAS_SPACE_LEFT: '"Space Left"'
-    SAME_WORLD: '"Within This World"'
-    CAN_BUY: '"Sufficient Funds"'
+    IS_BUYING: 'Buying'
+    IS_SELLING: 'Selling'
+    IS_UNLIMITED: 'Unlimited'
+    HAS_STOCK_LEFT: 'Stock Left'
+    HAS_SPACE_LEFT: 'Space Left'
+    SAME_WORLD: 'Within This World'
+    CAN_BUY: 'Sufficient Funds'
   filtering_selection:
-    POSITIVE: '"&a"'
-    NEGATIVE: '"&c"'
-    INVARIANT: '"&7&m"'
+    POSITIVE: '<&a>{criterion}'
+    NEGATIVE: '<&c>{criterion}'
+    INVARIANT: '<&7><&m>{criterion}'

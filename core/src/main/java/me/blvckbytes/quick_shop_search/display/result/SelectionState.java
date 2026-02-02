@@ -11,16 +11,6 @@ import java.util.*;
 
 public class SelectionState {
 
-  private static class SortingCriterionSelection {
-    final ShopSortingCriteria criterion;
-    SortingSelection selection;
-
-    SortingCriterionSelection(ShopSortingCriteria criterion, SortingSelection selection) {
-      this.criterion = criterion;
-      this.selection = selection;
-    }
-  }
-
   private List<SortingCriterionSelection> sortingSelections;
   private int selectedSortingSelectionIndex;
 
@@ -156,16 +146,25 @@ public class SelectionState {
   }
 
   public void extendSortingEnvironment(InterpretationEnvironment environment, Player player) {
+    for (var index = 0; index < sortingSelections.size(); ++index)
+      sortingSelections.get(index).active = index == selectedSortingSelectionIndex;
+
     environment
       .withVariable("sorting_selections", this.sortingSelections)
-      .withVariable("selected_index", selectedSortingSelectionIndex)
       .withVariable("has_permission", PluginPermission.FEATURE_SORT.has(player));
   }
 
   public void extendFilteringEnvironment(InterpretationEnvironment environment, Player player) {
+    var mappedSelections = new ArrayList<FilteringCriterionSelection>();
+
+    for (var entry : this.filteringSelections.entrySet()) {
+      var selection = new FilteringCriterionSelection(entry.getKey(), entry.getValue());
+      selection.active = selection.criterion == selectedFilteringCriteria;
+      mappedSelections.add(selection);
+    }
+
     environment
-      .withVariable("filtering_selections", this.filteringSelections)
-      .withVariable("selected_criteria", this.selectedFilteringCriteria)
+      .withVariable("filtering_selections", mappedSelections)
       .withVariable("has_permission", PluginPermission.FEATURE_FILTER.has(player));
   }
 
