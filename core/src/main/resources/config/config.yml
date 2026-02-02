@@ -103,11 +103,11 @@ resultDisplay:
               <&8>♦ <&7>Mode: <&e>Sells Items<br/>
             </container>
           </container>
-          <container *if="player_warp_display_details and env(player_warp_name) neq null">
+          <container *if="player_warp_display_details and has(player_warp_name)">
             <&8>♦ <&7>Player-Warp: <&e>{player_warp_name} ({player_warp_x}, {player_warp_y}, {player_warp_z})<br/>
           </container>
-          <container *if="essentials_warp_display_details and env(essentials_warp_name) neq null">
-            <&8>♦ <&7>Warp: <&e>{essentials_warp_name} ({essentials_warp_x}, {essentials_warp_y}, {essentials_warp_z})
+          <container *if="essentials_warp_display_details and has(essentials_warp_name)">
+            <&8>♦ <&7>Warp: <&e>{essentials_warp_name} ({essentials_warp_x}, {essentials_warp_y}, {essentials_warp_z})<br/>
           </container>
           {lut.spacer}<br/>
           <container *if="can_teleport">
@@ -247,7 +247,7 @@ teleportDisplay:
           <br/>
           {lut.spacer}<br/>
           <&8>♦ <&7>Coordinates: <&e>{loc_x} {loc_y} {loc_z}<br/>
-          <&8>♦ <&7>World: &e{loc_world}<br/>
+          <&8>♦ <&7>World: <&e>{loc_world}<br/>
           <container *if="distance < 0">
             <&8>♦ <&7>Distance: <&c>Different World<br/>
           </container>
@@ -260,7 +260,7 @@ teleportDisplay:
     nearestPlayerWarpLocation:
       slots: '3'
       type: '{has(player_warp_name) then "PLAYER_HEAD" else "BARRIER"}'
-      textures: 'env(player_warp_owner_textures) ?? lut.textures["player_warp_skin_fallback"]'
+      textures: '{has(player_warp_owner_textures) then (player_warp_owner_textures ?? lut.textures["player_warp_skin_fallback"])}'
       name: |
         <reset>
           <&8>» <&6>Nearest Player-Warp <&8>«
