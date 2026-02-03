@@ -64,8 +64,6 @@ public class QuickShopSearchPlugin extends JavaPlugin {
       if (parserPlugin == null)
         throw new IllegalStateException("Depending on ItemPredicateParser to be successfully loaded");
 
-      logger.info("Using language " + config.rootSection.predicates.mainLanguage.assetFileNameWithoutExtension + " for predicate parsing");
-
       var chatPromptManager = new ChatPromptManager(scheduler);
       Bukkit.getServer().getPluginManager().registerEvents(chatPromptManager, this);
 

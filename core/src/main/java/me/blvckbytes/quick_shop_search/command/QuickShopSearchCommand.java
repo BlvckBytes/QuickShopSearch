@@ -70,7 +70,7 @@ public class QuickShopSearchCommand implements CommandExecutor, TabCompleter {
     scheduler.runAsync(scheduleTask -> {
       ComponentMarkup message;
 
-      var language = config.rootSection.predicates.mainLanguage;
+      var language = predicateHelper.getSelectedLanguage(player);
       var argsOffset = 0;
       var searchFlagsContainer = new SearchFlagsContainer();
       var isLanguageCommand = command.getName().equals(config.rootSection.commands.quickShopSearchLanguage.evaluatedName);
@@ -216,7 +216,7 @@ public class QuickShopSearchCommand implements CommandExecutor, TabCompleter {
 
     ComponentMarkup message;
 
-    var language = config.rootSection.predicates.mainLanguage;
+    var language = predicateHelper.getSelectedLanguage(player);
     var argsOffset = 0;
 
     if (command.getName().equals(config.rootSection.commands.quickShopSearchLanguage.evaluatedName)) {

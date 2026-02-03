@@ -21,7 +21,6 @@ public class MainSection extends ConfigSection {
   public ResultDisplaySection resultDisplay;
   public TeleportDisplaySection teleportDisplay;
   public PlayerMessagesSection playerMessages;
-  public PredicatesSection predicates;
   public CommandsSection commands;
   public ShopAccessListsSection shopAccessLists;
   public CooldownsSection cooldowns;

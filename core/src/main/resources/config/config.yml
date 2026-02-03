@@ -396,9 +396,6 @@ playerMessages:
   slowTeleportTookDamageByNonPlayer: '{lut.prefix} <&c>You took damage - cancelling teleport!'
   nearestPlayerWarpBanned: '{lut.prefix} <&c>You''re banned from the nearest player-warp <&4>{player_warp_name} <&c>by <&4>{player_warp_owner} <&c>- teleporting to the shop instead!'
 
-predicates:
-  mainLanguage: ENGLISH_US
-
 shopAccessLists:
 
 # Specify the cooldown-duration in seconds
