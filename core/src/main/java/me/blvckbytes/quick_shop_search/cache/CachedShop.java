@@ -125,7 +125,7 @@ public class CachedShop {
   }
 
   public ToggleResult toggleAdvertising(Player player) {
-    if (getAdvertiseAllowState() != AdvertiseAllow.ALLOWED) {
+    if (getAdvertiseAllowState() == AdvertiseAllow.DISALLOWED) {
       var bypassPermission = PluginPermission.ADVERTISE_COMMAND_ALLOWLIST_BYPASS;
 
       if (!player.getUniqueId().equals(handle.getOwner().getUniqueId()))

@@ -4,7 +4,7 @@ import at.blvckbytes.cm_mapper.ConfigKeeper;
 import at.blvckbytes.cm_mapper.cm.ComponentMarkup;
 import at.blvckbytes.component_markup.expression.interpreter.InterpretationEnvironment;
 import com.ghostchu.quickshop.api.QuickShopAPI;
-import com.ghostchu.quickshop.api.shop.ShopType;
+import com.ghostchu.quickshop.shop.SimpleShopManager;
 import com.tcoded.folialib.impl.PlatformScheduler;
 import com.tcoded.folialib.wrapper.task.WrappedTask;
 import me.blvckbytes.quick_shop_search.*;
@@ -336,7 +336,7 @@ public class ResultDisplayHandler extends DisplayHandler<ResultDisplay, ResultDi
     }
 
     var limitingFactorExtendedEnvironment = distanceExtendedEnvironment
-      .withVariable("limiting_factor", maxUnitsResult.limitingFactor())
+      .withVariable("limiting_factor", maxUnitsResult.limitingFactor().name())
       .withVariable("max_units", maxUnitsResult.units());
 
     scheduler.runAtEntity(player, scheduleTask -> player.closeInventory());
@@ -398,7 +398,7 @@ public class ResultDisplayHandler extends DisplayHandler<ResultDisplay, ResultDi
         message.sendMessage(player);
     }
 
-    if (cachedShop.handle.getShopType() == ShopType.BUYING) {
+    if (cachedShop.handle.shopType() == SimpleShopManager.BUYING_TYPE) {
       if ((message = config.rootSection.playerMessages.shopInteractPromptBuying) != null)
         message.sendMessage(player, limitingFactorExtendedEnvironment);
     }

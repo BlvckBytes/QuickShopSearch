@@ -146,6 +146,8 @@ public class SlowTeleportManager implements Listener {
         var stampNow = System.currentTimeMillis();
         var elapsedMillisSinceLastTitle = stampNow - lastTitleDisplayStamp;
 
+        lastTitleDisplayStamp = stampNow;
+
         player.sendTitlePart(
           TitlePart.TIMES,
           Title.Times.times(
