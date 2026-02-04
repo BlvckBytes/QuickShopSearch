@@ -143,7 +143,7 @@ resultDisplay:
               *let-criterion="lut.sorting_criteria[sorting.criterion] ?? sorting.criterion"
               *let-renderer="lut.sorting_selection[sorting.selection] ?? sorting.selection"
             >
-              <&8><&e *use="sorting.active">➥ <container &renderer />
+              <&8><&e *use="sorting.active">➥ <container [renderer] />
             </container>
             <br/>
             {lut.spacer}<br/>
@@ -205,7 +205,7 @@ resultDisplay:
               *let-criterion="lut.filtering_criteria[filtering.criterion] ?? filtering.criterion"
               *let-renderer="lut.filtering_selection[filtering.selection] ?? filtering.selection"
             >
-              <&8><&e *use="filtering.active">➥ <container &renderer />
+              <&8><&e *use="filtering.active">➥ <container [renderer] />
             </container>
             <br/>
             {lut.spacer}<br/>
@@ -386,10 +386,10 @@ playerMessages:
   commandAdvertiseDisabledOther: '{lut.prefix} <&7>The shop of <&e>{owner} <&7>at <&e>{loc_x}<&7>, <&e>{loc_y}<&7>, <&e>{loc_z} <&7>is <&c>no longer <&7>advertised.'
   commandAdvertiseDisallowedSelf: '{lut.prefix} <&7>Your shop at <&e>{loc_x}<&7>, <&e>{loc_y}<&7>, <&e>{loc_z} <&7>is not allowed to advertise.'
   commandAdvertiseDisallowedOther: '{lut.prefix} <&7>The shop of <&e>{owner} <&7>at <&e>{loc_x}<&7>, <&e>{loc_y}<&7>, <&e>{loc_z} <&7>is not allowed to advertise.'
-  pendingCooldownFeatureTeleportSameShop: '{lut.prefix} <&7>Please wait another <&c><container *let-value="cooldown_millis" &lut.duration_display /><&7> until you teleport to the <&c>same shop <&7>again!'
-  pendingCooldownFeatureTeleportAnyShop: '{lut.prefix} <&7>Please wait another <&c><container *let-value="cooldown_millis" &lut.duration_display /><&7> until you teleport to a <&c>shop <&7>again!'
-  pendingCooldownFeatureTeleportOtherWorldSameShop: '{lut.prefix} <&7>Please wait another <&c><container *let-value="cooldown_millis" &lut.duration_display /><&7> until you teleport to the <&c>same shop in another world <&7>again!'
-  pendingCooldownFeatureTeleportOtherWorldAnyShop: '{lut.prefix} <&7>Please wait another <&c><container *let-value="cooldown_millis" &lut.duration_display /><&7> until you teleport to a <&c>shop in another world <&7>again!'
+  pendingCooldownFeatureTeleportSameShop: '{lut.prefix} <&7>Please wait another <&c><container *let-value="cooldown_millis" [lut.duration_display] /><&7> until you teleport to the <&c>same shop <&7>again!'
+  pendingCooldownFeatureTeleportAnyShop: '{lut.prefix} <&7>Please wait another <&c><container *let-value="cooldown_millis" [lut.duration_display] /><&7> until you teleport to a <&c>shop <&7>again!'
+  pendingCooldownFeatureTeleportOtherWorldSameShop: '{lut.prefix} <&7>Please wait another <&c><container *let-value="cooldown_millis" [lut.duration_display] /><&7> until you teleport to the <&c>same shop in another world <&7>again!'
+  pendingCooldownFeatureTeleportOtherWorldAnyShop: '{lut.prefix} <&7>Please wait another <&c><container *let-value="cooldown_millis" [lut.duration_display] /><&7> until you teleport to a <&c>shop in another world <&7>again!'
   slowTeleportHasMoved: '{lut.prefix} <&c>You have moved - cancelling teleport!'
   slowTeleportHasBeenAttacked: '{lut.prefix} <&c>You were attacked by <&4>{attacker} <&c>- cancelling teleport!'
   slowTeleportAttackedSomebody: '{lut.prefix} <&c>You attacked <&4>{victim} <&c>- cancelling teleport!'
@@ -530,7 +530,7 @@ sLut:
 cLut:
   prefix: '<&7>[<&6>QSS<&7>]'
   spacer: '<&8><&m>{" " ** 50}'
-  duration_display: '<duration &value units="hms" unit-renderer={<number &value format="0.#" locale="en_US" />{unit}} />'
+  duration_display: '<duration [value] units="hms" unit-renderer={<number [value] format="0.#" locale="en_US" />{unit}} />'
   sorting_criteria:
     PRICE: 'Price'
     OWNER_NAME: 'Owner-Name'
