@@ -22,13 +22,13 @@
         <dependency>
             <groupId>com.ghostchu</groupId>
             <artifactId>quickshop-api</artifactId>
-            <version>6.2.0.11-RELEASE-CANDIDATE-2</version>
+            <version>6.3.0.0-SNAPSHOT-5</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.ghostchu</groupId>
             <artifactId>quickshop-bukkit</artifactId>
-            <version>6.2.0.11-RELEASE-CANDIDATE-2</version>
+            <version>6.3.0.0-SNAPSHOT-5</version>
             <scope>provided</scope>
         </dependency>
         <!-- Made use of in AbstractEconomy, which I need to access, and somehow, this dependency doesn't trickle down... -->
