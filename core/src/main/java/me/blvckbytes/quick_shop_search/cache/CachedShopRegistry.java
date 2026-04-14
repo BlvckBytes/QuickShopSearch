@@ -53,12 +53,7 @@ public class CachedShopRegistry implements QuickShopEventConsumer, Listener {
     this.existingShopByLocation = new HashMap<>();
     this.shopsBucketByCoordinateHash = new Long2ObjectAVLTreeMap<>();
 
-    config.registerReloadListener(() -> {
-      synchronized (existingShopByLocation) {
-        for (var cachedShop : existingShopByLocation.values())
-          cachedShop.onConfigReload();
-      }
-    }, ReloadPriority.HIGHEST);
+    config.registerReloadListener(() -> forEachExistingShop(CachedShop::onConfigReload), ReloadPriority.HIGHEST);
 
     logger.info("Getting all globally existing shops... This may take a while!");
 
@@ -73,24 +68,30 @@ public class CachedShopRegistry implements QuickShopEventConsumer, Listener {
   }
 
   public @Nullable CachedShop findByLocation(Location location) {
-    var bucket = shopsBucketByCoordinateHash.get(fastCoordinateHash(location.getBlockX(), location.getBlockY(), location.getBlockZ()));
+    Set<CachedShop> bucket;
+
+    synchronized (shopsBucketByCoordinateHash) {
+      bucket = shopsBucketByCoordinateHash.get(fastCoordinateHash(location.getBlockX(), location.getBlockY(), location.getBlockZ()));
+    }
 
     if (bucket == null)
       return null;
 
-    for (var bucketEntry : bucket) {
-      var bucketEntryWorld = Objects.requireNonNull(bucketEntry.handle.getLocation().getWorld());
+    synchronized (bucket) {
+      for (var bucketEntry : bucket) {
+        var bucketEntryWorld = Objects.requireNonNull(bucketEntry.handle.getLocation().getWorld());
 
-      if (bucketEntryWorld.equals(location.getWorld()))
-        return bucketEntry;
+        if (bucketEntryWorld.equals(location.getWorld()))
+          return bucketEntry;
+      }
     }
 
     return null;
   }
 
-  public Collection<CachedShop> getExistingShops() {
+  public void forEachExistingShop(Consumer<CachedShop> handler) {
     synchronized (existingShopByLocation) {
-      return this.existingShopByLocation.values();
+      existingShopByLocation.values().forEach(handler);
     }
   }
 
@@ -102,28 +103,32 @@ public class CachedShopRegistry implements QuickShopEventConsumer, Listener {
   @Override
   public void onShopCreate(Shop shop) {
     scheduler.runAsync(scheduleTask -> {
+      var cachedShop = new CachedShop(plugin, scheduler, shop, config, integrationRegistry);
+
       synchronized (existingShopByLocation) {
-        var cachedShop = new CachedShop(plugin, scheduler, shop, config, integrationRegistry);
-
         existingShopByLocation.put(shop.getLocation(), cachedShop);
-        addToCoordinateLookup(cachedShop);
-
-        displayHandler.onShopUpdate(cachedShop, ShopUpdate.CREATED);
       }
+
+      addToCoordinateLookup(cachedShop);
+
+      displayHandler.onShopUpdate(cachedShop, ShopUpdate.CREATED);
     });
   }
 
   @Override
   public void onShopDelete(Shop shop) {
+    CachedShop cachedShop;
+
     synchronized (existingShopByLocation) {
-      var cachedShop = existingShopByLocation.remove(shop.getLocation());
-
-      if (cachedShop == null)
-        return;
-
-      removeFromCoordinateLookup(cachedShop);
-      displayHandler.onShopUpdate(cachedShop, ShopUpdate.REMOVED);
+      cachedShop = existingShopByLocation.remove(shop.getLocation());
     }
+
+    if (cachedShop == null)
+      return;
+
+    removeFromCoordinateLookup(cachedShop);
+
+    displayHandler.onShopUpdate(cachedShop, ShopUpdate.REMOVED);
   }
 
   @Override
@@ -238,31 +243,47 @@ public class CachedShopRegistry implements QuickShopEventConsumer, Listener {
   }
 
   private void tryAccessCache(Shop shop, Consumer<CachedShop> handler) {
-    synchronized (existingShopByLocation) {
-      var cachedShop = existingShopByLocation.get(shop.getLocation());
+    CachedShop cachedShop;
 
-      if (cachedShop != null)
-        handler.accept(cachedShop);
+    synchronized (existingShopByLocation) {
+      cachedShop = existingShopByLocation.get(shop.getLocation());
     }
+
+    if (cachedShop != null)
+      handler.accept(cachedShop);
   }
 
   private void addToCoordinateLookup(CachedShop shop) {
     var location = shop.handle.getLocation();
     var coordinateHash = fastCoordinateHash(location.getBlockX(), location.getBlockY(), location.getBlockZ());
 
-    shopsBucketByCoordinateHash
-      .computeIfAbsent(coordinateHash, key -> new HashSet<>())
-      .add(shop);
+    Set<CachedShop> bucket;
+
+    synchronized (shopsBucketByCoordinateHash) {
+      bucket = shopsBucketByCoordinateHash.computeIfAbsent(coordinateHash, key -> new HashSet<>());
+    }
+
+    synchronized (bucket) {
+      bucket.add(shop);
+    }
   }
 
   private void removeFromCoordinateLookup(CachedShop shop) {
     var location = shop.handle.getLocation();
     var coordinateHash = fastCoordinateHash(location.getBlockX(), location.getBlockY(), location.getBlockZ());
 
-    var bucket = shopsBucketByCoordinateHash.get(coordinateHash);
+    Set<CachedShop> bucket;
 
-    if (bucket != null)
+    synchronized (shopsBucketByCoordinateHash) {
+      bucket = shopsBucketByCoordinateHash.get(coordinateHash);
+    }
+
+    if (bucket == null)
+      return;
+
+    synchronized (bucket) {
       bucket.remove(shop);
+    }
   }
 
   private static long fastCoordinateHash(int x, int y, int z) {

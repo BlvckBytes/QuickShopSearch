@@ -315,27 +315,27 @@ public class QuickShopSearchCommand implements CommandExecutor, TabCompleter {
     var canViewOtherWorld = PluginPermission.OTHER_WORLD.has(player);
     var canViewNonAdvertising = PluginPermission.NON_ADVERTISE_BYPASS.has(player);
 
-    for (var cachedShop : shopRegistry.getExistingShops()) {
+    shopRegistry.forEachExistingShop(cachedShop -> {
       if (!cachedShop.isAdvertising() && !canViewNonAdvertising)
-        continue;
+        return;
 
       if (!canViewOtherWorld && cachedShop.handle.getLocation().getWorld() != playerWorld)
-        continue;
+        return;
 
       var shopItem = cachedShop.handle.getItem();
 
       if (accessList != null && !accessList.typeMaterials.contains(shopItem.getType()))
-        continue;
+        return;
 
       if (predicate != null && !predicate.test(new PredicateState(shopItem)))
-        continue;
+        return;
 
       if (!searchFlagsContainer.test(cachedShop, player))
-        continue;
+        return;
 
       matchingShops.add(cachedShop);
       matchingShopIds.add(cachedShop.handle.getShopId());
-    }
+    });
 
     return new ResultDisplayData(matchingShops, matchingShopIds, predicate, searchFlagsContainer);
   }
