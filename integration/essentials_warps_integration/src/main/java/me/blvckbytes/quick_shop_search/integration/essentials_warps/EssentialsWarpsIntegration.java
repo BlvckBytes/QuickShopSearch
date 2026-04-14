@@ -27,6 +27,8 @@ public class EssentialsWarpsIntegration extends ChunkBucketedCache<EssentialsWar
     @Nullable IWorldGuardIntegration worldGuardIntegration,
     ConfigKeeper<MainSection> config
   ) {
+    super(false);
+
     this.worldGuardIntegration = worldGuardIntegration;
     this.config = config;
 
@@ -62,8 +64,8 @@ public class EssentialsWarpsIntegration extends ChunkBucketedCache<EssentialsWar
   }
 
   @Override
-  protected boolean doItemsEqual(EssentialsWarpData a, EssentialsWarpData b) {
-    return a.name().equals(b.name());
+  protected String extractItemId(EssentialsWarpData item) {
+    return item.name();
   }
 
   @EventHandler

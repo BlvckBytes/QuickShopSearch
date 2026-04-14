@@ -29,6 +29,8 @@ public class RevivaloPlayerWarpsIntegration extends ChunkBucketedCache<Warp> imp
     ConfigKeeper<MainSection> config,
     @Nullable IWorldGuardIntegration worldGuardIntegration
   ) {
+    super(true);
+
     this.config = config;
     this.platformScheduler = platformScheduler;
     this.worldGuardIntegration = worldGuardIntegration;
@@ -39,23 +41,26 @@ public class RevivaloPlayerWarpsIntegration extends ChunkBucketedCache<Warp> imp
       throw new IllegalStateException("Expected the warp-manager to be accessible at this point in time");
 
     platformScheduler.runAsync(task -> {
-      var itemCount = updateAndInitiateNextUpdate();
+      var itemCount = updateAndInitiateNextUpdate(true);
       logger.info("Registered " + itemCount + " PlayerWarps!");
     });
   }
 
-  private int updateAndInitiateNextUpdate() {
-    clear();
-
+  private int updateAndInitiateNextUpdate(boolean isInitial) {
     var warps = this.warpManager.getWarps();
 
-    for (var playerWarp : warps)
-      registerItem(playerWarp);
+    var updatedLocations = swapOutItemsAndGetUpdatedLocations(() -> {
+      for (var playerWarp : warps)
+        registerItem(playerWarp);
+    });
+
+    if (!isInitial && !updatedLocations.isEmpty())
+      Bukkit.getPluginManager().callEvent(new AsyncPlayerWarpsUpdatesEvent(updatedLocations));
 
     int updatePeriod;
 
     if ((updatePeriod = config.rootSection.playerWarpsIntegration.updatePeriodSeconds) > 0)
-      this.platformScheduler.runLaterAsync(this::updateAndInitiateNextUpdate, 20L * updatePeriod);
+      this.platformScheduler.runLaterAsync(() -> updateAndInitiateNextUpdate(false), 20L * updatePeriod);
 
     return warps.size();
   }
@@ -93,7 +98,7 @@ public class RevivaloPlayerWarpsIntegration extends ChunkBucketedCache<Warp> imp
   }
 
   @Override
-  protected boolean doItemsEqual(Warp a, Warp b) {
-    return a.getWarpID().equals(b.getWarpID());
+  protected String extractItemId(Warp item) {
+    return String.valueOf(item.getWarpID());
   }
 }

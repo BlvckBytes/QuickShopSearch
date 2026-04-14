@@ -13,16 +13,54 @@ public abstract class ChunkBucketedCache<T> {
 
   private final Map<UUID, Long2ObjectMap<List<T>>> itemsByChunkHashByWorldId;
 
-  protected ChunkBucketedCache() {
+  private final boolean requiresDeltaTracking;
+  private @Nullable Map<String, T> itemById;
+
+  protected ChunkBucketedCache(boolean requiresDeltaTracking) {
     this.itemsByChunkHashByWorldId = new ConcurrentHashMap<>();
+    this.requiresDeltaTracking = requiresDeltaTracking;
   }
 
   protected abstract @Nullable Location extractItemLocation(T item);
 
-  protected abstract boolean doItemsEqual(T a, T b);
+  protected abstract String extractItemId(T item);
 
-  protected void clear() {
+  protected boolean doItemsEqual(T a, T b) {
+    return extractItemId(a).equals(extractItemId(b));
+  }
+
+  protected List<Location> swapOutItemsAndGetUpdatedLocations(Runnable itemsAdder) {
     itemsByChunkHashByWorldId.clear();
+
+    var oldItemsById = itemById;
+    itemById = null;
+
+    itemsAdder.run();
+
+    return tryComputeUpdatedLocations(oldItemsById, itemById);
+  }
+
+  private List<Location> tryComputeUpdatedLocations(@Nullable Map<?, T> oldItemsById, @Nullable Map<?, T> newItemsById) {
+    if (oldItemsById == null && newItemsById == null)
+      return Collections.emptyList();
+
+    var updatedLocations = new ArrayList<Location>();
+
+    if (newItemsById != null) {
+      // Items that have been added in the new dataset but are absent in the old one.
+      for (var registeredItemEntry : newItemsById.entrySet()) {
+        if (oldItemsById == null || oldItemsById.remove(registeredItemEntry.getKey()) == null)
+          updatedLocations.add(extractItemLocation(registeredItemEntry.getValue()));
+      }
+    }
+
+    if (oldItemsById != null) {
+      // Items that are present in the old dataset but missing in the new one.
+      for (var remainingOldItem : oldItemsById.values())
+        updatedLocations.add(extractItemLocation(remainingOldItem));
+    }
+
+    return updatedLocations;
   }
 
   protected void registerItem(T item) {
@@ -49,6 +87,13 @@ public abstract class ChunkBucketedCache<T> {
     }
 
     itemBucket.add(item);
+
+    if (requiresDeltaTracking) {
+      if (itemById == null)
+        itemById = new HashMap<>();
+
+      itemById.put(extractItemId(item), item);
+    }
   }
 
   protected void unregisterItem(T item) {
@@ -78,6 +123,9 @@ public abstract class ChunkBucketedCache<T> {
         return;
       }
     }
+
+    if (itemById != null)
+      itemById.remove(extractItemId(item));
   }
 
   private class ClosestItemSession {

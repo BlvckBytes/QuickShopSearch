@@ -9,18 +9,21 @@ import com.tcoded.folialib.impl.PlatformScheduler;
 import me.blvckbytes.quick_shop_search.config.MainSection;
 import me.blvckbytes.quick_shop_search.integration.ChunkBucketedCache;
 import me.blvckbytes.quick_shop_search.integration.worldguard.IWorldGuardIntegration;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 
 import javax.annotation.Nullable;
+import java.util.Collections;
 import java.util.logging.Logger;
 
 public class OlzieDevPlayerWarpsIntegration extends ChunkBucketedCache<Warp> implements IPlayerWarpsIntegration {
 
   private final ConfigKeeper<MainSection> config;
   private final @Nullable IWorldGuardIntegration worldGuardIntegration;
+  private final PlatformScheduler scheduler;
 
   public OlzieDevPlayerWarpsIntegration(
     Logger logger,
@@ -28,8 +31,11 @@ public class OlzieDevPlayerWarpsIntegration extends ChunkBucketedCache<Warp> imp
     ConfigKeeper<MainSection> config,
     @Nullable IWorldGuardIntegration worldGuardIntegration
   ) {
+    super(false);
+
     this.config = config;
     this.worldGuardIntegration = worldGuardIntegration;
+    this.scheduler = scheduler;
 
     PlayerWarpsAPI.getInstance(instance -> {
       scheduler.runAsync(task -> {
@@ -72,12 +78,23 @@ public class OlzieDevPlayerWarpsIntegration extends ChunkBucketedCache<Warp> imp
 
   @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
   public void onPlayerWarpCreate(PlayerWarpCreateEvent event) {
-    registerItem(event.getPlayerWarp());
+    var playerWarp = event.getPlayerWarp();
+
+    registerItem(playerWarp);
+    callUpdatesEvent(playerWarp);
   }
 
   @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
   public void onPlayerWarpRemove(PlayerWarpRemoveEvent event) {
-    unregisterItem(event.getPlayerWarp());
+    var playerWarp = event.getPlayerWarp();
+
+    unregisterItem(playerWarp);
+    callUpdatesEvent(playerWarp);
+  }
+
+  private void callUpdatesEvent(Warp playerWarp) {
+    var updates = Collections.singletonList(playerWarp.getWarpLocation().getLocation());
+    scheduler.runAsync(task -> Bukkit.getPluginManager().callEvent(new AsyncPlayerWarpsUpdatesEvent(updates)));
   }
 
   @Override
@@ -86,8 +103,8 @@ public class OlzieDevPlayerWarpsIntegration extends ChunkBucketedCache<Warp> imp
   }
 
   @Override
-  protected boolean doItemsEqual(Warp a, Warp b) {
+  protected String extractItemId(Warp item) {
     // NOTE: #getUUID() returns the ID of the player who owns this warp - do not use!
-    return a.getID() == b.getID();
+    return String.valueOf(item.getID());
   }
 }

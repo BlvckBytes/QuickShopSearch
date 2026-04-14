@@ -9,6 +9,7 @@ import com.tcoded.folialib.impl.PlatformScheduler;
 import me.blvckbytes.quick_shop_search.config.MainSection;
 import me.blvckbytes.quick_shop_search.integration.ChunkBucketedCache;
 import me.blvckbytes.quick_shop_search.integration.worldguard.IWorldGuardIntegration;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
@@ -28,6 +29,8 @@ public class AxPlayerWarpsIntegration extends ChunkBucketedCache<Warp> implement
     ConfigKeeper<MainSection> config,
     @Nullable IWorldGuardIntegration worldGuardIntegration
   ) {
+    super(true);
+
     this.config = config;
     this.platformScheduler = platformScheduler;
     this.worldGuardIntegration = worldGuardIntegration;
@@ -41,23 +44,26 @@ public class AxPlayerWarpsIntegration extends ChunkBucketedCache<Warp> implement
     }
 
     platformScheduler.runAsync(task -> {
-      var itemCount = updateAndInitiateNextUpdate();
+      var itemCount = updateAndInitiateNextUpdate(true);
       logger.info("Registered " + itemCount + " PlayerWarps!");
     });
   }
 
-  private int updateAndInitiateNextUpdate() {
-    clear();
-
+  private int updateAndInitiateNextUpdate(boolean isInitial) {
     var warps = WarpManager.getWarps();
 
-    for (var playerWarp : warps)
-      registerItem(playerWarp);
+    var updatedLocations = swapOutItemsAndGetUpdatedLocations(() -> {
+      for (var playerWarp : warps)
+        registerItem(playerWarp);
+    });
+
+    if (!isInitial && !updatedLocations.isEmpty())
+      Bukkit.getPluginManager().callEvent(new AsyncPlayerWarpsUpdatesEvent(updatedLocations));
 
     int updatePeriod;
 
     if ((updatePeriod = config.rootSection.playerWarpsIntegration.updatePeriodSeconds) > 0)
-      this.platformScheduler.runLaterAsync(this::updateAndInitiateNextUpdate, 20L * updatePeriod);
+      this.platformScheduler.runLaterAsync(() -> updateAndInitiateNextUpdate(false), 20L * updatePeriod);
 
     return warps.size();
   }
@@ -85,8 +91,8 @@ public class AxPlayerWarpsIntegration extends ChunkBucketedCache<Warp> implement
   }
 
   @Override
-  protected boolean doItemsEqual(Warp a, Warp b) {
-    return a.getId() == b.getId();
+  protected String extractItemId(Warp item) {
+    return String.valueOf(item.getId());
   }
 
   private boolean checkIfAccessDenied(Warp warp, Player player) {
