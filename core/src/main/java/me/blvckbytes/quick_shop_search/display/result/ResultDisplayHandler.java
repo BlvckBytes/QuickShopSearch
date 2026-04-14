@@ -539,7 +539,7 @@ public class ResultDisplayHandler extends DisplayHandler<ResultDisplay, ResultDi
     if (targetLocation == null)
       targetLocation = shopLocation.add(.5, 0, .5);
 
-    var nearestPlayerWarp = display.getNearestPlayerWarp(cachedShop);
+    var nearestPlayerWarp = cachedShop.getNearestPlayerWarp();
     var nearestEssentialsWarp = display.getNearestEssentialsWarp(cachedShop);
 
     var canUseShopLocation = PluginPermission.FEATURE_TELEPORT_SHOP.has(player);

@@ -23,7 +23,6 @@ import me.blvckbytes.quick_shop_search.display.Display;
 import me.blvckbytes.quick_shop_search.integration.IntegrationRegistry;
 import me.blvckbytes.quick_shop_search.integration.essentials_warps.EssentialsWarpData;
 import me.blvckbytes.quick_shop_search.integration.essentials_warps.IEssentialsWarpsIntegration;
-import me.blvckbytes.quick_shop_search.integration.player_warps.IPlayerWarpsIntegration;
 import me.blvckbytes.quick_shop_search.integration.player_warps.PlayerWarpData;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
@@ -42,7 +41,6 @@ public class ResultDisplay extends Display<ResultDisplayData> implements Dynamic
 
   private final Long2LongMap shopDistanceByShopId;
   private final Long2ObjectMap<CalculatedFees> shopFeesByShopId;
-  private final Long2ObjectMap<@Nullable PlayerWarpData> nearestPlayerWarpByShopId;
   private final Long2ObjectMap<@Nullable EssentialsWarpData> nearestEssentialsWarpByShopId;
   private List<CachedShop> filteredUnSortedShops;
   private List<CachedShop> filteredSortedShops;
@@ -81,7 +79,6 @@ public class ResultDisplay extends Display<ResultDisplayData> implements Dynamic
     this.playerLocation = player.getLocation();
     this.shopDistanceByShopId = new Long2LongAVLTreeMap();
     this.shopFeesByShopId = new Long2ObjectAVLTreeMap<>();
-    this.nearestPlayerWarpByShopId = new Long2ObjectAVLTreeMap<>();
     this.nearestEssentialsWarpByShopId = new Long2ObjectAVLTreeMap<>();
     this.slotMap = new CachedShop[9 * 6];
     this.selectionState = selectionState;
@@ -530,30 +527,6 @@ public class ResultDisplay extends Display<ResultDisplayData> implements Dynamic
     return result;
   }
 
-  public @Nullable PlayerWarpData getNearestPlayerWarp(CachedShop cachedShop) {
-    var playerWarpsIntegration = integrationRegistry.getPlayerWarpsIntegration();
-
-    if (playerWarpsIntegration == null)
-      return null;
-
-    var shopId = cachedShop.handle.getShopId();
-    var result = nearestPlayerWarpByShopId.get(shopId);
-
-    if (result == null) {
-      result = playerWarpsIntegration.locateNearestWithinRange(player, cachedShop.handle.getLocation(), config.rootSection.playerWarpsIntegration.nearestWarpBlockRadius);
-
-      if (result == null)
-        result = IPlayerWarpsIntegration.PLAYER_WARP_NULL_SENTINEL;
-
-      nearestPlayerWarpByShopId.put(shopId, result);
-    }
-
-    if (result == IPlayerWarpsIntegration.PLAYER_WARP_NULL_SENTINEL)
-      return null;
-
-    return result;
-  }
-
   private boolean canPlayerTeleport(
     CachedShop cachedShop,
     @Nullable PlayerWarpData nearestPlayerWarp,
@@ -577,7 +550,7 @@ public class ResultDisplay extends Display<ResultDisplayData> implements Dynamic
     var distance = getShopDistance(cachedShop);
     var isOtherWorld = distance < 0;
     var fees = getShopFees(cachedShop);
-    var nearestPlayerWarp = getNearestPlayerWarp(cachedShop);
+    var nearestPlayerWarp = cachedShop.getNearestPlayerWarp();
     var nearestEssentialsWarp = getNearestEssentialsWarp(cachedShop);
 
     var shopManager = QuickShopAPI.getInstance().getShopManager();

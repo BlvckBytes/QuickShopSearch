@@ -12,6 +12,7 @@ import me.blvckbytes.quick_shop_search.compatibility.QuickShopEventConsumer;
 import me.blvckbytes.quick_shop_search.config.MainSection;
 import me.blvckbytes.quick_shop_search.display.result.ResultDisplayHandler;
 import me.blvckbytes.quick_shop_search.integration.IntegrationRegistry;
+import me.blvckbytes.quick_shop_search.integration.player_warps.AsyncPlayerWarpsUpdatesEvent;
 import org.bukkit.Location;
 import org.bukkit.block.Chest;
 import org.bukkit.block.DoubleChest;
@@ -224,6 +225,11 @@ public class CachedShopRegistry implements QuickShopEventConsumer, Listener {
           onShopInventoryClose(closedShop);
       }
     }
+  }
+
+  @EventHandler
+  public void onPlayerWarpsUpdate(AsyncPlayerWarpsUpdatesEvent event) {
+    forEachExistingShop(cachedShop -> cachedShop.onPlayerWarpsUpdate(event.updatedLocations));
   }
 
   private void onShopInventoryClose(CachedShop cachedShop) {

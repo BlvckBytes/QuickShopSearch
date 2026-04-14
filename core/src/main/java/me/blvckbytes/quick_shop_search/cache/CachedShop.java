@@ -9,7 +9,10 @@ import com.tcoded.folialib.impl.PlatformScheduler;
 import me.blvckbytes.quick_shop_search.PluginPermission;
 import me.blvckbytes.quick_shop_search.config.MainSection;
 import me.blvckbytes.quick_shop_search.integration.IntegrationRegistry;
+import me.blvckbytes.quick_shop_search.integration.player_warps.IPlayerWarpsIntegration;
+import me.blvckbytes.quick_shop_search.integration.player_warps.PlayerWarpData;
 import me.blvckbytes.quick_shop_search.integration.worldguard.IWorldGuardIntegration;
+import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -18,6 +21,7 @@ import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
 import java.util.function.Consumer;
 import java.util.logging.Logger;
 
@@ -44,6 +48,8 @@ public class CachedShop {
   public double cachedPrice;
   public @Nullable String cachedName;
   private boolean advertising;
+
+  private @Nullable PlayerWarpData cachedNearestPlayerWarp;
 
   public CachedShop(
     Plugin plugin,
@@ -74,6 +80,47 @@ public class CachedShop {
       this.cachedName = handle.getShopName();
       this.diff.update();
     });
+  }
+
+  public void onPlayerWarpsUpdate(List<Location> updatedLocations) {
+    if (cachedNearestPlayerWarp == null)
+      return;
+
+    var affectedRadius = config.rootSection.playerWarpsIntegration.nearestWarpBlockRadius;
+    var affectedRadiusSquared = affectedRadius * affectedRadius;
+
+    var shopLocation = handle.getLocation();
+
+    for (var updatedLocation : updatedLocations) {
+      if (updatedLocation.distanceSquared(shopLocation) > affectedRadiusSquared)
+        continue;
+
+      cachedNearestPlayerWarp = null;
+      return;
+    }
+  }
+
+  public @Nullable PlayerWarpData getNearestPlayerWarp() {
+    var playerWarpsIntegration = integrationRegistry.getPlayerWarpsIntegration();
+
+    if (playerWarpsIntegration == null)
+      return null;
+
+    var result = cachedNearestPlayerWarp;
+
+    if (result == null) {
+      result = playerWarpsIntegration.locateNearestWithinRange(handle.getLocation(), config.rootSection.playerWarpsIntegration.nearestWarpBlockRadius);
+
+      if (result == null)
+        result = IPlayerWarpsIntegration.PLAYER_WARP_NULL_SENTINEL;
+
+      cachedNearestPlayerWarp = result;
+    }
+
+    if (result == IPlayerWarpsIntegration.PLAYER_WARP_NULL_SENTINEL)
+      return null;
+
+    return result;
   }
 
   private String formatItemType(ItemStack item) {
@@ -121,7 +168,6 @@ public class CachedShop {
       .withVariable("loc_x", shopLocation.getBlockX())
       .withVariable("loc_y", shopLocation.getBlockY())
       .withVariable("loc_z", shopLocation.getBlockZ());
-
   }
 
   public ToggleResult toggleAdvertising(Player player) {
