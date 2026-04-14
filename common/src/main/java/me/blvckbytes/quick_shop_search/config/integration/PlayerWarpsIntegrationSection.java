@@ -13,6 +13,7 @@ public class PlayerWarpsIntegrationSection extends ConfigSection {
   public int updatePeriodSeconds;
   public boolean withinSameRegion;
   public boolean doNotUseSlowTeleport;
+  public boolean hideShopsWithoutNearbyWarp;
 
   @CSAlways
   public PlayerWarpsTeleportCommandsSection teleportCommand;
@@ -26,5 +27,6 @@ public class PlayerWarpsIntegrationSection extends ConfigSection {
     this.updatePeriodSeconds = 30;
     this.withinSameRegion = false;
     this.doNotUseSlowTeleport = false;
+    this.hideShopsWithoutNearbyWarp = false;
   }
 }

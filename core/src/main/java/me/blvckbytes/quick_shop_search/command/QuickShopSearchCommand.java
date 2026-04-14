@@ -333,6 +333,9 @@ public class QuickShopSearchCommand implements CommandExecutor, TabCompleter {
       if (!searchFlagsContainer.test(cachedShop, player))
         return;
 
+      if (config.rootSection.playerWarpsIntegration.hideShopsWithoutNearbyWarp && cachedShop.getNearestPlayerWarp() == null)
+        return;
+
       matchingShops.add(cachedShop);
       matchingShopIds.add(cachedShop.handle.getShopId());
     });

@@ -461,6 +461,7 @@ playerWarpsIntegration:
   updatePeriodSeconds: 30
   withinSameRegion: false
   doNotUseSlowTeleport: false
+  hideShopsWithoutNearbyWarp: false
   teleportCommand:
     revivalo: 'pwarp {name}'
     olzieDev: 'pw {name}'
