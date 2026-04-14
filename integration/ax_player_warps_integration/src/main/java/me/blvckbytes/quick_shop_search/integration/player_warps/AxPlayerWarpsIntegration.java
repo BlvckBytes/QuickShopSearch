@@ -69,7 +69,7 @@ public class AxPlayerWarpsIntegration extends ChunkBucketedCache<Warp> implement
   }
 
   @Override
-  public @Nullable PlayerWarpData locateNearestWithinRange(Player player, Location origin, int blockRadius) {
+  public @Nullable PlayerWarpData locateNearestWithinRange(Location origin, int blockRadius) {
     var matchPredicate = IWorldGuardIntegration.makePredicate(origin, worldGuardIntegration, config.rootSection.playerWarpsIntegration.withinSameRegion);
     var nearestWarp = findClosestItem(origin, blockRadius, matchPredicate);
 
@@ -81,7 +81,7 @@ public class AxPlayerWarpsIntegration extends ChunkBucketedCache<Warp> implement
       nearestWarp.getOwnerName(),
       nearestWarp.getName(),
       nearestWarp.getLocation(),
-      checkIfAccessDenied(nearestWarp, player)
+      player -> checkIfAccessDenied(nearestWarp, player)
     );
   }
 

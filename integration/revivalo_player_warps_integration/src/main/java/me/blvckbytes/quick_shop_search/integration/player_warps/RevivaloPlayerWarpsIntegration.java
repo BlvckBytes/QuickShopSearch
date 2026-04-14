@@ -66,30 +66,31 @@ public class RevivaloPlayerWarpsIntegration extends ChunkBucketedCache<Warp> imp
   }
 
   @Override
-  public @Nullable PlayerWarpData locateNearestWithinRange(Player player, Location origin, int blockRadius) {
+  public @Nullable PlayerWarpData locateNearestWithinRange(Location origin, int blockRadius) {
     var matchPredicate = IWorldGuardIntegration.makePredicate(origin, worldGuardIntegration, config.rootSection.playerWarpsIntegration.withinSameRegion);
     var nearestWarp = findClosestItem(origin, blockRadius, matchPredicate);
 
     if (nearestWarp == null)
       return null;
 
-    var playerId = player.getUniqueId();
-    var isBanned = false;
-
-    for (var bannedId : nearestWarp.getBlockedPlayers()) {
-      if (bannedId.equals(playerId)) {
-        isBanned = true;
-        break;
-      }
-    }
-
     return new PlayerWarpData(
       PlayerWarpSource.REVIVALO,
       Bukkit.getOfflinePlayer(nearestWarp.getOwner()).getName(),
       nearestWarp.getName(),
       nearestWarp.getLocation(),
-      isBanned
+      player -> checkIfIsBanned(nearestWarp, player)
     );
+  }
+
+  private boolean checkIfIsBanned(Warp warp, Player player) {
+    var playerId = player.getUniqueId();
+
+    for (var bannedId : warp.getBlockedPlayers()) {
+      if (bannedId.equals(playerId))
+        return true;
+    }
+
+    return false;
   }
 
   @Override

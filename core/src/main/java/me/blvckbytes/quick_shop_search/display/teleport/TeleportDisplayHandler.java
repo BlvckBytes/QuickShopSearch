@@ -130,7 +130,7 @@ public class TeleportDisplayHandler extends DisplayHandler<TeleportDisplay, Tele
 
     scheduler.runAtEntity(player, scheduleTask -> player.closeInventory());
 
-    if (nearestPlayerWarp.isBanned() && !PluginPermission.FEATURE_TELEPORT_NEAREST_PLAYER_WARP_BAN_BYPASS.has(player)) {
+    if (nearestPlayerWarp.checkIfBanned().test(player) && !PluginPermission.FEATURE_TELEPORT_NEAREST_PLAYER_WARP_BAN_BYPASS.has(player)) {
       if (sendFailureMessage && (message = config.rootSection.playerMessages.nearestPlayerWarpBanned) != null)
         message.sendMessage(player, displayData.extendedShopEnvironment());
 

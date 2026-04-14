@@ -50,29 +50,19 @@ public class OlzieDevPlayerWarpsIntegration extends ChunkBucketedCache<Warp> imp
   }
 
   @Override
-  public @Nullable PlayerWarpData locateNearestWithinRange(Player player, Location origin, int blockRadius) {
+  public @Nullable PlayerWarpData locateNearestWithinRange(Location origin, int blockRadius) {
     var matchPredicate = IWorldGuardIntegration.makePredicate(origin, worldGuardIntegration, config.rootSection.playerWarpsIntegration.withinSameRegion);
     var nearestWarp = findClosestItem(origin, blockRadius, matchPredicate);
 
     if (nearestWarp == null)
       return null;
 
-    var playerId = player.getUniqueId();
-    var isBanned = false;
-
-    for (var banned : nearestWarp.getBanned()) {
-      if (banned.getUUID().equals(playerId)) {
-        isBanned = true;
-        break;
-      }
-    }
-
     return new PlayerWarpData(
       PlayerWarpSource.OLZIE_DEV,
       nearestWarp.getWarpPlayer().getName(),
       nearestWarp.getWarpName(),
       nearestWarp.getWarpLocation().getLocation(),
-      isBanned
+      player -> checkIfIsBanned(nearestWarp, player)
     );
   }
 
@@ -90,6 +80,17 @@ public class OlzieDevPlayerWarpsIntegration extends ChunkBucketedCache<Warp> imp
 
     unregisterItem(playerWarp);
     callUpdatesEvent(playerWarp);
+  }
+
+  private boolean checkIfIsBanned(Warp warp, Player player) {
+    var playerId = player.getUniqueId();
+
+    for (var banned : warp.getBanned()) {
+      if (banned.getUUID().equals(playerId))
+        return true;
+    }
+
+    return false;
   }
 
   private void callUpdatesEvent(Warp playerWarp) {
