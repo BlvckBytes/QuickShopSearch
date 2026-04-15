@@ -12,6 +12,24 @@
 resultDisplay:
   chatPromptAllSentinel: 'all'
   chatPromptCancelSentinel: 'cancel'
+  enabledFilteringCriteria:
+    IS_BUYING: true
+    IS_SELLING: true
+    IS_UNLIMITED: true
+    HAS_STOCK_LEFT: true
+    HAS_SPACE_LEFT: true
+    SAME_WORLD: true
+    CAN_BUY: true
+  enabledSortingCriteria:
+    PRICE: true
+    OWNER_NAME: true
+    STOCK_LEFT: true
+    SPACE_LEFT: true
+    ITEM_TYPE: true
+    SHOP_TYPE: true
+    SHOP_NAME: true
+    DISTANCE: true
+    WORLD_NAME: true
   title: '<&8>Shop Search <&e>{current_page}<&8>/<&e>{number_of_pages}'
   rows: 6
   paginationSlots: '0..44'

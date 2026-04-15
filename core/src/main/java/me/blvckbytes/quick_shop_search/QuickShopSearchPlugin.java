@@ -69,7 +69,7 @@ public class QuickShopSearchPlugin extends JavaPlugin {
 
       var remoteInteractionApi = new RemoteInteractionApi(logger);
 
-      stateStore = new SelectionStateStore(this, logger);
+      stateStore = new SelectionStateStore(this, config, logger);
       stampStore = new UidScopedNamedStampStore(this, logger);
 
       var slowTeleportManager = new SlowTeleportManager(scheduler, config);

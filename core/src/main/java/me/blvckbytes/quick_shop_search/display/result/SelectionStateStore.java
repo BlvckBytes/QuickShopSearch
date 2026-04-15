@@ -1,9 +1,12 @@
 package me.blvckbytes.quick_shop_search.display.result;
 
+import at.blvckbytes.cm_mapper.ConfigKeeper;
+import at.blvckbytes.cm_mapper.ReloadPriority;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import me.blvckbytes.quick_shop_search.PluginPermission;
+import me.blvckbytes.quick_shop_search.config.MainSection;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
@@ -26,7 +29,11 @@ public class SelectionStateStore {
   private final File stateFile;
   private final Logger logger;
 
-  public SelectionStateStore(Plugin plugin, Logger logger) throws Exception {
+  public SelectionStateStore(
+    Plugin plugin,
+    ConfigKeeper<MainSection> config,
+    Logger logger
+  ) throws Exception {
     this.logger = logger;
     this.states = new HashMap<>();
     this.stateFile = new File(plugin.getDataFolder(), "selection_states.json");
@@ -37,7 +44,19 @@ public class SelectionStateStore {
     } else if (!this.stateFile.isFile())
       throw new IllegalStateException("Expected file at location " + stateFile);
 
-    this.load();
+    updateEnabledCriteriaValues(config);
+
+    load();
+
+    config.registerReloadListener(() -> {
+      updateEnabledCriteriaValues(config);
+      states.values().forEach(state -> state.updateEnumValues(logger));
+    }, ReloadPriority.HIGH);
+  }
+
+  private void updateEnabledCriteriaValues(ConfigKeeper<MainSection> config) {
+    ShopFilteringCriteria.values.updateEnabledValues(config.rootSection.resultDisplay.enabledFilteringCriteria);
+    ShopSortingCriteria.values.updateEnabledValues(config.rootSection.resultDisplay.enabledSortingCriteria);
   }
 
   public SelectionState loadState(Player player) {

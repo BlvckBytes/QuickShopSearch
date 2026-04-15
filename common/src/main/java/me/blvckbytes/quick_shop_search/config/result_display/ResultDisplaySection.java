@@ -4,10 +4,16 @@ import at.blvckbytes.cm_mapper.section.gui.PaginatedGuiSection;
 import at.blvckbytes.component_markup.expression.interpreter.InterpretationEnvironment;
 import at.blvckbytes.component_markup.util.logging.InterpreterLogger;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class ResultDisplaySection extends PaginatedGuiSection<ResultDisplayItemsSection> {
 
   public String chatPromptAllSentinel;
   public String chatPromptCancelSentinel;
+
+  public Map<String, Boolean> enabledFilteringCriteria = new HashMap<>();
+  public Map<String, Boolean> enabledSortingCriteria = new HashMap<>();
 
   public ResultDisplaySection(InterpretationEnvironment baseEnvironment, InterpreterLogger interpreterLogger) {
     super(ResultDisplayItemsSection.class, baseEnvironment, interpreterLogger);

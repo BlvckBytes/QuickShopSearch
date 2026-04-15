@@ -3,9 +3,6 @@ package me.blvckbytes.quick_shop_search.display.result;
 import me.blvckbytes.quick_shop_search.cache.CachedShop;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Arrays;
-import java.util.List;
-
 public enum ShopSortingCriteria implements SortingFunction {
 
   PRICE((d, a, b) -> Double.compare(a.handle.getPrice(), b.handle.getPrice())),
@@ -21,7 +18,7 @@ public enum ShopSortingCriteria implements SortingFunction {
 
   private final SortingFunction function;
 
-  public static final List<ShopSortingCriteria> values = Arrays.stream(values()).toList();
+  public static final EnumValues<ShopSortingCriteria> values = new EnumValues<>(values());
 
   ShopSortingCriteria(SortingFunction function) {
     this.function = function;
@@ -30,13 +27,6 @@ public enum ShopSortingCriteria implements SortingFunction {
   @Override
   public int compare(DynamicPropertyProvider distanceProvider, CachedShop a, CachedShop b) {
     return function.compare(distanceProvider, a, b);
-  }
-
-  public static ShopSortingCriteria byOrdinalOrFirst(int ordinal) {
-    if (ordinal < 0 || ordinal >= values.size())
-      return values.get(0);
-
-    return values.get(ordinal);
   }
 
   private static int compareNullableStrings(@Nullable String a, @Nullable String b) {
