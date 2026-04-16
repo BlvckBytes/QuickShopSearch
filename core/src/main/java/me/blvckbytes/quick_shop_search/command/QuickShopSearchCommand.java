@@ -188,6 +188,12 @@ public class QuickShopSearchCommand implements CommandExecutor, TabCompleter {
 
       var displayData = createFilteredDisplayData(player, predicate, searchFlagsContainer);
 
+      if (displayData.hasAnyConstraints() && displayData.shops().isEmpty()) {
+        if ((message = config.rootSection.playerMessages.noMatches) != null)
+          message.sendMessage(player);
+        return;
+      }
+
       if ((message = config.rootSection.playerMessages.beforeQuerying) != null) {
         message.sendMessage(
           player,
@@ -195,12 +201,6 @@ public class QuickShopSearchCommand implements CommandExecutor, TabCompleter {
             .withVariable("number_shops", displayData.shops().size())
             .withVariable("predicate", PlainStringifier.stringify(predicate, true))
         );
-      }
-
-      if (displayData.hasAnyConstraints() && displayData.shops().isEmpty()) {
-        if ((message = config.rootSection.playerMessages.noMatches) != null)
-          message.sendMessage(player);
-        return;
       }
 
       resultDisplay.show(player, displayData);
