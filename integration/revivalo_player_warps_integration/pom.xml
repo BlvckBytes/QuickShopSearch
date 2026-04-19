@@ -11,6 +11,7 @@
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
+    <groupId>me.blvckbytes.quickshopsearch</groupId>
     <artifactId>revivalo_player_warps_integration</artifactId>
 
     <properties>
@@ -28,7 +29,7 @@
             <systemPath>${project.basedir}/libs/PlayerWarps-3.3.2.jar</systemPath>
         </dependency>
         <dependency>
-            <groupId>me.blvckbytes</groupId>
+            <groupId>me.blvckbytes.quickshopsearch</groupId>
             <artifactId>common</artifactId>
             <version>${revision}</version>
         </dependency>

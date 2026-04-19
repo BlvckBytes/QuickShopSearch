@@ -11,6 +11,7 @@
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
+    <groupId>me.blvckbytes.quickshopsearch</groupId>
     <artifactId>essentials_warps_integration</artifactId>
 
     <properties>
@@ -40,7 +41,7 @@
             </exclusions>
         </dependency>
         <dependency>
-            <groupId>me.blvckbytes</groupId>
+            <groupId>me.blvckbytes.quickshopsearch</groupId>
             <artifactId>common</artifactId>
             <version>${revision}</version>
         </dependency>

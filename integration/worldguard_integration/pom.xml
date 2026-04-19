@@ -11,6 +11,7 @@
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
+    <groupId>me.blvckbytes.quickshopsearch</groupId>
     <artifactId>worldguard_integration</artifactId>
 
     <properties>
@@ -34,7 +35,7 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>me.blvckbytes</groupId>
+            <groupId>me.blvckbytes.quickshopsearch</groupId>
             <artifactId>common</artifactId>
             <version>${revision}</version>
         </dependency>

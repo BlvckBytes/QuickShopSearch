@@ -9,7 +9,9 @@
         <version>${revision}</version>
     </parent>
 
+    <groupId>me.blvckbytes.quickshopsearch</groupId>
     <artifactId>core</artifactId>
+
     <name>QuickShopSearch</name>
 
     <properties>
@@ -39,7 +41,7 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>me.blvckbytes</groupId>
+            <groupId>me.blvckbytes.quickshopsearch</groupId>
             <artifactId>common</artifactId>
             <version>${revision}</version>
         </dependency>
@@ -49,27 +51,27 @@
             <version>2.3</version>
         </dependency>
         <dependency>
-            <groupId>me.blvckbytes</groupId>
+            <groupId>me.blvckbytes.quickshopsearch</groupId>
             <artifactId>olziedev_player_warps_integration</artifactId>
             <version>${revision}</version>
         </dependency>
         <dependency>
-            <groupId>me.blvckbytes</groupId>
+            <groupId>me.blvckbytes.quickshopsearch</groupId>
             <artifactId>revivalo_player_warps_integration</artifactId>
             <version>${revision}</version>
         </dependency>
         <dependency>
-            <groupId>me.blvckbytes</groupId>
+            <groupId>me.blvckbytes.quickshopsearch</groupId>
             <artifactId>ax_player_warps_integration</artifactId>
             <version>${revision}</version>
         </dependency>
         <dependency>
-            <groupId>me.blvckbytes</groupId>
+            <groupId>me.blvckbytes.quickshopsearch</groupId>
             <artifactId>essentials_warps_integration</artifactId>
             <version>${revision}</version>
         </dependency>
         <dependency>
-            <groupId>me.blvckbytes</groupId>
+            <groupId>me.blvckbytes.quickshopsearch</groupId>
             <artifactId>worldguard_integration</artifactId>
             <version>${revision}</version>
         </dependency>
@@ -97,12 +99,12 @@
                             <include>at.blvckbytes:ComponentMarkup</include>
                             <include>at.blvckbytes:CMMapper</include>
                             <include>me.blvckbytes:SyllablesMatcher</include>
-                            <include>me.blvckbytes:common</include>
-                            <include>me.blvckbytes:olziedev_player_warps_integration</include>
-                            <include>me.blvckbytes:revivalo_player_warps_integration</include>
-                            <include>me.blvckbytes:ax_player_warps_integration</include>
-                            <include>me.blvckbytes:essentials_warps_integration</include>
-                            <include>me.blvckbytes:worldguard_integration</include>
+                            <include>me.blvckbytes.quickshopsearch:common</include>
+                            <include>me.blvckbytes.quickshopsearch:olziedev_player_warps_integration</include>
+                            <include>me.blvckbytes.quickshopsearch:revivalo_player_warps_integration</include>
+                            <include>me.blvckbytes.quickshopsearch:ax_player_warps_integration</include>
+                            <include>me.blvckbytes.quickshopsearch:essentials_warps_integration</include>
+                            <include>me.blvckbytes.quickshopsearch:worldguard_integration</include>
                             <include>com.github.technicallycoded:FoliaLib</include>
                             <include>com.github.cryptomorin:XSeries</include>
                             <include>org.jetbrains:annotations</include>

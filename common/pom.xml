@@ -10,6 +10,7 @@
         <version>${revision}</version>
     </parent>
 
+    <groupId>me.blvckbytes.quickshopsearch</groupId>
     <artifactId>common</artifactId>
 
     <properties>
