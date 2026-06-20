@@ -24,6 +24,8 @@ import java.util.logging.Level;
 
 public class TexturesResolver implements Listener {
 
+  private static final long CACHE_SAVE_PERIOD_T = 20 * 60 * 15;
+
   private final Plugin plugin;
   private final OfflinePlayerRegistry offlinePlayerRegistry;
   private final HttpClient httpClient;
@@ -54,6 +56,8 @@ public class TexturesResolver implements Listener {
       throw new IllegalStateException("Expected file at " + cacheFile);
 
     loadCache();
+
+    Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, this::saveCache, CACHE_SAVE_PERIOD_T, CACHE_SAVE_PERIOD_T);
   }
 
   @EventHandler
