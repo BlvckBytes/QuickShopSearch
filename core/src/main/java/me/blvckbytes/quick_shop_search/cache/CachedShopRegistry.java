@@ -1,7 +1,7 @@
 package me.blvckbytes.quick_shop_search.cache;
 
 import at.blvckbytes.cm_mapper.ConfigKeeper;
-import at.blvckbytes.cm_mapper.ReloadPriority;
+import at.blvckbytes.cm_mapper.ConfigKeeperReloadEvent;
 import com.ghostchu.quickshop.api.QuickShopAPI;
 import com.ghostchu.quickshop.api.shop.Shop;
 import com.ghostchu.quickshop.shop.SimpleShopManager;
@@ -54,8 +54,6 @@ public class CachedShopRegistry implements QuickShopEventConsumer, Listener {
     this.existingShopByLocation = new HashMap<>();
     this.shopsBucketByCoordinateHash = new Long2ObjectAVLTreeMap<>();
 
-    config.registerReloadListener(() -> forEachExistingShop(CachedShop::onConfigReload), ReloadPriority.HIGHEST);
-
     logger.info("Getting all globally existing shops... This may take a while!");
 
     for (var shop : QuickShopAPI.getInstance().getShopManager().getAllShops()) {
@@ -66,6 +64,12 @@ public class CachedShopRegistry implements QuickShopEventConsumer, Listener {
     }
 
     logger.info("Found " + existingShopByLocation.size() + " shops in total");
+  }
+
+  @EventHandler(priority = EventPriority.LOWEST)
+  public void onConfigReload(ConfigKeeperReloadEvent event) {
+    if (event.configKeeper == config)
+      forEachExistingShop(CachedShop::onConfigReload);
   }
 
   public @Nullable CachedShop findByLocation(Location location) {

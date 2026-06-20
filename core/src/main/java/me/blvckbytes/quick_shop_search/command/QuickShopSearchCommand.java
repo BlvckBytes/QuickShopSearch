@@ -1,7 +1,7 @@
 package me.blvckbytes.quick_shop_search.command;
 
 import at.blvckbytes.cm_mapper.ConfigKeeper;
-import at.blvckbytes.cm_mapper.ReloadPriority;
+import at.blvckbytes.cm_mapper.ConfigKeeperReloadEvent;
 import at.blvckbytes.cm_mapper.cm.ComponentMarkup;
 import at.blvckbytes.component_markup.expression.interpreter.InterpretationEnvironment;
 import com.tcoded.folialib.impl.PlatformScheduler;
@@ -26,6 +26,9 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -33,7 +36,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
-public class QuickShopSearchCommand implements CommandExecutor, TabCompleter {
+public class QuickShopSearchCommand implements CommandExecutor, TabCompleter, Listener {
 
   private final PlatformScheduler scheduler;
   private final PredicateHelper predicateHelper;
@@ -58,8 +61,12 @@ public class QuickShopSearchCommand implements CommandExecutor, TabCompleter {
     this.offlinePlayerRegistry = offlinePlayerRegistry;
 
     this.patchSearchFlagsFromConfig();
+  }
 
-    config.registerReloadListener(this::patchSearchFlagsFromConfig, ReloadPriority.HIGHEST);
+  @EventHandler(priority = EventPriority.LOWEST)
+  public void onConfigReload(ConfigKeeperReloadEvent event) {
+    if (event.configKeeper == config)
+      patchSearchFlagsFromConfig();
   }
 
   @Override

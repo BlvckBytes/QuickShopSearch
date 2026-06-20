@@ -2,6 +2,7 @@ package me.blvckbytes.quick_shop_search;
 
 import at.blvckbytes.cm_mapper.ConfigHandler;
 import at.blvckbytes.cm_mapper.ConfigKeeper;
+import at.blvckbytes.cm_mapper.ConfigKeeperReloadEvent;
 import at.blvckbytes.cm_mapper.cm.ComponentMarkup;
 import at.blvckbytes.cm_mapper.section.command.CommandUpdater;
 import at.blvckbytes.component_markup.constructor.SlotType;
@@ -30,17 +31,22 @@ import me.blvckbytes.quick_shop_search.integration.IntegrationRegistry;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 import java.util.logging.Level;
 
-public class QuickShopSearchPlugin extends JavaPlugin {
+public class QuickShopSearchPlugin extends JavaPlugin implements Listener {
 
-  private ResultDisplayHandler resultDisplayHandler;
-  private TeleportDisplayHandler teleportDisplayHandler;
-  private SelectionStateStore stateStore;
-  private UidScopedNamedStampStore stampStore;
+  private @Nullable ResultDisplayHandler resultDisplayHandler;
+  private @Nullable TeleportDisplayHandler teleportDisplayHandler;
+  private @Nullable SelectionStateStore stateStore;
+  private @Nullable UidScopedNamedStampStore stampStore;
+  private @Nullable ConfigKeeper<MainSection> config;
+  private @Nullable Runnable updateCommands;
 
   @Override
   public void onEnable() {
@@ -57,7 +63,7 @@ public class QuickShopSearchPlugin extends JavaPlugin {
       Bukkit.getPluginManager().registerEvents(offlinePlayerRegistry, this);
 
       var configManager = new ConfigHandler(this, "config");
-      var config = new ConfigKeeper<>(configManager, "config.yml", MainSection.class);
+      config = new ConfigKeeper<>(configManager, "config.yml", MainSection.class);
 
       var parserPlugin = ItemPredicateParserPlugin.getInstance();
 
@@ -70,6 +76,8 @@ public class QuickShopSearchPlugin extends JavaPlugin {
       var remoteInteractionApi = new RemoteInteractionApi(logger);
 
       stateStore = new SelectionStateStore(this, config, logger);
+      getServer().getPluginManager().registerEvents(stateStore, this);
+
       stampStore = new UidScopedNamedStampStore(this, logger);
 
       var slowTeleportManager = new SlowTeleportManager(scheduler, config);
@@ -79,6 +87,7 @@ public class QuickShopSearchPlugin extends JavaPlugin {
       Bukkit.getPluginManager().registerEvents(teleportDisplayHandler, this);
 
       var integrationRegistry = new IntegrationRegistry(config, logger, scheduler, this);
+      getServer().getPluginManager().registerEvents(integrationRegistry, this);
 
       var texturesResolver = new TexturesResolver(logger, offlinePlayerRegistry);
 
@@ -104,6 +113,7 @@ public class QuickShopSearchPlugin extends JavaPlugin {
 
       var commandUpdater = new CommandUpdater(this);
       var commandExecutor = new QuickShopSearchCommand(scheduler, parserPlugin.getPredicateHelper(), shopRegistry, config, resultDisplayHandler, offlinePlayerRegistry);
+      getServer().getPluginManager().registerEvents(commandExecutor, this);
 
       var mainCommand = Objects.requireNonNull(getCommand(QuickShopSearchCommandSection.INITIAL_NAME));
       var languageCommand = Objects.requireNonNull(getCommand(QuickShopSearchLanguageCommandSection.INITIAL_NAME));
@@ -113,7 +123,7 @@ public class QuickShopSearchPlugin extends JavaPlugin {
       languageCommand.setExecutor(commandExecutor);
       reloadCommand.setExecutor(new ReloadCommand(logger, config));
 
-      Runnable updateCommands = () -> {
+      updateCommands = () -> {
         config.rootSection.commands.quickShopSearch.apply(mainCommand, commandUpdater);
         config.rootSection.commands.quickShopSearchLanguage.apply(languageCommand, commandUpdater);
         config.rootSection.commands.quickShopSearchReload.apply(reloadCommand, commandUpdater);
@@ -122,7 +132,6 @@ public class QuickShopSearchPlugin extends JavaPlugin {
       };
 
       updateCommands.run();
-      config.registerReloadListener(updateCommands);
 
       Bukkit.getPluginManager().registerEvents(new CommandSendListener(this, config), this);
 
@@ -144,24 +153,48 @@ public class QuickShopSearchPlugin extends JavaPlugin {
 
         return Component.text("Missing corresponding config-key");
       });
+
+      getServer().getPluginManager().registerEvents(this, this);
     } catch (Exception e) {
       logger.log(Level.SEVERE, "Could not initialize plugin", e);
       Bukkit.getPluginManager().disablePlugin(this);
     }
   }
 
+  @EventHandler
+  public void onConfigReload(ConfigKeeperReloadEvent event) {
+    if (event.configKeeper == config && updateCommands != null)
+      updateCommands.run();
+  }
+
   @Override
   public void onDisable() {
-    if (resultDisplayHandler != null)
-      resultDisplayHandler.onShutdown();
+    if (resultDisplayHandler != null) {
+      catchErrors(resultDisplayHandler::onShutdown);
+      resultDisplayHandler = null;
+    }
 
-    if (teleportDisplayHandler != null)
-      teleportDisplayHandler.onShutdown();
+    if (teleportDisplayHandler != null) {
+      catchErrors(teleportDisplayHandler::onShutdown);
+      teleportDisplayHandler = null;
+    }
 
-    if (stateStore != null)
-      stateStore.onShutdown();
+    if (stateStore != null) {
+      catchErrors(stateStore::onShutdown);
+      stateStore = null;
+    }
 
-    if (stampStore != null)
-      stampStore.onShutdown();
+    if (stampStore != null) {
+      catchErrors(stampStore::onShutdown);
+      stampStore = null;
+    }
+  }
+
+  private void catchErrors(Runnable runnable) {
+    try {
+      runnable.run();
+    } catch (Throwable e) {
+      getLogger().log(Level.SEVERE, "An error occurred while trying to disable the plugin", e);
+    }
   }
 }

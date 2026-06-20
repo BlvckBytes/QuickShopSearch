@@ -1,13 +1,16 @@
 package me.blvckbytes.quick_shop_search.display.result;
 
 import at.blvckbytes.cm_mapper.ConfigKeeper;
-import at.blvckbytes.cm_mapper.ReloadPriority;
+import at.blvckbytes.cm_mapper.ConfigKeeperReloadEvent;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import me.blvckbytes.quick_shop_search.PluginPermission;
 import me.blvckbytes.quick_shop_search.config.MainSection;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 
 import java.io.File;
@@ -20,11 +23,12 @@ import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class SelectionStateStore {
+public class SelectionStateStore implements Listener {
 
   // JSON seems more than good enough for a state-store this simple and concise
   private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
+  private final ConfigKeeper<MainSection> config;
   private final Map<UUID, SelectionState> states;
   private final File stateFile;
   private final Logger logger;
@@ -34,6 +38,7 @@ public class SelectionStateStore {
     ConfigKeeper<MainSection> config,
     Logger logger
   ) throws Exception {
+    this.config = config;
     this.logger = logger;
     this.states = new HashMap<>();
     this.stateFile = new File(plugin.getDataFolder(), "selection_states.json");
@@ -47,11 +52,15 @@ public class SelectionStateStore {
     updateEnabledCriteriaValues(config);
 
     load();
+  }
 
-    config.registerReloadListener(() -> {
-      updateEnabledCriteriaValues(config);
-      states.values().forEach(state -> state.updateEnumValues(logger));
-    }, ReloadPriority.HIGH);
+  @EventHandler(priority = EventPriority.LOW)
+  public void onConfigReload(ConfigKeeperReloadEvent event) {
+    if (event.configKeeper != config)
+      return;
+
+    updateEnabledCriteriaValues(config);
+    states.values().forEach(state -> state.updateEnumValues(logger));
   }
 
   private void updateEnabledCriteriaValues(ConfigKeeper<MainSection> config) {

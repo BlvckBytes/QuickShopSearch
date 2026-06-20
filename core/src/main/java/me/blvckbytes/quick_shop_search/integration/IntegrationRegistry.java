@@ -1,7 +1,7 @@
 package me.blvckbytes.quick_shop_search.integration;
 
 import at.blvckbytes.cm_mapper.ConfigKeeper;
-import at.blvckbytes.cm_mapper.ReloadPriority;
+import at.blvckbytes.cm_mapper.ConfigKeeperReloadEvent;
 import com.tcoded.folialib.impl.PlatformScheduler;
 import me.blvckbytes.quick_shop_search.config.MainSection;
 import me.blvckbytes.quick_shop_search.integration.essentials_warps.EssentialsWarpsIntegration;
@@ -13,13 +13,16 @@ import me.blvckbytes.quick_shop_search.integration.player_warps.RevivaloPlayerWa
 import me.blvckbytes.quick_shop_search.integration.worldguard.IWorldGuardIntegration;
 import me.blvckbytes.quick_shop_search.integration.worldguard.WorldGuardIntegration;
 import org.bukkit.Bukkit;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class IntegrationRegistry {
+public class IntegrationRegistry implements Listener {
 
   private final ConfigKeeper<MainSection> config;
   private final Logger logger;
@@ -42,8 +45,12 @@ public class IntegrationRegistry {
     this.plugin = plugin;
 
     this.loadIntegrations();
+  }
 
-    config.registerReloadListener(this::loadIntegrations, ReloadPriority.HIGHEST);
+  @EventHandler(priority = EventPriority.LOWEST)
+  public void onConfigReload(ConfigKeeperReloadEvent event) {
+    if (event.configKeeper == config)
+      loadIntegrations();
   }
 
   public @Nullable IWorldGuardIntegration getWorldGuardIntegration() {
