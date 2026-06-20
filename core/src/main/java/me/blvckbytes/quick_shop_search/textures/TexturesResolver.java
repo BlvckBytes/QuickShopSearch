@@ -19,6 +19,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 
 public class TexturesResolver implements Listener {
@@ -40,7 +41,7 @@ public class TexturesResolver implements Listener {
     this.offlinePlayerRegistry = offlinePlayerRegistry;
     this.httpClient = HttpClient.newHttpClient();
     this.gson = new GsonBuilder().create();
-    this.texturesByOwnerId = new HashMap<>();
+    this.texturesByOwnerId = new ConcurrentHashMap<>();
     this.currentlyResolvedOwnerIds = new HashSet<>();
 
     this.cacheFile = new File(plugin.getDataFolder(), "textures-cache.json");
