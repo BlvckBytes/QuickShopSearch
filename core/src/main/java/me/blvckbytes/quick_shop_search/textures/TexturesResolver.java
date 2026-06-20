@@ -2,6 +2,11 @@ package me.blvckbytes.quick_shop_search.textures;
 
 import com.google.gson.*;
 import me.blvckbytes.quick_shop_search.OfflinePlayerRegistry;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.Nullable;
 
@@ -9,18 +14,19 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.net.URI;
+import java.net.URL;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
-public class TexturesResolver {
+public class TexturesResolver implements Listener {
 
-  private final Logger logger;
+  private final Plugin plugin;
   private final OfflinePlayerRegistry offlinePlayerRegistry;
   private final HttpClient httpClient;
   private final Gson gson;
@@ -32,7 +38,7 @@ public class TexturesResolver {
     Plugin plugin,
     OfflinePlayerRegistry offlinePlayerRegistry
   ) throws Exception {
-    this.logger = plugin.getLogger();
+    this.plugin = plugin;
     this.offlinePlayerRegistry = offlinePlayerRegistry;
     this.httpClient = HttpClient.newHttpClient();
     this.gson = new GsonBuilder().create();
@@ -48,6 +54,29 @@ public class TexturesResolver {
       throw new IllegalStateException("Expected file at " + cacheFile);
 
     loadCache();
+  }
+
+  @EventHandler
+  public void onJoin(PlayerJoinEvent event) {
+    Bukkit.getScheduler().runTaskLater(plugin, () -> tryUpdateSkinFromOnlinePlayer(event.getPlayer()), 20);
+  }
+
+  private void tryUpdateSkinFromOnlinePlayer(Player player) {
+    if (!player.isOnline())
+      return;
+
+    var skinUrl = player.getPlayerProfile().getTextures().getSkin();
+
+    if (skinUrl == null)
+      return;
+
+    var updatedTextures = new CachedTextures(player.getName(), player.getUniqueId(), skinUrlToBase64(skinUrl), System.currentTimeMillis());
+
+    texturesByOwnerId.put(updatedTextures.ownerId(), updatedTextures);
+  }
+
+  private String skinUrlToBase64(URL skinUrl) {
+    return new String(Base64.getEncoder().encode(("{\"textures\":{\"SKIN\":{\"url\": \"" + skinUrl + "\"}}}").getBytes()));
   }
 
   public @Nullable CachedTextures tryResolveCachedTextures(String ownerName) {
@@ -124,7 +153,7 @@ public class TexturesResolver {
 
       return texturesValue;
     } catch (Throwable e) {
-      logger.log(Level.SEVERE, "Could not dispatch a request to Mojang's profile-API in order to retrieve skin-textures", e);
+      plugin.getLogger().log(Level.SEVERE, "Could not dispatch a request to Mojang's profile-API in order to retrieve skin-textures", e);
     }
 
     return null;
@@ -139,7 +168,7 @@ public class TexturesResolver {
 
       gson.toJson(cacheEntries, writer);
     } catch (Throwable e) {
-      logger.log(Level.SEVERE, "An error occurred while trying to save the textures-cache to disk", e);
+      plugin.getLogger().log(Level.SEVERE, "An error occurred while trying to save the textures-cache to disk", e);
     }
   }
 
@@ -159,7 +188,7 @@ public class TexturesResolver {
         try {
           textures = CachedTextures.fromJson(jsonObject);
         } catch (Throwable e) {
-          logger.log(Level.WARNING, "An error occurred while trying to load a textures cache-entry", e);
+          plugin.getLogger().log(Level.WARNING, "An error occurred while trying to load a textures cache-entry", e);
           continue;
         }
 
@@ -168,6 +197,6 @@ public class TexturesResolver {
       }
     }
 
-    logger.info("Loaded " + loadCounter + " cached textures from disk");
+    plugin.getLogger().info("Loaded " + loadCounter + " cached textures from disk");
   }
 }

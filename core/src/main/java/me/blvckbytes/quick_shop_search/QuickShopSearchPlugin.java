@@ -91,6 +91,7 @@ public class QuickShopSearchPlugin extends JavaPlugin implements Listener {
       getServer().getPluginManager().registerEvents(integrationRegistry, this);
 
       texturesResolver = new TexturesResolver(this, offlinePlayerRegistry);
+      getServer().getPluginManager().registerEvents(texturesResolver, this);
 
       resultDisplayHandler = new ResultDisplayHandler(
         logger,
