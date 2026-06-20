@@ -125,8 +125,12 @@ public class TexturesResolver implements Listener {
 
       var response = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
 
-      if (response.statusCode() != 200)
-        throw new IllegalStateException("Expected status-code 200, but got " + response.statusCode());
+      // Let's not spam the console with full stack-traces when rate-limited or when encountering outages.
+      // All other exceptions are fine to be logged in full, as they should never occur, except for when their API changes.
+      if (response.statusCode() != 200) {
+        plugin.getLogger().warning("Expected status-code 200, but got " + response.statusCode() + " for attempt of fetching textures for " + ownerId);
+        return null;
+      }
 
       var responseBody = response.body();
       var responseJson = gson.fromJson(responseBody, JsonObject.class);
