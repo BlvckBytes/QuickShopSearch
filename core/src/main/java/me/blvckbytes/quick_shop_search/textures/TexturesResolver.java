@@ -18,10 +18,7 @@ import java.net.URL;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.util.Base64;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.logging.Level;
 
 public class TexturesResolver implements Listener {
@@ -31,6 +28,7 @@ public class TexturesResolver implements Listener {
   private final HttpClient httpClient;
   private final Gson gson;
   private final Map<UUID, CachedTextures> texturesByOwnerId;
+  private final Set<UUID> currentlyResolvedOwnerIds;
 
   private final File cacheFile;
 
@@ -43,6 +41,7 @@ public class TexturesResolver implements Listener {
     this.httpClient = HttpClient.newHttpClient();
     this.gson = new GsonBuilder().create();
     this.texturesByOwnerId = new HashMap<>();
+    this.currentlyResolvedOwnerIds = new HashSet<>();
 
     this.cacheFile = new File(plugin.getDataFolder(), "textures-cache.json");
 
@@ -61,6 +60,17 @@ public class TexturesResolver implements Listener {
     Bukkit.getScheduler().runTaskLater(plugin, () -> tryUpdateSkinFromOnlinePlayer(event.getPlayer()), 20);
   }
 
+  private void updateCacheEntry(CachedTextures newEntry) {
+    var existingEntry = texturesByOwnerId.get(newEntry.ownerId());
+
+    texturesByOwnerId.put(newEntry.ownerId(), newEntry);
+
+    if (existingEntry != null && existingEntry.doPropertiesEqual(newEntry))
+      return;
+
+    Bukkit.getPluginManager().callEvent(new CachedTexturesUpdateEvent(newEntry));
+  }
+
   private void tryUpdateSkinFromOnlinePlayer(Player player) {
     if (!player.isOnline())
       return;
@@ -70,9 +80,7 @@ public class TexturesResolver implements Listener {
     if (skinUrl == null)
       return;
 
-    var updatedTextures = new CachedTextures(player.getName(), player.getUniqueId(), skinUrlToBase64(skinUrl), System.currentTimeMillis());
-
-    texturesByOwnerId.put(updatedTextures.ownerId(), updatedTextures);
+    updateCacheEntry(new CachedTextures(player.getName(), player.getUniqueId(), skinUrlToBase64(skinUrl), System.currentTimeMillis()));
   }
 
   private String skinUrlToBase64(URL skinUrl) {
@@ -93,25 +101,34 @@ public class TexturesResolver implements Listener {
     var result = texturesByOwnerId.get(ownerId);
 
     if (result != null) {
-      if (result.shouldBeUpdated()) {
-        // TODO: Initiate async update, then call update-event
-      }
+      if (result.shouldBeUpdated())
+        tryUpdateCachedTexturesAsync(ownerName, ownerId);
 
       return result;
     }
 
-    // TODO: Return null and fetch async, then call update-event
+    tryUpdateCachedTexturesAsync(ownerName, ownerId);
+    return null;
+  }
 
-    var skinUrl = tryResolveSkinUrl(ownerId);
+  private void tryUpdateCachedTexturesAsync(String ownerName, UUID ownerId) {
+    if (!currentlyResolvedOwnerIds.add(ownerId))
+      return;
 
-    if (skinUrl == null)
-      return null;
+    Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+      var skinUrl = tryResolveSkinUrl(ownerId);
 
-    result = new CachedTextures(ownerName, ownerId, skinUrlToBase64(skinUrl), System.currentTimeMillis());
+      synchronized (currentlyResolvedOwnerIds) {
+        currentlyResolvedOwnerIds.remove(ownerId);
+      }
 
-    texturesByOwnerId.put(ownerId, result);
+      if (skinUrl == null)
+        return;
 
-    return result;
+      var cachedTextures = new CachedTextures(ownerName, ownerId, skinUrlToBase64(skinUrl), System.currentTimeMillis());
+
+      Bukkit.getScheduler().runTask(plugin, () -> updateCacheEntry(cachedTextures));
+    });
   }
 
   private @Nullable URL tryResolveSkinUrl(UUID ownerId) {

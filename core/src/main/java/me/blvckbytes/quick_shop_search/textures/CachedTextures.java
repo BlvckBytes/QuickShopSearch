@@ -49,4 +49,14 @@ public record CachedTextures(
 
     return result;
   }
+
+  public boolean doPropertiesEqual(CachedTextures other) {
+    if (!ownerName.equalsIgnoreCase(other.ownerName))
+      return false;
+
+    if (!ownerId.equals(other.ownerId))
+      return false;
+
+    return textures.equals(other.textures());
+  }
 }

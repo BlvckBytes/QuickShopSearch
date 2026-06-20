@@ -8,8 +8,11 @@ import me.blvckbytes.quick_shop_search.PluginPermission;
 import me.blvckbytes.quick_shop_search.SlowTeleportManager;
 import me.blvckbytes.quick_shop_search.config.MainSection;
 import me.blvckbytes.quick_shop_search.display.DisplayHandler;
+import me.blvckbytes.quick_shop_search.display.result.ResultDisplay;
 import me.blvckbytes.quick_shop_search.integration.player_warps.PlayerWarpData;
+import me.blvckbytes.quick_shop_search.textures.CachedTexturesUpdateEvent;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.player.PlayerTeleportEvent;
 
@@ -31,6 +34,23 @@ public class TeleportDisplayHandler extends DisplayHandler<TeleportDisplay, Tele
 
     this.slowTeleportManager = slowTeleportManager;
     this.logger = logger;
+  }
+
+  @EventHandler
+  public void onCachedTexturesUpdate(CachedTexturesUpdateEvent event) {
+    forEachDisplay(teleportDisplay -> {
+      var nearestPlayerWarp = teleportDisplay.displayData.nearestPlayerWarp();
+
+      if (nearestPlayerWarp == null)
+        return;
+
+      if (!event.cachedTextures.ownerName().equalsIgnoreCase(nearestPlayerWarp.ownerName()))
+        return;
+
+      ResultDisplay.setPlayerWarpOwnerTextures(teleportDisplay.displayData.extendedShopEnvironment(), event.cachedTextures);
+
+      teleportDisplay.renderItems();
+    });
   }
 
   public void showOrTeleportDirectly(Player player, TeleportDisplayData displayData) {

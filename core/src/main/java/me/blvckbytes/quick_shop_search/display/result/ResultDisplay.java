@@ -24,6 +24,7 @@ import me.blvckbytes.quick_shop_search.integration.IntegrationRegistry;
 import me.blvckbytes.quick_shop_search.integration.essentials_warps.EssentialsWarpData;
 import me.blvckbytes.quick_shop_search.integration.essentials_warps.IEssentialsWarpsIntegration;
 import me.blvckbytes.quick_shop_search.integration.player_warps.PlayerWarpData;
+import me.blvckbytes.quick_shop_search.textures.CachedTextures;
 import me.blvckbytes.quick_shop_search.textures.TexturesResolver;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
@@ -547,6 +548,11 @@ public class ResultDisplay extends Display<ResultDisplayData> implements Dynamic
     return PluginPermission.FEATURE_TELEPORT_ESSENTIALS_WARP.has(player) && nearestEssentialsWarp != null;
   }
 
+  public static void setPlayerWarpOwnerTextures(InterpretationEnvironment environment, @Nullable CachedTextures cachedOwnerTextures) {
+    environment
+      .withVariable("player_warp_owner_textures", cachedOwnerTextures == null ? null : cachedOwnerTextures.textures());
+  }
+
   public InterpretationEnvironment getExtendedShopEnvironment(CachedShop cachedShop) {
     var distance = getShopDistance(cachedShop);
     var isOtherWorld = distance < 0;
@@ -607,7 +613,6 @@ public class ResultDisplay extends Display<ResultDisplayData> implements Dynamic
         warpDistance = (int) Math.round(nearestPlayerWarp.location().distance(playerLocation));
 
       var ownerName = nearestPlayerWarp.ownerName();
-      var cachedOwnerTextures = texturesResolver.tryResolveCachedTextures(ownerName);
 
       environment
         .withVariable("player_warp_name", nearestPlayerWarp.warpName())
@@ -616,8 +621,9 @@ public class ResultDisplay extends Display<ResultDisplayData> implements Dynamic
         .withVariable("player_warp_x", nearestPlayerWarp.location().getBlockX())
         .withVariable("player_warp_y", nearestPlayerWarp.location().getBlockY())
         .withVariable("player_warp_z", nearestPlayerWarp.location().getBlockZ())
-        .withVariable("player_warp_distance", warpDistance)
-        .withVariable("player_warp_owner_textures", cachedOwnerTextures == null ? null : cachedOwnerTextures.textures());
+        .withVariable("player_warp_distance", warpDistance);
+
+      setPlayerWarpOwnerTextures(environment, texturesResolver.tryResolveCachedTextures(ownerName));
     }
 
     environment.withVariable("essentials_warp_display_details", config.rootSection.essentialsWarpsIntegration.displayNearestInIcon);
