@@ -25,7 +25,7 @@ import me.blvckbytes.quick_shop_search.config.commands.QuickShopSearchLanguageCo
 import me.blvckbytes.quick_shop_search.config.commands.QuickShopSearchReloadCommandSection;
 import me.blvckbytes.quick_shop_search.display.result.ResultDisplayHandler;
 import me.blvckbytes.quick_shop_search.display.result.SelectionStateStore;
-import me.blvckbytes.quick_shop_search.display.result.TexturesResolver;
+import me.blvckbytes.quick_shop_search.textures.TexturesResolver;
 import me.blvckbytes.quick_shop_search.display.teleport.TeleportDisplayHandler;
 import me.blvckbytes.quick_shop_search.integration.IntegrationRegistry;
 import net.kyori.adventure.text.Component;
@@ -45,6 +45,7 @@ public class QuickShopSearchPlugin extends JavaPlugin implements Listener {
   private @Nullable TeleportDisplayHandler teleportDisplayHandler;
   private @Nullable SelectionStateStore stateStore;
   private @Nullable UidScopedNamedStampStore stampStore;
+  private @Nullable TexturesResolver texturesResolver;
   private @Nullable ConfigKeeper<MainSection> config;
   private @Nullable Runnable updateCommands;
 
@@ -89,7 +90,7 @@ public class QuickShopSearchPlugin extends JavaPlugin implements Listener {
       var integrationRegistry = new IntegrationRegistry(config, logger, scheduler, this);
       getServer().getPluginManager().registerEvents(integrationRegistry, this);
 
-      var texturesResolver = new TexturesResolver(logger, offlinePlayerRegistry);
+      texturesResolver = new TexturesResolver(this, offlinePlayerRegistry);
 
       resultDisplayHandler = new ResultDisplayHandler(
         logger,
@@ -187,6 +188,11 @@ public class QuickShopSearchPlugin extends JavaPlugin implements Listener {
     if (stampStore != null) {
       catchErrors(stampStore::onShutdown);
       stampStore = null;
+    }
+
+    if (texturesResolver != null) {
+      catchErrors(texturesResolver::saveCache);
+      texturesResolver = null;
     }
   }
 

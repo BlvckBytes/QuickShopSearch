@@ -1,9 +1,13 @@
-package me.blvckbytes.quick_shop_search.display.result;
+package me.blvckbytes.quick_shop_search.textures;
 
 import com.google.gson.*;
 import me.blvckbytes.quick_shop_search.OfflinePlayerRegistry;
+import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -20,17 +24,33 @@ public class TexturesResolver {
   private final OfflinePlayerRegistry offlinePlayerRegistry;
   private final HttpClient httpClient;
   private final Gson gson;
-  private final Map<UUID, String> texturesByOwnerId;
+  private final Map<UUID, CachedTextures> texturesByOwnerId;
 
-  public TexturesResolver(Logger logger, OfflinePlayerRegistry offlinePlayerRegistry) {
-    this.logger = logger;
+  private final File cacheFile;
+
+  public TexturesResolver(
+    Plugin plugin,
+    OfflinePlayerRegistry offlinePlayerRegistry
+  ) throws Exception {
+    this.logger = plugin.getLogger();
     this.offlinePlayerRegistry = offlinePlayerRegistry;
     this.httpClient = HttpClient.newHttpClient();
     this.gson = new GsonBuilder().create();
     this.texturesByOwnerId = new HashMap<>();
+
+    this.cacheFile = new File(plugin.getDataFolder(), "textures-cache.json");
+
+    if (!cacheFile.exists()) {
+      if (!cacheFile.createNewFile())
+        throw new IllegalStateException("Could not create file " + cacheFile);
+    }
+    else if (!cacheFile.isFile())
+      throw new IllegalStateException("Expected file at " + cacheFile);
+
+    loadCache();
   }
 
-  public @Nullable String tryResolveTextures(String ownerName) {
+  public @Nullable CachedTextures tryResolveCachedTextures(String ownerName) {
     if (ownerName == null)
       return null;
 
@@ -39,7 +59,25 @@ public class TexturesResolver {
     if (ownerPlayer == null)
       return null;
 
-    return texturesByOwnerId.computeIfAbsent(ownerPlayer.getUniqueId(), this::tryResolveTextures);
+    var ownerId = ownerPlayer.getUniqueId();
+
+    var result = texturesByOwnerId.get(ownerId);
+
+    if (result != null) {
+      if (result.shouldBeUpdated()) {
+        // TODO: Initiate async update, then call update-event
+      }
+
+      return result;
+    }
+
+    // TODO: Return null and fetch async, then call update-event
+
+    result = new CachedTextures(ownerName, ownerId, tryResolveTextures(ownerId), System.currentTimeMillis());
+
+    texturesByOwnerId.put(ownerId, result);
+
+    return result;
   }
 
   private @Nullable String tryResolveTextures(UUID ownerId) {
@@ -90,5 +128,46 @@ public class TexturesResolver {
     }
 
     return null;
+  }
+
+  public void saveCache() {
+    try (var writer = new FileWriter(cacheFile)) {
+      var cacheEntries = new JsonArray();
+
+      for (var cachedTexture : texturesByOwnerId.values())
+        cacheEntries.add(cachedTexture.toJson());
+
+      gson.toJson(cacheEntries, writer);
+    } catch (Throwable e) {
+      logger.log(Level.SEVERE, "An error occurred while trying to save the textures-cache to disk", e);
+    }
+  }
+
+  private void loadCache() throws Exception {
+    if (cacheFile.length() == 0)
+      return;
+
+    var loadCounter = 0;
+
+    try (var reader = new FileReader(cacheFile)) {
+      for (var arrayItem : gson.fromJson(reader, JsonArray.class)) {
+        if (!(arrayItem instanceof JsonObject jsonObject))
+          continue;
+
+        CachedTextures textures;
+
+        try {
+          textures = CachedTextures.fromJson(jsonObject);
+        } catch (Throwable e) {
+          logger.log(Level.WARNING, "An error occurred while trying to load a textures cache-entry", e);
+          continue;
+        }
+
+        texturesByOwnerId.put(textures.ownerId(), textures);
+        ++loadCounter;
+      }
+    }
+
+    logger.info("Loaded " + loadCounter + " cached textures from disk");
   }
 }

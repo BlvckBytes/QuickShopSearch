@@ -17,6 +17,7 @@ import me.blvckbytes.quick_shop_search.display.DisplayHandler;
 import me.blvckbytes.quick_shop_search.display.teleport.TeleportDisplayData;
 import me.blvckbytes.quick_shop_search.display.teleport.TeleportDisplayHandler;
 import me.blvckbytes.quick_shop_search.integration.IntegrationRegistry;
+import me.blvckbytes.quick_shop_search.textures.TexturesResolver;
 import org.bukkit.Location;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Sign;

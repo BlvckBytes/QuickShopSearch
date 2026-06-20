@@ -24,6 +24,7 @@ import me.blvckbytes.quick_shop_search.integration.IntegrationRegistry;
 import me.blvckbytes.quick_shop_search.integration.essentials_warps.EssentialsWarpData;
 import me.blvckbytes.quick_shop_search.integration.essentials_warps.IEssentialsWarpsIntegration;
 import me.blvckbytes.quick_shop_search.integration.player_warps.PlayerWarpData;
+import me.blvckbytes.quick_shop_search.textures.TexturesResolver;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -606,6 +607,7 @@ public class ResultDisplay extends Display<ResultDisplayData> implements Dynamic
         warpDistance = (int) Math.round(nearestPlayerWarp.location().distance(playerLocation));
 
       var ownerName = nearestPlayerWarp.ownerName();
+      var cachedOwnerTextures = texturesResolver.tryResolveCachedTextures(ownerName);
 
       environment
         .withVariable("player_warp_name", nearestPlayerWarp.warpName())
@@ -615,7 +617,7 @@ public class ResultDisplay extends Display<ResultDisplayData> implements Dynamic
         .withVariable("player_warp_y", nearestPlayerWarp.location().getBlockY())
         .withVariable("player_warp_z", nearestPlayerWarp.location().getBlockZ())
         .withVariable("player_warp_distance", warpDistance)
-        .withVariable("player_warp_owner_textures", texturesResolver.tryResolveTextures(ownerName));
+        .withVariable("player_warp_owner_textures", cachedOwnerTextures == null ? null : cachedOwnerTextures.textures());
     }
 
     environment.withVariable("essentials_warp_display_details", config.rootSection.essentialsWarpsIntegration.displayNearestInIcon);
