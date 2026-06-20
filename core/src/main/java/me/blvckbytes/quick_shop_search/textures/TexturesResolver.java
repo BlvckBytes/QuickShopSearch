@@ -102,14 +102,19 @@ public class TexturesResolver implements Listener {
 
     // TODO: Return null and fetch async, then call update-event
 
-    result = new CachedTextures(ownerName, ownerId, tryResolveTextures(ownerId), System.currentTimeMillis());
+    var skinUrl = tryResolveSkinUrl(ownerId);
+
+    if (skinUrl == null)
+      return null;
+
+    result = new CachedTextures(ownerName, ownerId, skinUrlToBase64(skinUrl), System.currentTimeMillis());
 
     texturesByOwnerId.put(ownerId, result);
 
     return result;
   }
 
-  private @Nullable String tryResolveTextures(UUID ownerId) {
+  private @Nullable URL tryResolveSkinUrl(UUID ownerId) {
     try {
       var ownerIdString = ownerId.toString().replace("-", "");
 
@@ -151,7 +156,27 @@ public class TexturesResolver implements Listener {
       if (texturesValue == null)
         throw new IllegalStateException("Could not locate \"textures\"-property within \"properties\"-array");
 
-      return texturesValue;
+      String decodedValue;
+
+      try {
+        decodedValue = new String(Base64.getDecoder().decode(texturesValue));
+      } catch (Throwable e) {
+        throw new IllegalStateException("Received invalid base64: " + texturesValue, e);
+      }
+
+      if (!(gson.fromJson(decodedValue, JsonElement.class) instanceof JsonObject valueObject))
+        throw new IllegalStateException("Expected decoded base64 \"" + texturesValue + "\" to be a json-object");
+
+      if (!(valueObject.get("textures") instanceof JsonObject texturesObject))
+        throw new IllegalStateException("Expected decoded base64 \"" + texturesValue + "\" to contain a \"textures\" json-object");
+
+      if (!(texturesObject.get("SKIN") instanceof JsonObject skinObject))
+        throw new IllegalStateException("Expected decoded base64 \"" + texturesValue + "\" to contain a \"textures\".\"SKIN\" json-object");
+
+      if (!(skinObject.get("url") instanceof JsonPrimitive urlPrimitive))
+        throw new IllegalStateException("Expected decoded base64 \"" + texturesValue + "\" to contain a \"textures\".\"SKIN\".\"url\" json-primitive");
+
+      return URI.create(urlPrimitive.getAsString()).toURL();
     } catch (Throwable e) {
       plugin.getLogger().log(Level.SEVERE, "Could not dispatch a request to Mojang's profile-API in order to retrieve skin-textures", e);
     }
