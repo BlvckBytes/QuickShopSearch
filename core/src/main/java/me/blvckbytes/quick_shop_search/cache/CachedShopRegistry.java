@@ -56,7 +56,17 @@ public class CachedShopRegistry implements QuickShopEventConsumer, Listener {
 
     logger.info("Getting all globally existing shops... This may take a while!");
 
-    for (var shop : QuickShopAPI.getInstance().getShopManager().getAllShops()) {
+    var encounteredShopWithUnsupportedDatatypes = false;
+
+    for (var existingShop : QuickShopAPI.getInstance().getShopManager().getAllShops()) {
+      if (!(existingShop.getLocation() instanceof Location) || CachedShop.accessPrice(existingShop) == Double.MIN_VALUE) {
+        encounteredShopWithUnsupportedDatatypes = true;
+        continue;
+      }
+
+      //noinspection unchecked
+      var shop = (Shop<Double, Location>) existingShop;
+
       var cachedShop = new CachedShop(plugin, scheduler, shop, config, integrationRegistry);
 
       existingShopByLocation.put(shop.getLocation(), cachedShop);
@@ -64,6 +74,9 @@ public class CachedShopRegistry implements QuickShopEventConsumer, Listener {
     }
 
     logger.info("Found " + existingShopByLocation.size() + " shops in total");
+
+    if (encounteredShopWithUnsupportedDatatypes)
+      logger.warning("Encountered shop-instances which use unsupported data-types; please report this, as it means we're making the wrong assumption!");
   }
 
   @EventHandler(priority = EventPriority.LOWEST)
@@ -101,12 +114,12 @@ public class CachedShopRegistry implements QuickShopEventConsumer, Listener {
   }
 
   @Override
-  public void onPurchaseSuccess(Shop shop, int amount, UUID purchaserId) {
+  public void onPurchaseSuccess(Shop<Double, Location> shop, int amount, UUID purchaserId) {
     tryAccessCache(shop, cachedShop -> displayHandler.onPurchaseSuccess(cachedShop, amount, purchaserId));
   }
 
   @Override
-  public void onShopCreate(Shop shop) {
+  public void onShopCreate(Shop<Double, Location> shop) {
     scheduler.runAsync(scheduleTask -> {
       var cachedShop = new CachedShop(plugin, scheduler, shop, config, integrationRegistry);
 
@@ -121,7 +134,7 @@ public class CachedShopRegistry implements QuickShopEventConsumer, Listener {
   }
 
   @Override
-  public void onShopDelete(Shop shop) {
+  public void onShopDelete(Shop<Double, Location> shop) {
     CachedShop cachedShop;
 
     synchronized (existingShopByLocation) {
@@ -137,14 +150,14 @@ public class CachedShopRegistry implements QuickShopEventConsumer, Listener {
   }
 
   @Override
-  public void onShopItemChange(Shop shop, ItemStack newItem) {
+  public void onShopItemChange(Shop<Double, Location> shop, ItemStack newItem) {
     tryAccessCache(shop, cachedShop -> {
       displayHandler.onShopUpdate(cachedShop, ShopUpdate.ITEM_CHANGED);
     });
   }
 
   @Override
-  public void onShopOwnerChange(Shop shop) {
+  public void onShopOwnerChange(Shop<Double, Location> shop) {
     tryAccessCache(shop, cachedShop -> {
       if (cachedShop.diff.update())
         displayHandler.onShopUpdate(cachedShop, ShopUpdate.PROPERTIES_CHANGED);
@@ -152,7 +165,7 @@ public class CachedShopRegistry implements QuickShopEventConsumer, Listener {
   }
 
   @Override
-  public void onShopSignUpdate(Shop shop) {
+  public void onShopSignUpdate(Shop<Double, Location> shop) {
     tryAccessCache(shop, cachedShop -> {
       if (cachedShop.diff.update())
         displayHandler.onShopUpdate(cachedShop, ShopUpdate.PROPERTIES_CHANGED);
@@ -160,7 +173,7 @@ public class CachedShopRegistry implements QuickShopEventConsumer, Listener {
   }
 
   @Override
-  public void onShopInventoryCalculate(Shop shop, int stock, int space) {
+  public void onShopInventoryCalculate(Shop<Double, Location> shop, int stock, int space) {
     tryAccessCache(shop, cachedShop -> {
       if (cachedShop.cachedType == SimpleShopManager.BUYING_TYPE && space >= 0)
         cachedShop.cachedSpace = space;
@@ -174,7 +187,7 @@ public class CachedShopRegistry implements QuickShopEventConsumer, Listener {
   }
 
   @Override
-  public void onShopNameChange(Shop shop) {
+  public void onShopNameChange(Shop<Double, Location> shop) {
     tryAccessCache(shop, cachedShop -> {
       cachedShop.cachedName = shop.getShopName();
 
@@ -184,9 +197,9 @@ public class CachedShopRegistry implements QuickShopEventConsumer, Listener {
   }
 
   @Override
-  public void onShopPriceChange(Shop shop) {
+  public void onShopPriceChange(Shop<Double, Location> shop) {
     tryAccessCache(shop, cachedShop -> {
-      cachedShop.cachedPrice = shop.getPrice();
+      cachedShop.cachedPrice = CachedShop.accessPrice(shop);
 
       if (cachedShop.diff.update())
         displayHandler.onShopUpdate(cachedShop, ShopUpdate.PROPERTIES_CHANGED);
@@ -194,7 +207,7 @@ public class CachedShopRegistry implements QuickShopEventConsumer, Listener {
   }
 
   @Override
-  public void onShopTypeChange(Shop shop) {
+  public void onShopTypeChange(Shop<Double, Location> shop) {
     tryAccessCache(shop, cachedShop -> {
       cachedShop.cachedType = shop.shopType();
 
@@ -252,7 +265,7 @@ public class CachedShopRegistry implements QuickShopEventConsumer, Listener {
     });
   }
 
-  private void tryAccessCache(Shop shop, Consumer<CachedShop> handler) {
+  private void tryAccessCache(Shop<Double, Location> shop, Consumer<CachedShop> handler) {
     CachedShop cachedShop;
 
     synchronized (existingShopByLocation) {

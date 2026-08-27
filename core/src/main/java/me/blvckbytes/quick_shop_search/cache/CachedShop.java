@@ -34,7 +34,7 @@ public class CachedShop {
   }
 
   private final Logger logger;
-  public final Shop handle;
+  public final Shop<Double, Location> handle;
   public final String shopWorldName;
   public final ShopScalarDiff diff;
 
@@ -54,7 +54,7 @@ public class CachedShop {
   public CachedShop(
     Plugin plugin,
     PlatformScheduler scheduler,
-    Shop handle,
+    Shop<Double, Location> handle,
     ConfigKeeper<MainSection> config,
     IntegrationRegistry integrationRegistry
   ) {
@@ -76,7 +76,7 @@ public class CachedShop {
       this.cachedStock = handle.getRemainingStock();
       this.cachedSpace = handle.getRemainingSpace();
       this.cachedType = handle.shopType();
-      this.cachedPrice = handle.getPrice();
+      this.cachedPrice = accessPrice(handle);
       this.cachedName = handle.getShopName();
       this.diff.update();
     });
@@ -157,7 +157,7 @@ public class CachedShop {
     return new InterpretationEnvironment()
       .withVariable("owner", handle.getOwner().getDisplay())
       .withVariable("name", handle.getShopName())
-      .withVariable("price", shopManager.format(handle.getPrice(), handle))
+      .withVariable("price", shopManager.format(accessPrice(handle), handle))
       .withVariable("item_type", formatItemType(handle.getItem()))
       .withVariable("remaining_stock", this.cachedStock)
       .withVariable("remaining_space", this.cachedSpace)
@@ -268,5 +268,19 @@ public class CachedShop {
       return AdvertiseAllow.ALLOWED;
 
     return AdvertiseAllow.DISALLOWED;
+  }
+
+  // This is a bit ugly, but I do want to keep support for multiple versions for the time being.
+  public static double accessPrice(Shop<?, ?> shop) {
+    try {
+      return (double) shop.price();
+    } catch (Throwable e) {
+      try {
+        //noinspection removal
+        return shop.getPrice();
+      } catch (Throwable e2) {
+        return Double.MIN_VALUE;
+      }
+    }
   }
 }

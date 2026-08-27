@@ -7,6 +7,7 @@ import com.ghostchu.quickshop.api.shop.ShopAction;
 import com.ghostchu.quickshop.obj.QUserImpl;
 import com.ghostchu.quickshop.shop.SimpleInfo;
 import com.ghostchu.quickshop.shop.inventory.BukkitInventoryWrapper;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import java.math.BigDecimal;
@@ -25,7 +26,7 @@ public class RemoteInteractionApi {
    * trading manually, at the shop's physical location. Whether items are bought or
    * sold is automatically determined by the Shop's type and thus not a user-choice.
    */
-  public void interact(Player player, Shop shop, int amount) {
+  public void interact(Player player, Shop<Double, Location> shop, int amount) {
     var economy = QuickShop.getInstance().getEconomyManager().provider();
 
     if (economy == null) {
@@ -59,7 +60,7 @@ public class RemoteInteractionApi {
   /**
    * Get the balance of a player within the shop's world, using the shop's currency
    */
-  public double getPlayerBalance(Player player, Shop shop) {
+  public double getPlayerBalance(Player player, Shop<Double, Location> shop) {
     var shopLocation = shop.getLocation();
     var shopWorld = shopLocation.getWorld();
 
@@ -77,7 +78,7 @@ public class RemoteInteractionApi {
   /**
    * Get the balance of the shop-owning player, within the shop's world, using the shop's currency
    */
-  public double getOwnerBalance(Shop shop) {
+  public double getOwnerBalance(Shop<Double, Location> shop) {
     var shopLocation = shop.getLocation();
     var shopWorld = shopLocation.getWorld();
 
@@ -92,7 +93,7 @@ public class RemoteInteractionApi {
     return economy.balance(shop.getOwner(), shopWorld.getName(), shop.getCurrency()).doubleValue();
   }
 
-  public boolean withdrawAmount(Player player, Shop shop, double amount) {
+  public boolean withdrawAmount(Player player, Shop<Double, Location> shop, double amount) {
     var shopLocation = shop.getLocation();
     var shopWorld = shopLocation.getWorld();
 
@@ -109,7 +110,7 @@ public class RemoteInteractionApi {
     return economy.withdraw(QUserImpl.createFullFilled(player), shopWorld.getName(), shop.getCurrency(), BigDecimal.valueOf(amount));
   }
 
-  public boolean depositAmount(Player player, Shop shop, double amount) {
+  public boolean depositAmount(Player player, Shop<Double, Location> shop, double amount) {
     var shopLocation = shop.getLocation();
     var shopWorld = shopLocation.getWorld();
 

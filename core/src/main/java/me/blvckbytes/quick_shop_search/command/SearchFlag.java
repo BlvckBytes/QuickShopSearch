@@ -64,7 +64,7 @@ public abstract class SearchFlag<T> implements MatchableEnum {
 
     @Override
     public boolean _test(CachedShop shop, Player executor, @NotNull Double value) {
-      return Math.abs(shop.handle.getPrice() - value) < .001;
+      return Math.abs(CachedShop.accessPrice(shop.handle) - value) < .001;
     }
   };
 
@@ -77,7 +77,7 @@ public abstract class SearchFlag<T> implements MatchableEnum {
 
     @Override
     public boolean _test(CachedShop shop, Player executor, @NotNull Double value) {
-      return shop.handle.getPrice() <= value;
+      return CachedShop.accessPrice(shop.handle) <= value;
     }
   };
 
@@ -90,7 +90,7 @@ public abstract class SearchFlag<T> implements MatchableEnum {
 
     @Override
     public boolean _test(CachedShop shop, Player executor, @NotNull Double value) {
-      return shop.handle.getPrice() >= value;
+      return CachedShop.accessPrice(shop.handle) >= value;
     }
   };
 

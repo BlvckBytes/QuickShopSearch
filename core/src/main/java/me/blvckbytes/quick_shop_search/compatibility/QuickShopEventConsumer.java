@@ -1,30 +1,31 @@
 package me.blvckbytes.quick_shop_search.compatibility;
 
 import com.ghostchu.quickshop.api.shop.Shop;
+import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.UUID;
 
 public interface QuickShopEventConsumer {
 
-  void onPurchaseSuccess(Shop shop, int amount, UUID purchaserId);
+  void onPurchaseSuccess(Shop<Double, Location> shop, int amount, UUID purchaserId);
 
-  void onShopCreate(Shop shop);
+  void onShopCreate(Shop<Double, Location> shop);
 
-  void onShopDelete(Shop shop);
+  void onShopDelete(Shop<Double, Location> shop);
 
-  void onShopItemChange(Shop shop, ItemStack newItem);
+  void onShopItemChange(Shop<Double, Location> shop, ItemStack newItem);
 
-  void onShopOwnerChange(Shop shop);
+  void onShopOwnerChange(Shop<Double, Location> shop);
 
-  void onShopSignUpdate(Shop shop);
+  void onShopSignUpdate(Shop<Double, Location> shop);
 
-  void onShopInventoryCalculate(Shop shop, int stock, int space);
+  void onShopInventoryCalculate(Shop<Double, Location> shop, int stock, int space);
 
-  void onShopNameChange(Shop shop);
+  void onShopNameChange(Shop<Double, Location> shop);
 
-  void onShopPriceChange(Shop shop);
+  void onShopPriceChange(Shop<Double, Location> shop);
 
-  void onShopTypeChange(Shop shop);
+  void onShopTypeChange(Shop<Double, Location> shop);
 
 }

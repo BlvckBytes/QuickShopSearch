@@ -5,7 +5,7 @@ import org.jetbrains.annotations.Nullable;
 
 public enum ShopSortingCriteria implements SortingFunction {
 
-  PRICE((d, a, b) -> Double.compare(a.handle.getPrice(), b.handle.getPrice())),
+  PRICE((d, a, b) -> Double.compare(CachedShop.accessPrice(a.handle), CachedShop.accessPrice(b.handle))),
   OWNER_NAME((d, a, b) -> a.handle.getOwner().getDisplay().compareTo(b.handle.getOwner().getDisplay())),
   STOCK_LEFT((d, a, b) -> Integer.compare(a.cachedStock, b.cachedStock)),
   SPACE_LEFT((d, a, b) -> Integer.compare(a.cachedSpace, b.cachedSpace)),
