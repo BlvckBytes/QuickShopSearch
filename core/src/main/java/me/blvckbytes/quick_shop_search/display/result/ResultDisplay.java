@@ -461,11 +461,11 @@ public class ResultDisplay extends Display<ResultDisplayData> implements Dynamic
   }
 
   private void renderSortingItem() {
-    config.rootSection.resultDisplay.items.sorting.renderInto(inventory, sortingEnvironment);
+    config.rootSection.resultDisplay.items.sorting.renderInto(inventory::setItem, sortingEnvironment);
   }
 
   private void renderFilteringItem() {
-    config.rootSection.resultDisplay.items.filtering.renderInto(inventory, filteringEnvironment);
+    config.rootSection.resultDisplay.items.filtering.renderInto(inventory::setItem, filteringEnvironment);
   }
 
   @Override
@@ -494,15 +494,15 @@ public class ResultDisplay extends Display<ResultDisplayData> implements Dynamic
     }
 
     // Render filler first, such that it may be overridden by conditionally displayed items
-    config.rootSection.resultDisplay.items.filler.renderInto(inventory, pageEnvironment);
+    config.rootSection.resultDisplay.items.filler.renderInto(inventory::setItem, pageEnvironment);
 
-    config.rootSection.resultDisplay.items.previousPage.renderInto(inventory, pageEnvironment);
-    config.rootSection.resultDisplay.items.nextPage.renderInto(inventory, pageEnvironment);
+    config.rootSection.resultDisplay.items.previousPage.renderInto(inventory::setItem, pageEnvironment);
+    config.rootSection.resultDisplay.items.nextPage.renderInto(inventory::setItem, pageEnvironment);
     renderSortingItem();
     renderFilteringItem();
 
     if (hasAnyActiveSearchProperties)
-      config.rootSection.resultDisplay.items.activeSearch.renderInto(inventory, activeSearchEnvironment);
+      config.rootSection.resultDisplay.items.activeSearch.renderInto(inventory::setItem, activeSearchEnvironment);
   }
 
   public @Nullable EssentialsWarpData getNearestEssentialsWarp(CachedShop cachedShop) {
