@@ -22,6 +22,7 @@ import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.logging.Logger;
 
@@ -92,6 +93,9 @@ public class CachedShop {
     var shopLocation = handle.getLocation();
 
     for (var updatedLocation : updatedLocations) {
+      if (!Objects.equals(updatedLocation.getWorld(), shopLocation.getWorld()))
+        continue;
+
       if (updatedLocation.distanceSquared(shopLocation) > affectedRadiusSquared)
         continue;
 

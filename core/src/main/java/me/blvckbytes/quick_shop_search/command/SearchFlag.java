@@ -46,9 +46,8 @@ public abstract class SearchFlag<T> implements MatchableEnum {
     public boolean _test(CachedShop shop, Player executor, @NotNull Integer value) {
       var shopLocation = shop.handle.getLocation();
       var playerLocation = executor.getLocation();
-      var shopWorld = shopLocation.getWorld();
 
-      if (shopWorld == null || !shopWorld.equals(executor.getWorld()))
+      if (!Objects.equals(shopLocation.getWorld(), executor.getWorld()))
         return false;
 
       return shopLocation.distanceSquared(playerLocation) < value * value;
