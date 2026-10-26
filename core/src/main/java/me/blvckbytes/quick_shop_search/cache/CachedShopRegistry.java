@@ -59,17 +59,16 @@ public class CachedShopRegistry implements QuickShopEventConsumer, Listener {
     var encounteredShopWithUnsupportedDatatypes = false;
 
     for (var existingShop : QuickShopAPI.getInstance().getShopManager().getAllShops()) {
-      if (!(existingShop.getLocation() instanceof Location) || CachedShop.accessPrice(existingShop) == Double.MIN_VALUE) {
+      var supportedShop = CachedShop.castToTypedIfSupportedOrNull(existingShop);
+
+      if (supportedShop == null) {
         encounteredShopWithUnsupportedDatatypes = true;
         continue;
       }
 
-      //noinspection unchecked
-      var shop = (Shop<Double, Location>) existingShop;
+      var cachedShop = new CachedShop(plugin, scheduler, supportedShop, config, integrationRegistry);
 
-      var cachedShop = new CachedShop(plugin, scheduler, shop, config, integrationRegistry);
-
-      existingShopByLocation.put(shop.getLocation(), cachedShop);
+      existingShopByLocation.put(supportedShop.getLocation(), cachedShop);
       addToCoordinateLookup(cachedShop);
     }
 

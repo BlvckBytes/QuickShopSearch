@@ -7,6 +7,7 @@ import com.ghostchu.quickshop.api.event.inventory.ShopInventoryCalculateEvent;
 import com.ghostchu.quickshop.api.event.management.ShopCreateEvent;
 import com.ghostchu.quickshop.api.event.management.ShopDeleteEvent;
 import com.ghostchu.quickshop.api.event.settings.type.*;
+import me.blvckbytes.quick_shop_search.cache.CachedShop;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
@@ -20,7 +21,12 @@ public class QuickShopEventListener implements Listener {
 
   @EventHandler
   public void onPurchaseSuccess(ShopSuccessPurchaseEvent event) {
-    consumer.onPurchaseSuccess(event.getShop(), event.getAmount(), event.getPurchaser().getUniqueId());
+    var supportedShop = CachedShop.castToTypedIfSupportedOrNull(event.getShop());
+
+    if (supportedShop == null)
+      return;
+
+    consumer.onPurchaseSuccess(supportedShop, event.getAmount(), event.getPurchaser().getUniqueId());
   }
 
   @EventHandler
@@ -28,7 +34,12 @@ public class QuickShopEventListener implements Listener {
     if (event.isCancelled() || event.phase() != Phase.POST)
       return;
 
-    event.shop().ifPresent(consumer::onShopCreate);
+    var supportedShop = CachedShop.castToTypedIfSupportedOrNull(event.shop().orElse(null));
+
+    if (supportedShop == null)
+      return;
+
+    consumer.onShopCreate(supportedShop);
   }
 
   @EventHandler
@@ -36,7 +47,12 @@ public class QuickShopEventListener implements Listener {
     if (event.isCancelled() || event.phase() != Phase.POST)
       return;
 
-    event.shop().ifPresent(consumer::onShopDelete);
+    var supportedShop = CachedShop.castToTypedIfSupportedOrNull(event.shop().orElse(null));
+
+    if (supportedShop == null)
+      return;
+
+    consumer.onShopDelete(supportedShop);
   }
 
   @EventHandler
@@ -44,7 +60,12 @@ public class QuickShopEventListener implements Listener {
     if (event.isCancelled() || event.phase() != Phase.POST)
       return;
 
-    consumer.onShopItemChange(event.shop(), event.updated());
+    var supportedShop = CachedShop.castToTypedIfSupportedOrNull(event.shop());
+
+    if (supportedShop == null)
+      return;
+
+    consumer.onShopItemChange(supportedShop, event.updated());
   }
 
   @EventHandler
@@ -52,17 +73,32 @@ public class QuickShopEventListener implements Listener {
     if (event.isCancelled() || event.phase() != Phase.POST)
       return;
 
-    consumer.onShopOwnerChange(event.shop());
+    var supportedShop = CachedShop.castToTypedIfSupportedOrNull(event.shop());
+
+    if (supportedShop == null)
+      return;
+
+    consumer.onShopOwnerChange(supportedShop);
   }
 
   @EventHandler
   public void onShopSignUpdate(ShopSignUpdateEvent event) {
-    consumer.onShopSignUpdate(event.getShop());
+    var supportedShop = CachedShop.castToTypedIfSupportedOrNull(event.getShop());
+
+    if (supportedShop == null)
+      return;
+
+    consumer.onShopSignUpdate(supportedShop);
   }
 
   @EventHandler
   public void onShopInventoryCalculate(ShopInventoryCalculateEvent event) {
-    consumer.onShopInventoryCalculate(event.getShop(), event.getStock(), event.getSpace());
+    var supportedShop = CachedShop.castToTypedIfSupportedOrNull(event.getShop());
+
+    if (supportedShop == null)
+      return;
+
+    consumer.onShopInventoryCalculate(supportedShop, event.getStock(), event.getSpace());
   }
 
   @EventHandler
@@ -70,7 +106,12 @@ public class QuickShopEventListener implements Listener {
     if (event.isCancelled() || event.phase() != Phase.POST)
       return;
 
-    consumer.onShopNameChange(event.shop());
+    var supportedShop = CachedShop.castToTypedIfSupportedOrNull(event.shop());
+
+    if (supportedShop == null)
+      return;
+
+    consumer.onShopNameChange(supportedShop);
   }
 
   @EventHandler
@@ -78,7 +119,12 @@ public class QuickShopEventListener implements Listener {
     if (event.isCancelled() || event.phase() != Phase.POST)
       return;
 
-    consumer.onShopPriceChange(event.shop());
+    var supportedShop = CachedShop.castToTypedIfSupportedOrNull(event.shop());
+
+    if (supportedShop == null)
+      return;
+
+    consumer.onShopPriceChange(supportedShop);
   }
 
   @EventHandler
@@ -86,7 +132,12 @@ public class QuickShopEventListener implements Listener {
     if (event.isCancelled() || event.phase() != Phase.POST)
       return;
 
-    consumer.onShopTypeChange(event.shop());
+    var supportedShop = CachedShop.castToTypedIfSupportedOrNull(event.shop());
+
+    if (supportedShop == null)
+      return;
+
+    consumer.onShopTypeChange(supportedShop);
   }
 
   @EventHandler
@@ -94,6 +145,11 @@ public class QuickShopEventListener implements Listener {
     if (event.isCancelled() || event.phase() != Phase.POST)
       return;
 
-    consumer.onShopTypeChange(event.shop());
+    var supportedShop = CachedShop.castToTypedIfSupportedOrNull(event.shop());
+
+    if (supportedShop == null)
+      return;
+
+    consumer.onShopTypeChange(supportedShop);
   }
 }

@@ -287,4 +287,15 @@ public class CachedShop {
       }
     }
   }
+
+  public static @Nullable Shop<Double, Location> castToTypedIfSupportedOrNull(@Nullable Shop<?, ?> shop) {
+    if (shop == null)
+      return null;
+
+    if (!(shop.getLocation() instanceof Location) || accessPrice(shop) == Double.MIN_VALUE)
+      return null;
+
+    //noinspection unchecked
+    return (Shop<Double, Location>) shop;
+  }
 }
