@@ -24,9 +24,9 @@
         <dependency>
             <groupId>com.ghostchu</groupId>
             <artifactId>quickshop-jar</artifactId>
-            <version>6.3.0.1</version>
+            <version>6.3.0.3</version>
             <scope>system</scope>
-            <systemPath>${project.basedir}/libs/QuickShop-Hikari-6.3.0.1.jar</systemPath>
+            <systemPath>${project.basedir}/libs/QuickShop-Hikari-6.3.0.3.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>me.blvckbytes.quickshopsearch</groupId>
